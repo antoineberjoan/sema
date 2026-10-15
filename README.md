@@ -9,7 +9,7 @@ Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoa
 - Une fenêtre de travail inspirée du mélange Panorama / Atelier : navigation latérale, indicateurs, historiques et détail d’une série.
 - Un panneau compact dans la barre de menus, partageant les mêmes données et favoris.
 - Treize repères macro réels via Webstat après connexion d’une clé personnelle : Livret A, LDDS, LEP, taux de dépôt BCE, €STR, inflation France et zone euro, quatre changes, crédit immobilier et emprunt français à dix ans.
-- Historique jusqu’à cinq ans selon la série, vue annuelle, source, période et date de mise à jour. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
+- Vues sur 1 mois, 3 mois, 1 an, 3 ans et 5 ans selon la profondeur disponible ; source, période et date de mise à jour. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
 - Favoris persistants, recherche dans les fonds de démonstration, règles de hausse/baisse sur une part précise.
 - Création, pause, suppression et test d’alertes. **Aucune surveillance automatique de fonds n’est active.**
 

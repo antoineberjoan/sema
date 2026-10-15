@@ -114,7 +114,7 @@ struct SeriesDetailView: View {
                         Spacer()
                     }
                     Picker("Période de l’historique", selection: $store.period) {
-                        ForEach(HistoryPeriod.allCases.filter { series.hasAnnualHistory || $0 != .year }) { period in
+                        ForEach(HistoryPeriod.allCases.filter { series.supports($0) }) { period in
                             Text(period.title).tag(period)
                         }
                     }
@@ -152,6 +152,11 @@ struct SeriesDetailView: View {
                     }
                     .buttonStyle(.borderedProminent).controlSize(.large)
                 }
+            }
+        }
+        .onChange(of: series, initial: true) { _, item in
+            if !item.supports(store.period) {
+                store.period = HistoryPeriod.allCases.last(where: { item.supports($0) }) ?? .month
             }
         }
     }

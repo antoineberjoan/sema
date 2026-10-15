@@ -42,7 +42,9 @@ struct HistoryChart: View {
             .chartXSelection(value: $hoveredDate)
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 3)) { _ in
-                    AxisValueLabel(format: .dateTime.day().month(.abbreviated))
+                    AxisValueLabel(format: period.days > 365
+                        ? .dateTime.month(.abbreviated).year()
+                        : .dateTime.day().month(.abbreviated))
                 }
             }
             .chartYAxis {

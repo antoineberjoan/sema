@@ -6,7 +6,7 @@
 - API Explore 2.1 : `https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/`.
 - Une clé personnelle est nécessaire. Sema la valide puis la conserve dans le Trousseau local, sans synchronisation iCloud. Aucun secret partagé n’est embarqué dans l’app ou le dépôt.
 - Authentification : header `Authorization: Apikey …`, jamais un paramètre d’URL.
-- Un export `observations/exports/json` récupère les 13 séries sur les cinq dernières années, avec des bornes de dates explicites.
+- Un export `observations/exports/json` récupère les 13 séries sur les six dernières années, avec des bornes de dates explicites. Cette marge permet une vue complète sur cinq ans même lorsque la dernière publication mensuelle est décalée.
 - Actualisation manuelle après connexion initiale. Le quota documenté est de 10 000 requêtes par jour et par compte. Aucun nouvel essai automatique n’est lancé après une erreur.
 - En cas d’erreur d’accès, de quota, de réseau ou d’export incomplet : les dernières données sont conservées. Le cache est séparé des préférences et ne contient jamais la clé.
 
@@ -54,7 +54,7 @@ L’ancien client public `ECBExchangeRateClient` et son parseur restent présent
 - Date d’observation : `time_period_start`. Pour le mensuel, conserver aussi `time_period_end` et afficher le mois et l’année, distincts de `updated_at`, la mise à jour source.
 - Une période mensuelle en cours peut avoir une date de fin future sans constituer une prévision. Sa valeur déjà publiée est conservée si sa date de début est atteinte.
 - Les observations sont triées par date ; pour les doublons, la révision la plus récente remplace l’ancienne. Le statut source est conservé et affiché si la dernière valeur n’a pas le statut normal `A`.
-- Fenêtres mensuelles en mois calendaires ; fenêtres quotidiennes en jours calendaires selon le sélecteur existant. La vue annuelle n’est proposée que si l’historique couvre au moins 365 jours.
+- Vues sur 1 mois, 3 mois, 1 an, 3 ans et 5 ans, proposées uniquement si la série couvre la période. Les fenêtres mensuelles et annuelles suivent le calendrier civil ; les fenêtres quotidiennes courtes couvrent 30 ou 90 jours.
 - Taux et inflation : variations en points de pourcentage. Devises et VL : variations relatives en pourcentage. Une variation de VL n’est pas une performance avec distributions réinvesties.
 - Les jours non ouvrés ne constituent pas de nouvelles observations. L’interface affiche la dernière observation disponible ; aucune surveillance de marché ne tourne en arrière-plan.
 

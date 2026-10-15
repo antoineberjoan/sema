@@ -109,7 +109,7 @@ struct WebstatClientTests {
         #expect(!url.absoluteString.contains("apikey="))
         let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
         let filter = try #require(items?.first { $0.name == "where" }?.value)
-        #expect(filter.contains("2021-10-15"))
+        #expect(filter.contains("2020-10-15"))
         #expect(filter.contains("HICP.M.FR.N.000000.4D0.ANR"))
         #expect(!filter.contains("FRMOYTEC10"))
         #expect(throws: (any Error).self) { _ = try WebstatClient.request(apiKey: "   ") }
@@ -126,5 +126,22 @@ struct WebstatClientTests {
         #expect(previous.latest?.updatedAt == nil)
         let current = try WebstatClient.parse(fixture(), now: now)
         #expect(try JSONDecoder().decode([MarketSeries].self, from: JSONEncoder().encode(current)) == current)
+    }
+
+    @Test
+    func longHistoryUsesCalendarYearsAndHidesUnavailablePeriods() throws {
+        let dates = ISO8601DateFormatter()
+        dates.formatOptions = [.withFullDate]
+        let monthly = MarketSeries(id: "rate", name: "Rate", subtitle: "", category: .savings,
+            unit: .percent, source: "Fixture", isDemo: false, frequency: .monthly,
+            observations: [MarketObservation(date: dates.date(from: "2020-08-01")!, value: 1),
+                           MarketObservation(date: dates.date(from: "2021-08-01")!, value: 2),
+                           MarketObservation(date: dates.date(from: "2023-08-01")!, value: 3),
+                           MarketObservation(date: dates.date(from: "2026-08-01")!, value: 4)])
+        #expect(monthly.supports(.fiveYears))
+        #expect(monthly.history(for: .fiveYears).map(\.value) == [2, 3, 4])
+        #expect(monthly.change(for: .threeYears) == 1)
+        #expect(HistoryPeriod.fiveYears.title == "5 ans")
+        #expect(!DemoCatalog.series()[0].supports(.threeYears))
     }
 }

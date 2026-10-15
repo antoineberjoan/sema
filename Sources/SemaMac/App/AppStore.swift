@@ -82,7 +82,9 @@ final class AppStore {
     func show(_ item: MarketSeries) {
         if item.category == .funds { selectedFundID = item.id; section = .funds }
         else { selectedSeriesID = item.id; category = item.category }
-        if !item.hasAnnualHistory && period == .year { period = .quarter }
+        if !item.supports(period) {
+            period = HistoryPeriod.allCases.last(where: { item.supports($0) }) ?? .month
+        }
     }
 
     func checkWebstatKey() async {
@@ -143,7 +145,6 @@ final class AppStore {
         merge(values)
         hasLoadedWebstat = true
         webstatError = nil
-        errorMessage = nil
         status = "\(values.count) repères Webstat actualisés · les fonds et les alertes restent en démonstration."
         do { try storage.cacheWebstat(values) }
         catch { errorMessage = "Les repères sont chargés, mais leur sauvegarde locale a échoué." }

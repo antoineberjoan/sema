@@ -73,7 +73,7 @@ public struct WebstatClient: Sendable {
 
     public init() {}
 
-    /// One grouped export provides five calendar years, enough for all current chart periods.
+    /// Six years cover a full five-year window even when the latest monthly release lags behind today.
     public static func request(apiKey: String, now: Date = .now) throws -> URLRequest {
         let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty, key.rangeOfCharacter(from: .controlCharacters) == nil else {
@@ -81,7 +81,7 @@ public struct WebstatClient: Sendable {
         }
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        let start = calendar.date(byAdding: .year, value: -5, to: now)!
+        let start = calendar.date(byAdding: .year, value: -6, to: now)!
         let date = ISO8601DateFormatter()
         date.formatOptions = [.withFullDate]
         var url = URLComponents(string: "https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/observations/exports/json")!

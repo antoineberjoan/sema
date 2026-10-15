@@ -38,7 +38,7 @@ Deux surfaces partagent la même information :
 
 1. Ouvrir l’app et le panneau de barre de menus ; sélectionner un indicateur et changer de période.
 2. Modifier les favoris dans une surface et vérifier l’autre, puis relancer l’app.
-3. Dans les réglages, connecter Webstat ; contrôler les sources, la devise et les dates, ainsi que la vue annuelle.
+3. Dans les réglages, connecter Webstat ; contrôler les sources, la devise et les dates, ainsi que les vues sur 1 an, 3 ans et 5 ans.
 4. Sélectionner une part fictive, créer une alerte à 2,5 %, la tester, la mettre en pause puis la supprimer.
 5. Contrôler les erreurs réseau et l’absence de perte de préférences.
 6. Retirer la clé ; vérifier que l’actualisation est désactivée et que les dernières données restent consultables après relancement.

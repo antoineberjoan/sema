@@ -20,7 +20,7 @@ flowchart TB
 - `MarketSeries` : série typée, origine, source et observations triées et dédupliquées.
 - `AlertRule` / `AlertEvaluator` : seuil, direction, part exacte, évaluation pure et déduplication par date d’observation.
 - `ECBExchangeRateClient` : téléchargement des 90 derniers jours, validation HTTP et lecture XML sans entités externes.
-- `WebstatClient` : export JSON groupé des 13 séries explicites sur cinq ans ; clé dans le header `Authorization`, validation HTTP, valeurs manquantes et dates d’observation. Un export incomplet n’est pas appliqué.
+- `WebstatClient` : export JSON groupé des 13 séries explicites sur six ans pour couvrir une fenêtre complète de cinq ans malgré le décalage des publications mensuelles ; clé dans le header `Authorization`, validation HTTP, valeurs manquantes et dates d’observation. Un export incomplet n’est pas appliqué.
 - `PreferencesStore` : document JSON versionné, lecture explicite des erreurs et écriture atomique.
 - `DemoCatalog` : fixtures fixes et identifiées comme telles, sans dépendance au réseau.
 
@@ -42,7 +42,7 @@ Les historiques restent immuables. Une connexion Webstat réussie remplace les s
 
 La connexion valide les données avant d’enregistrer la clé. Une erreur HTTP, un quota atteint ou une erreur de décodage conserve le cache et les données affichées ; aucun nouvel essai automatique ne tourne. Le bouton d’actualisation utilise ensuite la clé du Trousseau. Retirer la clé conserve volontairement les données publiques déjà téléchargées. Le cache est relu au lancement, l’actualisation reste manuelle.
 
-Les observations Webstat conservent la fin de période, le statut et la date de mise à jour source. Une période mensuelle peut se terminer dans le futur si le taux est déjà applicable dans le mois courant. Les fenêtres des séries mensuelles utilisent des mois calendaires. Les caches antérieurs, sans ces métadonnées optionnelles, restent lisibles.
+Les observations Webstat conservent la fin de période, le statut et la date de mise à jour source. Une période mensuelle peut se terminer dans le futur si le taux est déjà applicable dans le mois courant. Les fenêtres des séries mensuelles et les fenêtres annuelles utilisent le calendrier civil. Le sélecteur propose 1 mois, 3 mois, 1 an, 3 ans et 5 ans uniquement si la série couvre la période. Les caches antérieurs, sans ces métadonnées optionnelles, restent lisibles.
 
 ## Alertes
 

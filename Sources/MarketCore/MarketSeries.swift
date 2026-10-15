@@ -24,13 +24,16 @@ public enum ObservationFrequency: String, Codable, Sendable {
 }
 
 public enum HistoryPeriod: String, CaseIterable, Identifiable, Sendable {
-    case month, quarter, year
+    case month, quarter, year, threeYears, fiveYears
     public var id: String { rawValue }
     public var days: Int {
-        switch self { case .month: 30; case .quarter: 90; case .year: 365 }
+        switch self { case .month: 30; case .quarter: 90; case .year: 365; case .threeYears: 1_095; case .fiveYears: 1_825 }
+    }
+    public var months: Int {
+        switch self { case .month: 1; case .quarter: 3; case .year: 12; case .threeYears: 36; case .fiveYears: 60 }
     }
     public var title: String {
-        switch self { case .month: "1 mois"; case .quarter: "3 mois"; case .year: "1 an" }
+        switch self { case .month: "1 mois"; case .quarter: "3 mois"; case .year: "1 an"; case .threeYears: "3 ans"; case .fiveYears: "5 ans" }
     }
 }
 
@@ -90,18 +93,24 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
 
     public func history(for period: HistoryPeriod) -> [MarketObservation] {
         guard let latest else { return [] }
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        let months = period == .month ? 1 : period == .quarter ? 3 : 12
-        let cutoff = frequency == .monthly
-            ? calendar.date(byAdding: .month, value: -months, to: latest.date)!
-            : latest.date.addingTimeInterval(-Double(period.days) * 86_400)
+        let cutoff = cutoff(for: period, endingAt: latest.date)
         return observations.filter { $0.date >= cutoff }
     }
 
-    public var hasAnnualHistory: Bool {
+    public func supports(_ period: HistoryPeriod) -> Bool {
         guard let first = observations.first, let latest else { return false }
-        return latest.date.timeIntervalSince(first.date) >= 365 * 86_400
+        return observations.count > 1 && first.date <= cutoff(for: period, endingAt: latest.date)
+    }
+
+    public var hasAnnualHistory: Bool { supports(.year) }
+
+    private func cutoff(for period: HistoryPeriod, endingAt date: Date) -> Date {
+        if frequency == .monthly || period.days >= 365 {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+            return calendar.date(byAdding: .month, value: -period.months, to: date)!
+        }
+        return date.addingTimeInterval(-Double(period.days) * 86_400)
     }
 
     /// Rate changes use percentage points; exchange rates and NAVs use percent.
