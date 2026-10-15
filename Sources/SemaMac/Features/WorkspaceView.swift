@@ -31,8 +31,14 @@ struct WorkspaceView: View {
                 Spacer(minLength: 0)
                 VStack(alignment: .leading, spacing: 9) {
                     Text("VOTRE VEILLE, SIMPLEMENT").font(.system(size: 9, weight: .medium)).tracking(0.8).foregroundStyle(.secondary)
-                    HStack(spacing: 8) { Image(systemName: "person.crop.circle"); Text("Mon espace") }
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                    SettingsLink {
+                        HStack(spacing: 8) { Image(systemName: "person.crop.circle"); Text("Mon espace") }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .font(.system(size: 12)).foregroundStyle(.secondary)
+                    .help("Ouvrir les réglages de Sema")
                 }
                 .padding(20)
             }

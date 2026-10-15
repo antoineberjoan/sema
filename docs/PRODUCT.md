@@ -6,7 +6,7 @@ Permettre à un professionnel du patrimoine de consulter quelques repères écon
 
 ## Direction retenue
 
-Mélange des maquettes **Panorama** et **Atelier** validé par Antoine : douceur et lisibilité du panneau, structure d’une petite app de travail. Références : Hoy, Helumi, Monocle, Klack et Alcove. L’app reste sobre ; le mouvement sert les changements d’état et les sélections.
+Mélange des maquettes **Panorama** et **Atelier** validé par Antoine : douceur et lisibilité du panneau, structure d’une petite app de travail. Références : Hoy, Helumi, Monocle, Klack, Alcove et [Resurf](https://resurf.so/). L’app reste sobre ; le mouvement sert les changements d’état et les sélections.
 
 Deux surfaces partagent la même information :
 
@@ -22,6 +22,7 @@ Deux surfaces partagent la même information :
 | Favoris | Ajouter ou retirer un repère ou une part, et retrouver la sélection après relancement. |
 | Webstat | Connecter une clé personnelle, actualiser 13 repères sur cinq ans au maximum, conserver les données si le réseau échoue et afficher leur période et leur mise à jour source. |
 | Clé | Valider la clé avant de l’enregistrer dans le Trousseau de ce Mac ; pouvoir la remplacer ou la retirer sans effacer le cache. |
+| Réglages | « Mon espace » en bas de la sidebar ouvre les mêmes réglages natifs que le bouton de la barre d’outils et le menu Sema. |
 | Fonds | Rechercher et sélectionner quatre fonds fictifs, chacun avec une part et une devise déterminées. |
 | Alertes | Créer une règle de hausse/baisse, la mettre en pause, la supprimer et simuler un franchissement. |
 | Notifications | Le test est visible dans l’app ; une notification système est optionnelle après autorisation. |
