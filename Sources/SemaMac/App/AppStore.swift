@@ -26,6 +26,7 @@ final class AppStore {
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
+    var webstatError: String?
     var status: String?
     var errorMessage: String?
     var simulatedEvent: AlertEvent?
@@ -88,12 +89,13 @@ final class AppStore {
         guard !didCheckWebstatKey else { return }
         didCheckWebstatKey = true
         do { hasWebstatKey = try await webstatKeychain.read() != nil }
-        catch { errorMessage = error.localizedDescription }
+        catch { webstatError = error.localizedDescription }
     }
 
     func connectWebstat(apiKey: String) async -> Bool {
         guard !isLoading else { return false }
         isLoading = true
+        webstatError = nil
         defer { isLoading = false }
         do {
             let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -103,7 +105,7 @@ final class AppStore {
             applyWebstat(values)
             return true
         } catch {
-            errorMessage = "Connexion impossible : \(error.localizedDescription) Les données affichées sont conservées."
+            webstatError = "Connexion impossible : \(error.localizedDescription) Les données affichées sont conservées."
             return false
         }
     }
@@ -111,6 +113,7 @@ final class AppStore {
     func refreshWebstat() async {
         guard !isLoading else { return }
         isLoading = true
+        webstatError = nil
         defer { isLoading = false }
         do {
             guard let key = try await webstatKeychain.read() else {
@@ -119,24 +122,27 @@ final class AppStore {
             }
             applyWebstat(try await WebstatClient().fetch(apiKey: key))
         } catch {
-            errorMessage = "Actualisation impossible : \(error.localizedDescription) Les données affichées sont conservées."
+            webstatError = "Actualisation impossible : \(error.localizedDescription) Les données affichées sont conservées."
+            status = webstatError
         }
     }
 
     func removeWebstatKey() async {
         guard !isLoading else { return }
         isLoading = true
+        webstatError = nil
         defer { isLoading = false }
         do {
             try await webstatKeychain.remove()
             hasWebstatKey = false
             status = "Clé Webstat retirée · les dernières données restent consultables dans le cache local."
-        } catch { errorMessage = error.localizedDescription }
+        } catch { webstatError = error.localizedDescription }
     }
 
     private func applyWebstat(_ values: [MarketSeries]) {
         merge(values)
         hasLoadedWebstat = true
+        webstatError = nil
         errorMessage = nil
         status = "\(values.count) repères Webstat actualisés · les fonds et les alertes restent en démonstration."
         do { try storage.cacheWebstat(values) }

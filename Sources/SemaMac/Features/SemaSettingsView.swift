@@ -24,7 +24,7 @@ struct SemaSettingsView: View {
                     Link("Obtenir une clé sur Webstat", destination: URL(string: "https://webstat.banque-france.fr/login/")!)
                     Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Elle ne fait pas partie du cache ni des préférences.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
-                    if let error = store.errorMessage {
+                    if let error = store.webstatError {
                         Text(error).font(.system(size: 11)).foregroundStyle(.red)
                     }
                 }
