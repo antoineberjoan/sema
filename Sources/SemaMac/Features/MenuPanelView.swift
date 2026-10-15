@@ -1,0 +1,66 @@
+import AppKit
+import SwiftUI
+import MarketCore
+
+struct MenuPanelView: View {
+    @Environment(AppStore.self) private var store
+    @Environment(\.openWindow) private var openWindow
+    @State private var showsFavorites = false
+    private var items: [MarketSeries] {
+        if showsFavorites { return store.favorites }
+        return Array(store.macroSeries.filter { $0.category == .markets }.prefix(4))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 19) {
+            HStack {
+                SemaMark(size: 27)
+                Text("Sema").font(.system(size: 14, weight: .semibold))
+                Spacer()
+                Text(store.hasLoadedECB ? "BCE + démo" : "Démo").font(.system(size: 10)).foregroundStyle(.secondary)
+                SettingsLink { Image(systemName: "slider.horizontal.3") }.buttonStyle(.plain).help("Réglages")
+            }
+            VStack(alignment: .leading, spacing: 5) {
+                Text(Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale(identifier: "fr_FR"))).uppercased())
+                    .font(.system(size: 9, weight: .medium)).tracking(0.8).foregroundStyle(.secondary)
+                Text("Un peu de recul.").font(.system(size: 25, weight: .medium)).tracking(-1)
+            }
+            Picker("Affichage", selection: $showsFavorites) {
+                Text("Panorama").tag(false)
+                Text("Favoris").tag(true)
+            }
+            .pickerStyle(.segmented).labelsHidden()
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                    ForEach(items) { item in
+                        IndicatorTile(series: item, selected: store.selectedSeriesID == item.id, compact: true) {
+                            if item.category == .funds { store.show(item); openWorkspace() }
+                            else { store.show(item) }
+                        }
+                    }
+                }
+                if items.isEmpty { Text("Ajoutez vos premiers favoris dans la fenêtre Sema.").font(.system(size: 12)).foregroundStyle(.secondary).padding(20) }
+            }
+            .frame(height: showsFavorites && items.count > 4 ? 320 : 225)
+            HStack {
+                Text(store.selectedSeries.name).font(.system(size: 12, weight: .medium))
+                Spacer()
+                OriginBadge(series: store.selectedSeries)
+            }
+            HistoryChart(series: store.selectedSeries, period: .month, height: 110)
+            Divider()
+            HStack {
+                Text("Dates et sources dans le détail").font(.system(size: 10)).foregroundStyle(.secondary)
+                Spacer()
+                Button(action: openWorkspace) { Label("Ouvrir Sema", systemImage: "arrow.up.right") }.font(.system(size: 11))
+            }
+        }
+        .padding(22).frame(width: 450)
+        .background(SemaTheme.background)
+    }
+
+    private func openWorkspace() {
+        openWindow(id: "workspace")
+        NSApplication.shared.activate(ignoringOtherApps: true)
+    }
+}
