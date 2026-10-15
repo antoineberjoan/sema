@@ -6,6 +6,7 @@ import UserNotifications
 struct SemaMacApp: App {
     @NSApplicationDelegateAdaptor(SemaAppDelegate.self) private var appDelegate
     @State private var store = AppStore()
+    @State private var isMenuInserted = true
 
     var body: some Scene {
         Window("Sema", id: "workspace") {
@@ -18,11 +19,11 @@ struct SemaMacApp: App {
             SidebarCommands()
         }
 
-        MenuBarExtra {
+        MenuBarExtra(isInserted: $isMenuInserted) {
             MenuPanelView().environment(store).tint(SemaTheme.accent)
                 .environment(\.locale, Locale(identifier: "fr_FR"))
         } label: {
-            SemaSymbol().frame(width: 18, height: 18).accessibilityLabel("Sema")
+            Image(nsImage: SemaTheme.menuBarIcon).accessibilityLabel("Sema")
         }
         .menuBarExtraStyle(.window)
 
