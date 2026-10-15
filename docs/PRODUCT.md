@@ -18,9 +18,10 @@ Deux surfaces partagent la même information :
 | Fonction | Comportement attendu |
 | --- | --- |
 | Panorama | Basculer entre Marchés & devises et Épargne & économie ; sélectionner une série et consulter son historique. |
-| Origine | Identifier clairement les données de démonstration et les séries BCE réellement téléchargées. |
+| Origine | Identifier clairement les données fictives et les repères Webstat réellement téléchargés ; conserver leur producteur et leur période. |
 | Favoris | Ajouter ou retirer un repère ou une part, et retrouver la sélection après relancement. |
-| BCE | Actualiser trois parités ; conserver les dernières observations si le réseau échoue ; afficher leur date. |
+| Webstat | Connecter une clé personnelle, actualiser 13 repères sur cinq ans au maximum, conserver les données si le réseau échoue et afficher leur période et leur mise à jour source. |
+| Clé | Valider la clé avant de l’enregistrer dans le Trousseau de ce Mac ; pouvoir la remplacer ou la retirer sans effacer le cache. |
 | Fonds | Rechercher et sélectionner quatre fonds fictifs, chacun avec une part et une devise déterminées. |
 | Alertes | Créer une règle de hausse/baisse, la mettre en pause, la supprimer et simuler un franchissement. |
 | Notifications | Le test est visible dans l’app ; une notification système est optionnelle après autorisation. |
@@ -37,6 +38,7 @@ Deux surfaces partagent la même information :
 
 1. Ouvrir l’app et le panneau de barre de menus ; sélectionner un indicateur et changer de période.
 2. Modifier les favoris dans une surface et vérifier l’autre, puis relancer l’app.
-3. Actualiser les devises et contrôler l’origine BCE, la devise de cotation et la date.
+3. Dans les réglages, connecter Webstat ; contrôler les sources, la devise et les dates, ainsi que la vue annuelle.
 4. Sélectionner une part fictive, créer une alerte à 2,5 %, la tester, la mettre en pause puis la supprimer.
 5. Contrôler les erreurs réseau et l’absence de perte de préférences.
+6. Retirer la clé ; vérifier que l’actualisation est désactivée et que les dernières données restent consultables après relancement.

@@ -17,7 +17,7 @@ struct MenuPanelView: View {
                 SemaMark(size: 27)
                 Text("Sema").font(.system(size: 14, weight: .semibold))
                 Spacer()
-                Text(store.hasLoadedECB ? "BCE + démo" : "Démo").font(.system(size: 10)).foregroundStyle(.secondary)
+                Text(store.hasLoadedWebstat ? "Webstat" : "Démo").font(.system(size: 10)).foregroundStyle(.secondary)
                 SettingsLink { Image(systemName: "slider.horizontal.3") }.buttonStyle(.plain).help("Réglages")
             }
             VStack(alignment: .leading, spacing: 5) {
@@ -57,6 +57,7 @@ struct MenuPanelView: View {
         }
         .padding(22).frame(width: 450)
         .background(SemaTheme.background)
+        .task { await store.checkWebstatKey() }
     }
 
     private func openWorkspace() {

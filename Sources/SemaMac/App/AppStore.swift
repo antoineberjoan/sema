@@ -24,13 +24,16 @@ final class AppStore {
     var period: HistoryPeriod = .month
     var search = ""
     var isLoading = false
-    var hasLoadedECB = false
+    var hasLoadedWebstat = false
+    var hasWebstatKey = false
     var status: String?
     var errorMessage: String?
     var simulatedEvent: AlertEvent?
     var isAlertSheetPresented = false
     private let storage: LocalStorage
     private let notifications = NotificationService()
+    private let webstatKeychain = WebstatKeychain()
+    private var didCheckWebstatKey = false
     private var canSavePreferences = true
 
     init(storage: LocalStorage = .applicationDefault()) {
@@ -43,14 +46,20 @@ final class AppStore {
             errorMessage = "Les réglages n’ont pas pu être lus. Le fichier existant est conservé : \(error.localizedDescription)"
         }
         do {
-            let cached = try storage.cachedRates()
+            let cached = try storage.cachedWebstat()
             if !cached.isEmpty {
                 merge(cached)
-                hasLoadedECB = true
-                status = "Devises conservées localement · vérifiez la date de publication."
+                hasLoadedWebstat = true
+                status = "Repères Webstat conservés localement · consultez la période et la date de publication."
+            } else {
+                let previousRates = try storage.cachedRates()
+                if !previousRates.isEmpty {
+                    merge(previousRates)
+                    status = "Ancien cache BCE · connectez Webstat dans les réglages pour actualiser les repères."
+                }
             }
         } catch {
-            errorMessage = "Le cache des devises est illisible. Une actualisation BCE peut le remplacer."
+            errorMessage = "Le cache des données est illisible. Une actualisation peut le remplacer."
         }
     }
 
@@ -59,6 +68,7 @@ final class AppStore {
     var favorites: [MarketSeries] { series.filter { preferences.favoriteIDs.contains($0.id) } }
     var selectedSeries: MarketSeries { series.first { $0.id == selectedSeriesID } ?? series[0] }
     var selectedFund: MarketSeries { funds.first { $0.id == selectedFundID } ?? funds[0] }
+    var originSummary: String { hasLoadedWebstat ? "Webstat · fonds en démonstration" : "Webstat à connecter · démonstration disponible" }
 
     func isFavorite(_ id: String) -> Bool { preferences.favoriteIDs.contains(id) }
 
@@ -71,29 +81,71 @@ final class AppStore {
     func show(_ item: MarketSeries) {
         if item.category == .funds { selectedFundID = item.id; section = .funds }
         else { selectedSeriesID = item.id; category = item.category }
-        if !item.isDemo && period == .year { period = .quarter }
+        if !item.hasAnnualHistory && period == .year { period = .quarter }
     }
 
-    func refreshECB() async {
+    func checkWebstatKey() async {
+        guard !didCheckWebstatKey else { return }
+        didCheckWebstatKey = true
+        do { hasWebstatKey = try await webstatKeychain.read() != nil }
+        catch { errorMessage = error.localizedDescription }
+    }
+
+    func connectWebstat(apiKey: String) async -> Bool {
+        guard !isLoading else { return false }
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+            let values = try await WebstatClient().fetch(apiKey: key)
+            try await webstatKeychain.save(key)
+            hasWebstatKey = true
+            applyWebstat(values)
+            return true
+        } catch {
+            errorMessage = "Connexion impossible : \(error.localizedDescription) Les données affichées sont conservées."
+            return false
+        }
+    }
+
+    func refreshWebstat() async {
         guard !isLoading else { return }
         isLoading = true
         defer { isLoading = false }
         do {
-            let rates = try await ECBExchangeRateClient().fetch()
-            merge(rates)
-            hasLoadedECB = true
-            status = "\(rates.count) devises BCE actualisées · les autres séries restent en démonstration."
-            if !selectedSeries.isDemo && period == .year { period = .quarter }
-            do { try storage.cacheRates(rates) }
-            catch { errorMessage = "Les devises sont chargées, mais leur sauvegarde locale a échoué." }
+            guard let key = try await webstatKeychain.read() else {
+                hasWebstatKey = false
+                throw WebstatClient.ClientError.missingKey
+            }
+            applyWebstat(try await WebstatClient().fetch(apiKey: key))
         } catch {
-            errorMessage = "Actualisation impossible : \(error.localizedDescription) Les valeurs affichées et leurs dates sont conservées."
+            errorMessage = "Actualisation impossible : \(error.localizedDescription) Les données affichées sont conservées."
         }
+    }
+
+    func removeWebstatKey() async {
+        guard !isLoading else { return }
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            try await webstatKeychain.remove()
+            hasWebstatKey = false
+            status = "Clé Webstat retirée · les dernières données restent consultables dans le cache local."
+        } catch { errorMessage = error.localizedDescription }
+    }
+
+    private func applyWebstat(_ values: [MarketSeries]) {
+        merge(values)
+        hasLoadedWebstat = true
+        errorMessage = nil
+        status = "\(values.count) repères Webstat actualisés · les fonds et les alertes restent en démonstration."
+        do { try storage.cacheWebstat(values) }
+        catch { errorMessage = "Les repères sont chargés, mais leur sauvegarde locale a échoué." }
     }
 
     func restoreDemo() {
         series = DemoCatalog.series()
-        hasLoadedECB = false
+        hasLoadedWebstat = false
         status = "Données de démonstration · aucun cours actuel."
     }
 
@@ -150,9 +202,10 @@ final class AppStore {
         save()
     }
 
-    private func merge(_ rates: [MarketSeries]) {
-        for rate in rates {
-            if let index = series.firstIndex(where: { $0.id == rate.id }) { series[index] = rate }
+    private func merge(_ values: [MarketSeries]) {
+        for value in values {
+            if let index = series.firstIndex(where: { $0.id == value.id }) { series[index] = value }
+            else { series.insert(value, at: series.firstIndex { $0.category == .funds } ?? series.endIndex) }
         }
     }
 

@@ -48,10 +48,11 @@ struct WorkspaceView: View {
                     if store.section == .funds || store.section == .alerts {
                         Button { store.isAlertSheetPresented = true } label: { Label("Créer une alerte", systemImage: "bell.badge") }
                     } else {
-                        Button { Task { await store.refreshECB() } } label: {
-                            Label(store.isLoading ? "Actualisation…" : "Actualiser les devises", systemImage: "arrow.clockwise")
+                        Button { Task { await store.refreshWebstat() } } label: {
+                            Label(store.isLoading ? "Actualisation…" : "Actualiser Webstat", systemImage: "arrow.clockwise")
                         }
-                        .disabled(store.isLoading)
+                        .disabled(store.isLoading || !store.hasWebstatKey)
+                        .help(store.hasWebstatKey ? "Actualiser les repères" : "Ajoutez votre clé Webstat dans les réglages")
                     }
                     SettingsLink { Image(systemName: "slider.horizontal.3") }.help("Réglages de Sema")
                 }
@@ -72,7 +73,7 @@ struct WorkspaceView: View {
                 HStack {
                     Text("Sema · première version")
                     Spacer()
-                    Text(store.hasLoadedECB ? "Devises BCE · autres séries en démo" : "Indicateurs et fonds fictifs")
+                    Text(store.originSummary)
                 }
                 .font(.system(size: 11)).foregroundStyle(.secondary)
                 .padding(.horizontal, 30).padding(.vertical, 14)
@@ -81,6 +82,7 @@ struct WorkspaceView: View {
             .background(SemaTheme.background)
         }
         .frame(minWidth: 940, minHeight: 700)
+        .task { await store.checkWebstatKey() }
         .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
         .alert("Sema", isPresented: errorBinding) {
             Button("Compris", role: .cancel) { store.errorMessage = nil }
@@ -110,10 +112,13 @@ struct WorkspaceView: View {
 
     private var dataStatus: some View {
         HStack(spacing: 10) {
-            Image(systemName: store.hasLoadedECB ? "checkmark.circle" : "info.circle").foregroundStyle(.secondary)
+            Image(systemName: store.hasLoadedWebstat ? "checkmark.circle" : "info.circle").foregroundStyle(.secondary)
             Text(store.status ?? "Mode démonstration · les valeurs affichées ne sont pas des cours actuels.")
                 .font(.system(size: 12)).foregroundStyle(.secondary)
             Spacer(minLength: 0)
+            if !store.hasWebstatKey {
+                SettingsLink { Text("Connecter Webstat") }.font(.system(size: 12))
+            }
         }
     }
 }

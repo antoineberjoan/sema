@@ -105,7 +105,7 @@ private struct SemaSignalPath: Shape {
 struct OriginBadge: View {
     let series: MarketSeries
     var body: some View {
-        Text(series.isDemo ? "Démo" : "BCE")
+        Text(series.isDemo ? "Démo" : series.sourceURL?.host == "webstat.banque-france.fr" ? "BdF" : "BCE")
             .font(.system(size: 10, weight: .medium))
             .foregroundStyle(series.isDemo ? Color.secondary : SemaTheme.accent)
             .padding(.horizontal, 6).padding(.vertical, 3)

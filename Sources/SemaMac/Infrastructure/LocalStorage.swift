@@ -24,4 +24,15 @@ struct LocalStorage {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         try JSONEncoder().encode(rates).write(to: directory.appendingPathComponent("ecb-cache.json"), options: .atomic)
     }
+
+    func cachedWebstat() throws -> [MarketSeries] {
+        let url = directory.appendingPathComponent("webstat-cache.json")
+        guard FileManager.default.fileExists(atPath: url.path) else { return [] }
+        return try JSONDecoder().decode([MarketSeries].self, from: Data(contentsOf: url))
+    }
+
+    func cacheWebstat(_ series: [MarketSeries]) throws {
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try JSONEncoder().encode(series).write(to: directory.appendingPathComponent("webstat-cache.json"), options: .atomic)
+    }
 }

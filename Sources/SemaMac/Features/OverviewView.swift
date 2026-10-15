@@ -114,7 +114,7 @@ struct SeriesDetailView: View {
                         Spacer()
                     }
                     Picker("Période de l’historique", selection: $store.period) {
-                        ForEach(HistoryPeriod.allCases.filter { series.isDemo || $0 != .year }) { period in
+                        ForEach(HistoryPeriod.allCases.filter { series.hasAnnualHistory || $0 != .year }) { period in
                             Text(period.title).tag(period)
                         }
                     }
@@ -125,13 +125,21 @@ struct SeriesDetailView: View {
                 HStack(alignment: .top, spacing: 9) {
                     Image(systemName: "calendar").foregroundStyle(.secondary)
                     VStack(alignment: .leading, spacing: 5) {
-                        Text("Observation du " + MarketFormat.date(series.latest?.date)).font(.system(size: 11, weight: .medium))
+                        Text(observationLabel).font(.system(size: 11, weight: .medium))
                         if series.isDemo {
                             Text(series.category == .funds ? "Fonds fictif · la part et la devise sont suivies séparément." : "Valeurs fictives pour explorer l’application.")
                                 .font(.system(size: 11)).foregroundStyle(.secondary)
                         } else {
-                            Text("Taux de référence quotidien · historique BCE de 90 jours.")
+                            Text(series.frequency == .monthly ? "Publication mensuelle · consultez la période de référence." : "Publication quotidienne · dernière observation disponible.")
                                 .font(.system(size: 11)).foregroundStyle(.secondary)
+                            if let updatedAt = series.latest?.updatedAt {
+                                Text("Mise à jour source : " + MarketFormat.date(updatedAt))
+                                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                            }
+                            if let status = series.latest?.status, status != "A" {
+                                Text("Statut de la source : \(status) · consultez le détail officiel.")
+                                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                            }
                             if let url = series.sourceURL {
                                 Link(series.source, destination: url).font(.system(size: 11))
                             }
@@ -146,6 +154,15 @@ struct SeriesDetailView: View {
                 }
             }
         }
+    }
+
+    private var observationLabel: String {
+        guard series.frequency == .monthly, let latest = series.latest else {
+            return "Observation du " + MarketFormat.date(series.latest?.date)
+        }
+        var format = Date.FormatStyle().month(.wide).year().locale(Locale(identifier: "fr_FR"))
+        format.timeZone = TimeZone(secondsFromGMT: 0)!
+        return "Période : " + latest.date.formatted(format)
     }
 }
 

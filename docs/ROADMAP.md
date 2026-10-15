@@ -12,8 +12,9 @@
 ## Prochain incrément produit
 
 - [ ] Valider l’app native avec Antoine : hiérarchie, densité, interactions et comportement du panneau.
-- [ ] Brancher les autres indicateurs sur les sources officielles validées.
-- [ ] Choisir précisément le repère obligataire et ses droits de réutilisation.
+- [x] Brancher 13 indicateurs officiels via Webstat et une clé personnelle dans le Trousseau.
+- [x] Utiliser l’emprunt phare français à dix ans, publié mensuellement par la Banque de France ; ne pas intégrer le TEC 10 quotidien sous droits Euronext.
+- [ ] Ajouter ensuite la collecte agrégée des OPC et les autres repères du catalogue vérifié.
 - [ ] Ajouter une restauration persistante du mode de données et des préférences de présentation si elle est utile à l’usage.
 
 ## Fonds réels et surveillance

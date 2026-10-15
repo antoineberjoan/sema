@@ -8,12 +8,12 @@ Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoa
 
 - Une fenêtre de travail inspirée du mélange Panorama / Atelier : navigation latérale, indicateurs, historiques et détail d’une série.
 - Un panneau compact dans la barre de menus, partageant les mêmes données et favoris.
-- Huit repères macro ; les données fictives sont identifiées par un badge **Démo**.
-- Un flux réel optionnel : taux de référence EUR/USD, EUR/JPY et EUR/CHF publiés par la BCE, avec un historique de 90 jours et un cache local.
+- Treize repères macro réels via Webstat après connexion d’une clé personnelle : Livret A, LDDS, LEP, taux de dépôt BCE, €STR, inflation France et zone euro, quatre changes, crédit immobilier et emprunt français à dix ans.
+- Historique jusqu’à cinq ans selon la série, vue annuelle, source, période et date de mise à jour. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
 - Favoris persistants, recherche dans les fonds de démonstration, règles de hausse/baisse sur une part précise.
 - Création, pause, suppression et test d’alertes. **Aucune surveillance automatique de fonds n’est active.**
 
-Tous les fonds sont fictifs. Les autres séries macro restent fictives tant que leur fournisseur n’est pas intégré. Les alertes sont une démonstration explicite ; leurs règles sont sauvegardées, mais aucun service de surveillance ne tourne.
+Tous les fonds sont fictifs. Les alertes sont une démonstration explicite ; leurs règles sont sauvegardées, mais aucun service de surveillance ne tourne. Les actions et les données réelles de fonds ne sont pas connectées.
 
 ## Démarrer
 
@@ -30,13 +30,22 @@ Le script crée une app locale avec une signature ad hoc. Pour une distribution 
 
 Dans Xcode : ouvrir `Package.swift`. Pour tester les comportements dépendant d’un vrai bundle (dont les notifications), lancer l’app produite par le script.
 
+## Connecter Webstat
+
+1. Créer un compte gratuit sur [Webstat](https://webstat.banque-france.fr/login/), puis générer une clé dans l’espace utilisateur.
+2. Ouvrir **Sema → Réglages → Général**, coller la clé dans le champ sécurisé et cliquer sur **Enregistrer et connecter**.
+3. Les données sont validées avant l’enregistrement de la clé dans le Trousseau macOS. La clé reste sur ce Mac et est envoyée uniquement à Webstat dans un header HTTP.
+4. Utiliser **Actualiser Webstat** pour les mises à jour suivantes. Les données du cache restent consultables sans clé ; **Retirer la clé** supprime uniquement la connexion.
+
+Ne jamais ajouter une clé personnelle au code ou au dépôt. Les données sources sont accessibles gratuitement auprès de leurs producteurs ; l’accès par clé personnelle ne remplace pas leurs conditions de réutilisation.
+
 ## Vérifier
 
 ```sh
 ./scripts/check.sh
 ```
 
-La CI utilise macOS avec Xcode et lance la même suite. Les tests couvrent les variations de taux et de VL, les seuils stricts, l’identification d’une part, la déduplication des publications, la persistance et le parseur BCE.
+La CI utilise macOS avec Xcode et lance la même suite. Les tests couvrent aussi le JSON Webstat, les erreurs d’accès et de quota, la précision des nombres, les valeurs absentes ou futures, les périodes mensuelles, les révisions et la compatibilité des anciens caches.
 
 La suite utilise Swift Testing. Xcode complet est nécessaire si les seuls Command Line Tools installés ne fournissent pas son environnement d’exécution.
 
@@ -44,12 +53,12 @@ La suite utilise Swift Testing. Xcode complet est nécessaire si les seuls Comma
 
 ```text
 Sources/
-  MarketCore/             Modèles, calculs, lecture BCE, persistance des préférences
+  MarketCore/             Modèles, calculs, clients Webstat/BCE, préférences
   SemaMac/
     App/                  Cycle de vie et état partagé
     DesignSystem/         Couleurs, typographie, composants et graphiques
     Features/             Panorama, favoris, fonds, alertes, menu et réglages
-    Infrastructure/       Emplacement des fichiers et notifications macOS
+    Infrastructure/       Fichiers, Trousseau et notifications macOS
 Tests/MarketCoreTests/    Règles métier et contrats des données
 Resources/               Métadonnées du bundle et logos SVG
 scripts/                 Vérification et création de l’app
@@ -62,13 +71,13 @@ L’interface utilise **SF Pro**, les contrôles macOS et une palette teal/mint.
 
 ## Données locales
 
-Par défaut, les favoris et alertes sont dans `~/Library/Application Support/Sema/preferences.json`. Le cache des devises est séparé dans `ecb-cache.json`. Les écritures sont atomiques. Un fichier de préférences illisible ou d’une version inconnue est conservé ; l’app signale le problème et désactive sa sauvegarde.
+Par défaut, les favoris et alertes sont dans `~/Library/Application Support/Sema/preferences.json`. Les observations Webstat sont dans `webstat-cache.json`, sans clé API. L’ancien `ecb-cache.json` reste lisible. Les écritures sont atomiques. Un fichier de préférences illisible ou d’une version inconnue est conservé ; l’app signale le problème et désactive sa sauvegarde.
 
 Pour une session de validation isolée, `SEMA_DEVELOPMENT_DATA_DIRECTORY` peut définir l’emplacement des données lors de la création du bundle. `SEMA_CONFIGURATION=debug` permet de produire une app de développement. Ces valeurs ne sont pas nécessaires à une utilisation normale.
 
 ## Bibliothèques
 
-Aucune dépendance externe : SwiftUI, AppKit, Swift Charts, Observation, Foundation et UserNotifications. Les bibliothèques possibles pour des besoins ultérieurs sont documentées dans [les décisions techniques](docs/decisions/001-native-and-dependencies.md).
+Aucune dépendance externe : SwiftUI, AppKit, Swift Charts, Observation, Foundation, Security et UserNotifications. Les bibliothèques possibles pour des besoins ultérieurs sont documentées dans [les décisions techniques](docs/decisions/001-native-and-dependencies.md).
 
 ## Suite
 

@@ -5,7 +5,7 @@ public enum SeriesCategory: String, Codable, CaseIterable, Sendable {
 }
 
 public enum ValueUnit: String, Codable, Sendable {
-    case percent, usd, jpy, chf, eur
+    case percent, usd, jpy, chf, gbp, eur
 
     public var symbol: String {
         switch self {
@@ -13,9 +13,14 @@ public enum ValueUnit: String, Codable, Sendable {
         case .usd: "USD"
         case .jpy: "JPY"
         case .chf: "CHF"
+        case .gbp: "GBP"
         case .eur: "€"
         }
     }
+}
+
+public enum ObservationFrequency: String, Codable, Sendable {
+    case daily, monthly
 }
 
 public enum HistoryPeriod: String, CaseIterable, Identifiable, Sendable {
@@ -33,10 +38,17 @@ public struct MarketObservation: Codable, Equatable, Sendable, Identifiable {
     public var id: Date { date }
     public let date: Date
     public let value: Decimal
+    public let periodEnd: Date?
+    public let updatedAt: Date?
+    public let status: String?
 
-    public init(date: Date, value: Decimal) {
+    public init(date: Date, value: Decimal, periodEnd: Date? = nil,
+                updatedAt: Date? = nil, status: String? = nil) {
         self.date = date
         self.value = value
+        self.periodEnd = periodEnd
+        self.updatedAt = updatedAt
+        self.status = status
     }
 }
 
@@ -50,12 +62,14 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public let source: String
     public let sourceURL: URL?
     public let isDemo: Bool
+    public let frequency: ObservationFrequency?
     public let observations: [MarketObservation]
 
     public init(
         id: String, name: String, subtitle: String, category: SeriesCategory,
         unit: ValueUnit, fractionDigits: Int = 2, source: String,
-        sourceURL: URL? = nil, isDemo: Bool, observations: [MarketObservation]
+        sourceURL: URL? = nil, isDemo: Bool, frequency: ObservationFrequency? = nil,
+        observations: [MarketObservation]
     ) {
         self.id = id
         self.name = name
@@ -66,6 +80,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         self.source = source
         self.sourceURL = sourceURL
         self.isDemo = isDemo
+        self.frequency = frequency
         // One publication per date; the last input for that date wins.
         let unique = Dictionary(observations.map { ($0.date, $0) }, uniquingKeysWith: { _, latest in latest })
         self.observations = unique.values.sorted { $0.date < $1.date }
@@ -75,8 +90,18 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
 
     public func history(for period: HistoryPeriod) -> [MarketObservation] {
         guard let latest else { return [] }
-        let cutoff = latest.date.addingTimeInterval(-Double(period.days) * 86_400)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let months = period == .month ? 1 : period == .quarter ? 3 : 12
+        let cutoff = frequency == .monthly
+            ? calendar.date(byAdding: .month, value: -months, to: latest.date)!
+            : latest.date.addingTimeInterval(-Double(period.days) * 86_400)
         return observations.filter { $0.date >= cutoff }
+    }
+
+    public var hasAnnualHistory: Bool {
+        guard let first = observations.first, let latest else { return false }
+        return latest.date.timeIntervalSince(first.date) >= 365 * 86_400
     }
 
     /// Rate changes use percentage points; exchange rates and NAVs use percent.

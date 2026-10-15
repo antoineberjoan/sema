@@ -2,17 +2,43 @@ import SwiftUI
 
 struct SemaSettingsView: View {
     @Environment(AppStore.self) private var store
+    @State private var apiKey = ""
     var body: some View {
         TabView {
             Form {
+                Section("Banque de France · Webstat") {
+                    LabeledContent("Clé personnelle") { Text(store.hasWebstatKey ? "Enregistrée dans le Trousseau" : "À renseigner") }
+                    SecureField(store.hasWebstatKey ? "Nouvelle clé Webstat" : "Votre clé API Webstat", text: $apiKey)
+                        .textContentType(.password).privacySensitive()
+                        .accessibilityLabel("Clé API Webstat")
+                    HStack {
+                        Button(store.isLoading ? "Connexion…" : "Enregistrer et connecter") {
+                            Task { if await store.connectWebstat(apiKey: apiKey) { apiKey = "" } }
+                        }
+                        .disabled(store.isLoading || apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        if store.hasWebstatKey {
+                            Button("Retirer la clé", role: .destructive) { Task { await store.removeWebstatKey() } }
+                                .disabled(store.isLoading)
+                        }
+                    }
+                    Link("Obtenir une clé sur Webstat", destination: URL(string: "https://webstat.banque-france.fr/login/")!)
+                    Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Elle ne fait pas partie du cache ni des préférences.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                    if let error = store.errorMessage {
+                        Text(error).font(.system(size: 11)).foregroundStyle(.red)
+                    }
+                }
                 Section("Sources") {
-                    LabeledContent("Devises") { Text(store.hasLoadedECB ? "BCE · taux de référence publiés" : "Démonstration") }
-                    Text("L’actualisation récupère les taux EUR/USD, EUR/JPY et EUR/CHF des 90 derniers jours. Les autres indicateurs et tous les fonds restent fictifs.")
+                    LabeledContent("Repères") { Text(store.hasLoadedWebstat ? "Banque de France · Webstat" : "Démonstration") }
+                    Text("13 repères : épargne réglementée, taux BCE, €STR, inflation, changes, crédit immobilier et emprunt français à dix ans. Historique jusqu’à cinq ans selon la série. Les fonds restent fictifs.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                     HStack {
-                        Button("Actualiser depuis la BCE") { Task { await store.refreshECB() } }.disabled(store.isLoading)
-                        Button("Afficher la démonstration") { store.restoreDemo() }
+                        Button("Actualiser Webstat") { Task { await store.refreshWebstat() } }
+                            .disabled(store.isLoading || !store.hasWebstatKey)
+                        Button("Afficher la démonstration") { store.restoreDemo() }.disabled(store.isLoading)
                     }
+                    Text("Les données sources sont consultables gratuitement auprès de la Banque de France, de la BCE et d’Eurostat. Chaque repère indique sa période et sa source.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 Section("Notifications") {
                     Toggle("Autoriser les notifications système pour les tests", isOn: Binding(
@@ -36,6 +62,8 @@ struct SemaSettingsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .tabItem { Label("À propos", systemImage: "info.circle") }
         }
-        .padding(15).frame(width: 560, height: 440)
+        .padding(15).frame(width: 620, height: 650)
+        .task { await store.checkWebstatKey() }
+        .onDisappear { apiKey = "" }
     }
 }
