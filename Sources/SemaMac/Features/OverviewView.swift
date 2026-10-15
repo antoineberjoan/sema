@@ -114,8 +114,8 @@ struct SeriesDetailView: View {
                         Spacer()
                     }
                     Picker("Période de l’historique", selection: $store.period) {
-                        ForEach(HistoryPeriod.allCases) { period in
-                            Text(period.title).tag(period).disabled(period == .year && !series.isDemo)
+                        ForEach(HistoryPeriod.allCases.filter { series.isDemo || $0 != .year }) { period in
+                            Text(period.title).tag(period)
                         }
                     }
                     .pickerStyle(.segmented).labelsHidden()
