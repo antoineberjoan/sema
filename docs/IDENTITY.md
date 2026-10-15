@@ -24,7 +24,7 @@ Le teal de marque est assombri pour les petits textes et actions sur fond clair.
 
 ## Symbole original
 
-Un S continu aux extrémités arrondies, accompagné d’un point détaché : le signal qui mérite l’attention. Le symbole fonctionne sans dégradé et en monochrome. Le dégradé est réservé à l’icône d’app, pas aux contrôles.
+**Balise**, retenu par Antoine le 15 octobre 2026 : deux angles arrondis encadrent un point central, le repère qui mérite l’attention. Le symbole fonctionne sans dégradé et en monochrome. Le dégradé est réservé à l’icône d’app, pas aux contrôles.
 
 - `Resources/Brand/sema-symbol.svg` : symbole sur fond transparent, couleur modifiable.
 - `Resources/Brand/sema-symbol-mono.svg` : version monochrome.
@@ -32,4 +32,4 @@ Un S continu aux extrémités arrondies, accompagné d’un point détaché : le
 - `SemaSymbol` : dessin natif SwiftUI du même symbole.
 - `scripts/render-icon.swift` : rendu natif des PNG nécessaires au bundle macOS.
 
-Ces fichiers sont des propositions originales de travail. Ils restent modifiables avant la finalisation de l’identité.
+Le SVG, le dessin SwiftUI et le rendu de l’icône macOS appliquent la même géométrie.

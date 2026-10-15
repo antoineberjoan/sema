@@ -74,9 +74,9 @@ struct SemaSymbol: View {
             let scale = side / 64
             ZStack {
                 SemaSignalPath()
-                    .stroke(style: StrokeStyle(lineWidth: 8 * scale, lineCap: .round, lineJoin: .round))
-                Circle().frame(width: 8 * scale, height: 8 * scale)
-                    .position(x: 49 * scale, y: 14 * scale)
+                    .stroke(style: StrokeStyle(lineWidth: 7 * scale, lineCap: .round, lineJoin: .round))
+                Circle().frame(width: 10 * scale, height: 10 * scale)
+                    .position(x: 32 * scale, y: 32 * scale)
             }
             .frame(width: side, height: side)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -90,14 +90,14 @@ private struct SemaSignalPath: Shape {
     func path(in rect: CGRect) -> Path {
         let scale = min(rect.width, rect.height) / 64
         var path = Path()
-        path.move(to: CGPoint(x: 37, y: 14))
-        path.addLine(to: CGPoint(x: 27, y: 14))
-        path.addCurve(to: CGPoint(x: 16, y: 23.5), control1: CGPoint(x: 20.4, y: 14), control2: CGPoint(x: 16, y: 18.1))
-        path.addCurve(to: CGPoint(x: 27, y: 33), control1: CGPoint(x: 16, y: 29), control2: CGPoint(x: 20.4, y: 33))
-        path.addLine(to: CGPoint(x: 37, y: 33))
-        path.addCurve(to: CGPoint(x: 48, y: 42.5), control1: CGPoint(x: 43.6, y: 33), control2: CGPoint(x: 48, y: 37.1))
-        path.addCurve(to: CGPoint(x: 37, y: 52), control1: CGPoint(x: 48, y: 48), control2: CGPoint(x: 43.6, y: 52))
-        path.addLine(to: CGPoint(x: 21, y: 52))
+        path.move(to: CGPoint(x: 29, y: 17))
+        path.addLine(to: CGPoint(x: 23, y: 17))
+        path.addCurve(to: CGPoint(x: 17, y: 23), control1: CGPoint(x: 19.7, y: 17), control2: CGPoint(x: 17, y: 19.7))
+        path.addLine(to: CGPoint(x: 17, y: 29))
+        path.move(to: CGPoint(x: 35, y: 47))
+        path.addLine(to: CGPoint(x: 41, y: 47))
+        path.addCurve(to: CGPoint(x: 47, y: 41), control1: CGPoint(x: 44.3, y: 47), control2: CGPoint(x: 47, y: 44.3))
+        path.addLine(to: CGPoint(x: 47, y: 35))
         return path.applying(CGAffineTransform(scaleX: scale, y: scale))
     }
 }
