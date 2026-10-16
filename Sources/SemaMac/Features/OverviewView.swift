@@ -109,6 +109,7 @@ struct FavoriteButton: View {
     @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
     let seriesID: String
+    private var seriesName: String { store.series.first { $0.id == seriesID }?.name ?? "ce repère" }
     var body: some View {
         Button { store.toggleFavorite(seriesID) } label: {
             Image(systemName: store.isFavorite(seriesID) ? "star.fill" : "star")
@@ -117,7 +118,7 @@ struct FavoriteButton: View {
         }
         .buttonStyle(.plain)
         .help(store.isFavorite(seriesID) ? "Retirer des favoris" : "Ajouter aux favoris")
-        .accessibilityLabel(store.isFavorite(seriesID) ? "Retirer \(seriesID) des favoris" : "Ajouter \(seriesID) aux favoris")
+        .accessibilityLabel(store.isFavorite(seriesID) ? "Retirer \(seriesName) des favoris" : "Ajouter \(seriesName) aux favoris")
     }
 }
 
@@ -177,7 +178,7 @@ struct SeriesDetailView: View {
                     }
                 }
                 HStack(alignment: .firstTextBaseline) {
-                    Label("Observation du " + MarketFormat.date(series.latest?.date), systemImage: "calendar")
+                    Label(observationPeriod, systemImage: "calendar")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                     Spacer(minLength: 8)
                     if store.isFollowing(series.id) {
@@ -208,6 +209,7 @@ struct SeriesDetailView: View {
                                 LabeledContent("Dernière période", value: MarketFormat.date(descriptor.lastPeriod))
                                 if let base = descriptor.attributes["UNIT_INDEX_BASE"] { LabeledContent("Base de l’indice", value: base) }
                             } else { Text(series.frequency?.title ?? "Fréquence non renseignée") }
+                            if let status = series.latest?.status { LabeledContent("Statut de l’observation", value: status) }
                             if let updated = series.latest?.updatedAt { LabeledContent("Mise à jour source", value: MarketFormat.date(updated)) }
                             if let sync = series.syncedAt { LabeledContent("Téléchargé le", value: MarketFormat.date(sync)) }
                             if let url = series.sourceURL { Link("Consulter sur Webstat ↗", destination: url) }
@@ -237,6 +239,13 @@ struct SeriesDetailView: View {
             }
         }
         .onChange(of: series.id, initial: true) { _, _ in period = series.supports(.year) ? .year : .all }
+    }
+    private var observationPeriod: String {
+        guard let latest = series.latest else { return "Aucune observation disponible" }
+        if let end = latest.periodEnd, end != latest.date {
+            return "Période du " + MarketFormat.date(latest.date) + " au " + MarketFormat.date(end)
+        }
+        return "Observation du " + MarketFormat.date(latest.date)
     }
 }
 

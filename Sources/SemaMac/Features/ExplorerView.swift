@@ -9,6 +9,9 @@ struct ExplorerView: View {
 struct CatalogueBrowserView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let selectionDuration = 0.14
+    private let previewDuration = 0.22
     @State private var showsFilters = false
     @State private var selectedID: String?
     @State private var isAdding = false
@@ -63,51 +66,12 @@ struct CatalogueBrowserView: View {
                 HStack(alignment: .top, spacing: 20) {
                     results.frame(minWidth: compact ? 260 : 300, maxWidth: store.previewDescriptor == nil ? .infinity : 350)
                     if let descriptor = store.previewDescriptor {
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 16) {
-                                HStack {
-                                    Text("Aperçu").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
-                                    Spacer()
-                                    Button { store.closePreview() } label: { Image(systemName: "xmark") }
-                                        .buttonStyle(.plain).help("Fermer l’aperçu").accessibilityLabel("Fermer l’aperçu")
-                                }
-                                if store.isLoadingPreview && store.previewSeries == nil {
-                                    VStack(alignment: .leading, spacing: 16) {
-                                        Text(descriptor.title).font(.system(size: 18, weight: .semibold))
-                                        Text(descriptor.definition).font(.system(size: 12)).foregroundStyle(.secondary)
-                                        ProgressView("Chargement de l’historique…").controlSize(.small)
-                                    }.frame(maxWidth: .infinity, minHeight: 280, alignment: .topLeading).padding(20)
-                                } else {
-                                    SeriesDetailView(series: store.previewSeries ?? descriptor.series(observations: []), preview: true)
-                                }
-                                if let error = store.previewError {
-                                    Label(error, systemImage: "exclamationmark.triangle")
-                                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                                    Button("Réessayer") { store.openPreview(descriptor) }.buttonStyle(.borderless)
-                                }
-                                HStack {
-                                    if store.isFollowing(descriptor.key) {
-                                        Label("Ajouté", systemImage: "checkmark").foregroundStyle(accent)
-                                        Spacer()
-                                        Button("Ouvrir le repère") {
-                                            if let item = store.followedSeries.first(where: { $0.id == descriptor.key }) {
-                                                store.show(item); store.section = .overview; store.closePreview(); close?()
-                                            }
-                                        }.buttonStyle(.borderedProminent)
-                                    } else {
-                                        Button {
-                                            isAdding = true
-                                            Task { _ = await store.follow(descriptor); isAdding = false }
-                                        } label: {
-                                            if isAdding { ProgressView().controlSize(.small) }
-                                            else { Label("Ajouter à mes repères", systemImage: "plus") }
-                                        }.buttonStyle(.borderedProminent).disabled(isAdding || store.isLoadingPreview || store.previewSeries == nil)
-                                    }
-                                }.font(.system(size: 12)).padding(.horizontal, 4)
-                            }.padding(.bottom, 10)
-                        }.frame(minWidth: compact ? 330 : 360, maxWidth: .infinity)
+                        previewPane(descriptor)
+                            .frame(minWidth: compact ? 330 : 360, maxWidth: .infinity)
+                            .transition(.opacity.combined(with: .offset(y: reduceMotion ? 0 : 6)))
                     }
                 }
+                .animation(reduceMotion ? nil : .easeOut(duration: previewDuration), value: store.previewDescriptor?.key)
             }
         }
         .onAppear { store.searchCatalogue(); searchFocused = true }
@@ -120,6 +84,56 @@ struct CatalogueBrowserView: View {
         }
         .onChange(of: store.hasWebstatKey) { _, connected in if connected { store.searchCatalogue() } }
         .onDisappear { store.cancelCatalogueSearch() }
+    }
+
+    private func previewPane(_ descriptor: WebstatSeriesDescriptor) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Aperçu").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
+                if store.isLoadingPreview { ProgressView().controlSize(.mini) }
+                Spacer()
+                Button { store.closePreview() } label: { Image(systemName: "xmark") }
+                    .buttonStyle(.plain).help("Fermer l’aperçu").accessibilityLabel("Fermer l’aperçu")
+            }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    if store.isLoadingPreview && store.previewSeries == nil {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(descriptor.title).font(.system(size: 18, weight: .semibold))
+                            Text(descriptor.definition).font(.system(size: 12)).foregroundStyle(.secondary)
+                            ProgressView("Chargement de l’historique…").controlSize(.small)
+                        }.frame(maxWidth: .infinity, minHeight: 280, alignment: .topLeading).padding(20)
+                    } else {
+                        SeriesDetailView(series: store.previewSeries ?? descriptor.series(observations: []), preview: true)
+                    }
+                    if let error = store.previewError {
+                        Label(error, systemImage: "exclamationmark.triangle")
+                            .font(.system(size: 11)).foregroundStyle(.secondary)
+                        Button("Réessayer") { store.openPreview(descriptor) }.buttonStyle(.borderless)
+                    }
+                }.padding(.bottom, 10)
+            }
+            HStack {
+                if store.isFollowing(descriptor.key) {
+                    Label("Ajouté", systemImage: "checkmark").foregroundStyle(accent)
+                    Spacer()
+                    Button("Ouvrir le repère") {
+                        if let item = store.followedSeries.first(where: { $0.id == descriptor.key }) {
+                            store.show(item); store.section = .overview; store.closePreview(); close?()
+                        }
+                    }.buttonStyle(.borderedProminent)
+                } else {
+                    Button {
+                        isAdding = true
+                        Task { _ = await store.follow(descriptor); isAdding = false }
+                    } label: {
+                        if isAdding { ProgressView().controlSize(.small) }
+                        else { Label("Ajouter à mes repères", systemImage: "plus") }
+                    }.buttonStyle(.borderedProminent).disabled(isAdding || store.isLoadingPreview || store.previewSeries == nil)
+                    Spacer(minLength: 0)
+                }
+            }.font(.system(size: 12)).padding(.horizontal, 4)
+        }
     }
 
     private var results: some View {
@@ -147,6 +161,9 @@ struct CatalogueBrowserView: View {
                             .background(selectedID == item.id ? accent.opacity(0.09) : .clear, in: RoundedRectangle(cornerRadius: 11))
                             .contentShape(Rectangle())
                         }.buttonStyle(SemaPressStyle()).id(item.id)
+                        .accessibilityAddTraits(selectedID == item.id ? .isSelected : [])
+                        .help(item.definition)
+                        .animation(reduceMotion ? nil : .easeOut(duration: selectionDuration), value: selectedID == item.id)
                     }
                     if let error = store.catalogueError {
                         Label(error, systemImage: "exclamationmark.triangle").font(.system(size: 12)).foregroundStyle(.secondary).padding(16)

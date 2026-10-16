@@ -109,7 +109,7 @@ public struct WebstatClient: Sendable {
             .replacingOccurrences(of: "'", with: "\\'") + "'"
     }
 
-    public static func searchRequest(apiKey: String, search: WebstatSearch, offset: Int = 0) throws -> URLRequest {
+    public static func searchRequest(apiKey: String, search: WebstatSearch, offset: Int = 0, after: String? = nil) throws -> URLRequest {
         var filters: [String] = []
         let query = search.query.trimmingCharacters(in: .whitespacesAndNewlines)
         if !query.isEmpty {
@@ -123,16 +123,20 @@ public struct WebstatClient: Sendable {
             filters.append("\(search.areaField) = \(literal(search.area))")
         }
         if !search.frequency.isEmpty { filters.append("freq = \(literal(search.frequency))") }
+        if let after {
+            guard WebstatSeriesDescriptor.isValidKey(after) else { throw ClientError.invalidData }
+            filters.append("series_key > \(literal(after))")
+        }
         var parameters = [URLQueryItem(name: "limit", value: "50"),
-                          URLQueryItem(name: "offset", value: String(max(0, offset))),
-                          URLQueryItem(name: "order_by", value: "title_fr,series_key")]
+                          URLQueryItem(name: "offset", value: after == nil ? String(max(0, offset)) : "0"),
+                          URLQueryItem(name: "order_by", value: "series_key asc")]
         if !filters.isEmpty { parameters.append(URLQueryItem(name: "where", value: filters.joined(separator: " and "))) }
         return try request(table: "series", apiKey: apiKey, parameters: parameters)
     }
 
-    public func search(apiKey: String, search: WebstatSearch, offset: Int = 0) async throws -> WebstatPage<WebstatSeriesDescriptor> {
-        let data = try await send(Self.searchRequest(apiKey: apiKey, search: search, offset: offset))
-        return try Self.parseSeriesPage(data, offset: offset)
+    public func search(apiKey: String, search: WebstatSearch, offset: Int = 0, after: String? = nil) async throws -> WebstatPage<WebstatSeriesDescriptor> {
+        let data = try await send(Self.searchRequest(apiKey: apiKey, search: search, offset: offset, after: after))
+        return try Self.parseSeriesPage(data, offset: after == nil ? offset : 0)
     }
 
     public static func parseSeriesPage(_ data: Data, offset: Int = 0) throws -> WebstatPage<WebstatSeriesDescriptor> {

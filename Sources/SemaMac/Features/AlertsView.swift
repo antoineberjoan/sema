@@ -13,7 +13,11 @@ struct AlertsView: View {
                 } description: {
                     Text("Suivez le franchissement d’un seuil sur les taux, l’inflation ou les devises.")
                 } actions: {
-                    Button("Créer une alerte") { store.isAlertSheetPresented = true }.buttonStyle(.borderedProminent)
+                    if store.alertableSeries.isEmpty {
+                        Button("Explorer les repères") { store.section = .explorer }.buttonStyle(.borderedProminent)
+                    } else {
+                        Button("Créer une alerte") { store.isAlertSheetPresented = true }.buttonStyle(.borderedProminent)
+                    }
                 }
                 .frame(maxWidth: .infinity, minHeight: 350)
             } else {
@@ -78,7 +82,7 @@ struct AlertEditorView: View {
             Text("Créer une alerte").font(.title2)
             Form {
                 Picker("Repère", selection: $seriesID) {
-                    ForEach(store.macroSeries.filter(\.canAlert)) { Text($0.name).tag($0.id) }
+                    ForEach(store.alertableSeries) { Text($0.name).tag($0.id) }
                 }
                 Picker("Me prévenir quand la valeur", selection: $direction) {
                     ForEach(AlertDirection.allCases, id: \.self) { Text($0.crossingTitle.lowercased()).tag($0) }
@@ -92,7 +96,7 @@ struct AlertEditorView: View {
                         .font(.system(size: 11)).foregroundStyle(.red)
                 }
                 if let item {
-                    LabeledContent("Dernière valeur") { Text(MarketFormat.value(item) + (item.unit == .percent ? "" : " " + item.displayUnit)) }
+                    LabeledContent("Dernière valeur") { Text(MarketFormat.value(item)) }
                     Text(item.isDemo ? "Valeurs fictives : connectez Webstat pour activer la vérification réelle."
                          : item.frequency == .monthly ? "Publication mensuelle : l’alerte suit les nouveaux mois publiés."
                          : "L’alerte suit les nouvelles observations publiées par la source.")
@@ -112,8 +116,8 @@ struct AlertEditorView: View {
         }
         .padding(30).frame(width: 530)
         .onAppear {
-            seriesID = store.selectedSeriesID
-            thresholdText = store.selectedSeries?.latest.map { NSDecimalNumber(decimal: $0.value).stringValue.replacingOccurrences(of: ".", with: ",") } ?? "3,0"
+            seriesID = store.alertableSeries.first(where: { $0.id == store.selectedSeriesID })?.id ?? store.alertableSeries.first?.id ?? ""
+            thresholdText = item?.latest.map { NSDecimalNumber(decimal: $0.value).stringValue.replacingOccurrences(of: ".", with: ",") } ?? "3,0"
         }
         .onChange(of: seriesID) { _, _ in
             if let value = item?.latest?.value {

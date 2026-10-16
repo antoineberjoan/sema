@@ -106,6 +106,7 @@ final class AppStore {
     var starterSeries: [MarketSeries] { WebstatClient.starterSeries }
     var followedSeries: [MarketSeries] { preferences.followedSeriesIDs.compactMap { id in series.first { $0.id == id } } }
     var macroSeries: [MarketSeries] { followedSeries }
+    var alertableSeries: [MarketSeries] { followedSeries.filter(\.canAlert) }
     var favorites: [MarketSeries] { followedSeries.filter { preferences.favoriteIDs.contains($0.id) } }
     var selectedSeries: MarketSeries? { followedSeries.first { $0.id == selectedSeriesID } ?? followedSeries.first }
     var originSummary: String { hasLoadedWebstat ? "Banque de France · Webstat" : "Webstat à connecter · démonstration disponible" }
@@ -300,7 +301,7 @@ final class AppStore {
         let generation = UUID(); searchGeneration = generation
         var search = catalogueSearch
         if let dataset = catalogueDatasets.first(where: { $0.id == search.datasetID }) { search.areaField = dataset.areaField ?? "ref_area" }
-        let offset = loadMore ? catalogueResults.count : 0
+        let cursor = loadMore ? catalogueResults.last?.key : nil
         if !loadMore { catalogueResults = []; catalogueTotal = 0; catalogueHasMore = false }
         catalogueError = nil
         guard hasWebstatKey else { isSearchingCatalogue = false; return }
@@ -319,14 +320,15 @@ final class AppStore {
                     catalogueLabels.merge(labels, uniquingKeysWith: { _, new in new })
                     try? storage.cacheCatalogue(.init(datasets: catalogueDatasets, labels: catalogueLabels))
                 }
-                let page = try await WebstatClient().search(apiKey: key, search: search, offset: offset)
+                let page = try await WebstatClient().search(apiKey: key, search: search, after: cursor)
                 try Task.checkCancellation()
                 guard generation == searchGeneration else { return }
                 let items = page.items.map { resolvedWithCachedLabels($0) }
                 if loadMore {
                     let known = Set(catalogueResults.map(\.key)); catalogueResults += items.filter { !known.contains($0.key) }
                 } else { catalogueResults = items }
-                catalogueTotal = page.total; catalogueHasMore = page.hasMore
+                if !loadMore { catalogueTotal = page.total }
+                catalogueHasMore = page.hasMore
                 isSearchingCatalogue = false
             } catch is CancellationError { }
             catch {

@@ -61,6 +61,7 @@ struct WorkspaceView: View {
                 ToolbarItemGroup(placement: .primaryAction) {
                     if store.section == .alerts {
                         Button { store.isAlertSheetPresented = true } label: { Label("Créer une alerte", systemImage: "bell.badge") }
+                            .disabled(store.alertableSeries.isEmpty)
                     }
                     Button { Task { await store.refreshWebstat() } } label: {
                         Label(store.isLoading ? "Actualisation…" : "Actualiser Webstat", systemImage: "arrow.clockwise")

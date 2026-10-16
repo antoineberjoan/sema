@@ -28,7 +28,7 @@ struct SemaCommands: Commands {
                 openWindow(id: "workspace")
                 store.isAlertSheetPresented = true
             }
-            .disabled(hasModal)
+            .disabled(hasModal || store.alertableSeries.isEmpty)
             Button("Actualiser Webstat") { Task { await store.refreshWebstat() } }
                 .keyboardShortcut("r").disabled(store.isLoading || !store.hasWebstatKey || store.isOnboardingPresented)
         }

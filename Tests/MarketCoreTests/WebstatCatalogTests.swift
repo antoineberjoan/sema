@@ -114,6 +114,18 @@ struct WebstatCatalogTests {
         #expect(page.items[0].unit == .index)
     }
 
+
+    @Test func cursorPaginationKeepsTheSameUniqueOrderAndResetsRecordOffset() throws {
+        let search = WebstatSearch(query: "taux")
+        let cursor = "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD"
+        let request = try WebstatClient.searchRequest(apiKey: "key", search: search, offset: 10_050, after: cursor)
+        let parameters = try #require(URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?.queryItems)
+        #expect(parameters.first { $0.name == "order_by" }?.value == "series_key asc")
+        #expect(parameters.first { $0.name == "offset" }?.value == "0")
+        #expect(parameters.first { $0.name == "where" }?.value?.contains("series_key > '\(cursor)'") == true)
+        #expect(throws: (any Error).self) { _ = try WebstatClient.searchRequest(apiKey: "key", search: search, after: "bad' cursor") }
+    }
+
     @Test func observationsKeepSourcePeriodsAndNewestRevisionWithMissingValuesExcluded() throws {
         let data = Data("""
         [{"series_key":"TEST.Q.FR.A","time_period_start":"2026-01-01","time_period_end":"2026-03-31","obs_value":-1.25,"updated_at":"2026-04-02T10:00:00Z","obs_status":"A"},

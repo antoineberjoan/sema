@@ -81,7 +81,7 @@ struct SeriesSearchView: View {
             .padding(.horizontal, 12)
         }
             }
-        .padding(18).frame(width: 880, height: 520).background(SemaTheme.surface)
+        .padding(18).frame(width: 880, height: 560).background(SemaTheme.surface)
         .onAppear { selectedID = results.first?.id; isSearchFocused = true }
         .onChange(of: query) { _, _ in selectedID = results.first?.id }
         .onChange(of: catalogue) { _, selected in
