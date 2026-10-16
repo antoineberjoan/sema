@@ -66,10 +66,11 @@ mkdir -p "$mount_point/.background"
 cp "$staging/background.tiff" "$mount_point/.background/background.tiff"
 "$staging/finder-alias" "$mount_point/.background/background.tiff" "$staging/background.alias"
 python3 "$project_root/scripts/distribution/finder-layout.py" "$mount_point" "$staging/background.alias"
-SetFile -a E "$mount_point/Sema.app"
 SetFile -a V "$mount_point/.background"
 cp "$release_bundle/Contents/Resources/Sema.icns" "$mount_point/.VolumeIcon.icns"
 SetFile -a C "$mount_point"
+# Never add FinderInfo to the signed bundle; validate the exact app on the volume.
+codesign --verify --strict --deep "$mount_point/Sema.app"
 # bless --openfolder is unavailable on Apple Silicon. Finder reads .DS_Store on mount.
 hdiutil detach "$mount_point" -quiet
 mounted=0
