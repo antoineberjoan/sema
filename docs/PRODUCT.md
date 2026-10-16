@@ -18,6 +18,7 @@ Deux surfaces partagent la même information :
 | Fonction | Comportement attendu |
 | --- | --- |
 | Panorama | Basculer entre Marchés & devises et Épargne & économie ; sélectionner une série et consulter son historique. |
+| Graphiques | Au survol, afficher la date, la valeur et l’unité du point historique le plus proche dans une infobulle, avec un repère sur la courbe et la même lecture sous le graphique. Effacer la sélection lorsque la série ou la période change. |
 | Origine | Identifier clairement les données fictives et les repères Webstat réellement téléchargés ; conserver leur producteur et leur période. |
 | Favoris | Ajouter ou retirer un repère ou une part, et retrouver la sélection après relancement. |
 | Webstat | Connecter une clé personnelle, actualiser 13 repères sur cinq ans au maximum, conserver les données si le réseau échoue et afficher leur période et leur mise à jour source. |

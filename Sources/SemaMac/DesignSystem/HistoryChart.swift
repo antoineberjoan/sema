@@ -36,6 +36,20 @@ struct HistoryChart: View {
                         .foregroundStyle(Color.secondary.opacity(0.35))
                     PointMark(x: .value("Date", hovered.date), y: .value(series.unit.symbol, MarketFormat.double(hovered.value)))
                         .foregroundStyle(SemaTheme.accent).symbolSize(35)
+                        .annotation(position: .top, spacing: 8,
+                                    overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(MarketFormat.date(hovered.date)).foregroundStyle(.secondary)
+                                Text(MarketFormat.number(hovered.value, digits: series.fractionDigits) + " " + series.unit.symbol)
+                                    .fontWeight(.medium).monospacedDigit()
+                            }
+                            .font(.system(size: 11))
+                            .padding(.horizontal, 10).padding(.vertical, 7)
+                            .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: 8))
+                            .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(SemaTheme.separator, lineWidth: 0.5))
+                            .shadow(color: .black.opacity(0.08), radius: 5, y: 2)
+                            .allowsHitTesting(false)
+                        }
                 }
             }
             .chartYScale(domain: domain)
@@ -69,6 +83,8 @@ struct HistoryChart: View {
             }
             .font(.system(size: 11)).foregroundStyle(.secondary)
         }
+        .onChange(of: series.id) { _, _ in hoveredDate = nil }
+        .onChange(of: period) { _, _ in hoveredDate = nil }
     }
 }
 
