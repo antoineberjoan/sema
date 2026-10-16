@@ -18,6 +18,8 @@ Deux surfaces partagent la même information :
 | Fonction | Comportement attendu |
 | --- | --- |
 | Panorama | Basculer entre Marchés & devises et Épargne & économie ; sélectionner une série et consulter son historique. |
+| Recherche | ⌘K ouvre une recherche locale ; accents ignorés et noms usuels comme OAT ou prêt immobilier. Flèches pour choisir, Entrée pour ouvrir, Échap pour fermer. |
+| Raccourcis | ⌘1 Panorama, ⌘2 Favoris, ⌘3 Alertes et ⌘R pour actualiser Webstat lorsque la connexion est disponible. Raccourcis internes à Sema, sans raccourci système global. |
 | Graphiques | Au survol, afficher la date, la valeur et l’unité du point historique le plus proche dans une infobulle, avec un repère sur la courbe et la même lecture sous le graphique. Effacer la sélection lorsque la série ou la période change. |
 | Origine | Identifier clairement les données fictives et les repères Webstat réellement téléchargés ; conserver leur producteur et leur période. |
 | Favoris | Ajouter ou retirer un repère Webstat, et retrouver la sélection après relancement. |
@@ -45,3 +47,5 @@ Deux surfaces partagent la même information :
 5. Contrôler les erreurs réseau et l’absence de perte de préférences.
 6. Retirer la clé ; vérifier que l’actualisation est désactivée et que les dernières données restent consultables après relancement.
 7. Changer de thème dans Apparence, vérifier la fenêtre et le panneau, puis relancer pour vérifier la persistance.
+
+8. Ouvrir la recherche avec ⌘K, saisir « OAT », ouvrir au clavier ; contrôler les résultats sans accents, la navigation par flèches, la fermeture avec Échap et les raccourcis de rubrique.

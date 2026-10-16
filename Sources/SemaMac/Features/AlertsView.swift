@@ -141,8 +141,7 @@ struct DemoNotificationView: View {
         }
         .padding(17).frame(width: 345)
         .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: 15))
-        .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(SemaTheme.separator, lineWidth: 0.5))
-        .shadow(color: .black.opacity(0.14), radius: 20, y: 8)
+        .modifier(SemaElevation())
         .accessibilityElement(children: .contain)
     }
 }

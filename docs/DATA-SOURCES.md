@@ -61,3 +61,26 @@ L’ancien client public `ECBExchangeRateClient` et son parseur restent présent
 ## Suites possibles
 
 La collecte agrégée des OPC, les autres repères du catalogue vérifié et les fonds réels restent à intégrer. Les données de fonds nécessitent une part précise, une devise, un calendrier et une source autorisée. Le scraping et les actions ne font pas partie de la connexion actuelle.
+
+## Catalogue candidat — pas encore intégré
+
+Repérage du 16 octobre 2026 à partir du catalogue officiel et de ses fiches. Les séries ci-dessous ne font pas partie des 13 séries connectées. Une fiche disponible ne remplace pas un test d’observations ni la vérification des conventions et droits du producteur.
+
+| Priorité | Repère candidat | Série / fréquence | Intérêt pour un CGP |
+| --- | --- | --- | --- |
+| Haute | Bund allemand à 10 ans | [FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD](https://webstat.banque-france.fr/fr/catalogue/fm/FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD), mensuelle, BdF | Comparaison avec France 10 ans ; écart de taux mensuels à dates et conventions alignées. |
+| Haute | États-Unis à 10 ans | [FM.M.US.USD.FR2.BB.US10YT_RR.YLD](https://webstat.banque-france.fr/fr/catalogue/fm/FM.M.US.USD.FR2.BB.US10YT_RR.YLD), mensuelle, BdF | Contexte mondial des taux longs. |
+| Haute | BCE refinancement principal | [FM.D.U2.EUR.4F.KR.MRR_FR.LEV](https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.U2.EUR.4F.KR.MRR_FR.LEV), quotidienne, BCE via BdF | Compléter le taux de dépôt déjà présent. |
+| Haute | BCE prêt marginal | [FM.D.U2.EUR.4F.KR.MLFR.LEV](https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.U2.EUR.4F.KR.MLFR.LEV), quotidienne, BCE via BdF | Compléter le corridor des taux directeurs. |
+| Haute | Crédit immobilier par durée | Famille `MIR1.Q.FR.R.A22FRX`, trimestrielle : durées `<10`, `10–<15`, `15–<20`, `20–<25`, `25+` ans | Comparer les conditions par horizon ; taux effectifs au sens étroit, pas une grille commerciale ni un TAEG. [Exemple 20–<25 ans](https://webstat.banque-france.fr/fr/catalogue/mir1/MIR1.Q.FR.R.A22FRX.Y.R.A.2254FR.EUR.N). |
+| Haute | Taux d’usure immobilier | `MIR1.Q.FR.R.A22FRF.W1/W2/W3.U.A.2254FR.EUR.N`, trimestrielle ; vérifier les trois fiches complètes avant intégration | Plafonds réglementaires selon la durée. [Sélection officielle](https://webstat.banque-france.fr/fr/selection/5385584/). Les variantes mensuelles arrêtées ne doivent pas être reprises. |
+| Ensuite | Dépôts à terme des ménages et entreprises | [Publication officielle](https://www.banque-france.fr/fr/statistiques/epargne/taux-de-remuneration-des-depots-bancaires-2026-06), mensuelle ; codes à sélectionner | Contexte sur l’épargne bancaire et la trésorerie. |
+| Ensuite | Collecte agrégée des OPC par catégorie | [Panorama officiel](https://www.banque-france.fr/fr/statistiques/epargne/panorama-financier-des-opc-france-2024-q4), codes et périodicités à sélectionner | Flux agrégés ; aucun suivi d’un fonds individuel n’est réintroduit. |
+
+Les séries de taux souverains candidates sont à jour dans le catalogue au repérage, depuis janvier 1980 jusqu’à septembre 2026. Les séries de crédit par durée repérées couvrent mars 2004 à juin 2026. Ces profondeurs sont des métadonnées de catalogue, pas un nouvel historique téléchargé et testé dans l’app. Le modèle doit prendre en charge la fréquence trimestrielle avant de brancher les séries `MIR1.Q`.
+
+### États-Unis et autres compléments
+
+L’EFFR (taux effectif des fonds fédéraux) et le SOFR ont une [API officielle New York Fed](https://markets.newyorkfed.org/static/docs/markets-api.html). Leur disponibilité dans un jeu Webstat adapté n’a pas été confirmée. L’EFFR ne doit pas être présenté comme la fourchette cible du FOMC. Tout connecteur complémentaire et ses conditions de réutilisation restent à valider avant intégration.
+
+Le TEC 10 quotidien est distinct de l’emprunt phare mensuel actuellement intégré : [l’AFT rappelle qu’Euronext calcule et administre les indices CNO-TEC](https://www.aft.gouv.fr/fr/oat-tec-10). Aucun ajout du TEC 10 n’est décidé dans ce repérage. Le PIB, le chômage, l’inflation américaine et les prix immobiliers peuvent compléter une vue macro ensuite, avec une source officielle et des définitions vérifiées pour chaque série.

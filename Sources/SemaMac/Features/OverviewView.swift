@@ -7,22 +7,21 @@ struct OverviewView: View {
 
     var body: some View {
         @Bindable var store = store
-        VStack(alignment: .leading, spacing: 23) {
-            Picker("Famille de repères", selection: $store.category) {
-                Text("Marchés & devises").tag(SeriesCategory.markets)
-                Text("Épargne & économie").tag(SeriesCategory.savings)
-            }
-            .pickerStyle(.segmented).labelsHidden().frame(width: 350)
-
-            HStack(alignment: .top, spacing: 23) {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+        HStack(alignment: .top, spacing: 26) {
+            VStack(alignment: .leading, spacing: 16) {
+                Picker("Famille de repères", selection: $store.category) {
+                    Text("Marchés").tag(SeriesCategory.markets)
+                    Text("Épargne & économie").tag(SeriesCategory.savings)
+                }
+                .pickerStyle(.segmented).labelsHidden()
+                LazyVStack(spacing: 4) {
                     ForEach(items) { item in
                         IndicatorTile(series: item, selected: store.selectedSeriesID == item.id) { store.show(item) }
                     }
                 }
-                .frame(width: 350)
-                SeriesDetailView(series: store.selectedSeries).frame(maxWidth: .infinity)
             }
+            .frame(width: 285)
+            SeriesDetailView(series: store.selectedSeries).frame(minWidth: 360, maxWidth: .infinity)
         }
         .onChange(of: store.category) { _, category in
             if store.selectedSeries.category != category, let first = items.first { store.selectedSeriesID = first.id }
@@ -31,8 +30,9 @@ struct OverviewView: View {
 }
 
 struct IndicatorTile: View {
-    @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isHovered = false
     let series: MarketSeries
     var selected = false
     var compact = false
@@ -41,29 +41,41 @@ struct IndicatorTile: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Button(action: action) {
-                VStack(alignment: .leading, spacing: compact ? 9 : 13) {
-                    Text(series.name).font(.system(size: 12)).foregroundStyle(.secondary).padding(.trailing, 17)
-                    Text(MarketFormat.value(series)).font(.system(size: compact ? 25 : 28, weight: .medium))
-                        .tracking(-0.9).monospacedDigit().lineLimit(1).minimumScaleFactor(0.8)
-                    HStack(alignment: .bottom) {
-                        Text(MarketFormat.change(series, period: .month)).font(.system(size: 11)).foregroundStyle(.secondary)
-                        Spacer(minLength: 3)
-                        OriginBadge(series: series)
+                VStack(alignment: .leading, spacing: compact ? 14 : 10) {
+                    HStack(spacing: 6) {
+                        Text(series.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
+                        if series.isDemo { Text("Démo").font(.system(size: 11)).foregroundStyle(.secondary) }
                     }
-                    if !compact {
-                        HStack { Text("sur 1 mois").font(.system(size: 10)).foregroundStyle(.secondary); Spacer(); Sparkline(series: series) }
+                    .padding(.trailing, 22)
+                    HStack(alignment: .firstTextBaseline) {
+                        Text(MarketFormat.value(series))
+                            .font(.system(size: compact ? 24 : 22, weight: .regular))
+                            .tracking(-0.6).monospacedDigit().lineLimit(1).minimumScaleFactor(0.85)
+                        Spacer(minLength: 6)
+                        Text(MarketFormat.change(series, period: .month))
+                            .font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
+                            .lineLimit(1)
                     }
                 }
+                .foregroundStyle(.primary)
+                .padding(compact ? 16 : 14)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(compact ? 14 : 17)
-                .background(selected ? accent.opacity(0.09) : SemaTheme.surface, in: RoundedRectangle(cornerRadius: 14))
-                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(selected ? accent.opacity(0.35) : SemaTheme.separator, lineWidth: 0.7))
-                .contentShape(RoundedRectangle(cornerRadius: 14))
+                .background(fill, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
-            .buttonStyle(.plain)
+            .buttonStyle(SemaPressStyle())
             .accessibilityLabel("\(series.name), \(MarketFormat.value(series))\(series.isDemo ? ", démonstration" : "")")
-            FavoriteButton(seriesID: series.id).padding(10)
+            .accessibilityValue(selected ? "Sélectionné" : "")
+            FavoriteButton(seriesID: series.id).padding(8)
         }
+        .onHover { isHovered = $0 }
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.14), value: isHovered)
+    }
+
+    private var fill: Color {
+        if selected { return accent.opacity(0.10) }
+        if isHovered { return Color.primary.opacity(0.04) }
+        return compact ? SemaTheme.surface : .clear
     }
 }
 
@@ -74,8 +86,8 @@ struct FavoriteButton: View {
     var body: some View {
         Button { store.toggleFavorite(seriesID) } label: {
             Image(systemName: store.isFavorite(seriesID) ? "star.fill" : "star")
-                .font(.system(size: 11)).foregroundStyle(store.isFavorite(seriesID) ? accent : Color.secondary.opacity(0.7))
-                .frame(width: 22, height: 22).contentShape(Rectangle())
+                .font(.system(size: 12)).foregroundStyle(store.isFavorite(seriesID) ? accent : Color.secondary)
+                .frame(width: 26, height: 26).contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .help(store.isFavorite(seriesID) ? "Retirer des favoris" : "Ajouter aux favoris")
@@ -86,70 +98,66 @@ struct FavoriteButton: View {
 struct SeriesDetailView: View {
     @Environment(AppStore.self) private var store
     let series: MarketSeries
-    var compact = false
 
     var body: some View {
         @Bindable var store = store
         Surface {
-            VStack(alignment: .leading, spacing: 20) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(series.name).font(.system(size: 16, weight: .medium))
-                        Text(series.subtitle).font(.system(size: 11)).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 26) {
+                HStack(alignment: .top, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(series.name).font(.system(size: 18, weight: .semibold))
+                        Text(series.subtitle).font(.system(size: 12)).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    Spacer(minLength: 5)
+                    Spacer(minLength: 0)
                     OriginBadge(series: series)
                 }
                 VStack(alignment: .leading, spacing: 9) {
-                    HStack(alignment: .firstTextBaseline, spacing: 5) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
-                            .font(.system(size: compact ? 34 : 43, weight: .medium)).tracking(-1.5).monospacedDigit()
-                        Text(series.unit.symbol).font(.system(size: 22)).foregroundStyle(.secondary)
+                            .font(.system(size: 44, weight: .medium)).tracking(-1.4).monospacedDigit()
+                            .lineLimit(1).minimumScaleFactor(0.8)
+                        Text(series.unit.symbol).font(.system(size: 18)).foregroundStyle(.secondary)
                     }
-                    Text(MarketFormat.change(series, period: store.period) + " · " + store.period.title)
+                    Text(MarketFormat.change(series, period: store.period) + " sur " + store.period.title)
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
-                VStack(spacing: 14) {
-                    HStack {
-                        Text(series.unit == .percent ? "Taux en %" : series.unit.symbol + " pour 1 EUR")
-                            .font(.system(size: 11)).foregroundStyle(.secondary)
-                        Spacer()
+                Picker("Période de l’historique", selection: $store.period) {
+                    ForEach(HistoryPeriod.allCases.filter { series.supports($0) }) { period in
+                        Text(period.title).tag(period)
                     }
-                    Picker("Période de l’historique", selection: $store.period) {
-                        ForEach(HistoryPeriod.allCases.filter { series.supports($0) }) { period in
-                            Text(period.title).tag(period)
-                        }
-                    }
-                    .pickerStyle(.segmented).labelsHidden()
-                    HistoryChart(series: series, period: store.period, height: compact ? 125 : 185)
                 }
-                Divider()
-                HStack(alignment: .top, spacing: 9) {
-                    Image(systemName: "calendar").foregroundStyle(.secondary)
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(observationLabel).font(.system(size: 11, weight: .medium))
+                .pickerStyle(.segmented).labelsHidden()
+                HistoryChart(series: series, period: store.period, height: 245)
+                HStack(alignment: .firstTextBaseline) {
+                    Label(observationLabel, systemImage: "calendar")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                    Spacer(minLength: 8)
+                    Button { store.isAlertSheetPresented = true } label: {
+                        Label("Créer une alerte", systemImage: "bell.badge")
+                    }
+                    .buttonStyle(.borderless).font(.system(size: 12))
+                }
+                DisclosureGroup("Source et publication") {
+                    VStack(alignment: .leading, spacing: 8) {
                         if series.isDemo {
                             Text("Valeurs fictives pour explorer l’application.")
-                                .font(.system(size: 11)).foregroundStyle(.secondary)
                         } else {
-                            Text(series.frequency == .monthly ? "Publication mensuelle · consultez la période de référence." : "Publication quotidienne · dernière observation disponible.")
-                                .font(.system(size: 11)).foregroundStyle(.secondary)
+                            Text(series.frequency == .monthly ? "Publication mensuelle · période de référence indiquée ci-dessus."
+                                 : "Publication quotidienne · dernière observation disponible.")
                             if let updatedAt = series.latest?.updatedAt {
                                 Text("Mise à jour source : " + MarketFormat.date(updatedAt))
-                                    .font(.system(size: 11)).foregroundStyle(.secondary)
                             }
-                            if let status = series.latest?.status, status != "A" {
-                                Text("Statut de la source : \(status) · consultez le détail officiel.")
-                                    .font(.system(size: 11)).foregroundStyle(.secondary)
-                            }
-                            if let url = series.sourceURL {
-                                Link(series.source, destination: url).font(.system(size: 11))
-                            }
+                            if let url = series.sourceURL { Link(series.source, destination: url) }
                         }
                     }
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading).padding(.top, 8)
                 }
-                Button { store.isAlertSheetPresented = true } label: {
-                    Label("Créer une alerte", systemImage: "bell.badge")
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+                if let status = series.latest?.status, status != "A" {
+                    Text("Statut de la source : \(status) · consultez le détail officiel.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
             }
         }
@@ -178,9 +186,9 @@ struct FavoritesView: View {
                                    description: Text("Ajoutez des indicateurs avec l’étoile pour les retrouver ici."))
                 .frame(maxWidth: .infinity, minHeight: 380)
         } else {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 250), spacing: 16)], spacing: 16) {
                 ForEach(store.favorites) { series in
-                    IndicatorTile(series: series) {
+                    IndicatorTile(series: series, compact: true) {
                         store.show(series)
                         store.section = .overview
                     }

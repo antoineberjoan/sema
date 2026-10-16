@@ -8,6 +8,12 @@ Une petite application Mac calme et précise. Mise en page et contrôles en Swif
 
 Ajoutée par Antoine le 15 octobre 2026. Les vues officielles de [Resurf](https://resurf.so/) servent de référence pour une sidebar compacte, une barre d’outils discrète, des surfaces neutres légèrement chaudes et une distinction claire entre navigation, contenu et inspecteur. Pour Sema, ces principes guideront les prochains ajustements de densité et de hiérarchie ; la typographie système reste retenue et les accents suivent le thème choisi dans les réglages.
 
+### Surfaces et hiérarchie
+
+La revue Interface Craft et les visuels publics de [Monocle](https://trymonocle.app/) guident la passe du 16 octobre : liste de repères sobre, graphique dominant, suppression des contours décoratifs des tuiles, badges et panneaux. La surface de détail est légèrement plus claire en mode sombre et porte une ombre de contact courte avec une ombre ambiante discrète. Les autres repères restent sur le plan de fond.
+
+La fenêtre et son séparateur restent un `NavigationSplitView`. Les lignes de sidebar sont des boutons SwiftUI personnalisés avec sélection neutre, icônes SF Symbols, traits d’accessibilité et survol discret. Les actions rejoignent la barre d’outils native. Les ombres ne s’appliquent pas à chaque élément de liste. Les contrôles conservent leur focus clavier natif ; les animations de pression et de survol respectent Réduire les animations.
+
 ## Typographie
 
 **SF Pro**, via `.system` : aucune police à télécharger ou embarquer. Conserver les styles natifs des contrôles ; utiliser `monospacedDigit()` pour aligner les valeurs financières. Les titres emploient les graisses medium et semibold. Éviter d’ajouter une seconde famille typographique.

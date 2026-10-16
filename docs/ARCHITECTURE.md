@@ -22,11 +22,13 @@ flowchart TB
 - `ECBExchangeRateClient` : téléchargement des 90 derniers jours, validation HTTP et lecture XML sans entités externes.
 - `WebstatClient` : export JSON groupé des 13 séries explicites sur six ans pour couvrir une fenêtre complète de cinq ans malgré le décalage des publications mensuelles ; clé dans le header `Authorization`, validation HTTP, valeurs manquantes et dates d’observation. Un export incomplet n’est pas appliqué.
 - `PreferencesStore` : document JSON versionné, lecture explicite des erreurs et écriture atomique.
+- `SeriesSearch` : recherche locale pure, normalisation des accents/casse et alias des repères déjà intégrés. Aucun accès réseau ni découverte de séries distantes.
 - `DemoCatalog` : fixtures fixes et identifiées comme telles, sans dépendance au réseau.
 
 ### SemaMac
 
 - `AppStore` est l’état partagé et le point de coordination. Il ne dessine pas l’interface.
+- `SemaCommands` expose les actions de navigation et de recherche dans les menus natifs et ouvre la fenêtre si nécessaire. Les feuilles de recherche et d’alerte partagent l’état local, avec exclusion des commandes de navigation pendant une feuille.
 - `Features` présente les données et émet les actions utilisateur.
 - `DesignSystem` contient les couleurs adaptées à l’apparence système, les composants partagés et les graphiques.
 - `Infrastructure` contient les effets dépendants de macOS : chemins de stockage et notifications système.

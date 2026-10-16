@@ -10,6 +10,8 @@ Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoa
 - Un panneau compact dans la barre de menus, partageant les mêmes données et favoris.
 - Treize repères macro réels via Webstat après connexion d’une clé personnelle : Livret A, LDDS, LEP, taux de dépôt BCE, €STR, inflation France et zone euro, quatre changes, crédit immobilier et emprunt français à dix ans.
 - Vues sur 1 mois, 3 mois, 1 an, 3 ans et 5 ans selon la profondeur disponible ; source, période et date de mise à jour. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
+- Recherche locale **⌘K** (noms et alias : OAT, BCE, prêt immobilier…), navigation par flèches puis Entrée. **⌘1/⌘2/⌘3** ouvrent Panorama/Favoris/Alertes ; **⌘R** actualise Webstat.
+- Composition native sans contours décoratifs : sidebar sobre, liste de repères et panneau de graphique avec une ombre légère.
 - Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Sarcelle, Menthe, Lavande, Bleu ciel, Bleu polaire et Graphite.
 - Alertes de franchissement strict au-dessus ou en dessous d’un seuil, sur chaque repère Webstat. Création, pause, suppression et test ; vérification des nouvelles observations à chaque actualisation, sans doublon par date.
 

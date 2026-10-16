@@ -21,6 +21,10 @@ struct HistoryChart: View {
         guard let hoveredDate else { return nil }
         return points.min { abs($0.date.timeIntervalSince(hoveredDate)) < abs($1.date.timeIntervalSince(hoveredDate)) }
     }
+    private var axisDigits: Int {
+        let step = (domain.upperBound - domain.lowerBound) / 2
+        return max(min(series.fractionDigits, 4), min(4, max(0, Int(ceil(-log10(step))))))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
@@ -30,7 +34,7 @@ struct HistoryChart: View {
                              yEnd: .value(series.unit.symbol, MarketFormat.double(point.value)))
                         .foregroundStyle(LinearGradient(colors: [accent.opacity(0.09), .clear], startPoint: .top, endPoint: .bottom))
                     LineMark(x: .value("Date", point.date), y: .value(series.unit.symbol, MarketFormat.double(point.value)))
-                        .foregroundStyle(accent).lineStyle(StrokeStyle(lineWidth: 1.8))
+                        .foregroundStyle(accent).lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
                 }
                 if let hovered {
                     RuleMark(x: .value("Date sélectionnée", hovered.date))
@@ -47,13 +51,13 @@ struct HistoryChart: View {
                             .font(.system(size: 11))
                             .padding(.horizontal, 10).padding(.vertical, 7)
                             .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: 8))
-                            .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(SemaTheme.separator, lineWidth: 0.5))
-                            .shadow(color: .black.opacity(0.08), radius: 5, y: 2)
+                            .modifier(SemaElevation())
                             .allowsHitTesting(false)
                         }
                 }
             }
             .chartYScale(domain: domain)
+            .chartXScale(range: .plotDimension(padding: 12))
             .chartXSelection(value: $hoveredDate)
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: 3)) { _ in
@@ -67,7 +71,7 @@ struct HistoryChart: View {
                     AxisGridLine().foregroundStyle(SemaTheme.separator)
                     AxisValueLabel {
                         if let number = value.as(Double.self) {
-                            Text(MarketFormat.number(Decimal(number), digits: min(series.fractionDigits, 3)))
+                            Text(MarketFormat.number(Decimal(number), digits: axisDigits))
                         }
                     }
                 }
@@ -86,21 +90,5 @@ struct HistoryChart: View {
         }
         .onChange(of: series.id) { _, _ in hoveredDate = nil }
         .onChange(of: period) { _, _ in hoveredDate = nil }
-    }
-}
-
-struct Sparkline: View {
-    @Environment(\.semaAccent) private var accent
-    let series: MarketSeries
-    private var values: [MarketObservation] { series.history(for: .month) }
-    var body: some View {
-        Chart(values) { point in
-            LineMark(x: .value("Date", point.date), y: .value("Valeur", MarketFormat.double(point.value)))
-                .foregroundStyle(accent.opacity(0.8)).lineStyle(StrokeStyle(lineWidth: 1.4))
-        }
-        .chartYScale(domain: .automatic(includesZero: false))
-        .chartXAxis(.hidden).chartYAxis(.hidden)
-        .frame(width: 68, height: 28)
-        .accessibilityHidden(true)
     }
 }

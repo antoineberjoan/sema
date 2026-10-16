@@ -15,9 +15,11 @@ struct SemaMacApp: App {
                 .environment(\.locale, Locale(identifier: "fr_FR"))
         }
         .defaultSize(width: 1120, height: 760)
-        .windowStyle(.hiddenTitleBar)
+        .windowStyle(.automatic)
+        .windowToolbarStyle(.unifiedCompact)
         .commands {
             SidebarCommands()
+            SemaCommands(store: store)
         }
 
         MenuBarExtra(isInserted: $isMenuInserted) {

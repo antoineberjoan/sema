@@ -30,6 +30,7 @@ final class AppStore {
     var simulatedEvent: AlertEvent?
     var recentAlertEvents: [AlertEvent] = []
     var isAlertSheetPresented = false
+    var isSearchPresented = false
     private let storage: LocalStorage
     private let notifications = NotificationService()
     private let webstatKeychain = WebstatKeychain()

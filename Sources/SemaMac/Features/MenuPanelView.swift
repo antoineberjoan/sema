@@ -12,18 +12,18 @@ struct MenuPanelView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 19) {
+        VStack(alignment: .leading, spacing: 20) {
             HStack {
                 SemaMark(size: 27)
                 Text("Sema").font(.system(size: 14, weight: .semibold))
                 Spacer()
                 Text(store.hasLoadedWebstat ? "Webstat" : "Démo").font(.system(size: 10)).foregroundStyle(.secondary)
+                Button {
+                    openWorkspace()
+                    store.isSearchPresented = true
+                } label: { Image(systemName: "magnifyingglass") }
+                .buttonStyle(.plain).help("Rechercher un repère · ⌘K").accessibilityLabel("Rechercher un repère")
                 SettingsLink { Image(systemName: "slider.horizontal.3") }.buttonStyle(.plain).help("Réglages")
-            }
-            VStack(alignment: .leading, spacing: 5) {
-                Text(Date.now.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(Locale(identifier: "fr_FR"))).uppercased())
-                    .font(.system(size: 9, weight: .medium)).tracking(0.8).foregroundStyle(.secondary)
-                Text("Un peu de recul.").font(.system(size: 25, weight: .medium)).tracking(-1)
             }
             Picker("Affichage", selection: $showsFavorites) {
                 Text("Panorama").tag(false)
@@ -40,18 +40,18 @@ struct MenuPanelView: View {
                 }
                 if items.isEmpty { Text("Ajoutez vos premiers favoris dans la fenêtre Sema.").font(.system(size: 12)).foregroundStyle(.secondary).padding(20) }
             }
-            .frame(height: showsFavorites && items.count > 4 ? 320 : 225)
+            .frame(height: showsFavorites && items.count > 4 ? 300 : 205)
             HStack {
                 Text(store.selectedSeries.name).font(.system(size: 12, weight: .medium))
                 Spacer()
                 OriginBadge(series: store.selectedSeries)
             }
             HistoryChart(series: store.selectedSeries, period: .month, height: 110)
-            Divider()
             HStack {
                 Text("Dates et sources dans le détail").font(.system(size: 10)).foregroundStyle(.secondary)
                 Spacer()
-                Button(action: openWorkspace) { Label("Ouvrir Sema", systemImage: "arrow.up.right") }.font(.system(size: 11))
+                Button(action: openWorkspace) { Label("Ouvrir Sema", systemImage: "arrow.up.right") }
+                    .buttonStyle(.borderless).font(.system(size: 11))
             }
         }
         .padding(22).frame(width: 450)

@@ -72,10 +72,14 @@ extension EnvironmentValues {
 
 @MainActor
 enum SemaTheme {
-    static let surface = Color(nsColor: .controlBackgroundColor)
+    static let surface = Color(nsColor: NSColor(name: "SemaElevatedSurface") { appearance in
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            ? NSColor(srgbRed: 0.16, green: 0.165, blue: 0.175, alpha: 1)
+            : .controlBackgroundColor
+    })
     static let background = Color(nsColor: .windowBackgroundColor)
     static let separator = Color(nsColor: .separatorColor).opacity(0.5)
-    static let corner: CGFloat = 16
+    static let corner: CGFloat = 22
 
     static let menuBarIcon: NSImage = {
         let renderer = ImageRenderer(content: SemaSymbol().foregroundStyle(.black).frame(width: 18, height: 18))
@@ -124,7 +128,6 @@ struct SemaMark: View {
             .foregroundStyle(accent)
             .padding(size * 0.08)
             .frame(width: size, height: size)
-            .background(accent.opacity(0.12), in: RoundedRectangle(cornerRadius: size * 0.28))
             .accessibilityHidden(true)
     }
 }
@@ -170,10 +173,8 @@ struct OriginBadge: View {
     let series: MarketSeries
     var body: some View {
         Text(series.isDemo ? "Démo" : series.sourceURL?.host == "webstat.banque-france.fr" ? "BdF" : "BCE")
-            .font(.system(size: 10, weight: .medium))
+            .font(.system(size: 11, weight: .medium))
             .foregroundStyle(series.isDemo ? Color.secondary : accent)
-            .padding(.horizontal, 6).padding(.vertical, 3)
-            .background(series.isDemo ? Color.secondary.opacity(0.08) : accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 5))
     }
 }
 
@@ -181,8 +182,28 @@ struct Surface<Content: View>: View {
     @ViewBuilder var content: Content
     var body: some View {
         content
-            .padding(20)
+            .padding(26)
             .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: SemaTheme.corner))
-            .overlay(RoundedRectangle(cornerRadius: SemaTheme.corner).strokeBorder(SemaTheme.separator, lineWidth: 0.5))
+            .modifier(SemaElevation())
+    }
+}
+
+/// A small contact shadow anchors the surface; a softer shadow separates its plane.
+struct SemaElevation: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+    func body(content: Content) -> some View {
+        content
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.16 : 0.04), radius: 2, x: 0, y: 1)
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.20 : 0.06), radius: 16, x: 0, y: 6)
+    }
+}
+
+struct SemaPressStyle: ButtonStyle {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.82 : 1)
+            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.99 : 1)
+            .animation(reduceMotion ? nil : .spring(response: 0.22, dampingFraction: 0.85), value: configuration.isPressed)
     }
 }

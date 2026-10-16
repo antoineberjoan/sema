@@ -13,6 +13,8 @@
 
 ## Prochain incrément produit
 
+- [x] Recherche locale ⌘K, alias des repères et raccourcis de navigation.
+- [x] Première passe de hiérarchie et de surfaces sans contours décoratifs, inspirée d’Interface Craft et Monocle.
 - [ ] Valider l’app native avec Antoine : hiérarchie, densité, interactions et comportement du panneau.
 - [x] Brancher 13 indicateurs officiels via Webstat et une clé personnelle dans le Trousseau.
 - [x] Proposer des vues sur 1 mois, 3 mois, 1 an, 3 ans et 5 ans selon l’historique disponible.
