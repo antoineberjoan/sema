@@ -109,7 +109,7 @@ public struct WebstatClient: Sendable {
             .replacingOccurrences(of: "'", with: "\\'") + "'"
     }
 
-    public static func searchRequest(apiKey: String, search: WebstatSearch, offset: Int = 0, after: String? = nil) throws -> URLRequest {
+    public static func searchRequest(apiKey: String, search: WebstatSearch, offset: Int = 0) throws -> URLRequest {
         var filters: [String] = []
         let query = search.query.trimmingCharacters(in: .whitespacesAndNewlines)
         if !query.isEmpty {
@@ -123,20 +123,41 @@ public struct WebstatClient: Sendable {
             filters.append("\(search.areaField) = \(literal(search.area))")
         }
         if !search.frequency.isEmpty { filters.append("freq = \(literal(search.frequency))") }
-        if let after {
-            guard WebstatSeriesDescriptor.isValidKey(after) else { throw ClientError.invalidData }
-            filters.append("series_key > \(literal(after))")
-        }
         var parameters = [URLQueryItem(name: "limit", value: "50"),
-                          URLQueryItem(name: "offset", value: after == nil ? String(max(0, offset)) : "0"),
+                          URLQueryItem(name: "offset", value: String(max(0, offset))),
                           URLQueryItem(name: "order_by", value: "series_key asc")]
         if !filters.isEmpty { parameters.append(URLQueryItem(name: "where", value: filters.joined(separator: " and "))) }
         return try request(table: "series", apiKey: apiKey, parameters: parameters)
     }
 
-    public func search(apiKey: String, search: WebstatSearch, offset: Int = 0, after: String? = nil) async throws -> WebstatPage<WebstatSeriesDescriptor> {
-        let data = try await send(Self.searchRequest(apiKey: apiKey, search: search, offset: offset, after: after))
-        return try Self.parseSeriesPage(data, offset: after == nil ? offset : 0)
+    public func search(apiKey: String, search: WebstatSearch, offset: Int = 0) async throws -> WebstatPage<WebstatSeriesDescriptor> {
+        let data = try await send(Self.searchRequest(apiKey: apiKey, search: search, offset: offset))
+        return try Self.parseSeriesPage(data, offset: offset)
+    }
+
+    /// ODSQL has no ordered text comparison. Offset paging stops before its 10,000-row cap;
+    /// a user who reaches it can load this lightweight metadata index once and continue locally.
+    public static func summaryExportRequest(apiKey: String, search: WebstatSearch) throws -> URLRequest {
+        var request = try searchRequest(apiKey: apiKey, search: search)
+        var url = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
+        url.path = url.path.replacingOccurrences(of: "/records", with: "/exports/json")
+        url.queryItems = (url.queryItems ?? []).filter { !["limit", "offset"].contains($0.name) } + [
+            .init(name: "select", value: "series_key,dataset_id,title_fr,freq,unit,unit_mult,ref_area")]
+        request.url = url.url
+        return request
+    }
+    public func exportSummaries(apiKey: String, search: WebstatSearch) async throws -> [WebstatSeriesDescriptor] {
+        let data = try await send(Self.summaryExportRequest(apiKey: apiKey, search: search))
+        try Task.checkCancellation()
+        return try Self.parseSummaryExport(data)
+    }
+    public static func parseSummaryExport(_ data: Data) throws -> [WebstatSeriesDescriptor] {
+        let rows: [[String: WebstatValue]]
+        do { rows = try JSONDecoder().decode([[String: WebstatValue]].self, from: data) } catch { throw ClientError.invalidData }
+        let items = try rows.map { try WebstatSeriesDescriptor(raw: $0) }
+        guard Set(items.map(\.key)).count == items.count else { throw ClientError.invalidData }
+        // Keep the provider’s text collation: exports and records use the same order_by.
+        return items
     }
 
     public static func parseSeriesPage(_ data: Data, offset: Int = 0) throws -> WebstatPage<WebstatSeriesDescriptor> {

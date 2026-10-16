@@ -146,7 +146,7 @@ struct CatalogueBrowserView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(store.isSearchingCatalogue && store.catalogueResults.isEmpty ? "Recherche…" : "\(store.catalogueTotal.formatted()) séries")
+                        Text(store.isSearchingCatalogue && store.catalogueResults.isEmpty ? "Recherche…" : "\(store.catalogueTotal.formatted()) \(store.catalogueTotal == 1 ? "série" : "séries")")
                         Spacer()
                         Text("Webstat")
                     }.font(.system(size: 10)).foregroundStyle(.secondary).padding(.horizontal, 12).padding(.bottom, 8)

@@ -55,6 +55,8 @@ final class AppStore {
     private var canSavePreferences = true
     private var searchTask: Task<Void, Never>?
     private var searchGeneration = UUID()
+    private var summaryExportSearch: WebstatSearch?
+    private var summaryExport: [WebstatSeriesDescriptor] = []
     private var previewTask: Task<Void, Never>?
     private var historyTask: Task<Void, Never>?
     private var historyGeneration = UUID()
@@ -309,7 +311,8 @@ final class AppStore {
         let generation = UUID(); searchGeneration = generation
         var search = catalogueSearch
         if let dataset = catalogueDatasets.first(where: { $0.id == search.datasetID }) { search.areaField = dataset.areaField ?? "ref_area" }
-        let cursor = loadMore ? catalogueResults.last?.key : nil
+        let offset = loadMore ? catalogueResults.count : 0
+        if summaryExportSearch != search { summaryExportSearch = nil; summaryExport = [] }
         if !loadMore { catalogueResults = []; catalogueTotal = 0; catalogueHasMore = false }
         catalogueError = nil
         guard hasWebstatKey else { isSearchingCatalogue = false; return }
@@ -318,6 +321,8 @@ final class AppStore {
             do {
                 if !loadMore { try await Task.sleep(for: .milliseconds(250)) }
                 let key = try await requiredKey()
+                try Task.checkCancellation()
+                guard generation == searchGeneration else { return }
                 if catalogueDatasets.isEmpty { catalogueDatasets = try await WebstatClient().datasets(apiKey: key) }
                 let areaList = catalogueDatasets.first(where: { $0.id == search.datasetID })?.areaCodelist ?? "CL_AREA"
                 let missing = ["CL_UNIT", "CL_UNIT_MULT", "CL_FREQ", "CL_ORGANISATION", areaList].filter { catalogueLabels[$0] == nil }
@@ -328,15 +333,34 @@ final class AppStore {
                     catalogueLabels.merge(labels, uniquingKeysWith: { _, new in new })
                     try? storage.cacheCatalogue(.init(datasets: catalogueDatasets, labels: catalogueLabels))
                 }
-                let page = try await WebstatClient().search(apiKey: key, search: search, after: cursor)
+                let items: [WebstatSeriesDescriptor]
+                let hasMore: Bool
+                if offset >= 9_950 {
+                    if summaryExportSearch != search {
+                        let summaries = try await WebstatClient().exportSummaries(apiKey: key, search: search)
+                        try Task.checkCancellation()
+                        guard generation == searchGeneration else { return }
+                        summaryExport = summaries; summaryExportSearch = search
+                    }
+                    let end = min(offset + 50, summaryExport.count)
+                    items = offset < end ? Array(summaryExport[offset..<end]) : []
+                    catalogueTotal = summaryExport.count
+                    hasMore = end < summaryExport.count
+                } else {
+                    let page = try await WebstatClient().search(apiKey: key, search: search, offset: offset)
+                    try Task.checkCancellation()
+                    guard generation == searchGeneration else { return }
+                    items = page.items
+                    if !loadMore { catalogueTotal = page.total }
+                    hasMore = page.hasMore
+                }
                 try Task.checkCancellation()
                 guard generation == searchGeneration else { return }
-                let items = page.items.map { resolvedWithCachedLabels($0) }
+                let resolvedItems = items.map { resolvedWithCachedLabels($0) }
                 if loadMore {
-                    let known = Set(catalogueResults.map(\.key)); catalogueResults += items.filter { !known.contains($0.key) }
-                } else { catalogueResults = items }
-                if !loadMore { catalogueTotal = page.total }
-                catalogueHasMore = page.hasMore
+                    let known = Set(catalogueResults.map(\.key)); catalogueResults += resolvedItems.filter { !known.contains($0.key) }
+                } else { catalogueResults = resolvedItems }
+                catalogueHasMore = hasMore
                 isSearchingCatalogue = false
             } catch is CancellationError { }
             catch {
@@ -353,7 +377,11 @@ final class AppStore {
         previewTask = Task {
             do {
                 let key = try await requiredKey()
-                let resolved = await resolve(descriptor, apiKey: key)
+                let official = try await WebstatClient().descriptor(apiKey: key, key: descriptor.key)
+                let resolved = await resolve(official, apiKey: key)
+                try Task.checkCancellation()
+                guard previewDescriptor?.key == descriptor.key else { return }
+                previewDescriptor = resolved
                 let value = try await fetchRecent(descriptor: resolved, apiKey: key)
                 try Task.checkCancellation()
                 guard previewDescriptor?.key == descriptor.key else { return }

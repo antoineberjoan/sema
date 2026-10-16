@@ -115,15 +115,21 @@ struct WebstatCatalogTests {
     }
 
 
-    @Test func cursorPaginationKeepsTheSameUniqueOrderAndResetsRecordOffset() throws {
-        let search = WebstatSearch(query: "taux")
-        let cursor = "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD"
-        let request = try WebstatClient.searchRequest(apiKey: "key", search: search, offset: 10_050, after: cursor)
-        let parameters = try #require(URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?.queryItems)
-        #expect(parameters.first { $0.name == "order_by" }?.value == "series_key asc")
-        #expect(parameters.first { $0.name == "offset" }?.value == "0")
-        #expect(parameters.first { $0.name == "where" }?.value?.contains("series_key > '\(cursor)'") == true)
-        #expect(throws: (any Error).self) { _ = try WebstatClient.searchRequest(apiKey: "key", search: search, after: "bad' cursor") }
+    @Test func largeCatalogueUsesALightweightExportWithoutAnUnsupportedTextCursor() throws {
+        let request = try WebstatClient.summaryExportRequest(apiKey: "fixture-key", search: .init(query: "inflation", frequency: "M"))
+        let url = try #require(request.url)
+        let parameters = try #require(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems)
+        #expect(url.path.hasSuffix("/series/exports/json"))
+        #expect(parameters.first { $0.name == "where" }?.value?.contains("search('inflation')") == true)
+        #expect(parameters.first { $0.name == "where" }?.value?.contains("series_key >") == false)
+        #expect(parameters.first { $0.name == "select" }?.value == "series_key,dataset_id,title_fr,freq,unit,unit_mult,ref_area")
+        #expect(!parameters.contains { ["limit", "offset"].contains($0.name) })
+        #expect(!url.absoluteString.contains("fixture-key"))
+        let rows = Data("[{\"series_key\":\"TEST.M.B\",\"title_fr\":\"B\",\"unit\":\"IX\"},{\"series_key\":\"TEST.M.A\",\"title_fr\":\"A\",\"freq\":\"M\"}]".utf8)
+        let summaries = try WebstatClient.parseSummaryExport(rows)
+        #expect(summaries.map(\.key) == ["TEST.M.B", "TEST.M.A"])
+        #expect(summaries[1].definition == "A")
+        #expect(throws: (any Error).self) { _ = try WebstatClient.parseSummaryExport(Data("[{\"series_key\":\"TEST.M.A\"},{\"series_key\":\"TEST.M.A\"}]".utf8)) }
     }
 
     @Test func observationsKeepSourcePeriodsAndNewestRevisionWithMissingValuesExcluded() throws {
