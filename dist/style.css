@@ -101,7 +101,8 @@ details p a:hover { color: var(--text); }
 .site-footer p span { margin-inline: 5px; }
 .site-footer p .footer-support { display: block; margin: 8px 0 0; color: var(--muted); font-size: 11px; }
 .support-note { margin: 26px 0 0; color: var(--text); font-size: 12px; line-height: 1.8; }
-.support-note > span { color: var(--muted); }
+.support-note > a { color: var(--muted); }
+.footer-support:hover, .support-note > a:hover { color: var(--text); }
 .site-footer a { white-space: nowrap; }
 .site-footer a span { margin-left: 6px; }
 dialog { background: #242424; color: var(--text); border: 0; padding: 32px; border-radius: 22px; box-shadow: 0 30px 100px #000a; }
