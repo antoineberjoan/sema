@@ -74,9 +74,11 @@ struct MacroAlertTests {
         """.utf8)
         var preferences = try JSONDecoder().decode(AppPreferences.self, from: old)
         #expect(preferences.themeID == nil)
+        #expect(preferences.ribbonPositionID == nil)
         #expect(preferences.alerts.first?.effectiveCondition == .relativeChange)
         #expect(preferences.favoriteIDs.contains("atlas-i-eur"))
         preferences.themeID = "lavender"
+        preferences.ribbonPositionID = "right"
         preferences.alerts.append(AlertRule(seriesID: "inflation", direction: .fall, threshold: 0,
                                             condition: .level, lastEvaluatedAt: start))
         let restored = try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(preferences))

@@ -4,7 +4,7 @@
 
 ## Périmètre
 
-Le petit panneau de barre de menus est remplacé par un bandeau horizontal sous la barre des menus. Le contenu reste en SwiftUI et Swift Charts ; AppKit gère le status item et le panneau non activant. Aucun fournisseur, calcul financier ni dépendance n’est ajouté.
+Le petit panneau de barre de menus est remplacé par un bandeau de favoris, horizontal en haut/bas ou vertical à gauche/droite. Le contenu reste en SwiftUI et Swift Charts ; AppKit gère le status item et le panneau non activant. Aucun fournisseur, calcul financier ni dépendance n’est ajouté.
 
 ## Contrôles effectués
 
@@ -20,6 +20,19 @@ Le petit panneau de barre de menus est remplacé par un bandeau horizontal sous 
 - Libellé obligataire précisé : « Emprunt phare FR · 10 ans », avec le sous-titre « Rendement · série mensuelle ». La clé Webstat reste `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD`. Le nouveau titre est vérifié dans l’app relancée ; le site et le guide distinguent cette série du TEC 10 quotidien.
 
 Le script local `./scripts/check.sh` rencontre l’absence du module Swift Testing dans les Command Line Tools installés. Les tests du cœur et la compilation du bundle sont aussi exécutés par GitHub Actions avec le SDK complet.
+
+## Verre, placement et signature
+
+Passe suivante du 16 octobre, dans la même copie isolée et sans clé fournisseur :
+
+- Les quatre choix Haut, Bas, Gauche, Droite sont présents dans Apparence. Les deux dispositions natives sont observées avec huit favoris. Le choix Gauche est conservé au relancement ; les données et le thème Graphite sont préservés.
+- Défilement vertical jusqu’au dernier repère et flèche suivante du carrousel horizontal vérifiés. Les cartes restent découpées dans leur zone et ne passent plus sous la signature.
+- Période 3 mois : variations et mini-courbes changent, puis retour à 1 an. L’actualisation reste indisponible sans clé.
+- Le signe original apparaît progressivement ; le cartouche révèle ensuite « L’économie bouge. Gardez vos repères. ». Rejouer deux fois rapidement redémarre la séquence ; ⌘K pendant la présentation ferme le bandeau et ouvre la recherche du hub. Échap est aussi contrôlé.
+- La matière repose sur un `NSVisualEffectView` derrière la fenêtre ; le fond et le contenu sont frères pour éviter que la vibrance ne réduise le contraste des textes secondaires. Les captures natives isolent le panneau et ne permettent pas de juger fidèlement le bureau transmis par le flou : contrôler également à l’œil sur des fonds variés.
+- Compilation en production et bundle ad hoc réussis. Le test de compatibilité des préférences conserve le nouveau champ de position lors de l’encodage/décodage et accepte les anciens documents qui en sont dépourvus.
+
+Les comportements Réduire les animations, Réduire la transparence et Augmenter le contraste sont implémentés ; ils restent à vérifier avec les réglages système correspondants. Les réglages d’accessibilité du Mac n’ont pas été modifiés pour cette passe.
 
 ## Contrôles restant à effectuer
 

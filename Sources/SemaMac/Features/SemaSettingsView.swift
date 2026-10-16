@@ -61,6 +61,16 @@ struct SemaSettingsView: View {
             .formStyle(.grouped)
             .tabItem { Label("Général", systemImage: "slider.horizontal.3") }
             Form {
+                Section("Bandeau des favoris") {
+                    Picker("Position à l’écran", selection: Binding(get: { store.ribbonPosition }, set: { store.setRibbonPosition($0) })) {
+                        ForEach(MenuRibbonPosition.allCases) { position in
+                            Label(position.title, systemImage: position.symbol).tag(position)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    Text("Au clic sur l’icône Sema, retrouvez vos favoris sur le bord choisi. La matière translucide suit l’apparence de votre Mac.")
+                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                }
                 Section("Couleurs de Sema") {
                     Picker("Thème", selection: Binding(get: { store.palette }, set: { store.setPalette($0) })) {
                         ForEach(SemaPalette.allCases) { Text($0.title).tag($0) }

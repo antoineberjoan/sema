@@ -10,14 +10,14 @@ Mélange des maquettes **Panorama** et **Atelier** validé par Antoine : douceur
 
 Deux surfaces partagent la même information :
 
-1. Bandeau sous la barre de menus : vue d’ensemble des favoris sur la largeur de l’écran courant, avec cartes, mini-courbes et défilement horizontal.
+1. Bandeau de favoris : vue d’ensemble sur le bord choisi de l’écran courant. Cartes et mini-courbes défilent horizontalement en haut et en bas, verticalement à gauche et à droite.
 2. Fenêtre principale : sélection des séries, historiques et gestion des alertes macroéconomiques.
 
 ## Contrats de la version 0.3 locale
 
 | Fonction | Comportement attendu |
 | --- | --- |
-| Bandeau | Clic sur l’icône Sema ou ⌘⇧B : favoris dans leur ordre personnel, période commune 1 mois / 3 mois / 1 an, valeurs, variations, courbes et dates en cache. Défilement au trackpad ou par flèches si nécessaire. Clic sur une carte pour ouvrir son détail dans le hub ; clic extérieur, Échap, changement d’application ou d’espace pour fermer. Une sélection sans favori propose de les choisir dans le hub. |
+| Bandeau | Clic sur l’icône Sema ou ⌘⇧B : favoris dans leur ordre personnel, période commune 1 mois / 3 mois / 1 an, valeurs, variations, courbes et dates en cache. Défilement au trackpad ou par flèches si nécessaire. Clic sur une carte pour ouvrir son détail dans le hub ; clic extérieur, Échap, changement d’application ou d’espace pour fermer. Une sélection sans favori propose de les choisir dans le hub. Position haut/bas/gauche/droite persistante dans Apparence. Verre natif, signature tracée puis texte révélé, rejouable sans boucle ; état final immédiat avec Réduire les animations. |
 | Panorama | Consulter la sélection personnelle ordonnée ; ajouter depuis Explorer, retirer, déplacer par glissement ou avec ⌘⌥↑ / ⌘⌥↓. Une sélection vide est valide. |
 | Recherche | ⌘K propose Mes repères et Catalogue Webstat. Recherche locale immédiate, catalogue après 250 ms, annulation des requêtes dépassées, pagination de 50, code exact, filtres jeu/zone/fréquence. Flèches pour choisir, Entrée pour ouvrir l’aperçu, Échap pour fermer. |
 | Raccourcis | ⌘1 Panorama, ⌘2 Favoris, ⌘3 Alertes et ⌘R pour actualiser Webstat lorsque la connexion est disponible. ⌘⇧B ouvre ou referme le bandeau des favoris. Raccourcis internes à Sema, sans raccourci système global. |

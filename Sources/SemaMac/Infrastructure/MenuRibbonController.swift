@@ -15,6 +15,14 @@ final class MenuRibbonController: NSObject {
     private var screenObserver: NSObjectProtocol?
     private var isPresented = false
     private var transition = UUID()
+    private lazy var hostedContent = NSHostingView(rootView: ribbonContent(presentationID: nil))
+
+    private func ribbonContent(presentationID: UUID?) -> AnyView {
+        AnyView(MenuRibbonView(presentationID: presentationID,
+            openWorkspace: { [weak self] in self?.showWorkspace() },
+            openSettings: { [weak self] in self?.showSettings() },
+            dismiss: { [weak self] in self?.dismiss() }).environment(store))
+    }
 
     private lazy var panel: RibbonPanel = {
         let panel = RibbonPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel],
@@ -26,10 +34,31 @@ final class MenuRibbonController: NSObject {
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient, .ignoresCycle]
         panel.isReleasedWhenClosed = false
-        panel.contentView = NSHostingView(rootView: MenuRibbonView(
-            openWorkspace: { [weak self] in self?.showWorkspace() },
-            openSettings: { [weak self] in self?.showSettings() },
-            dismiss: { [weak self] in self?.dismiss() }).environment(store))
+        // Keep the backdrop outside SwiftUI’s rendering/clipping hierarchy.
+        let container = NSView()
+        container.wantsLayer = true
+        container.layer?.cornerRadius = MenuRibbonLayout.cornerRadius
+        container.layer?.masksToBounds = true
+        let glass = NSVisualEffectView()
+        glass.material = .hudWindow
+        glass.blendingMode = .behindWindow
+        glass.state = .active
+        glass.translatesAutoresizingMaskIntoConstraints = false
+        hostedContent.translatesAutoresizingMaskIntoConstraints = false
+        // Siblings keep vibrancy from altering the financial labels’ semantic colours.
+        container.addSubview(glass)
+        container.addSubview(hostedContent)
+        NSLayoutConstraint.activate([
+            glass.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            glass.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            glass.topAnchor.constraint(equalTo: container.topAnchor),
+            glass.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            hostedContent.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            hostedContent.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            hostedContent.topAnchor.constraint(equalTo: container.topAnchor),
+            hostedContent.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+        panel.contentView = container
         return panel
     }()
 
@@ -60,13 +89,12 @@ final class MenuRibbonController: NSObject {
         let screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) }
             ?? statusItem.button?.window?.screen ?? NSScreen.main
         guard let screen else { return }
-        let top = min(screen.visibleFrame.maxY, screen.frame.maxY - screen.safeAreaInsets.top)
-        let target = NSRect(x: screen.frame.minX + MenuRibbonLayout.screenInset,
-            y: top - MenuRibbonLayout.topGap - MenuRibbonLayout.height,
-            width: screen.frame.width - 2 * MenuRibbonLayout.screenInset, height: MenuRibbonLayout.height)
+        let target = store.ribbonPosition.frame(in: screen)
+        let offset = store.ribbonPosition.revealOffset
         transition = UUID(); isPresented = true
+        hostedContent.rootView = ribbonContent(presentationID: transition)
         if !panel.isVisible {
-            panel.setFrame(target.offsetBy(dx: 0, dy: MenuRibbonLayout.revealOffset), display: false)
+            panel.setFrame(target.offsetBy(dx: offset.dx, dy: offset.dy), display: false)
             panel.alphaValue = 0
         }
         panel.makeKeyAndOrderFront(nil)
@@ -91,6 +119,7 @@ final class MenuRibbonController: NSObject {
         removeMonitors(); statusItem.button?.highlight(false)
         if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
             panel.orderOut(nil)
+            hostedContent.rootView = ribbonContent(presentationID: nil)
         } else {
             NSAnimationContext.runAnimationGroup { context in
                 context.duration = MenuRibbonLayout.dismissDuration
@@ -99,6 +128,7 @@ final class MenuRibbonController: NSObject {
                 Task { @MainActor in
                     guard let self, self.transition == generation, !self.isPresented else { return }
                     self.panel.orderOut(nil)
+                    self.hostedContent.rootView = self.ribbonContent(presentationID: nil)
                 }
             }
         }

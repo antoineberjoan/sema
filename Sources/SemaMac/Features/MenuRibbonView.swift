@@ -4,13 +4,17 @@ import MarketCore
 
 // BANDEAU
 //   0 ms  Les favoris en cache sont immédiatement disponibles.
-// 220 ms  Le panneau apparaît sous la barre des menus, sur 8 pt (AppKit).
+// 220 ms  Le panneau apparaît depuis le bord choisi, sur 8 pt (AppKit).
 // 160 ms  Un survol change seulement la profondeur de la carte.
 // 280 ms  Les flèches amènent le prochain repère ; le trackpad reste natif.
 enum MenuRibbonLayout {
     static let height: CGFloat = 288
+    static let verticalWidth: CGFloat = 368
+    static let signatureWidth: CGFloat = 252
+    static let signatureHeight: CGFloat = 184
+    static let cornerRadius: CGFloat = 28
+    static let cardCornerRadius: CGFloat = 22
     static let screenInset: CGFloat = 12
-    static let topGap: CGFloat = 8
     static let padding: CGFloat = 18
     static let spacing: CGFloat = 12
     static let minimumCardWidth: CGFloat = 248
@@ -26,6 +30,9 @@ enum MenuRibbonLayout {
 struct MenuRibbonView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    let presentationID: UUID?
     let openWorkspace: () -> Void
     let openSettings: () -> Void
     let dismiss: () -> Void
@@ -33,11 +40,61 @@ struct MenuRibbonView: View {
     @State private var leadingID: String?
 
     private var items: [MarketSeries] { store.favorites }
+    private var isVertical: Bool { store.ribbonPosition.isVertical }
 
     var body: some View {
         VStack(spacing: MenuRibbonLayout.spacing) {
-            header.frame(height: 30)
-            GeometryReader { geometry in
+            header
+            if isVertical {
+                periodPicker
+                if items.isEmpty { emptyState.frame(maxWidth: .infinity, maxHeight: .infinity) }
+                else {
+                    ScrollView(.vertical) {
+                        LazyVStack(spacing: MenuRibbonLayout.spacing) {
+                            ForEach(items) { item in
+                                RibbonCard(series: item, period: period) { open(item) }
+                                    .frame(height: MenuRibbonLayout.cardHeight)
+                            }
+                        }.padding(.vertical, 2)
+                    }.scrollIndicators(.automatic)
+                    sourceNote.frame(maxWidth: .infinity, alignment: .leading)
+                }
+                RibbonSignatureView(presentationID: presentationID).frame(height: MenuRibbonLayout.signatureHeight)
+                Button(action: openWorkspace) { Label("Ouvrir Sema", systemImage: "arrow.up.right") }
+                    .buttonStyle(.plain).font(.system(size: 12, weight: .medium)).padding(.vertical, 4)
+            } else {
+                HStack(alignment: .top, spacing: MenuRibbonLayout.spacing) {
+                    horizontalFavorites
+                    ViewThatFits(in: .horizontal) {
+                        RibbonSignatureView(presentationID: presentationID)
+                            .frame(width: MenuRibbonLayout.signatureWidth, height: MenuRibbonLayout.signatureHeight)
+                        Color.clear.frame(width: 0, height: 0)
+                    }
+                }
+            }
+        }
+        .padding(MenuRibbonLayout.padding)
+        .background {
+            if reduceTransparency || contrast == .increased { SemaTheme.background }
+            // AppKit samples the desktop behind this semitransparent contrast veil.
+            else { SemaTheme.background.opacity(0.45) }
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: MenuRibbonLayout.cornerRadius, style: .continuous)
+                .strokeBorder(LinearGradient(colors: [.white.opacity(0.28), .white.opacity(0.04), .white.opacity(0.12)],
+                                              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 0.5)
+                .allowsHitTesting(false).accessibilityHidden(true)
+        }
+        .environment(\.semaAccent, store.palette.accent).tint(store.palette.controlAccent)
+        .environment(\.locale, Locale(identifier: "fr_FR"))
+        .onChange(of: items.map(\.id)) { _, ids in
+            if let leadingID, !ids.contains(leadingID) { self.leadingID = ids.first }
+        }
+        .task { await store.checkWebstatKey() }
+    }
+
+    private var horizontalFavorites: some View {
+        GeometryReader { geometry in
                 let capacity = max(1, Int((geometry.size.width + MenuRibbonLayout.spacing)
                                          / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)))
                 let visibleCount = max(1, min(items.count, capacity))
@@ -58,7 +115,6 @@ struct MenuRibbonView: View {
                                 .scrollTargetLayout()
                             }
                             .scrollIndicators(.hidden)
-                            .scrollClipDisabled()
                             .scrollTargetBehavior(.viewAligned)
                             .scrollPosition(id: $leadingID, anchor: .leading)
                             .frame(height: MenuRibbonLayout.cardHeight)
@@ -67,8 +123,7 @@ struct MenuRibbonView: View {
                                 Text("·").accessibilityHidden(true)
                                 Text("Comparaison sur " + period.title)
                                 Spacer()
-                                if items.contains(where: \.isDemo) { Text("Démo · valeurs fictives") }
-                                else { Text("Publications Webstat · données en cache") }
+                                sourceNote
                                 if items.count > capacity {
                                     Button { scroll(-1, proxy: proxy) } label: { Image(systemName: "chevron.left") }
                                         .help("Favoris précédents").accessibilityLabel("Favoris précédents")
@@ -83,32 +138,15 @@ struct MenuRibbonView: View {
                         }
                     }
                 }
-            }
         }
-        .padding(MenuRibbonLayout.padding)
-        .background(SemaTheme.background.opacity(0.92), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .environment(\.semaAccent, store.palette.accent).tint(store.palette.controlAccent)
-        .environment(\.locale, Locale(identifier: "fr_FR"))
-        .onChange(of: items.map(\.id)) { _, ids in
-            if let leadingID, !ids.contains(leadingID) { self.leadingID = ids.first }
-        }
-        .task { await store.checkWebstatKey() }
     }
 
     private var header: some View {
         HStack(spacing: 12) {
             SemaMark(size: 26)
-            Text("Vos favoris").font(.system(size: 15, weight: .semibold)).tracking(-0.3).foregroundStyle(.primary)
+            Text(isVertical ? "Vos repères" : "Vos favoris").font(.system(size: 15, weight: .semibold)).tracking(-0.3).foregroundStyle(.primary)
             Spacer()
-            if !items.isEmpty {
-                Picker("Période de comparaison", selection: $period) {
-                    Text("1 mois").tag(HistoryPeriod.month)
-                    Text("3 mois").tag(HistoryPeriod.quarter)
-                    Text("1 an").tag(HistoryPeriod.year)
-                }
-                .pickerStyle(.segmented).labelsHidden().controlSize(.small).frame(width: 185)
-            }
+            if !isVertical && !items.isEmpty { periodPicker.frame(width: 185) }
             Button { Task { await store.refreshWebstat() } } label: {
                 Image(systemName: "arrow.clockwise")
             }
@@ -122,12 +160,28 @@ struct MenuRibbonView: View {
                 .help("Rechercher un repère · ⌘K").accessibilityLabel("Rechercher un repère")
             Button(action: openSettings) { Image(systemName: "slider.horizontal.3") }
                 .help("Réglages de Sema").accessibilityLabel("Réglages de Sema")
-            Button(action: openWorkspace) { Label("Ouvrir Sema", systemImage: "arrow.up.right") }
-                .font(.system(size: 12)).foregroundStyle(store.palette.accent)
+            if !isVertical {
+                Button(action: openWorkspace) { Label("Ouvrir Sema", systemImage: "arrow.up.right") }
+                    .font(.system(size: 12)).foregroundStyle(store.palette.accent)
+            }
             Button(action: dismiss) { Image(systemName: "xmark").frame(width: 24, height: 24) }
                 .help("Fermer · Échap").accessibilityLabel("Fermer le bandeau")
         }
-        .buttonStyle(.plain).foregroundStyle(.secondary)
+        .buttonStyle(.plain).foregroundStyle(.secondary).frame(height: 30)
+    }
+
+    private var periodPicker: some View {
+        Picker("Période de comparaison", selection: $period) {
+            Text("1 mois").tag(HistoryPeriod.month)
+            Text("3 mois").tag(HistoryPeriod.quarter)
+            Text("1 an").tag(HistoryPeriod.year)
+        }
+        .pickerStyle(.segmented).labelsHidden().controlSize(.small)
+    }
+
+    private var sourceNote: some View {
+        Text(items.contains(where: \.isDemo) ? "Démo · valeurs fictives" : "Publications Webstat · en cache")
+            .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
     }
 
     private var emptyState: some View {
@@ -170,10 +224,8 @@ private struct RibbonCard: View {
             }
             .foregroundStyle(.primary).padding(16)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .background(SemaTheme.surface.opacity(hovered ? 0.98 : 0.82),
-                        in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: .black.opacity(hovered ? 0.12 : 0.06), radius: hovered ? 9 : 4, x: 0, y: 3)
-            .contentShape(RoundedRectangle(cornerRadius: 16))
+            .modifier(RibbonSurface(emphasized: hovered))
+            .contentShape(RoundedRectangle(cornerRadius: MenuRibbonLayout.cardCornerRadius))
         }
         .buttonStyle(SemaPressStyle())
         .onHover { hovered = $0 }

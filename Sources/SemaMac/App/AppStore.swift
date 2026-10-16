@@ -115,6 +115,7 @@ final class AppStore {
     var originSummary: String { hasLoadedWebstat ? "Banque de France · Webstat" : "Webstat à connecter · démonstration disponible" }
     var macroAlerts: [AlertRule] { preferences.alerts.filter { $0.effectiveCondition == .level } }
     var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .graphite }
+    var ribbonPosition: MenuRibbonPosition { MenuRibbonPosition(rawValue: preferences.ribbonPositionID ?? "") ?? .top }
     var canLoadMoreCatalogue: Bool { catalogueHasMore && !isSearchingCatalogue }
     var previewRequiresRefresh: Bool {
         guard let descriptor = previewDescriptor,
@@ -123,6 +124,7 @@ final class AppStore {
     }
 
     func setPalette(_ palette: SemaPalette) { mutatePreferences { $0.themeID = palette.rawValue } }
+    func setRibbonPosition(_ position: MenuRibbonPosition) { mutatePreferences { $0.ribbonPositionID = position.rawValue } }
     func isFollowing(_ id: String) -> Bool { preferences.followedSeriesIDs.contains(WebstatClient.canonicalID(id)) }
     func isFavorite(_ id: String) -> Bool { preferences.favoriteIDs.contains(id) }
     func toggleFavorite(_ id: String) {
