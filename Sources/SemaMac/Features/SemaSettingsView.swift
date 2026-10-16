@@ -61,6 +61,12 @@ struct SemaSettingsView: View {
             .formStyle(.grouped)
             .tabItem { Label("Général", systemImage: "slider.horizontal.3") }
             Form {
+                Section("Mode d’affichage") {
+                    Picker("Apparence", selection: Binding(get: { store.appearance }, set: { store.setAppearance($0) })) {
+                        ForEach(SemaAppearance.allCases) { Text($0.title).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                }
                 Section("Bandeau des favoris") {
                     Picker("Position à l’écran", selection: Binding(get: { store.ribbonPosition }, set: { store.setRibbonPosition($0) })) {
                         ForEach(MenuRibbonPosition.allCases) { position in
@@ -68,7 +74,7 @@ struct SemaSettingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    Text("Au clic sur l’icône sema, retrouvez vos favoris sur le bord choisi. La matière translucide suit l’apparence de votre Mac.")
+                    Text("Au clic sur l’icône sema, retrouvez vos favoris sur le bord choisi. La matière translucide suit le mode d’affichage et la palette choisis.")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
                 Section("Couleurs de sema") {
@@ -82,7 +88,7 @@ struct SemaSettingsView: View {
                         }
                     }
                     .accessibilityElement(children: .combine)
-                    Text("Le thème s’applique à la fenêtre, au panneau de barre de menus et aux graphiques. Les surfaces et la typographie restent natives ; les accents s’adaptent aux modes clair et sombre.")
+                    Text("La palette colore les courbes, les contrôles et légèrement le verre du bandeau. Elle reste identique lorsque vous changez de mode d’affichage.")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
             }

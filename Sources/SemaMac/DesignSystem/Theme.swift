@@ -54,6 +54,16 @@ enum SemaPalette: String, CaseIterable, Identifiable, Sendable {
     var controlAccent: Color { Color(nsColor: Self.nsColor(lightAccent)) }
     // The signature is the one coloured editorial surface in the Graphite ribbon.
     var signatureAccent: Color { self == .graphite ? Self.swatch(0x355A80) : controlAccent }
+    var glassTint: Color {
+        switch self {
+        case .graphite: .clear
+        case .teal: Self.swatch(0x2D9596)
+        case .mint: Self.swatch(0x8EC3B0)
+        case .lavender: Self.swatch(0xD0A2F7)
+        case .sky: Self.swatch(0x00A9FF)
+        case .polar: Self.swatch(0x21A5EC)
+        }
+    }
     static func swatch(_ hex: UInt32) -> Color { Color(nsColor: nsColor(hex)) }
     private static func nsColor(_ hex: UInt32) -> NSColor {
         NSColor(srgbRed: CGFloat((hex >> 16) & 255) / 255,
@@ -65,7 +75,15 @@ private struct SemaAccentKey: EnvironmentKey {
     static let defaultValue: Color = SemaPalette.graphite.accent
 }
 
+private struct SemaGlassTintKey: EnvironmentKey {
+    static let defaultValue: Color = .clear
+}
+
 extension EnvironmentValues {
+    var semaGlassTint: Color {
+        get { self[SemaGlassTintKey.self] }
+        set { self[SemaGlassTintKey.self] = newValue }
+    }
     var semaAccent: Color {
         get { self[SemaAccentKey.self] }
         set { self[SemaAccentKey.self] = newValue }

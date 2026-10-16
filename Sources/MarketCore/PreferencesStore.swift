@@ -7,11 +7,12 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var alerts: [AlertRule]
     public var notificationsEnabled: Bool
     public var themeID: String?
+    public var appearanceID: String?
     public var ribbonPositionID: String?
     public var onboardingCompleted: Bool?
 
     public init(favoriteIDs: Set<String> = ["fr10", "eurusd", "livreta"],
-                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "graphite",
+                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "graphite", appearanceID: String? = nil,
                 followedSeriesIDs: [String] = WebstatClient.starterIDs, onboardingCompleted: Bool? = nil,
                 ribbonPositionID: String? = "top") {
         self.favoriteIDs = Set(favoriteIDs.map(WebstatClient.canonicalID))
@@ -19,12 +20,13 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         self.alerts = alerts
         self.notificationsEnabled = notificationsEnabled
         self.themeID = themeID
+        self.appearanceID = appearanceID
         self.ribbonPositionID = ribbonPositionID
         self.onboardingCompleted = onboardingCompleted
     }
 
     enum CodingKeys: String, CodingKey {
-        case schemaVersion, favoriteIDs, followedSeriesIDs, alerts, notificationsEnabled, themeID, onboardingCompleted, ribbonPositionID
+        case schemaVersion, favoriteIDs, followedSeriesIDs, alerts, notificationsEnabled, themeID, appearanceID, onboardingCompleted, ribbonPositionID
     }
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -33,6 +35,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         alerts = try values.decode([AlertRule].self, forKey: .alerts)
         notificationsEnabled = try values.decode(Bool.self, forKey: .notificationsEnabled)
         themeID = try values.decodeIfPresent(String.self, forKey: .themeID)
+        appearanceID = try values.decodeIfPresent(String.self, forKey: .appearanceID)
         ribbonPositionID = try values.decodeIfPresent(String.self, forKey: .ribbonPositionID)
         onboardingCompleted = try values.decodeIfPresent(Bool.self, forKey: .onboardingCompleted)
         // Empty is a valid v2 selection; absence only means legacy v1.

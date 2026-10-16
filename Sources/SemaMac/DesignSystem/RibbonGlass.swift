@@ -43,9 +43,11 @@ enum MenuRibbonPosition: String, CaseIterable, Identifiable {
 
 /// A separate native backdrop per card leaves the space between cards transparent.
 private struct RibbonGlassBackdrop: NSViewRepresentable {
+    @Environment(\.colorScheme) private var colorScheme
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
-        view.material = .hudWindow
+        view.material = .underWindowBackground
+        view.appearance = NSAppearance(named: colorScheme == .dark ? .darkAqua : .aqua)
         view.blendingMode = .behindWindow
         view.state = .active
         view.wantsLayer = true
@@ -54,12 +56,22 @@ private struct RibbonGlassBackdrop: NSViewRepresentable {
         return view
     }
 
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+        nsView.appearance = NSAppearance(named: colorScheme == .dark ? .darkAqua : .aqua)
+    }
+}
+
+private enum RibbonGlassStyle {
+    static let darkVeil = 0.10
+    static let lightVeil = 0.20
+    static let darkTint = 0.22
+    static let lightTint = 0.12
 }
 
 /// A thin highlight describes the glass edge; labels stay outside its vibrancy.
 struct RibbonSurface: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.semaGlassTint) private var glassTint
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
     var emphasized = false
@@ -69,12 +81,17 @@ struct RibbonSurface: ViewModifier {
         let shape = RoundedRectangle(cornerRadius: MenuRibbonLayout.cardCornerRadius, style: .continuous)
         content
             .background {
-                if opaque { shape.fill(SemaTheme.surface) }
+                if opaque {
+                    shape.fill(SemaTheme.surface)
+                    shape.fill(glassTint.opacity(0.06))
+                }
                 else {
                     RibbonGlassBackdrop()
-                    shape.fill(colorScheme == .dark ? Color.black.opacity(0.35) : Color.white.opacity(0.35))
-                    shape.fill(colorScheme == .dark ? Color.white.opacity(emphasized ? 0.11 : 0.065)
-                                                    : Color.white.opacity(emphasized ? 0.65 : 0.42))
+                    shape.fill(colorScheme == .dark ? Color.black.opacity(RibbonGlassStyle.darkVeil)
+                                                    : Color.white.opacity(RibbonGlassStyle.lightVeil))
+                    shape.fill(LinearGradient(colors: [glassTint.opacity(colorScheme == .dark ? RibbonGlassStyle.darkTint : RibbonGlassStyle.lightTint), glassTint.opacity(0.04)],
+                                              startPoint: .topLeading, endPoint: .bottomTrailing))
+                    shape.fill(Color.white.opacity(emphasized ? 0.07 : 0.025))
                 }
             }
             .overlay {

@@ -12,6 +12,7 @@ struct SemaMacApp: App {
             WorkspaceView().environment(store).tint(store.palette.controlAccent)
                 .environment(\.semaAccent, store.palette.accent)
                 .environment(\.locale, Locale(identifier: "fr_FR"))
+                .preferredColorScheme(store.appearance.colorScheme)
                 .background {
                     MenuRibbonAttachment(store: store, appDelegate: appDelegate).frame(width: 0, height: 0)
                 }
@@ -34,6 +35,7 @@ struct SemaMacApp: App {
         Settings {
             SemaSettingsView().environment(store).tint(store.palette.controlAccent)
                 .environment(\.semaAccent, store.palette.accent)
+                .preferredColorScheme(store.appearance.colorScheme)
         }
     }
 }

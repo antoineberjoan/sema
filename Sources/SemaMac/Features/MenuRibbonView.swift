@@ -14,7 +14,7 @@ enum MenuRibbonLayout {
     static let signatureWidth: CGFloat = 252
     static let signatureHeight: CGFloat = 184
     static let cardCornerRadius: CGFloat = 22
-    static let screenInset: CGFloat = 8
+    static let screenInset: CGFloat = 6
     static let padding: CGFloat = 18
     static let topPadding: CGFloat = 6
     static let bottomPadding: CGFloat = 12
@@ -42,7 +42,6 @@ struct MenuRibbonView: View {
 
     var body: some View {
         VStack(spacing: MenuRibbonLayout.headerSpacing) {
-            header
             if isVertical {
                 if items.isEmpty { emptyState.frame(maxWidth: .infinity, maxHeight: .infinity) }
                 else {
@@ -66,11 +65,14 @@ struct MenuRibbonView: View {
                     }
                 }
             }
+            header
         }
         .padding(.horizontal, MenuRibbonLayout.padding)
         .padding(.top, MenuRibbonLayout.topPadding)
         .padding(.bottom, MenuRibbonLayout.bottomPadding)
         .environment(\.semaAccent, store.palette.accent).tint(store.palette.controlAccent)
+        .environment(\.semaGlassTint, store.palette.glassTint)
+        .preferredColorScheme(store.appearance.colorScheme)
         .environment(\.locale, Locale(identifier: "fr_FR"))
         .task { await store.checkWebstatKey() }
     }

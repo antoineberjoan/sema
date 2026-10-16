@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Observation
 import MarketCore
@@ -68,6 +69,7 @@ final class AppStore {
             canSavePreferences = false
             errorMessage = "Les réglages n’ont pas pu être lus. Le fichier existant est conservé : \(error.localizedDescription)"
         }
+        NSApplication.shared.appearance = appearance.nativeAppearance
         do {
             let cached = try storage.cachedWebstat()
             if !cached.isEmpty {
@@ -115,6 +117,7 @@ final class AppStore {
     var originSummary: String { hasLoadedWebstat ? "Banque de France · Webstat" : "Webstat à connecter · démonstration disponible" }
     var macroAlerts: [AlertRule] { preferences.alerts.filter { $0.effectiveCondition == .level } }
     var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .graphite }
+    var appearance: SemaAppearance { SemaAppearance(rawValue: preferences.appearanceID ?? "") ?? .system }
     var ribbonPosition: MenuRibbonPosition { MenuRibbonPosition(rawValue: preferences.ribbonPositionID ?? "") ?? .top }
     var canLoadMoreCatalogue: Bool { catalogueHasMore && !isSearchingCatalogue }
     var previewRequiresRefresh: Bool {
@@ -124,6 +127,10 @@ final class AppStore {
     }
 
     func setPalette(_ palette: SemaPalette) { mutatePreferences { $0.themeID = palette.rawValue } }
+    func setAppearance(_ appearance: SemaAppearance) {
+        guard mutatePreferences({ $0.appearanceID = appearance.rawValue }) else { return }
+        NSApplication.shared.appearance = appearance.nativeAppearance
+    }
     func setRibbonPosition(_ position: MenuRibbonPosition) { mutatePreferences { $0.ribbonPositionID = position.rawValue } }
     func isFollowing(_ id: String) -> Bool { preferences.followedSeriesIDs.contains(WebstatClient.canonicalID(id)) }
     func isFavorite(_ id: String) -> Bool { preferences.favoriteIDs.contains(id) }
