@@ -8,3 +8,8 @@ xcuserdata/
 .env
 .env.*
 !.env.example
+
+# Site linking and generated release archives
+.vercel/
+*.dmg
+*.tar.gz

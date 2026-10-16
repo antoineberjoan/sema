@@ -10,6 +10,8 @@ Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` 
 - Configuration statique : `vercel.json`, répertoire publié `dist`.
 - `.vercel` est local et ignoré ; `.vercelignore` exclut les métadonnées Sites et les documents internes du transfert Vercel.
 
+Le site est désormais versionné dans `site/` du dépôt privé `antoineberjoan/sema`, sur `origin/main`. L’historique Sites est conservé dans Git.
+
 Depuis ce dossier, vérifier le propriétaire et le projet avant toute publication :
 
 ```sh
@@ -23,4 +25,4 @@ Les prévisualisations et domaines Vercel restent soumis à la protection du com
 
 ## Source existante
 
-Le projet Sites d’origine et son identité `.openai/hosting.json` sont conservés. Ce manifeste ne déploie pas vers Vercel. La source reste dans le dépôt Sites existant ; aucune intégration GitHub automatique n’est créée par le déploiement CLI. Le précédent site Sites conserve sa publication et son audience tant qu’une publication explicite n’y est pas demandée.
+Le projet Sites d’origine et son identité `.openai/hosting.json` sont conservés. Ce manifeste ne déploie pas vers Vercel. La source de référence est `origin/main` du dépôt sema. L’identité du projet Sites existant est conservée pour une reprise éventuelle ; ce transfert de sources ne modifie pas sa publication. Le déploiement Vercel s’effectue depuis `site/`, sans intégration Git automatique implicite. Le précédent site Sites conserve sa publication et son audience tant qu’une publication explicite n’y est pas demandée.
