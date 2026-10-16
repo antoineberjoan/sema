@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-17",
+  "repositories": {
+    "antoineberjoan/sema": {
+      "branches": [
+        "main"
+      ],
+      "retainedPrivateArchive": "workspace-archive-2026-10-17",
+      "removedTags": [
+        "archive/catalogue-2026-10-17",
+        "archive/distribution-2026-10-17"
+      ]
+    },
+    "antoineberjoan/homebrew-sema": {
+      "branches": [
+        "main"
+      ],
+      "activeRelease": "v0.4.0",
+      "removedReleaseAndTag": "v0.2.0",
+      "releaseTagCommit": "c4d70e6f7bdf421491d00d348275bf1c070a781c"
+    }
+  },
+  "oldReleaseAssetsVerifiedInPrivateArchive": 3,
+  "oldReleaseMetadata": "release-0.2.json in private workspace archive release",
+  "activeDownloadUnchanged": true,
+  "activeDownloadSHA256": "81c3c017f8a7356a71abaeaacb7f27b1a48f8b59d28651f2c6ac6fa3e2abe884",
+  "activeDownloadBytes": 2787414,
+  "activeDownloadVerifiedWithoutAuthentication": true
+}

@@ -66,7 +66,7 @@ Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade
 
 ## Alpha 0.2.0 vérifiée le 16 octobre 2026
 
-Le DMG versionné est publié dans la release `v0.2.0` de `antoineberjoan/homebrew-sema` : 3 064 325 octets, SHA-256 `71660035ef0bcd16ef2006515989ef3ab7abec3b4c8c363576062bbc3016c96e`. Le source de l’app reste privé ; le site conserve son audience privée.
+Le DMG versionné a été publié dans la release `v0.2.0` de `antoineberjoan/homebrew-sema` : 3 064 325 octets, SHA-256 `71660035ef0bcd16ef2006515989ef3ab7abec3b4c8c363576062bbc3016c96e`. Le source de l’app reste privé ; le site conserve son audience privée.
 
 Le téléchargement HTTPS sans authentification et l’installation depuis le vrai cask public ont été vérifiés dans un dossier Applications isolé. Une installation puis une mise à jour 0.1.0 → cet artefact exact ont aussi passé le test sur un tap privé. La signature stricte et la quarantaine restent valides après copie ; aucun lancement ni contournement Gatekeeper n’a été effectué. Le premier lancement Internet sur un autre compte ou Mac reste à valider.
 
@@ -77,3 +77,5 @@ Homebrew 7 peut demander une approbation du cask tiers. Après consultation de `
 Le DMG 0.4.0, build 13, est publié dans le dépôt de distribution : 2 787 414 octets, SHA-256 `81c3c017f8a7356a71abaeaacb7f27b1a48f8b59d28651f2c6ac6fa3e2abe884`. Le cask public et `distribution/Casks/sema.rb` correspondent à cet artefact. Le manifeste source de la page se trouve dans `distribution/release.json`, sa copie publiée dans `site/dist/download/release.json`.
 
 Le téléchargement HTTPS sans session, l’installation depuis le vrai cask public et une mise à jour 0.2.0 → 0.4.0 sur tap privé ont été vérifiés dans un dossier Applications isolé. Les signatures restent valides et la quarantaine est conservée. Le test ne lance pas le binaire téléchargé ; le premier lancement Gatekeeper sur un autre compte ou Mac reste à observer. [Preuves](validation/distribution-0.4.0.json).
+
+La release publique 0.2.0 a été retirée lors du nettoyage GitHub du 17 octobre ; ses fichiers et ses métadonnées restent récupérables dans [l’archive privée](ARCHIVES.md). La 0.4.0 reste la seule version publique active.

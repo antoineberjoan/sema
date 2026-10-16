@@ -10,3 +10,9 @@ Le 17 octobre 2026, les sources de l’app et le site ont été réunis sur `ori
 Les clés, sessions, données personnelles de test et caches de compilation ou téléchargement ne sont pas publiés. Les copies locales obsolètes sont retirées seulement après vérification de la récupération de l’archive depuis GitHub. L’archive ne constitue pas une version distribuée de l’app.
 
 L’archive a été retéléchargée depuis GitHub et chaque empreinte de l’inventaire a été vérifiée avant nettoyage : [preuve de récupération](validation/archive-recovery-2026-10-17.json). Les anciennes copies et les caches locaux ont été déplacés hors du dossier de travail, vers la Corbeille, pour permettre un retour en arrière. Seule la copie canonique sur `main`, synchronisée avec `origin/main`, reste dans le dossier du projet.
+
+## Nettoyage GitHub
+
+Le 17 octobre, les deux dépôts nécessaires conservent chacun uniquement leur branche `main` : sources privées dans `antoineberjoan/sema`, distribution publique dans `antoineberjoan/homebrew-sema`. Les tags temporaires `archive/catalogue-2026-10-17` et `archive/distribution-2026-10-17` sont retirés ; leurs historiques restent dans le bundle Git de l’archive privée.
+
+La release publique et le tag `v0.2.0` sont retirés après vérification de leurs trois fichiers dans l’archive privée. Les métadonnées de cette ancienne release y sont aussi conservées sous `release-0.2.json`. Le dépôt public propose uniquement `v0.4.0`. Son tag correspond au commit du cask 0.4.0 ; le DMG, son URL et son SHA-256 restent inchangés, avec un téléchargement sans authentification revérifié. [Preuves](validation/github-cleanup-2026-10-17.json).
