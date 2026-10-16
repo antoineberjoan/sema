@@ -1,0 +1,37 @@
+{
+  "url": "https://getsema.app/",
+  "deployment": "https://sema-povje3j5t-antoine-berjoan.vercel.app",
+  "deploymentId": "dpl_HsujnidXLZ2Lz1S7FxS14Q4h7wPc",
+  "sourceCommit": "10a6f4a7dff828f46359082bcd3cb96c199896c4",
+  "version": "0.4.0",
+  "build": 13,
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "matchesMain": true
+    },
+    {
+      "path": "/download/",
+      "status": 200,
+      "matchesMain": true
+    },
+    {
+      "path": "/brand/",
+      "status": 200,
+      "matchesMain": true
+    },
+    {
+      "path": "/download/release.json",
+      "status": 200,
+      "matchesMain": true
+    }
+  ],
+  "assetsAccessible": 15,
+  "dns": "authoritative DNS and Cloudflare resolve; local negative cache still present; HTTPS verified with the authoritative address and normal certificate validation",
+  "gitProduction": {
+    "repository": "antoineberjoan/sema",
+    "branch": "main",
+    "rootDirectory": "site"
+  }
+}

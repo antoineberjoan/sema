@@ -99,4 +99,4 @@ Le bouton « Une idée ou un bug ? » du bandeau ouvre le [formulaire public](ht
 
 ## Source de référence
 
-`origin/main` réunit les sources de l’app, le site et son guide de marque. L’historique du dépôt Sites a été importé dans `site/` sans modifier son identité ni son audience. Le site public reste sur [getsema.app](https://getsema.app/) ; voir [site/README.md](site/README.md) pour le déploiement depuis ce dossier. Les essais et livrables historiques sont inventoriés dans [docs/ARCHIVES.md](docs/ARCHIVES.md). Les clés, préférences personnelles, caches et liens locaux Vercel restent hors de Git.
+`origin/main` réunit les sources de l’app, le site et son guide de marque. L’historique du dépôt Sites a été importé dans `site/` sans modifier son identité ni son audience. Le site public reste sur [getsema.app](https://getsema.app/) ; voir [site/README.md](site/README.md) pour le déploiement du site. Les essais et livrables historiques sont inventoriés dans [docs/ARCHIVES.md](docs/ARCHIVES.md). Les clés, préférences personnelles, caches et liens locaux Vercel restent hors de Git.
