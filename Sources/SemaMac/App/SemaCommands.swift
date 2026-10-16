@@ -3,6 +3,7 @@ import SwiftUI
 struct SemaCommands: Commands {
     @Environment(\.openWindow) private var openWindow
     let store: AppStore
+    let showRibbon: () -> Void
 
     var body: some Commands {
         CommandGroup(after: .newItem) {
@@ -14,6 +15,9 @@ struct SemaCommands: Commands {
             .disabled(store.isAlertSheetPresented || store.isOnboardingPresented)
         }
         CommandMenu("Navigation") {
+            Button("Afficher le bandeau des favoris", action: showRibbon)
+                .keyboardShortcut("b", modifiers: [.command, .shift]).disabled(hasModal)
+            Divider()
             Button("Panorama") { navigate(to: .overview) }.keyboardShortcut("1").disabled(hasModal)
             Button("Favoris") { navigate(to: .favorites) }.keyboardShortcut("2").disabled(hasModal)
             Button("Alertes") { navigate(to: .alerts) }.keyboardShortcut("3").disabled(hasModal)

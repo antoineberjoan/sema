@@ -7,9 +7,9 @@ Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoa
 ## Version 0.2
 
 - Une fenêtre de travail inspirée du mélange Panorama / Atelier : navigation latérale, indicateurs, historiques et détail d’une série.
-- Un panneau compact dans la barre de menus, partageant les mêmes données et favoris.
 - Catalogue Webstat dynamique avec clé personnelle : rechercher, filtrer et prévisualiser les séries accessibles, puis composer une sélection ordonnée. Les treize repères macro précédents restent une sélection de départ.
 - Vues sur 1 mois, 3 mois, 1 an, 3 ans, 5 ans et Tout selon la profondeur disponible ; chargement des périodes anciennes par tranches annulables. Définition, unité, échelle, fréquence, périodes, base des indices et métadonnées officielles. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
+- Un bandeau natif sous la barre des menus affiche les favoris, leurs valeurs, variations, courbes et dates. Clic sur une carte pour approfondir dans le hub ; défilement horizontal quand nécessaire et fermeture avec Échap ou clic extérieur. **⌘⇧B** permet aussi de l’ouvrir dans Sema.
 - **⌘K** propose Mes repères et Catalogue Webstat ; recherche par noms ou codes, filtres jeu/zone/fréquence, navigation par flèches puis Entrée. **⌘1/⌘2/⌘3/⌘4** ouvrent Panorama/Favoris/Alertes/Explorer ; **⌘R** actualise Webstat. **⌘⌥↑ / ⌘⌥↓** réordonnent le repère sélectionné.
 - Composition native sans contours décoratifs : sidebar sobre, liste de repères et panneau de graphique avec une ombre légère.
 - Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Sarcelle, Menthe, Lavande, Bleu ciel, Bleu polaire et Graphite.

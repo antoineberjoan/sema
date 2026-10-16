@@ -6,7 +6,7 @@ Un seul package Swift, deux cibles de production et une cible de tests. Aucun se
 
 ```mermaid
 flowchart TB
-    Menu["Panneau de barre de menus"] --> Store["AppStore · MainActor"]
+    Menu["Bandeau des favoris"] --> Store["AppStore · MainActor"]
     Window["Fenêtre principale"] --> Store
     Store --> Core["MarketCore · modèles et règles"]
     Store --> Webstat["Webstat · URLSession · clé personnelle"]
@@ -32,6 +32,7 @@ flowchart TB
 - `AppStore` est l’état partagé et le point de coordination. Il ne dessine pas l’interface.
 - `SemaCommands` expose les actions de navigation et de recherche dans les menus natifs et ouvre la fenêtre si nécessaire. Les feuilles de recherche et d’alerte partagent l’état local, avec exclusion des commandes de navigation pendant une feuille.
 - `Features` présente les données et émet les actions utilisateur.
+- `MenuRibbonView` affiche les favoris partagés, sans deuxième sélection ni requête automatique. `MenuRibbonController` utilise un `NSStatusItem` et un `NSPanel` non activant pour occuper la largeur de l’écran sous la barre des menus. Le délégué de l’app le conserve quand le hub est fermé. Le contenu reste en SwiftUI, les mini-courbes en Swift Charts. Les écouteurs de souris et de clavier local sont installés uniquement pendant la présentation, puis retirés à la fermeture ; aucun raccourci global ni permission d’accessibilité supplémentaire n’est demandé. Les transitions interrompues vérifient leur génération avant de masquer le panneau. Les actions vers le hub et les réglages utilisent les actions SwiftUI de scène.
 - `DesignSystem` contient les couleurs adaptées à l’apparence système, les composants partagés et les graphiques.
 - `Infrastructure` contient les effets dépendants de macOS : chemins de stockage et notifications système.
 - `WebstatKeychain` utilise Security dans un acteur séparé du MainActor. La clé n’est jamais incluse dans les fichiers de préférences, dans le cache, dans une URL ou dans le binaire. Aucun service serveur ni bibliothèque externe n’est ajouté.
