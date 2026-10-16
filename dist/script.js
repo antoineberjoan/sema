@@ -1,7 +1,7 @@
 "use strict";
 
 const indicators = [
-  { name: "France · 10 ans", category: "Taux souverain", icon: "↗", aliases: "oat france obligation taux souverain", description: "Le taux de référence des obligations françaises à dix ans. Série mensuelle publiée sur Webstat." },
+  { name: "Emprunt phare FR · 10 ans", category: "Taux souverain", icon: "↗", aliases: "oat france obligation taux souverain", description: "Le taux de l’emprunt phare à 10 ans en France, publié mensuellement sur Webstat (FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD). Ce rendement de référence est distinct du TEC 10 quotidien." },
   { name: "BCE · Facilité de dépôt", category: "Taux directeur", icon: "%", aliases: "banque centrale europeenne bce depot directeur", description: "Le taux de la facilité de dépôt de la Banque centrale européenne. L’historique permet de retrouver les changements de taux." },
   { name: "Crédit immobilier", category: "Crédit · France", icon: "⌂", aliases: "immobilier emprunt pret habitat logement credit", description: "Le taux moyen des nouveaux crédits à l’habitat en France, hors renégociations. Une série mensuelle, distincte d’une offre bancaire ou d’un TAEG." },
   { name: "Inflation · France", category: "Prix · France", icon: "%", aliases: "inflation france ipch prix", description: "La variation annuelle de l’indice des prix à la consommation harmonisé en France. Données Eurostat, diffusées via Webstat." },
