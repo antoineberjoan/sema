@@ -55,6 +55,7 @@ struct OnboardingView: View {
     }
 
     private var suggestions: [MarketSeries] { WebstatClient.starterSeries }
+    private var selectedCount: Int { selection.intersection(Set(suggestions.map(\.id))).count }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -120,7 +121,7 @@ struct OnboardingView: View {
                 }
             }
             HStack(alignment: .firstTextBaseline) {
-                Text("\(selection.intersection(Set(suggestions.map(\.id))).count) repères choisis")
+                Text(selectedCount == 1 ? "1 repère choisi" : "\(selectedCount) repères choisis")
                     .font(.system(size: 12, weight: .medium)).monospacedDigit()
                     .contentTransition(.numericText())
                 Spacer()

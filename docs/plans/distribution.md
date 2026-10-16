@@ -1,6 +1,6 @@
 # Téléchargement et premier lancement de Sema
 
-16 octobre 2026. Plan d’implémentation. Le parcours, le DMG et Homebrew sont approuvés dans leur principe ; aucun téléchargement public n’est encore activé.
+16 octobre 2026. Plan d’implémentation. Le parcours, le DMG et Homebrew sont approuvés. La section de validation de livraison distingue les essais locaux et les accès publics.
 
 ## Direction retenue
 
@@ -40,7 +40,7 @@ Choisir l’outil de packaging après un essai local. Préférer les outils macO
 
 L’accueil s’affiche seulement au premier lancement ou sur demande depuis les réglages. Un utilisateur existant conserve ses préférences et entre directement dans son espace. L’état d’accueil est local et versionné ; quitter pendant une étape ne détruit aucune sélection.
 
-1. **Vos premiers repères.** Une courte apparition du signe, un titre et une liste de sélection sobre. Les repères recommandés sont modifiables ; on peut poursuivre sans en choisir ou ouvrir ensuite le catalogue complet. Aucun carrousel de présentation obligatoire.
+1. **Vos premiers repères.** Une courte apparition du signe, un titre et quatre collections — Taux & marchés, Économie réelle, Épargne et Devises. Les 13 repères se choisissent par pastilles, sans défilement ni bordure décorative. Les repères recommandés sont modifiables ; on peut poursuivre sans en choisir ou ouvrir ensuite le catalogue complet. Aucun carrousel de présentation obligatoire.
 2. **Vos données Webstat.** Expliquer comment obtenir et connecter sa clé personnelle. Réutiliser la validation et le stockage dans le Trousseau. Proposer « Découvrir en démonstration » ; un refus réseau conserve la saisie en mémoire et permet de réessayer ou de passer.
 3. **Arrivée dans l’espace.** Les choix apparaissent dans la liste de repères, avec une brève transition de continuité. Si l’on a choisi la démonstration, les données fictives restent signalées. La permission de notifications est demandée au moment de créer une alerte, avec une action explicite.
 
