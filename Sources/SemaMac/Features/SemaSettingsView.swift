@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SemaSettingsView: View {
     @Environment(AppStore.self) private var store
+    @Environment(\.openWindow) private var openWindow
     @State private var apiKey = ""
     var body: some View {
         TabView {
@@ -40,6 +41,14 @@ struct SemaSettingsView: View {
                     Text("Les données sources sont consultables gratuitement auprès de la Banque de France, de la BCE et d’Eurostat. Chaque repère indique sa période et sa source.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
+                Section("Premiers pas") {
+                    Button("Revoir l’accueil de Sema") {
+                        store.beginOnboarding()
+                        openWindow(id: "workspace")
+                    }
+                    Text("Retrouvez la sélection de départ et la connexion Webstat. Vos repères personnels sont conservés.")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
                 Section("Notifications") {
                     Toggle("Autoriser les notifications de seuil et les tests", isOn: Binding(
                         get: { store.preferences.notificationsEnabled },
@@ -73,7 +82,8 @@ struct SemaSettingsView: View {
                 SemaMark(size: 64)
                 Text("Sema").font(.system(size: 28, weight: .medium)).tracking(-1)
                 Text("Vos repères, à portée de main.").foregroundStyle(.secondary)
-                Text("Version 0.1.0 · macOS 14+").font(.system(size: 11)).foregroundStyle(.secondary)
+                Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") · macOS 14+")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
                 Text("SwiftUI · AppKit · Swift Charts\nAucune bibliothèque externe.")
                     .font(.system(size: 11)).foregroundStyle(.secondary).multilineTextAlignment(.center)
             }

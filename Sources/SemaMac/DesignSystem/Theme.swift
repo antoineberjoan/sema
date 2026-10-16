@@ -153,7 +153,7 @@ struct SemaSymbol: View {
     }
 }
 
-private struct SemaSignalPath: Shape {
+struct SemaSignalPath: Shape {
     func path(in rect: CGRect) -> Path {
         let scale = min(rect.width, rect.height) / 64
         var path = Path()

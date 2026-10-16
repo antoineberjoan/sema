@@ -11,7 +11,7 @@ struct SemaCommands: Commands {
                 store.isSearchPresented = true
             }
             .keyboardShortcut("k")
-            .disabled(store.isAlertSheetPresented)
+            .disabled(store.isAlertSheetPresented || store.isOnboardingPresented)
         }
         CommandMenu("Navigation") {
             Button("Panorama") { navigate(to: .overview) }.keyboardShortcut("1").disabled(hasModal)
@@ -30,11 +30,11 @@ struct SemaCommands: Commands {
             }
             .disabled(hasModal)
             Button("Actualiser Webstat") { Task { await store.refreshWebstat() } }
-                .keyboardShortcut("r").disabled(store.isLoading || !store.hasWebstatKey)
+                .keyboardShortcut("r").disabled(store.isLoading || !store.hasWebstatKey || store.isOnboardingPresented)
         }
     }
 
-    private var hasModal: Bool { store.isSearchPresented || store.isAlertSheetPresented }
+    private var hasModal: Bool { store.isSearchPresented || store.isAlertSheetPresented || store.isOnboardingPresented }
 
     private func navigate(to section: WorkspaceSection) {
         store.section = section

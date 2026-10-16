@@ -13,6 +13,13 @@ struct SemaMacApp: App {
             WorkspaceView().environment(store).tint(store.palette.controlAccent)
                 .environment(\.semaAccent, store.palette.accent)
                 .environment(\.locale, Locale(identifier: "fr_FR"))
+                .sheet(isPresented: $store.isOnboardingPresented) {
+                    OnboardingView(initialSelection: store.preferences.followedSeriesIDs,
+                        selectSeries: store.followStarterSeries, finish: store.finishOnboarding)
+                        .environment(store).tint(store.palette.controlAccent)
+                        .environment(\.semaAccent, store.palette.accent)
+                        .environment(\.locale, Locale(identifier: "fr_FR"))
+                }
         }
         .defaultSize(width: 1120, height: 760)
         .windowStyle(.automatic)

@@ -31,6 +31,7 @@ final class AppStore {
     var recentAlertEvents: [AlertEvent] = []
     var isAlertSheetPresented = false
     var isSearchPresented = false
+    var isOnboardingPresented = false
     private var opensAlertAfterSearch = false
     var seriesErrors: [String: String] = [:]
     var historyLoadingID: String?
@@ -84,6 +85,22 @@ final class AppStore {
             }
         } catch { errorMessage = "Le cache des données est illisible. Il est conservé ; une actualisation pourra le remplacer." }
         reconcileSelection()
+        isOnboardingPresented = canSavePreferences && preferences.onboardingCompleted != true
+    }
+
+    func beginOnboarding() {
+        isSearchPresented = false
+        isAlertSheetPresented = false
+        isOnboardingPresented = true
+    }
+
+    @discardableResult func finishOnboarding() -> Bool {
+        var next = preferences
+        next.onboardingCompleted = true
+        guard commit(next) else { return false }
+        isOnboardingPresented = false
+        section = .overview
+        return true
     }
 
     var starterSeries: [MarketSeries] { WebstatClient.starterSeries }
