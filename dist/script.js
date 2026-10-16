@@ -11,7 +11,7 @@ const indicators = [
   { name: "Livret A", category: "Épargne réglementée", icon: "%", aliases: "livret a epargne taux reglemente", description: "Le taux du Livret A et ses évolutions historiques, pour replacer la rémunération de l’épargne dans son contexte." },
   { name: "LDDS", category: "Épargne réglementée", icon: "%", aliases: "ldds livret developpement durable solidaire epargne", description: "Le taux du livret de développement durable et solidaire, avec les observations historiques disponibles sur Webstat." },
   { name: "LEP", category: "Épargne réglementée", icon: "%", aliases: "lep livret epargne populaire", description: "Le taux du livret d’épargne populaire et son évolution dans le temps." },
-  { name: "Euro / Yen", category: "Devise · EUR / JPY", icon: "¥", aliases: "eur jpy yen japon change euro", description: "Le taux de change de référence du yen japonais pour un euro, avec un historique consultable dans Sema." },
+  { name: "Euro / Yen", category: "Devise · EUR / JPY", icon: "¥", aliases: "eur jpy yen japon change euro", description: "Le taux de change de référence du yen japonais pour un euro, avec un historique consultable dans sema." },
   { name: "Euro / Franc suisse", category: "Devise · EUR / CHF", icon: "↔", aliases: "eur chf franc suisse change euro", description: "Le taux de change de référence du franc suisse pour un euro, selon les publications de la série." },
   { name: "Euro / Livre sterling", category: "Devise · EUR / GBP", icon: "£", aliases: "eur gbp livre sterling royaume uni change euro", description: "Le taux de change de référence de la livre sterling pour un euro, avec l’historique disponible sur Webstat." }
 ];

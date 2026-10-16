@@ -1,4 +1,4 @@
-# Site Sema
+# Site sema
 
 - Conserver le projet Sites et son audience existante. Lire `.openai/hosting.json` et suivre la skill Sites pour la publication.
 - Appliquer Interface Craft aux choix de design et de mouvement ; lire la skill et le guide `dist/brand/` avant une modification visuelle.
