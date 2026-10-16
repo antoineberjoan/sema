@@ -36,6 +36,10 @@ struct MenuRibbonView: View {
 
     private var items: [MarketSeries] { store.favorites }
     private var isVertical: Bool { store.ribbonPosition.isVertical }
+    private var periodToggleTitle: String {
+        if showsExtendedPeriods { return "Retour" }
+        return [.quarter, .halfYear, .year].contains(period) ? "Plus" : period.title
+    }
 
     var body: some View {
         VStack(spacing: MenuRibbonLayout.spacing) {
@@ -105,7 +109,7 @@ struct MenuRibbonView: View {
                     RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent,
                         periods: showsExtendedPeriods ? [.month, .threeYears, .fiveYears, .all] : [.quarter, .halfYear, .year])
                         .frame(width: showsExtendedPeriods ? 210 : 174)
-                    Button(showsExtendedPeriods ? "Retour" : "Plus") { showsExtendedPeriods.toggle() }
+                    Button(periodToggleTitle) { showsExtendedPeriods.toggle() }
                         .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).fixedSize()
                         .accessibilityLabel(showsExtendedPeriods ? "Afficher les périodes courtes" : "Afficher les périodes longues")
                         .help("Historique disponible sur ce Mac · Tout utilise le cache chargé")
@@ -184,6 +188,9 @@ private struct RibbonCard: View {
     let period: HistoryPeriod
     let action: () -> Void
     private var points: [MarketObservation] { series.history(for: period) }
+    private var comparison: String {
+        series.supports(period) ? MarketFormat.change(series, period: period) : "Historique partiel"
+    }
 
     var body: some View {
         Button(action: action) {
@@ -239,7 +246,7 @@ private struct RibbonCard: View {
     }
     private var publication: some View {
         HStack(spacing: 8) {
-            Text(MarketFormat.change(series, period: period)).lineLimit(1)
+            Text(comparison).lineLimit(1)
             Spacer(minLength: 0)
             Text(series.latest.map { MarketFormat.date($0.date) } ?? "Aucune publication").lineLimit(1)
         }
@@ -247,7 +254,7 @@ private struct RibbonCard: View {
     }
     private var accessibilityDescription: String {
         series.name + ", " + MarketFormat.value(series)
-            + (series.isDemo ? ", démonstration" : "") + ", " + MarketFormat.change(series, period: period)
+            + (series.isDemo ? ", démonstration" : "") + ", " + comparison
             + " sur " + period.title + ", publication du " + MarketFormat.date(series.latest?.date)
     }
 }
