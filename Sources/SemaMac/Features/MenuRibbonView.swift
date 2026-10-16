@@ -9,13 +9,17 @@ import MarketCore
 // 160 ms  Un survol change seulement la profondeur de la carte.
 // Le défilement des cartes reste natif, au trackpad et au clavier.
 enum MenuRibbonLayout {
-    static let height: CGFloat = 268
+    static let height = topPadding + headerHeight + headerSpacing + cardHeight + bottomPadding
     static let verticalWidth: CGFloat = 368
     static let signatureWidth: CGFloat = 252
     static let signatureHeight: CGFloat = 184
     static let cardCornerRadius: CGFloat = 22
-    static let screenInset: CGFloat = 12
+    static let screenInset: CGFloat = 8
     static let padding: CGFloat = 18
+    static let topPadding: CGFloat = 6
+    static let bottomPadding: CGFloat = 12
+    static let headerHeight: CGFloat = 32
+    static let headerSpacing: CGFloat = 6
     static let spacing: CGFloat = 12
     static let minimumCardWidth: CGFloat = 248
     static let maximumCardWidth: CGFloat = 600
@@ -32,17 +36,12 @@ struct MenuRibbonView: View {
     let openWorkspace: () -> Void
     let openSettings: () -> Void
     @State private var period: HistoryPeriod = .year
-    @State private var showsExtendedPeriods = false
 
     private var items: [MarketSeries] { store.favorites }
     private var isVertical: Bool { store.ribbonPosition.isVertical }
-    private var periodToggleTitle: String {
-        if showsExtendedPeriods { return "Retour" }
-        return [.quarter, .halfYear, .year].contains(period) ? "Plus" : period.title
-    }
 
     var body: some View {
-        VStack(spacing: MenuRibbonLayout.spacing) {
+        VStack(spacing: MenuRibbonLayout.headerSpacing) {
             header
             if isVertical {
                 if items.isEmpty { emptyState.frame(maxWidth: .infinity, maxHeight: .infinity) }
@@ -68,7 +67,9 @@ struct MenuRibbonView: View {
                 }
             }
         }
-        .padding(MenuRibbonLayout.padding)
+        .padding(.horizontal, MenuRibbonLayout.padding)
+        .padding(.top, MenuRibbonLayout.topPadding)
+        .padding(.bottom, MenuRibbonLayout.bottomPadding)
         .environment(\.semaAccent, store.palette.accent).tint(store.palette.controlAccent)
         .environment(\.locale, Locale(identifier: "fr_FR"))
         .task { await store.checkWebstatKey() }
@@ -107,11 +108,8 @@ struct MenuRibbonView: View {
             HStack(spacing: 8) {
                 if !items.isEmpty {
                     RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent,
-                        periods: showsExtendedPeriods ? [.month, .threeYears, .fiveYears, .all] : [.quarter, .halfYear, .year])
-                        .frame(width: showsExtendedPeriods ? 210 : 174)
-                    Button(periodToggleTitle) { showsExtendedPeriods.toggle() }
-                        .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).fixedSize()
-                        .accessibilityLabel(showsExtendedPeriods ? "Afficher les périodes courtes" : "Afficher les périodes longues")
+                        compact: isVertical)
+                        .frame(width: isVertical ? 278 : 350)
                         .help("Historique disponible sur ce Mac · Tout utilise le cache chargé")
                 }
                 Button(action: openSettings) {
@@ -120,10 +118,10 @@ struct MenuRibbonView: View {
                 .buttonStyle(.plain)
                 .help("Réglages de sema").accessibilityLabel("Réglages de sema")
             }
-            .padding(.horizontal, 10).padding(.vertical, 4)
+            .padding(.horizontal, 10).padding(.vertical, 3)
             .modifier(RibbonSurface())
         }
-        .foregroundStyle(.primary).frame(height: 36)
+        .foregroundStyle(.primary).frame(height: MenuRibbonLayout.headerHeight)
     }
 
     private var emptyState: some View {
@@ -140,18 +138,30 @@ struct MenuRibbonView: View {
     private func open(_ item: MarketSeries) { store.show(item); store.section = .overview; openWorkspace() }
 }
 
-/// Native segments can clear their selection when an extended period is chosen.
+/// All periods remain directly available in one native segmented control.
 private struct RibbonPeriodPicker: NSViewRepresentable {
     @Binding var selection: HistoryPeriod
     let accent: Color
-    let periods: [HistoryPeriod]
+    let compact: Bool
+    private let periods = HistoryPeriod.allCases
+
+    private func title(for period: HistoryPeriod) -> String {
+        guard compact else { return period.title }
+        switch period {
+        case .month: return "1 m"
+        case .quarter: return "3 m"
+        case .halfYear: return "6 m"
+        default: return period.title
+        }
+    }
 
     func makeCoordinator() -> Coordinator { Coordinator(selection: $selection, periods: periods) }
 
     func makeNSView(context: Context) -> NSSegmentedControl {
-        let control = NSSegmentedControl(labels: periods.map(\.title), trackingMode: .selectOne,
+        let control = NSSegmentedControl(labels: periods.map { title(for: $0) }, trackingMode: .selectOne,
             target: context.coordinator, action: #selector(Coordinator.selectPeriod(_:)))
         control.controlSize = .small
+        control.font = .systemFont(ofSize: 11)
         control.segmentStyle = .rounded
         control.setAccessibilityLabel("Période de comparaison")
         return control
@@ -161,7 +171,10 @@ private struct RibbonPeriodPicker: NSViewRepresentable {
         context.coordinator.selection = $selection
         context.coordinator.periods = periods
         control.segmentCount = periods.count
-        for (index, period) in periods.enumerated() { control.setLabel(period.title, forSegment: index) }
+        for (index, period) in periods.enumerated() {
+            control.setLabel(title(for: period), forSegment: index)
+            control.setToolTip(period.title, forSegment: index)
+        }
         control.selectedSegmentBezelColor = NSColor(accent)
         control.selectedSegment = periods.firstIndex(of: selection) ?? -1
     }
