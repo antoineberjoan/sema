@@ -84,3 +84,7 @@ Aucune dépendance externe : SwiftUI, AppKit, Swift Charts, Observation, Foundat
 ## Suite
 
 Voir [ROADMAP.md](docs/ROADMAP.md). Les priorités sont l’intégration des autres sources officielles, la validation des droits sur les données de fonds et la préparation d’une bêta signée.
+
+## Distribution
+
+Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, le manifeste de release, la page de téléchargement et la préparation Homebrew. Le packaging reste local et ne publie aucun artefact.

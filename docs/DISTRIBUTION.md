@@ -1,0 +1,65 @@
+# Préparer une version de Sema
+
+La construction de l’app et sa distribution sont deux opérations distinctes. Le dépôt source reste privé. Ces outils ne créent aucun dépôt distant, aucune release et aucun téléchargement public.
+
+## Construire l’image disque
+
+Pré-requis de construction : macOS avec les Command Line Tools (Swift, clang, SetFile), Python 3 et les outils système `hdiutil`, `ditto` et `tiffutil`. Aucune dépendance supplémentaire n’est installée ou embarquée dans Sema.
+
+```sh
+./scripts/build-app.sh dist/Sema.app
+./scripts/package-dmg.sh dist/Sema.app dist/releases/0.2.0
+```
+
+Le packaging prend le bundle en argument et lit son `Info.plist`. Il ne modifie pas sa version et ne le signe pas à nouveau. Une copie temporaire est vérifiée avant le montage : identifiant de production, absence de chemin de données de développement ou de fichiers personnels, signature valide, architecture arm64 et macOS minimum cohérent avec le binaire.
+
+La version doit suivre `majeur.mineur.correctif` et le build être numérique. `CFBundleShortVersionString`, `CFBundleVersion` et `LSMinimumSystemVersion` se règlent dans `Resources/Info.plist` avant la compilation. La signature actuelle est ad hoc ; la notarisation n’est pas annoncée.
+
+Le script produit :
+
+- `Sema-<version>-arm64.dmg`, compressé en lecture seule, avec `Sema.app` et un lien vers `/Applications` ;
+- le fond Retina et standard dans `background-preview/` ;
+- `Sema-<version>-arm64.dmg.sha256` ;
+- `release.json`, source des métadonnées du site ;
+- `sema.rb.template`, modèle de cask pour le futur tap.
+
+Un fichier DMG versionné existant n’est jamais écrasé. Pour un nouvel essai du même numéro, utiliser un autre dossier de sortie. Les volumes temporaires sont démontés sur succès, erreur ou interruption. Le script ne retire aucune quarantaine et ne change pas Gatekeeper.
+
+## Fond et disposition Finder
+
+Le fond source est `Resources/Distribution/dmg-background.svg`. `scripts/render-dmg.swift` le rend avec AppKit à 640 × 400 pt, en représentations 1× et 2× réunies dans un TIFF HiDPI. La présentation est écrite dans `.DS_Store` sans automatiser le Finder : fenêtre 640 × 400, affichage par icônes, icônes de 96 pt centrées en (164, 226) et (476, 226), noms sous les icônes, barres du Finder masquées.
+
+Le petit outil C `finder-alias.c` utilise l’Alias Manager de macOS pour lier le fond au fichier **sur le volume monté**. Ces API sont dépréciées mais produisent le format `backgroundImageAlias` encore employé par le Finder ; elles ne sont jamais utilisées dans l’app livrée. Le writer Python est volontairement limité à cette disposition : une seule feuille B-tree, aucun éditeur DS_Store générique.
+
+`bless --openfolder` n’est pas utilisé : cette option ne fonctionne pas sur Apple Silicon. Le montage utilisateur du DMG et la lecture de sa disposition doivent être contrôlés dans le Finder réel.
+
+## Alimenter la page de téléchargement
+
+Le site est un projet distinct. Les métadonnées sont générées à partir du manifeste du **même DMG** :
+
+```sh
+python3 scripts/distribution/sync-download.py \
+  dist/releases/0.2.0/release.json /chemin/site/dist --local-preview
+```
+
+`--local-preview` vérifie la taille et le SHA-256, copie le fichier sous `downloads/`, écrit le manifeste de préversion et insère un vrai lien HTML. Le téléchargement fonctionne ainsi même sans JavaScript. Ce mode est prévu pour la prévisualisation ou le site privé ; il ne décide pas de son audience.
+
+Sans cette option, l’outil utilise uniquement l’URL déjà activée dans `release.json`. L’URL publique proposée et la commande Homebrew restent désactivées par défaut. Ne pas activer le site tant qu’un téléchargement Internet sans session développeur et son SHA-256 n’ont pas été vérifiés.
+
+La page contient une démonstration, pas une mesure du téléchargement ou de la copie réelle. Une seule lecture est lancée lorsque la figure entre dans l’écran ; Rejouer reste disponible, y compris au clavier. Réduire les animations conserve la composition et les trois étapes sans déplacement. L’animation se termine proprement si la fenêtre est masquée ou redimensionnée. Sur localhost uniquement, Alt + clic sur Rejouer ouvre les réglages de développement : vitesse, amortissement, hauteur et ombre.
+
+## Activer Homebrew
+
+Le dépôt envisagé est `antoineberjoan/homebrew-sema`. Le cask se place sous `Casks/sema.rb` dans ce dépôt de distribution ; le code source de Sema n’a pas besoin de devenir public. L’adresse immuable de release proposée est inscrite dans le manifeste et dans le modèle de cask.
+
+Avant activation : créer le dépôt de distribution avec l’audience décidée, publier exactement le DMG contrôlé et son empreinte, vérifier le téléchargement sans authentification, puis tester installation **et** mise à jour sur un environnement distinct. La commande attendue est `brew install --cask antoineberjoan/sema/sema`. Elle n’est pas opérationnelle tant que ces étapes ne sont pas terminées.
+
+Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade` et `validation.internetDownload`. Le générateur de page refuse d’exposer une commande Homebrew active si ces trois valeurs ne sont pas vraies. La désinstallation ne supprime pas les préférences de l’utilisateur ; aucun `zap` automatique n’est défini.
+
+## Vérification avant diffusion
+
+1. Monter le DMG par le Finder, contrôler le fond Retina, les deux icônes, leur nom, les ombres et l’absence d’éléments superflus.
+2. Glisser réellement Sema dans Applications sur un compte de test, éjecter le disque et ouvrir la copie. Vérifier l’accueil, le parcours passé, la reprise et l’ouverture suivante.
+3. Télécharger le fichier via le navigateur sur un autre compte ou Mac pour observer les contrôles de quarantaine et confirmer l’aide Gatekeeper.
+4. Vérifier la page desktop et mobile, le clavier, la copie Homebrew, Réduire les animations, JavaScript absent et les relectures rapides.
+5. Ne cocher les contrôles de `release.json` qu’après les essais correspondants. Le succès de `hdiutil verify` et de la signature locale ne vaut pas validation de l’installation Internet.
