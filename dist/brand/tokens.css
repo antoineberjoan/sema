@@ -1,0 +1,16 @@
+:root {
+  --ink: #101412;
+  --paper: #F4F5F2;
+  --secondary: #A7B2AB;
+  --surface: #202622;
+  --sarcelle: #1F6F73;
+  --reflet: #9AD0C2;
+  --motion-feedback: 120ms;
+  --motion-selection: 180ms;
+  --motion-panel: 240ms;
+  --motion-exit: 160ms;
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --radius-control: 8px;
+  --radius-surface: 16px;
+  --shadow-panel: 0 2px 4px #0003, 0 12px 26px #0002;
+}
