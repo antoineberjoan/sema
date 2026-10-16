@@ -69,6 +69,7 @@ final class AppStore {
     private var historyTask: Task<Void, Never>?
     private var historyGeneration = UUID()
     private var sourceGenerations: [String: UUID] = [:]
+    @ObservationIgnored private var invertedExchangeRates: [String: (source: MarketSeries, display: MarketSeries)] = [:]
 
     init(storage: LocalStorage = .applicationDefault()) {
         self.storage = storage
@@ -167,6 +168,25 @@ final class AppStore {
         NSApplication.shared.appearance = appearance.nativeAppearance
     }
     func setRibbonPosition(_ position: MenuRibbonPosition) { mutatePreferences { $0.ribbonPositionID = position.rawValue } }
+    func isExchangeRateInverted(_ item: MarketSeries) -> Bool {
+        guard let pair = item.exchangeRatePair else { return false }
+        return (preferences.invertedCurrencyPairs ?? []).contains(pair.id)
+    }
+    func displayedSeries(_ item: MarketSeries) -> MarketSeries {
+        guard isExchangeRateInverted(item) else { return item }
+        if let cached = invertedExchangeRates[item.id], cached.source == item { return cached.display }
+        guard let inverse = item.invertedExchangeRateForDisplay() else { return item }
+        invertedExchangeRates[item.id] = (item, inverse)
+        return inverse
+    }
+    func toggleExchangeRateDirection(_ item: MarketSeries) {
+        guard let pair = item.exchangeRatePair, item.canInvertExchangeRate else { return }
+        mutatePreferences { value in
+            var inverted = value.invertedCurrencyPairs ?? []
+            if inverted.contains(pair.id) { inverted.remove(pair.id) } else { inverted.insert(pair.id) }
+            value.invertedCurrencyPairs = inverted
+        }
+    }
     var profile: LocalProfile { preferences.profile ?? LocalProfile() }
     @discardableResult func setProfile(_ profile: LocalProfile) -> Bool { mutatePreferences { $0.profile = profile } }
     func isSourceEnabled(_ id: String) -> Bool { preferences.isSourceEnabled(id) }

@@ -51,7 +51,7 @@ struct MenuRibbonView: View {
                     ScrollView(.vertical) {
                         LazyVStack(spacing: MenuRibbonLayout.spacing) {
                             ForEach(items) { item in
-                                RibbonCard(series: item, period: period) { open(item) }
+                                RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
                                     .frame(height: MenuRibbonLayout.cardHeight)
                             }
                         }.padding(.vertical, 2)
@@ -95,7 +95,7 @@ struct MenuRibbonView: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: MenuRibbonLayout.spacing) {
                         ForEach(items) { item in
-                            RibbonCard(series: item, period: period) { open(item) }
+                            RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
                                 .frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
                         }
                     }

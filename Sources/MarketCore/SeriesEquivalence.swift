@@ -24,7 +24,7 @@ public enum SeriesEquivalence {
         ]
     }
 
-    private static func referenceExchangeRateKey(_ value: MarketSeries) -> String? {
+    static func referenceExchangeRateKey(_ value: MarketSeries) -> String? {
         let key: String
         let unit: String?
         let multiplier: Int?
