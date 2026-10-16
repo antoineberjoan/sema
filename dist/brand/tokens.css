@@ -1,10 +1,10 @@
 :root {
-  --ink: #101412;
-  --paper: #F4F5F2;
-  --secondary: #A7B2AB;
-  --surface: #202622;
-  --sarcelle: #1F6F73;
-  --reflet: #9AD0C2;
+  --ink: #141414;
+  --paper: #FAFAFA;
+  --secondary: #AAAAAA;
+  --surface: #262626;
+  --graphite: #474747;
+  --signal: #D6D6D6;
   --motion-feedback: 120ms;
   --motion-selection: 180ms;
   --motion-panel: 240ms;

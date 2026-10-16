@@ -17,12 +17,12 @@ const MOTION = {
   selection: { duration: 180 },
 };
 const THEMES = [
+  {name:"Graphite", light:"#474747", dark:"#D6D6D6"},
   {name:"Sarcelle", light:"#1F6F73", dark:"#9AD0C2"},
   {name:"Menthe", light:"#32755E", dark:"#9ED5C5"},
   {name:"Lavande", light:"#78499E", dark:"#D0A2F7"},
   {name:"Bleu ciel", light:"#007AB8", dark:"#89CFF3"},
   {name:"Bleu polaire", light:"#097BAF", dark:"#90D2F5"},
-  {name:"Graphite", light:"#474747", dark:"#D6D6D6"},
 ];
 const preference = matchMedia("(prefers-reduced-motion: reduce)");
 const reduceToggle = document.querySelector("#reduce-motion");

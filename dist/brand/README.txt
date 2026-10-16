@@ -1,4 +1,4 @@
-SEMA — IDENTITÉ 1.0
+SEMA — IDENTITÉ 1.1
 16 octobre 2026
 
 Ouvrir index.html pour consulter le guide et ses démonstrations hors ligne.
@@ -6,6 +6,8 @@ Version hébergée : https://sema.raregoat8192.chatgpt.site/brand/
 
 Signature : Gardez vos repères.
 Qualités : calme, précis, attentif.
+Identité monochrome : signe blanc sur graphite.
+Graphite par défaut ; les cinq autres thèmes restent facultatifs dans l’app.
 Logo : Déploiement D3 · Apaisé, dessin original d’Antoine.
 
 assets/ : symboles Display (96 px et plus), Standard (28–95 px), Compact (16–27 px),
