@@ -132,18 +132,15 @@ struct SemaMark: View {
     }
 }
 
-/// Original Sema symbol, also supplied as editable SVG in Resources/Brand.
+/// Déploiement D3: the original curve, with optical weights for small sizes.
 struct SemaSymbol: View {
     var body: some View {
         GeometryReader { geometry in
             let side = min(geometry.size.width, geometry.size.height)
             let scale = side / 64
-            ZStack {
-                SemaSignalPath()
-                    .stroke(style: StrokeStyle(lineWidth: 7 * scale, lineCap: .round, lineJoin: .round))
-                Circle().frame(width: 10 * scale, height: 10 * scale)
-                    .position(x: 32 * scale, y: 32 * scale)
-            }
+            SemaSignalPath()
+                .stroke(style: StrokeStyle(lineWidth: (side < 28 ? 2.89 : side < 96 ? 2.04 : 1.224) * scale,
+                                          lineCap: .round, lineJoin: .round))
             .frame(width: side, height: side)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -156,15 +153,13 @@ private struct SemaSignalPath: Shape {
     func path(in rect: CGRect) -> Path {
         let scale = min(rect.width, rect.height) / 64
         var path = Path()
-        path.move(to: CGPoint(x: 29, y: 17))
-        path.addLine(to: CGPoint(x: 23, y: 17))
-        path.addCurve(to: CGPoint(x: 17, y: 23), control1: CGPoint(x: 19.7, y: 17), control2: CGPoint(x: 17, y: 19.7))
-        path.addLine(to: CGPoint(x: 17, y: 29))
-        path.move(to: CGPoint(x: 35, y: 47))
-        path.addLine(to: CGPoint(x: 41, y: 47))
-        path.addCurve(to: CGPoint(x: 47, y: 41), control1: CGPoint(x: 44.3, y: 47), control2: CGPoint(x: 47, y: 44.3))
-        path.addLine(to: CGPoint(x: 47, y: 35))
-        return path.applying(CGAffineTransform(scaleX: scale, y: scale))
+        path.move(to: CGPoint(x: 43, y: 149.348))
+        path.addCurve(to: CGPoint(x: 89.6292, y: 114.842), control1: CGPoint(x: 84.0337, y: 149.348), control2: CGPoint(x: 95.2247, y: 128.831))
+        path.addCurve(to: CGPoint(x: 74.7079, y: 128.831), control1: CGPoint(x: 84.0337, y: 100.854), control2: CGPoint(x: 64.4494, y: 112.045))
+        path.addCurve(to: CGPoint(x: 155.843, y: 92.4604), control1: CGPoint(x: 95.2247, y: 162.404), control2: CGPoint(x: 137.191, y: 119.505))
+        path.addCurve(to: CGPoint(x: 209, y: 81.2694), control1: CGPoint(x: 174.494, y: 65.4155), control2: CGPoint(x: 187.551, y: 81.2694))
+        return path.applying(CGAffineTransform(a: 0.34 * scale, b: 0, c: 0,
+                                             d: 0.34 * scale, tx: -10.84 * scale, ty: -6.76 * scale))
     }
 }
 

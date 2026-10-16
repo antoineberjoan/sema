@@ -21,30 +21,23 @@ func render(pixels: Int, name: String) throws {
     context.addPath(background)
     context.clip()
     let gradient = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
-        colors: [color(38, 80, 115), color(45, 149, 150)] as CFArray, locations: [0, 1])!
-    context.drawLinearGradient(gradient, start: CGPoint(x: 4, y: 60), end: CGPoint(x: 60, y: 4), options: [])
+        colors: [color(32, 39, 37), color(16, 22, 20)] as CFArray, locations: [0, 1])!
+    context.drawLinearGradient(gradient, start: CGPoint(x: 4, y: 4), end: CGPoint(x: 60, y: 60), options: [])
     context.restoreGState()
-    context.addPath(CGPath(roundedRect: CGRect(x: 4.5, y: 4.5, width: 55, height: 55),
-                           cornerWidth: 12.5, cornerHeight: 12.5, transform: nil))
-    context.setStrokeColor(color(255, 255, 255, alpha: 0.14))
-    context.setLineWidth(1)
-    context.strokePath()
 
-    context.move(to: CGPoint(x: 29, y: 17))
-    context.addLine(to: CGPoint(x: 23, y: 17))
-    context.addCurve(to: CGPoint(x: 17, y: 23), control1: CGPoint(x: 19.7, y: 17), control2: CGPoint(x: 17, y: 19.7))
-    context.addLine(to: CGPoint(x: 17, y: 29))
-    context.move(to: CGPoint(x: 35, y: 47))
-    context.addLine(to: CGPoint(x: 41, y: 47))
-    context.addCurve(to: CGPoint(x: 47, y: 41), control1: CGPoint(x: 44.3, y: 47), control2: CGPoint(x: 47, y: 44.3))
-    context.addLine(to: CGPoint(x: 47, y: 35))
-    context.setLineWidth(7)
+    // Same D3 path as the SVG, normalized to 64 and inset by 8 points.
+    context.translateBy(x: 8 - 10.84 * 0.75, y: 8 - 6.76 * 0.75)
+    context.scaleBy(x: 0.34 * 0.75, y: 0.34 * 0.75)
+    context.move(to: CGPoint(x: 43, y: 149.348))
+    context.addCurve(to: CGPoint(x: 89.6292, y: 114.842), control1: CGPoint(x: 84.0337, y: 149.348), control2: CGPoint(x: 95.2247, y: 128.831))
+    context.addCurve(to: CGPoint(x: 74.7079, y: 128.831), control1: CGPoint(x: 84.0337, y: 100.854), control2: CGPoint(x: 64.4494, y: 112.045))
+    context.addCurve(to: CGPoint(x: 155.843, y: 92.4604), control1: CGPoint(x: 95.2247, y: 162.404), control2: CGPoint(x: 137.191, y: 119.505))
+    context.addCurve(to: CGPoint(x: 209, y: 81.2694), control1: CGPoint(x: 174.494, y: 65.4155), control2: CGPoint(x: 187.551, y: 81.2694))
+    context.setLineWidth(8.5)
     context.setLineCap(.round)
     context.setLineJoin(.round)
-    context.setStrokeColor(color(246, 250, 249))
+    context.setStrokeColor(color(154, 208, 194))
     context.strokePath()
-    context.setFillColor(color(154, 208, 194))
-    context.fillEllipse(in: CGRect(x: 27, y: 27, width: 10, height: 10))
 
     let bitmap = NSBitmapImageRep(cgImage: context.makeImage()!)
     try bitmap.representation(using: .png, properties: [:])!.write(to: directory.appendingPathComponent(name))
