@@ -3,7 +3,7 @@
 /* ANIMATION STORYBOARD — one demonstration, never an installation progress bar.
  *
  *    0ms   composition visible; actions already usable
- *  120ms   D3 draws, dash offset 1 → 0 (360 ms)
+ *  120ms   Palier draws, dash offset 1 → 0 (360 ms)
  *  480ms   sema follows the gesture toward Applications (420 ms)
  *  900ms   destination acknowledges the gesture, ghost fades (180 ms)
  * 1080ms   return to the static composition; Replay remains available

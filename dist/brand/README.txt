@@ -1,4 +1,4 @@
-SEMA — IDENTITÉ 1.1
+sema — IDENTITÉ 1.3
 16 octobre 2026
 
 Ouvrir index.html pour consulter le guide et ses démonstrations hors ligne.
@@ -8,7 +8,7 @@ Signature : Gardez vos repères.
 Qualités : calme, précis, attentif.
 Identité monochrome : signe blanc sur graphite.
 Graphite par défaut ; les cinq autres thèmes restent facultatifs dans l’app.
-Logo : Déploiement D3 · Apaisé, dessin original d’Antoine.
+Logo : Palier — Référence, dessin original d’Antoine.
 
 assets/ : symboles Display (96 px et plus), Standard (28–95 px), Compact (16–27 px),
 version blanche, signature horizontale vectorisée et icône SVG/PNG 1024 px.
