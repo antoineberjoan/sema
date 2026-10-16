@@ -29,6 +29,8 @@ flowchart TB
 
 ### SemaMac
 
+Le bundle déclare `LSUIElement = true` : sema est une app accessoire macOS, absente du Dock, qui conserve ses fenêtres SwiftUI. Le clic droit sur le `NSStatusItem` affiche un menu AppKit natif pour ouvrir le hub, les réglages ou quitter ; aucun changement dynamique de politique d’activation n’est nécessaire.
+
 - `AppStore` est l’état partagé et le point de coordination. Il ne dessine pas l’interface.
 - `SemaCommands` expose les actions de navigation et de recherche dans les menus natifs et ouvre la fenêtre si nécessaire. Les feuilles de recherche et d’alerte partagent l’état local, avec exclusion des commandes de navigation pendant une feuille.
 - `Features` présente les données et émet les actions utilisateur.

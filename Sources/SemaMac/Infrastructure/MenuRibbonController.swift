@@ -55,7 +55,8 @@ final class MenuRibbonController: NSObject {
             button.imagePosition = .imageOnly
             button.toolTip = "sema · Vos favoris"
             button.setAccessibilityLabel("sema, afficher les favoris")
-            button.target = self; button.action = #selector(toggle)
+            button.target = self; button.action = #selector(handleStatusItemClick(_:))
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
         screenObserver = NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main) { [weak self] _ in
@@ -64,6 +65,20 @@ final class MenuRibbonController: NSObject {
                     self.dismiss()
                 }
             }
+    }
+
+    @objc private func handleStatusItemClick(_ button: NSStatusBarButton) {
+        guard let event = NSApplication.shared.currentEvent, event.type == .rightMouseUp else {
+            toggle(); return
+        }
+        dismiss()
+        let menu = NSMenu()
+        menu.addItem(withTitle: "Ouvrir sema", action: #selector(showWorkspace), keyEquivalent: "").target = self
+        menu.addItem(withTitle: "Réglages…", action: #selector(showSettings), keyEquivalent: ",").target = self
+        menu.addItem(.separator())
+        menu.addItem(withTitle: "Quitter sema", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+            .target = NSApplication.shared
+        NSMenu.popUpContextMenu(menu, with: event, for: button)
     }
 
     @objc func toggle() {
@@ -119,8 +134,8 @@ final class MenuRibbonController: NSObject {
         }
     }
 
-    private func showWorkspace() { dismiss(); openWorkspace() }
-    private func showSettings() { dismiss(); openSettings() }
+    @objc private func showWorkspace() { dismiss(); openWorkspace() }
+    @objc private func showSettings() { dismiss(); openSettings() }
 
     private func installMonitors() {
         removeMonitors()
