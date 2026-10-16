@@ -10,12 +10,19 @@
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="download.css">
     <script src="download.js" defer></script>
+    <script src="/chrome.js" defer></script>
+    <link rel="stylesheet" href="/chrome.css">
   </head>
   <body>
     <a class="skip-link" href="#main">Aller au contenu</a>
-    <header class="site-header wrap">
-      <a class="brand" href="/" aria-label="sema, accueil"><img src="/brand/assets/sema-symbol-white.svg" width="32" height="32" alt=""><span>sema</span></a>
-      <nav aria-label="Navigation principale"><a href="/#app">L’app</a><a href="/#questions">Questions</a></nav>
+    <header class="site-header marketing-header">
+      <div class="header-inner wrap">
+        <a class="brand" href="/" aria-label="sema, accueil"><svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path pathLength="1" d="M43 166.683C92.9018 166.683 111.233 118.818 118.362 76.0449C122.436 49.5664 94.9387 55.6768 90.865 86.229C84.7546 136.131 140.767 111.689 159.098 96.413C180.485 79.1001 196.779 95.3946 209 94.3762" transform="translate(-10.84 -6.41998) scale(.34)" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <nav aria-label="navigation principale">
+          <a href="https://github.com/antoineberjoan/homebrew-sema/releases" target="_blank" rel="noopener noreferrer">nouveautés</a>
+          <a class="header-download" href="#release-action" data-header-download aria-hidden="true" inert>télécharger</a>
+        </nav>
+      </div>
     </header>
     <main id="main">
       <section class="download-hero wrap" aria-labelledby="download-title">
@@ -75,7 +82,14 @@
           <!-- release:updates:end --></div>
       </section>
     </main>
-    <footer class="site-footer wrap"><p>sema <span aria-hidden="true">·</span> Une app Mac par Antoine Berjoan.<a class="footer-support" href="https://ko-fi.com/antoineberjoan" target="_blank" rel="noopener noreferrer">Soutenir sema sur Ko-fi <span aria-hidden="true">↗</span></a></p><a href="/">Retour à l’app <span aria-hidden="true">↗</span></a></footer>
+    <footer class="site-footer wrap marketing-footer">
+      <p>créé par <a class="author" href="https://github.com/antoineberjoan" target="_blank" rel="noopener noreferrer">antoine berjoan.</a></p>
+      <nav aria-label="liens utiles">
+        <a href="https://github.com/antoineberjoan/homebrew-sema/releases" target="_blank" rel="noopener noreferrer">nouveautés</a>
+        <a href="https://antoineberjoan.notion.site/5e95023c58754a8990fd16f5fd1ad5f2" target="_blank" rel="noopener noreferrer">une idée ou un bug ?</a>
+        <a href="https://ko-fi.com/antoineberjoan" target="_blank" rel="noopener noreferrer">soutenir</a>
+      </nav>
+    </footer>
     <aside class="motion-tuning" id="motion-tuning" hidden aria-label="Réglage de la démonstration"><h2>Installation · Mouvement</h2><label>Vitesse <input id="motion-speed" type="range" min="0.5" max="1.5" step="0.05" value="1"><output for="motion-speed">1×</output></label><label>Ombre <input id="motion-shadow" type="range" min="0" max="1" step="0.05" value="0.28"><output for="motion-shadow">0,28</output></label><label>Amortissement <input id="motion-damping" type="range" min="4" max="12" step="0.5" value="7"><output for="motion-damping">7</output></label><label>Hauteur <input id="motion-lift" type="range" min="0" max="16" step="1" value="8"><output for="motion-lift">8 px</output></label><label><input id="motion-reduce" type="checkbox"> Réduire les animations</label><p>Outil de développement · Alt + clic sur Rejouer.</p></aside>
   </body>
 </html>

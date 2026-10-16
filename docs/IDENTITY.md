@@ -60,3 +60,11 @@ Le nom s’écrit **sema**, toujours en minuscules, y compris en début de phras
 Signature : **Gardez vos repères.** La promesse est de réunir les repères économiques du conseiller dans une petite app Mac. Trois qualités guident les choix : calme, précision, attention aux détails. Le ton est direct, posé et concret ; vouvoiement, phrases courtes, vocabulaire financier explicité. Toujours afficher source, période et unité. Une hausse de taux n’est pas automatiquement une bonne nouvelle : garder une couleur neutre et une variation signée.
 
 Le guide de marque v1.3 et ses démonstrations de mouvement sont accessibles dans le site privé, à `/brand/`. Le kit de livraison comprend les SVG, les tokens JSON/CSS et le guide HTML autonome. Les démonstrations du guide ne changent pas le fonctionnement de l’app. Les animations actuelles restent natives, avec Réduire les animations respecté ; toute nouvelle séquence se valide au clavier, à vitesse normale et en interruption rapide.
+
+### Présentation web — retenue du 17 octobre
+
+L’accueil se limite à une promesse en deux lignes, un téléchargement, la commande Homebrew discrète, une capture et trois réponses utiles. Les recherches simulées, agrandissements et libellés décoratifs ont été retirés. Les textes visibles de l’accueil sont en minuscules.
+
+L’accueil et la page d’installation partagent un header fixe au défilement : le signe Palier à gauche, « nouveautés » à droite. « télécharger » apparaît uniquement après la sortie du bouton principal au-dessus de la zone visible ; il disparaît au retour. Il reprend sa destination depuis le bouton principal, y compris le fichier distribué sur la page d’installation. Masqué, le lien est inerte et absent du parcours clavier. Le footer tient sur une ligne sur grand écran, avec l’auteur et trois liens utiles, en minuscules et sans encadré.
+
+Le signe se trace une seule fois à chaque chargement, après 160 ms et pendant 2 400 ms. Aucune répétition au défilement. Réduire les animations affiche immédiatement le signe complet et supprime la transition du bouton. Ces durées sont des choix sema réglables dans les variables de `site/dist/chrome.css`, selon les principes d’Interface Craft.

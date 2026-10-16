@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#101010">
+    <meta name="theme-color" content="#0e0e0e">
     <title>sema — L’économie, à portée de Mac.</title>
     <meta name="description" content="Taux, inflation, devises. sema réunit vos repères économiques dans une app native pour Mac, avec favoris, historiques et alertes de seuil.">
     <meta property="og:type" content="website">
@@ -16,107 +16,53 @@
     <link rel="icon" type="image/svg+xml" href="assets/sema.svg">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
-    <script src="motion.js" defer></script>
+    <script src="/chrome.js" defer></script>
+    <link rel="stylesheet" href="landing.css">
+    <link rel="stylesheet" href="/chrome.css">
   </head>
-  <body>
-    <a class="skip-link" href="#main">Aller au contenu</a>
-    <header class="site-header wrap">
-      <a class="brand" href="#top" aria-label="sema, accueil">
-        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M43 166.683C92.9018 166.683 111.233 118.818 118.362 76.0449C122.436 49.5664 94.9387 55.6768 90.865 86.229C84.7546 136.131 140.767 111.689 159.098 96.413C180.485 79.1001 196.779 95.3946 209 94.3762" transform="translate(-10.84 -6.41998) scale(.34)" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>sema</span>
-      </a>
-      <nav aria-label="Navigation principale">
-        <a href="#app">L’app</a>
-        <a href="#questions">Questions</a>
-        <a href="/download/">Télécharger</a>
-      </nav>
+  <body class="landing">
+    <a class="skip-link" href="#main">aller au contenu</a>
+    <header class="site-header marketing-header">
+      <div class="header-inner wrap">
+        <a class="brand" href="#top" aria-label="sema, accueil"><svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path pathLength="1" d="M43 166.683C92.9018 166.683 111.233 118.818 118.362 76.0449C122.436 49.5664 94.9387 55.6768 90.865 86.229C84.7546 136.131 140.767 111.689 159.098 96.413C180.485 79.1001 196.779 95.3946 209 94.3762" transform="translate(-10.84 -6.41998) scale(.34)" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <nav aria-label="navigation principale">
+          <a href="https://github.com/antoineberjoan/homebrew-sema/releases" target="_blank" rel="noopener noreferrer">nouveautés</a>
+          <a class="header-download" href="/download/" data-header-download aria-hidden="true" inert>télécharger</a>
+        </nav>
+      </div>
     </header>
-
     <main id="main">
       <section class="hero wrap" id="top" aria-labelledby="hero-title">
-        <p class="eyebrow">Une app native pour Mac</p>
-        <h1 id="hero-title">Taux. Inflation. Devises.<br><span>D’un coup d’œil, sur votre Mac.</span></h1>
+        <h1 id="hero-title">vos repères économiques. en un regard.<br><span>un clic dans la barre de menus du mac.</span></h1>
         <a class="button" href="/download/">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-          Installer sema
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.5 7.59 9.04 7.31c1.35.07 2.29.76 3.08.82 1.18-.24 2.31-.94 3.57-.85 1.51.12 2.65.72 3.4 1.8-3.11 1.87-2.37 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg>
+          télécharger
         </a>
-        <p class="availability">Préversion <span aria-hidden="true">·</span> Mac avec puce Apple <span aria-hidden="true">·</span> macOS 14+</p>
+        <p class="brew-line"><a class="brew-link" href="/download/#homebrew" data-copy-command="brew install --cask antoineberjoan/sema/sema" aria-label="Copier la commande Homebrew">brew install --cask antoineberjoan/sema/sema</a></p>
+        <p class="sr-only" id="copy-status" role="status"></p>
       </section>
-
-      <section class="product wrap" id="app" aria-label="Aperçu de sema" data-scroll-visual="product">
+      <section class="product wrap" id="app" aria-label="Aperçu de sema">
         <figure>
-          <button class="screenshot-button" type="button" data-enlarge aria-label="Agrandir la capture de sema">
-            <img class="app-screenshot" src="assets/sema-macos-palier.jpg" width="2240" height="1520" alt="sema sur Mac : une barre latérale avec Panorama, Favoris et Alertes, les taux et devises à gauche, et l’historique Euro/Dollar sur un an à droite." fetchpriority="high" decoding="async">
-          </button>
-          <figcaption>
-            <span>sema pour macOS · Aperçu Graphite, données de démonstration.</span>
-            <button class="text-button" type="button" data-enlarge>Agrandir <span aria-hidden="true">↗</span></button>
-          </figcaption>
+          <img class="app-screenshot" src="assets/sema-macos-palier.jpg" width="2240" height="1520" alt="sema sur Mac : une sélection de repères et l’historique Euro / Dollar." fetchpriority="high" decoding="async">
+          <figcaption>données de démonstration.</figcaption>
         </figure>
       </section>
-
-      <section class="closer wrap" aria-labelledby="closer-title">
-        <div class="section-copy">
-          <h2 id="closer-title">Gardez vos repères.</h2>
-          <p data-scroll-text>Vos favoris, plusieurs années d’historique, des alertes de seuil. Et <kbd>⌘ K</kbd> pour retrouver le taux qu’il vous faut.</p>
-        </div>
-        <div class="search-demo" data-scroll-visual="search">
-          <div class="search-surface">
-            <label class="search-field" for="rate-search">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              <input id="rate-search" type="search" aria-label="Rechercher un indicateur" placeholder="Un taux, une devise…" autocomplete="off" spellcheck="false" aria-controls="rate-results" aria-describedby="search-hint">
-              <kbd aria-hidden="true">⌘ K</kbd>
-            </label>
-            <div class="rate-results" id="rate-results" aria-label="Indicateurs disponibles"></div>
-            <p class="no-results" hidden>Aucun repère trouvé. Essayez « BCE » ou « immobilier ».</p>
-            <div class="search-bottom"><span id="result-count" aria-live="polite"></span><span>↑ ↓ <span class="key-hint">pour naviguer</span> <span aria-hidden="true">·</span> ↵ <span class="key-hint">pour ouvrir</span></span></div>
-          </div>
-          <p class="demo-caption" id="search-hint">Essayez la recherche <span aria-hidden="true">·</span> Aperçu interactif du catalogue</p>
-        </div>
-      </section>
-
       <section class="questions wrap" id="questions" aria-labelledby="questions-title">
-        <h2 id="questions-title">Quelques réponses.</h2>
+        <h2 id="questions-title">quelques réponses.</h2>
         <div class="faq-list">
-          <details>
-            <summary>Quels repères peut-on suivre ?<span class="plus" aria-hidden="true"></span></summary>
-            <p>Les treize repères proposés au départ sont une sélection modifiable. Explorez le catalogue accessible avec votre clé Webstat, recherchez une série par son nom ou son code, puis ajoutez-la à votre espace. Taux, crédit, inflation, épargne ou devises : chaque série conserve sa définition, son unité et sa fréquence. Les données proviennent de <a href="https://webstat.banque-france.fr/" target="_blank" rel="noopener noreferrer">Webstat, le portail de la Banque de France ↗</a>.</p>
-          </details>
-          <details>
-            <summary>Comment se connecter aux données ?<span class="plus" aria-hidden="true"></span></summary>
-            <p>Vous renseignez votre propre clé Webstat à l’accueil ou dans les réglages de sema. Elle reste dans le Trousseau de votre Mac. Les données téléchargées sont conservées localement pour pouvoir les consulter hors connexion.</p>
-          </details>
-          <details>
-            <summary>Comment fonctionnent les alertes ?<span class="plus" aria-hidden="true"></span></summary>
-            <p>Choisissez un indicateur, un seuil et le sens du franchissement. sema vérifie vos règles quand vous actualisez les données dans l’app et peut envoyer une notification macOS, si vous l’autorisez. La surveillance automatique en arrière-plan n’est pas encore disponible.</p>
-          </details>
-          <details>
-            <summary>Les données sont-elles en temps réel ?<span class="plus" aria-hidden="true"></span></summary>
-            <p>Chaque série suit son rythme de publication, quotidien, mensuel, trimestriel ou annuel selon l’indicateur. sema affiche la date et la source de chaque observation. Le taux de l’emprunt phare français à 10 ans et le taux du crédit immobilier sont des séries mensuelles. L’emprunt phare est distinct de l’indice TEC 10 quotidien.</p>
-          </details>
-          <details>
-            <summary>Comment télécharger sema ?<span class="plus" aria-hidden="true"></span></summary>
-            <p>Une alpha pour les Mac avec puce Apple est en préparation. Retrouvez le fichier disponible, les étapes et les précautions de première ouverture sur la <a href="/download/">page de téléchargement</a>.</p>
-          </details>
+          <details><summary>quels repères peut-on suivre ?<span class="plus" aria-hidden="true"></span></summary><p>taux, inflation, crédit, épargne, devises : composez votre sélection à partir des catalogues publics disponibles dans sema, dont <a href="https://webstat.banque-france.fr/">webstat, le portail de la banque de france</a>. chaque série conserve sa source, son unité et sa fréquence de publication. votre clé personnelle webstat reste dans le trousseau de votre mac.</p></details>
+          <details><summary>comment fonctionnent les alertes ?<span class="plus" aria-hidden="true"></span></summary><p>choisissez un repère et un seuil. sema vérifie le franchissement lorsque vous actualisez les données et peut vous envoyer une notification macos. la surveillance automatique en arrière-plan n’est pas encore disponible.</p></details>
+          <details><summary>sur quels mac fonctionne sema ?<span class="plus" aria-hidden="true"></span></summary><p>sur les mac avec puce apple, à partir de macos 14. la préversion est disponible en téléchargement ou avec homebrew. les étapes d’installation et de première ouverture sont expliquées sur la <a href="/download/">page de téléchargement</a>.</p></details>
         </div>
       </section>
     </main>
-
-    <footer class="site-footer wrap">
-      <p>sema <span aria-hidden="true">·</span> Une app Mac par Antoine Berjoan.<a class="footer-support" href="https://ko-fi.com/antoineberjoan" target="_blank" rel="noopener noreferrer">Soutenir sema sur Ko-fi <span aria-hidden="true">↗</span></a></p>
-      <a href="#top">Tout en haut <span aria-hidden="true">↑</span></a>
+    <footer class="site-footer wrap marketing-footer">
+      <p>créé par <a class="author" href="https://github.com/antoineberjoan" target="_blank" rel="noopener noreferrer">antoine berjoan.</a></p>
+      <nav aria-label="liens utiles">
+        <a href="https://github.com/antoineberjoan/homebrew-sema/releases" target="_blank" rel="noopener noreferrer">nouveautés</a>
+        <a href="https://antoineberjoan.notion.site/5e95023c58754a8990fd16f5fd1ad5f2" target="_blank" rel="noopener noreferrer">une idée ou un bug ?</a>
+        <a href="https://ko-fi.com/antoineberjoan" target="_blank" rel="noopener noreferrer">soutenir</a>
+      </nav>
     </footer>
-
-    <dialog id="screenshot-dialog" aria-label="Capture de sema en grand">
-      <form method="dialog"><button class="dialog-close" aria-label="Fermer la capture">Fermer <kbd>esc</kbd></button></form>
-      <img src="assets/sema-macos-palier.jpg" alt="Capture en grand de sema : les taux, devises et l’historique Euro/Dollar sur un an." width="2240" height="1520">
-    </dialog>
-    <dialog id="indicator-dialog" aria-labelledby="indicator-title">
-      <form method="dialog"><button class="dialog-close" aria-label="Fermer l’indicateur">Fermer <kbd>esc</kbd></button></form>
-      <p class="eyebrow">Dans le catalogue de sema</p>
-      <h2 id="indicator-title"></h2>
-      <p id="indicator-description"></p>
-      <p class="indicator-source">Source : Webstat · Banque de France</p>
-    </dialog>
   </body>
 </html>
