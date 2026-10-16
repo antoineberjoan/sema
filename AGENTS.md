@@ -1,15 +1,17 @@
-# Instructions du projet Sema
+# Instructions du projet sema
 
 Lire `docs/PRODUCT.md`, `docs/ARCHITECTURE.md` et les fichiers concernés avant de modifier le code. Respecter le socle comportemental donné par Antoine ; ces règles le précisent.
 
 ## Périmètre et structure
 
-- Nom de l’app : **Sema**. Dépôt : **antoineberjoan/sema**.
+- Nom de l’app : **sema**, toujours en minuscules dans les textes visibles. Dépôt : **antoineberjoan/sema**.
 - Cible : macOS 14+, Swift 6. Interface native SwiftUI ; AppKit seulement pour un comportement macOS précis.
 - Le cœur `MarketCore` reste indépendant de SwiftUI, AppKit et UserNotifications.
 - L’interface est rangée par fonctionnalité dans `SemaMac/Features`. Le panneau et la fenêtre partagent `AppStore`.
 - Ne pas ajouter de framework d’architecture, de cible, de service serveur ou de dépendance de production sans nécessité explicite et accord préalable pour une dépendance.
 - Préférer les composants natifs Apple. Centraliser les choix visuels réutilisés dans `DesignSystem`.
+- Respecter Interface Craft dans l’app et ses supports : hiérarchie nette, couleur intentionnelle, profondeur par ombres discrètes, cohérence des espacements et conventions natives. Consulter la skill et `docs/IDENTITY.md` avant une modification de design ou de mouvement.
+- Les animations ont des constantes nommées, restent interruptibles et respectent Réduire les animations. Valider le flux au clavier et le rendu natif ; distinguer ce qui est observé de ce qui reste à vérifier.
 
 ## Données et calculs
 

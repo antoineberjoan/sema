@@ -5,7 +5,7 @@ public enum SeriesCategory: String, Codable, CaseIterable, Sendable {
 }
 
 public enum ValueUnit: String, Codable, Sendable {
-    case percent, usd, jpy, chf, eur
+    case percent, usd, jpy, chf, gbp, eur, index, number, unknown
 
     public var symbol: String {
         switch self {
@@ -13,19 +13,43 @@ public enum ValueUnit: String, Codable, Sendable {
         case .usd: "USD"
         case .jpy: "JPY"
         case .chf: "CHF"
+        case .gbp: "GBP"
         case .eur: "€"
+        case .index: "indice"
+        case .number: ""
+        case .unknown: "Unité non interprétée"
+        }
+    }
+}
+
+public enum ObservationFrequency: String, Codable, Sendable {
+    case daily, businessDaily, weekly, monthly, quarterly, halfYearly, yearly, unknown
+
+    public var title: String {
+        switch self {
+        case .daily: "Quotidien"
+        case .businessDaily: "Jours ouvrés"
+        case .weekly: "Hebdomadaire"
+        case .monthly: "Mensuel"
+        case .quarterly: "Trimestriel"
+        case .halfYearly: "Semestriel"
+        case .yearly: "Annuel"
+        case .unknown: "Fréquence non interprétée"
         }
     }
 }
 
 public enum HistoryPeriod: String, CaseIterable, Identifiable, Sendable {
-    case month, quarter, year
+    case month, quarter, halfYear, year, threeYears, fiveYears, all
     public var id: String { rawValue }
     public var days: Int {
-        switch self { case .month: 30; case .quarter: 90; case .year: 365 }
+        switch self { case .month: 30; case .quarter: 90; case .halfYear: 183; case .year: 365; case .threeYears: 1_095; case .fiveYears: 1_825; case .all: Int.max }
+    }
+    public var months: Int {
+        switch self { case .month: 1; case .quarter: 3; case .halfYear: 6; case .year: 12; case .threeYears: 36; case .fiveYears: 60; case .all: 0 }
     }
     public var title: String {
-        switch self { case .month: "1 mois"; case .quarter: "3 mois"; case .year: "1 an" }
+        switch self { case .month: "1 mois"; case .quarter: "3 mois"; case .halfYear: "6 mois"; case .year: "1 an"; case .threeYears: "3 ans"; case .fiveYears: "5 ans"; case .all: "Tout" }
     }
 }
 
@@ -33,10 +57,17 @@ public struct MarketObservation: Codable, Equatable, Sendable, Identifiable {
     public var id: Date { date }
     public let date: Date
     public let value: Decimal
+    public let periodEnd: Date?
+    public let updatedAt: Date?
+    public let status: String?
 
-    public init(date: Date, value: Decimal) {
+    public init(date: Date, value: Decimal, periodEnd: Date? = nil,
+                updatedAt: Date? = nil, status: String? = nil) {
         self.date = date
         self.value = value
+        self.periodEnd = periodEnd
+        self.updatedAt = updatedAt
+        self.status = status
     }
 }
 
@@ -50,12 +81,20 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public let source: String
     public let sourceURL: URL?
     public let isDemo: Bool
+    public let frequency: ObservationFrequency?
     public let observations: [MarketObservation]
+    public let descriptor: WebstatSeriesDescriptor?
+    public let syncedAt: Date?
+    public let hasCompleteHistory: Bool?
+    public let statisticalDescriptor: StatisticalSeriesDescriptor?
 
     public init(
         id: String, name: String, subtitle: String, category: SeriesCategory,
         unit: ValueUnit, fractionDigits: Int = 2, source: String,
-        sourceURL: URL? = nil, isDemo: Bool, observations: [MarketObservation]
+        sourceURL: URL? = nil, isDemo: Bool, frequency: ObservationFrequency? = nil,
+        observations: [MarketObservation], descriptor: WebstatSeriesDescriptor? = nil,
+        syncedAt: Date? = nil, hasCompleteHistory: Bool? = nil,
+        statisticalDescriptor: StatisticalSeriesDescriptor? = nil
     ) {
         self.id = id
         self.name = name
@@ -66,25 +105,71 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         self.source = source
         self.sourceURL = sourceURL
         self.isDemo = isDemo
+        self.frequency = frequency
+        self.descriptor = descriptor
+        self.syncedAt = syncedAt
+        self.hasCompleteHistory = hasCompleteHistory
+        self.statisticalDescriptor = statisticalDescriptor
         // One publication per date; the last input for that date wins.
         let unique = Dictionary(observations.map { ($0.date, $0) }, uniquingKeysWith: { _, latest in latest })
         self.observations = unique.values.sorted { $0.date < $1.date }
     }
 
     public var latest: MarketObservation? { observations.last }
+    public var originBadge: String { statisticalDescriptor?.dataset.source.title ?? (sourceURL?.host == "webstat.banque-france.fr" ? "BdF" : "BCE") }
+    public var variationConvention: VariationConvention {
+        descriptor?.variation ?? statisticalDescriptor?.variation ?? (unit == .percent ? .points : .relativePercent)
+    }
+    public var displayUnit: String { descriptor?.displayUnit ?? statisticalDescriptor?.displayUnit ?? unit.symbol }
+    public var canAlert: Bool { descriptor?.canAlert ?? statisticalDescriptor?.canAlert ?? (unit != .unknown) }
+
+    public func replacing(observations: [MarketObservation], syncedAt: Date? = nil,
+                          completeHistory: Bool? = nil, descriptor: WebstatSeriesDescriptor? = nil) -> MarketSeries {
+        MarketSeries(id: id, name: name, subtitle: subtitle, category: category, unit: unit,
+            fractionDigits: fractionDigits, source: source, sourceURL: sourceURL, isDemo: isDemo,
+            frequency: frequency, observations: observations, descriptor: descriptor ?? self.descriptor,
+            syncedAt: syncedAt ?? self.syncedAt, hasCompleteHistory: completeHistory ?? hasCompleteHistory,
+            statisticalDescriptor: statisticalDescriptor)
+    }
+
+    public func withID(_ id: String) -> MarketSeries {
+        MarketSeries(id: id, name: name, subtitle: subtitle, category: category, unit: unit,
+            fractionDigits: fractionDigits, source: source, sourceURL: sourceURL, isDemo: isDemo,
+            frequency: frequency, observations: observations, descriptor: descriptor,
+            syncedAt: syncedAt, hasCompleteHistory: hasCompleteHistory, statisticalDescriptor: statisticalDescriptor)
+    }
 
     public func history(for period: HistoryPeriod) -> [MarketObservation] {
+        if period == .all { return observations }
         guard let latest else { return [] }
-        let cutoff = latest.date.addingTimeInterval(-Double(period.days) * 86_400)
+        let cutoff = cutoff(for: period, endingAt: latest.date)
         return observations.filter { $0.date >= cutoff }
+    }
+
+    public func supports(_ period: HistoryPeriod) -> Bool {
+        if period == .all { return !observations.isEmpty }
+        guard let first = observations.first, let latest else { return false }
+        return history(for: period).count > 1 && first.date <= cutoff(for: period, endingAt: latest.date)
+    }
+
+    public var hasAnnualHistory: Bool { supports(.year) }
+
+    private func cutoff(for period: HistoryPeriod, endingAt date: Date) -> Date {
+        if [.monthly, .quarterly, .halfYearly, .yearly].contains(frequency) || period == .halfYear || period.days >= 365 {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+            return calendar.date(byAdding: .month, value: -period.months, to: date)!
+        }
+        return date.addingTimeInterval(-Double(period.days) * 86_400)
     }
 
     /// Rate changes use percentage points; exchange rates and NAVs use percent.
     public func change(for period: HistoryPeriod) -> Decimal? {
         let points = history(for: period)
         guard points.count > 1, let first = points.first, let last = points.last else { return nil }
+        guard variationConvention != .unavailable else { return nil }
         if unit == .percent { return last.value - first.value }
-        guard first.value != 0 else { return nil }
+        guard first.value > 0, last.value >= 0 else { return nil }
         return (last.value - first.value) / first.value * 100
     }
 

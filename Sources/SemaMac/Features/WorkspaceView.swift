@@ -3,117 +3,159 @@ import MarketCore
 
 struct WorkspaceView: View {
     @Environment(AppStore.self) private var store
-    private var selection: Binding<WorkspaceSection?> {
-        Binding(get: { store.section }, set: { if let section = $0 { store.section = section } })
-    }
-
+    @Environment(\.openSettings) private var openSettings
     var body: some View {
         NavigationSplitView {
-            VStack(alignment: .leading, spacing: 26) {
-                HStack(spacing: 10) {
-                    SemaMark(size: 34)
-                    Text("Sema").font(.system(size: 20, weight: .semibold)).tracking(-0.6)
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 9) {
+                    SemaMark(size: 27)
+                    Text("sema").font(.system(size: 19, weight: .semibold)).tracking(-0.5)
                 }
-                .padding(.horizontal, 18).padding(.top, 30)
-                List(WorkspaceSection.allCases, selection: selection) { section in
-                    Label {
-                        HStack {
-                            Text(section.title)
+                .padding(.horizontal, 20).padding(.top, 22)
+                VStack(spacing: 16) {
+                    Button { store.isSearchPresented = true } label: {
+                        HStack(spacing: 9) {
+                            Image(systemName: "magnifyingglass")
+                            Text("Rechercher")
                             Spacer()
-                            if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(.secondary) }
-                            if section == .alerts && !store.preferences.alerts.isEmpty { Text("\(store.preferences.alerts.count)").foregroundStyle(.secondary) }
+                            Text("⌘K").font(.system(size: 11))
                         }
-                    } icon: { Image(systemName: section.symbol).frame(width: 16) }
-                    .tag(section)
-                    .padding(.vertical, 6)
-                }
-                .listStyle(.sidebar)
-                Spacer(minLength: 0)
-                VStack(alignment: .leading, spacing: 9) {
-                    Text("VOTRE VEILLE, SIMPLEMENT").font(.system(size: 9, weight: .medium)).tracking(0.8).foregroundStyle(.secondary)
-                    HStack(spacing: 8) { Image(systemName: "person.crop.circle"); Text("Mon espace") }
                         .font(.system(size: 12)).foregroundStyle(.secondary)
+                        .padding(11).background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 10))
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(SemaPressStyle()).help("Rechercher un repère · ⌘K")
+                    VStack(spacing: 4) {
+                        ForEach(WorkspaceSection.allCases) { SidebarItem(section: $0) }
+                    }
                 }
+                .padding(.horizontal, 12)
+                Spacer(minLength: 0)
+                Button {
+                    store.settingsTab = .profile; openSettings()
+                } label: {
+                    HStack(spacing: 10) {
+                        ProfileAvatar(profile: store.profile)
+                        VStack(alignment: .leading, spacing: 3) {
+                            if !store.profile.displayName.isEmpty {
+                                Text(store.profile.displayName).font(.system(size: 12, weight: .medium))
+                                    .foregroundStyle(.primary).lineLimit(1)
+                            }
+                            Text("Mon espace").font(.system(size: store.profile.displayName.isEmpty ? 13 : 11))
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "gearshape").font(.system(size: 12))
+                    }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain).font(.system(size: 13)).foregroundStyle(.secondary)
+                .help("Personnaliser mon profil local").accessibilityLabel(store.profile.displayName.isEmpty ? "Mon espace" : "Mon espace, \(store.profile.displayName)")
                 .padding(20)
             }
             .navigationSplitViewColumnWidth(min: 185, ideal: 200, max: 225)
         } detail: {
             VStack(spacing: 0) {
-                HStack(alignment: .center) {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text("VOS REPÈRES, À PORTÉE DE MAIN").font(.system(size: 10, weight: .medium)).tracking(1).foregroundStyle(.secondary)
-                        Text(title).font(.system(size: 29, weight: .medium)).tracking(-1)
-                    }
-                    Spacer()
-                    if store.section == .funds || store.section == .alerts {
-                        Button { store.isAlertSheetPresented = true } label: { Label("Créer une alerte", systemImage: "bell.badge") }
-                    } else {
-                        Button { Task { await store.refreshECB() } } label: {
-                            Label(store.isLoading ? "Actualisation…" : "Actualiser les devises", systemImage: "arrow.clockwise")
-                        }
-                        .disabled(store.isLoading)
-                    }
-                    SettingsLink { Image(systemName: "slider.horizontal.3") }.help("Réglages de Sema")
-                }
-                .padding(.horizontal, 30).padding(.top, 27).padding(.bottom, 23)
-
+                if store.section == .explorer {
+                    ExplorerView().padding(26).frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 21) {
-                        dataStatus
+                    VStack(alignment: .leading, spacing: 24) {
                         switch store.section {
                         case .overview: OverviewView()
                         case .favorites: FavoritesView()
-                        case .funds: FundsView()
                         case .alerts: AlertsView()
+                        case .explorer: EmptyView()
                         }
                     }
-                    .padding(.horizontal, 30).padding(.bottom, 26)
+                    .padding(26)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
                 }
-                HStack {
-                    Text("Sema · première version")
-                    Spacer()
-                    Text(store.hasLoadedECB ? "Devises BCE · autres séries en démo" : "Indicateurs et fonds fictifs")
                 }
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .padding(.horizontal, 30).padding(.vertical, 14)
-                .background(SemaTheme.background)
+                dataStatus.padding(.horizontal, 26).padding(.vertical, 14)
             }
             .background(SemaTheme.background)
+            .navigationTitle(store.section.title)
+            .toolbar {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    if store.section == .alerts {
+                        Button { store.isAlertSheetPresented = true } label: { Label("Créer une alerte", systemImage: "bell.badge") }
+                            .disabled(store.alertableSeries.isEmpty)
+                    }
+                    Button { Task { await store.refreshSeries() } } label: {
+                        Label(store.isLoading ? "Actualisation…" : "Actualiser les repères", systemImage: "arrow.clockwise")
+                    }
+                    .labelStyle(.iconOnly).disabled(store.isLoading || !store.canRefresh)
+                    .help(store.canRefresh ? "Actualiser les repères" : "Ajoutez un repère public ou connectez Webstat")
+                    SettingsLink { Label("Réglages", systemImage: "slider.horizontal.3") }
+                        .labelStyle(.iconOnly).help("Réglages de sema")
+                }
+            }
         }
-        .frame(minWidth: 940, minHeight: 700)
+        .frame(minWidth: 980, minHeight: 680)
+        .task { await store.checkWebstatKey() }
         .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
-        .alert("Sema", isPresented: errorBinding) {
+        .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
+        .alert("sema", isPresented: errorBinding) {
             Button("Compris", role: .cancel) { store.errorMessage = nil }
         } message: { Text(store.errorMessage ?? "") }
         .overlay(alignment: .topTrailing) {
             if let event = store.simulatedEvent {
-                DemoNotificationView(event: event).environment(store).padding(.top, 85).padding(.trailing, 25)
+                DemoNotificationView(event: event).environment(store).padding(24)
             }
-        }
-    }
-
-    private var title: String {
-        switch store.section {
-        case .overview: "Un peu de recul."
-        case .favorites: "L’essentiel, choisi par vous."
-        case .funds: "Fonds suivis"
-        case .alerts: "Mes alertes"
         }
     }
 
     private var alertSheetBinding: Binding<Bool> {
         Binding(get: { store.isAlertSheetPresented }, set: { store.isAlertSheetPresented = $0 })
     }
+    private var searchSheetBinding: Binding<Bool> {
+        Binding(get: { store.isSearchPresented }, set: { store.isSearchPresented = $0 })
+    }
     private var errorBinding: Binding<Bool> {
         Binding(get: { store.errorMessage != nil }, set: { if !$0 { store.errorMessage = nil } })
     }
 
     private var dataStatus: some View {
-        HStack(spacing: 10) {
-            Image(systemName: store.hasLoadedECB ? "checkmark.circle" : "info.circle").foregroundStyle(.secondary)
-            Text(store.status ?? "Mode démonstration · les valeurs affichées ne sont pas des cours actuels.")
-                .font(.system(size: 12)).foregroundStyle(.secondary)
-            Spacer(minLength: 0)
+        HStack(spacing: 8) {
+            Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
+            Text(store.status ?? "Démonstration · valeurs fictives")
+                .lineLimit(2).help(store.status ?? "Les valeurs de démonstration ne sont pas des cours actuels.")
+            Spacer(minLength: 12)
+            if !store.hasWebstatKey {
+                Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
+            }
         }
+        .font(.system(size: 11)).foregroundStyle(.secondary)
+    }
+}
+
+private struct SidebarItem: View {
+    @Environment(AppStore.self) private var store
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isHovered = false
+    let section: WorkspaceSection
+    private var selected: Bool { store.section == section }
+
+    var body: some View {
+        Button { store.section = section } label: {
+            HStack(spacing: 10) {
+                Image(systemName: section.symbol).frame(width: 17)
+                Text(section.title)
+                Spacer(minLength: 4)
+                if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(.secondary) }
+                if section == .alerts && !store.macroAlerts.isEmpty {
+                    Text("\(store.macroAlerts.count)").foregroundStyle(.secondary)
+                }
+            }
+            .font(.system(size: 13, weight: selected ? .medium : .regular))
+            .foregroundStyle(selected ? Color.primary : .secondary)
+            .padding(.horizontal, 12).padding(.vertical, 11)
+            .background(Color.primary.opacity(selected ? 0.07 : isHovered ? 0.035 : 0),
+                        in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SemaPressStyle())
+        .accessibilityAddTraits(selected ? .isSelected : [])
+        .onHover { isHovered = $0 }
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.14), value: isHovered)
     }
 }
