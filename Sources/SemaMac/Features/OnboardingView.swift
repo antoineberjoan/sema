@@ -98,8 +98,15 @@ struct OnboardingView: View {
             .id(step)
 
             if let selectionError {
-                Text(selectionError).font(.system(size: 11)).foregroundStyle(.red)
-                    .fixedSize(horizontal: false, vertical: true).padding(.top, 12)
+                HStack(alignment: .top, spacing: 12) {
+                    Text(selectionError).font(.system(size: 11)).foregroundStyle(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    Button("Fermer") { store.isOnboardingPresented = false }
+                        .buttonStyle(.borderless).font(.system(size: 11))
+                        .help("Fermer l’accueil sans le marquer comme terminé")
+                }
+                .padding(.top, 12)
             }
             footer.padding(.top, 24)
         }

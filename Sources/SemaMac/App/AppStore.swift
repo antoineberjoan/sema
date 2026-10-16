@@ -91,6 +91,7 @@ final class AppStore {
     }
 
     func beginOnboarding() {
+        guard canSavePreferences else { return }
         isSearchPresented = false
         isAlertSheetPresented = false
         isOnboardingPresented = true
