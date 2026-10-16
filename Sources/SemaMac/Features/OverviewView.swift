@@ -32,6 +32,7 @@ struct OverviewView: View {
 
 struct IndicatorTile: View {
     @Environment(AppStore.self) private var store
+    @Environment(\.semaAccent) private var accent
     let series: MarketSeries
     var selected = false
     var compact = false
@@ -55,8 +56,8 @@ struct IndicatorTile: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(compact ? 14 : 17)
-                .background(selected ? SemaTheme.accent.opacity(0.09) : SemaTheme.surface, in: RoundedRectangle(cornerRadius: 14))
-                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(selected ? SemaTheme.accent.opacity(0.35) : SemaTheme.separator, lineWidth: 0.7))
+                .background(selected ? accent.opacity(0.09) : SemaTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(selected ? accent.opacity(0.35) : SemaTheme.separator, lineWidth: 0.7))
                 .contentShape(RoundedRectangle(cornerRadius: 14))
             }
             .buttonStyle(.plain)
@@ -68,11 +69,12 @@ struct IndicatorTile: View {
 
 struct FavoriteButton: View {
     @Environment(AppStore.self) private var store
+    @Environment(\.semaAccent) private var accent
     let seriesID: String
     var body: some View {
         Button { store.toggleFavorite(seriesID) } label: {
             Image(systemName: store.isFavorite(seriesID) ? "star.fill" : "star")
-                .font(.system(size: 11)).foregroundStyle(store.isFavorite(seriesID) ? SemaTheme.accent : Color.secondary.opacity(0.7))
+                .font(.system(size: 11)).foregroundStyle(store.isFavorite(seriesID) ? accent : Color.secondary.opacity(0.7))
                 .frame(width: 22, height: 22).contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -109,7 +111,7 @@ struct SeriesDetailView: View {
                 }
                 VStack(spacing: 14) {
                     HStack {
-                        Text(series.category == .funds ? "Valeur liquidative en euros" : series.unit == .percent ? "Taux en %" : series.unit.symbol + " pour 1 EUR")
+                        Text(series.unit == .percent ? "Taux en %" : series.unit.symbol + " pour 1 EUR")
                             .font(.system(size: 11)).foregroundStyle(.secondary)
                         Spacer()
                     }
@@ -127,7 +129,7 @@ struct SeriesDetailView: View {
                     VStack(alignment: .leading, spacing: 5) {
                         Text(observationLabel).font(.system(size: 11, weight: .medium))
                         if series.isDemo {
-                            Text(series.category == .funds ? "Fonds fictif · la part et la devise sont suivies séparément." : "Valeurs fictives pour explorer l’application.")
+                            Text("Valeurs fictives pour explorer l’application.")
                                 .font(.system(size: 11)).foregroundStyle(.secondary)
                         } else {
                             Text(series.frequency == .monthly ? "Publication mensuelle · consultez la période de référence." : "Publication quotidienne · dernière observation disponible.")
@@ -146,11 +148,8 @@ struct SeriesDetailView: View {
                         }
                     }
                 }
-                if series.category == .funds {
-                    Button { store.isAlertSheetPresented = true } label: {
-                        Label("Créer une alerte", systemImage: "bell.badge").frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent).controlSize(.large)
+                Button { store.isAlertSheetPresented = true } label: {
+                    Label("Créer une alerte", systemImage: "bell.badge")
                 }
             }
         }
@@ -176,14 +175,14 @@ struct FavoritesView: View {
     var body: some View {
         if store.favorites.isEmpty {
             ContentUnavailableView("Votre veille commence ici", systemImage: "star",
-                                   description: Text("Ajoutez des indicateurs ou des fonds avec l’étoile pour les retrouver ici."))
+                                   description: Text("Ajoutez des indicateurs avec l’étoile pour les retrouver ici."))
                 .frame(maxWidth: .infinity, minHeight: 380)
         } else {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
                 ForEach(store.favorites) { series in
                     IndicatorTile(series: series) {
                         store.show(series)
-                        if series.category != .funds { store.section = .overview }
+                        store.section = .overview
                     }
                 }
             }

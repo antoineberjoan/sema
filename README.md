@@ -1,6 +1,6 @@
 # Sema
 
-**Vos repères, à portée de main.** Une application macOS native pour consulter ses repères économiques, conserver ses favoris et explorer un suivi de fonds.
+**Vos repères, à portée de main.** Une application macOS native pour consulter ses repères économiques, conserver ses favoris et suivre des seuils sur les taux, l’inflation et les devises.
 
 Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoan/sema`.
 
@@ -10,10 +10,10 @@ Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoa
 - Un panneau compact dans la barre de menus, partageant les mêmes données et favoris.
 - Treize repères macro réels via Webstat après connexion d’une clé personnelle : Livret A, LDDS, LEP, taux de dépôt BCE, €STR, inflation France et zone euro, quatre changes, crédit immobilier et emprunt français à dix ans.
 - Vues sur 1 mois, 3 mois, 1 an, 3 ans et 5 ans selon la profondeur disponible ; source, période et date de mise à jour. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
-- Favoris persistants, recherche dans les fonds de démonstration, règles de hausse/baisse sur une part précise.
-- Création, pause, suppression et test d’alertes. **Aucune surveillance automatique de fonds n’est active.**
+- Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Sarcelle, Menthe, Lavande, Bleu ciel, Bleu polaire et Graphite.
+- Alertes de franchissement strict au-dessus ou en dessous d’un seuil, sur chaque repère Webstat. Création, pause, suppression et test ; vérification des nouvelles observations à chaque actualisation, sans doublon par date.
 
-Tous les fonds sont fictifs. Les alertes sont une démonstration explicite ; leurs règles sont sauvegardées, mais aucun service de surveillance ne tourne. Les actions et les données réelles de fonds ne sont pas connectées.
+Le périmètre est limité aux repères Webstat. Les fonds suivis ont été retirés de l’interface ; les anciennes préférences sont conservées. Aucun minuteur ni service de surveillance en arrière-plan ne tourne : les alertes sont vérifiées à l’actualisation manuelle, pas quand l’app est quittée ou le Mac en veille. Les notifications système restent optionnelles.
 
 ## Démarrer
 
@@ -57,7 +57,7 @@ Sources/
   SemaMac/
     App/                  Cycle de vie et état partagé
     DesignSystem/         Couleurs, typographie, composants et graphiques
-    Features/             Panorama, favoris, fonds, alertes, menu et réglages
+    Features/             Panorama, favoris, alertes macro, menu et réglages
     Infrastructure/       Fichiers, Trousseau et notifications macOS
 Tests/MarketCoreTests/    Règles métier et contrats des données
 Resources/               Métadonnées du bundle et logos SVG
@@ -67,7 +67,7 @@ docs/                    Produit, architecture, sources et décisions
 
 Commencer par [le périmètre produit](docs/PRODUCT.md), puis [l’architecture](docs/ARCHITECTURE.md) et [les sources de données](docs/DATA-SOURCES.md). Les instructions de contribution sont dans [AGENTS.md](AGENTS.md).
 
-L’interface utilise **SF Pro**, les contrôles macOS et une palette teal/mint. Le symbole original est disponible en SVG dans `Resources/Brand`. Voir [l’identité visuelle](docs/IDENTITY.md).
+L’interface utilise **SF Pro**, les contrôles macOS et six palettes avec des accents adaptés aux modes clair et sombre. Le symbole original est disponible en SVG dans `Resources/Brand`. Voir [l’identité visuelle](docs/IDENTITY.md).
 
 ## Données locales
 

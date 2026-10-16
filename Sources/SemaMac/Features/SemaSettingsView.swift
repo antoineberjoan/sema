@@ -30,7 +30,7 @@ struct SemaSettingsView: View {
                 }
                 Section("Sources") {
                     LabeledContent("Repères") { Text(store.hasLoadedWebstat ? "Banque de France · Webstat" : "Démonstration") }
-                    Text("13 repères : épargne réglementée, taux BCE, €STR, inflation, changes, crédit immobilier et emprunt français à dix ans. Historique jusqu’à cinq ans selon la série. Les fonds restent fictifs.")
+                    Text("13 repères : épargne réglementée, taux BCE, €STR, inflation, changes, crédit immobilier et emprunt français à dix ans. Historique jusqu’à cinq ans selon la série.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                     HStack {
                         Button("Actualiser Webstat") { Task { await store.refreshWebstat() } }
@@ -41,16 +41,34 @@ struct SemaSettingsView: View {
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 Section("Notifications") {
-                    Toggle("Autoriser les notifications système pour les tests", isOn: Binding(
+                    Toggle("Autoriser les notifications de seuil et les tests", isOn: Binding(
                         get: { store.preferences.notificationsEnabled },
                         set: { value in Task { await store.setNotificationsEnabled(value) } }
                     ))
-                    Text("Le test reste visible dans Sema même sans autorisation système. Aucune surveillance automatique ou notification distante n’est active.")
+                    Text("Les seuils sont vérifiés à chaque actualisation Webstat. Les signaux restent visibles dans Sema sans notification système. Aucun contrôle quand l’app est quittée ou le Mac en veille.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
             }
             .formStyle(.grouped)
             .tabItem { Label("Général", systemImage: "slider.horizontal.3") }
+            Form {
+                Section("Couleurs de Sema") {
+                    Picker("Thème", selection: Binding(get: { store.palette }, set: { store.setPalette($0) })) {
+                        ForEach(SemaPalette.allCases) { Text($0.title).tag($0) }
+                    }
+                    HStack(spacing: 8) {
+                        ForEach(store.palette.swatches, id: \.self) { hex in
+                            RoundedRectangle(cornerRadius: 8).fill(SemaPalette.swatch(hex))
+                                .frame(height: 52).accessibilityLabel(String(format: "#%06X", hex))
+                        }
+                    }
+                    .accessibilityElement(children: .combine)
+                    Text("Le thème s’applique à la fenêtre, au panneau de barre de menus et aux graphiques. Les surfaces et la typographie restent natives ; les accents s’adaptent aux modes clair et sombre.")
+                        .font(.system(size: 12)).foregroundStyle(.secondary)
+                }
+            }
+            .formStyle(.grouped)
+            .tabItem { Label("Apparence", systemImage: "paintpalette") }
             VStack(spacing: 14) {
                 SemaMark(size: 64)
                 Text("Sema").font(.system(size: 28, weight: .medium)).tracking(-1)

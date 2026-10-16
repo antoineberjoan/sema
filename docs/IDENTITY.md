@@ -6,7 +6,7 @@ Une petite application Mac calme et précise. Mise en page et contrôles en Swif
 
 ### Référence complémentaire : Resurf
 
-Ajoutée par Antoine le 15 octobre 2026. Les vues officielles de [Resurf](https://resurf.so/) servent de référence pour une sidebar compacte, une barre d’outils discrète, des surfaces neutres légèrement chaudes et une distinction claire entre navigation, contenu et inspecteur. Pour Sema, ces principes guideront les prochains ajustements de densité et de hiérarchie ; la typographie système et l’accent teal/mint restent les choix retenus.
+Ajoutée par Antoine le 15 octobre 2026. Les vues officielles de [Resurf](https://resurf.so/) servent de référence pour une sidebar compacte, une barre d’outils discrète, des surfaces neutres légèrement chaudes et une distinction claire entre navigation, contenu et inspecteur. Pour Sema, ces principes guideront les prochains ajustements de densité et de hiérarchie ; la typographie système reste retenue et les accents suivent le thème choisi dans les réglages.
 
 ## Typographie
 
@@ -14,17 +14,18 @@ Ajoutée par Antoine le 15 octobre 2026. Les vues officielles de [Resurf](https:
 
 ## Couleurs
 
-La cinquième référence d’Antoine fournit le bleu profond et le teal, la quatrième les neutres, et la sixième la douceur du mint.
+Six thèmes sont disponibles dans **Réglages → Apparence**. Sarcelle conserve le choix initial ; Lavande, Bleu polaire et Graphite reprennent les propositions, complétées par Menthe et Bleu ciel.
 
-| Usage | Couleur |
+| Thème | Palette de référence |
 | --- | --- |
-| Marque, partie sombre de l’icône | `#265073` |
-| Teal de marque, partie claire de l’icône | `#2D9596` |
-| Actions et courbes en apparence claire | `#1F6F73` |
-| Accent en apparence sombre | `#9AD0C2` |
-| Textes et surfaces | Couleurs sémantiques macOS |
+| Menthe | `#8EC3B0` · `#9ED5C5` · `#BCEAD5` · `#DEF5E5` |
+| Lavande | `#D0A2F7` · `#DCBFFF` · `#E5D4FF` · `#F1EAFF` |
+| Bleu ciel | `#00A9FF` · `#89CFF3` · `#A0E9FF` · `#CDF5FD` |
+| Sarcelle | `#265073` · `#2D9596` · `#9AD0C2` · `#ECF4D6` |
+| Bleu polaire | `#053F56` · `#21A5EC` · `#90D2F5` · `#F2F3F7` |
+| Graphite | `#333333` · `#707070` · `#D6D6D6` · `#FAFAFA` |
 
-Le teal de marque est assombri pour les petits textes et actions sur fond clair. Le vert et le rouge liés aux variations restent des informations distinctes de la couleur de marque ; une direction est aussi exprimée par le texte et le signe.
+Les références pastel sont conservées dans l’aperçu. Les accents sont approfondis sur fond clair pour les textes, les courbes et les contrôles sélectionnés, puis éclaircis pour les courbes en mode sombre. Surfaces et typographie restent sémantiques macOS. Le choix est local, persistant et partagé par la fenêtre et le panneau. L’icône d’app conserve son identité Sarcelle.
 
 ## Symbole original
 

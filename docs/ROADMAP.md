@@ -6,7 +6,9 @@
 - [x] Fenêtre principale et panneau de barre de menus partageant le même état.
 - [x] Repères de démonstration, historiques et favoris persistants.
 - [x] Flux public BCE, cache et indication de la provenance.
-- [x] Fonds fictifs et règles d’alerte locales en démonstration.
+- [x] Alertes de seuil sur les repères Webstat à l’actualisation, pause, test et déduplication persistante.
+- [x] Fonds retirés de l’interface ; anciennes préférences préservées.
+- [x] Six thèmes persistants dans les réglages.
 - [x] Tests du cœur et workflow CI.
 
 ## Prochain incrément produit

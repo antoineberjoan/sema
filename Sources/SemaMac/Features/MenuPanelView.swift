@@ -34,8 +34,7 @@ struct MenuPanelView: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                     ForEach(items) { item in
                         IndicatorTile(series: item, selected: store.selectedSeriesID == item.id, compact: true) {
-                            if item.category == .funds { store.show(item); openWorkspace() }
-                            else { store.show(item) }
+                            store.show(item)
                         }
                     }
                 }

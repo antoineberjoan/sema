@@ -10,7 +10,8 @@ struct SemaMacApp: App {
 
     var body: some Scene {
         Window("Sema", id: "workspace") {
-            WorkspaceView().environment(store).tint(SemaTheme.accent)
+            WorkspaceView().environment(store).tint(store.palette.controlAccent)
+                .environment(\.semaAccent, store.palette.accent)
                 .environment(\.locale, Locale(identifier: "fr_FR"))
         }
         .defaultSize(width: 1120, height: 760)
@@ -20,7 +21,8 @@ struct SemaMacApp: App {
         }
 
         MenuBarExtra(isInserted: $isMenuInserted) {
-            MenuPanelView().environment(store).tint(SemaTheme.accent)
+            MenuPanelView().environment(store).tint(store.palette.controlAccent)
+                .environment(\.semaAccent, store.palette.accent)
                 .environment(\.locale, Locale(identifier: "fr_FR"))
         } label: {
             Image(nsImage: SemaTheme.menuBarIcon).accessibilityLabel("Sema")
@@ -28,7 +30,8 @@ struct SemaMacApp: App {
         .menuBarExtraStyle(.window)
 
         Settings {
-            SemaSettingsView().environment(store).tint(SemaTheme.accent)
+            SemaSettingsView().environment(store).tint(store.palette.controlAccent)
+                .environment(\.semaAccent, store.palette.accent)
         }
     }
 }

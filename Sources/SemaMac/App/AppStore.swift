@@ -3,26 +3,24 @@ import Observation
 import MarketCore
 
 enum WorkspaceSection: String, CaseIterable, Identifiable {
-    case overview, favorites, funds, alerts
+    case overview, favorites, alerts
     var id: String { rawValue }
     var title: String {
-        switch self { case .overview: "Panorama"; case .favorites: "Favoris"; case .funds: "Fonds suivis"; case .alerts: "Alertes" }
+        switch self { case .overview: "Panorama"; case .favorites: "Favoris"; case .alerts: "Alertes" }
     }
     var symbol: String {
-        switch self { case .overview: "square.grid.2x2"; case .favorites: "star"; case .funds: "bookmark"; case .alerts: "bell" }
+        switch self { case .overview: "square.grid.2x2"; case .favorites: "star"; case .alerts: "bell" }
     }
 }
 
 @Observable @MainActor
 final class AppStore {
-    var series = DemoCatalog.series()
+    var series = DemoCatalog.series().filter { $0.category != .funds }
     var preferences = AppPreferences()
     var section: WorkspaceSection = .overview
     var category: SeriesCategory = .markets
     var selectedSeriesID = "eurusd"
-    var selectedFundID = "atlas-i-eur"
     var period: HistoryPeriod = .month
-    var search = ""
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -30,6 +28,7 @@ final class AppStore {
     var status: String?
     var errorMessage: String?
     var simulatedEvent: AlertEvent?
+    var recentAlertEvents: [AlertEvent] = []
     var isAlertSheetPresented = false
     private let storage: LocalStorage
     private let notifications = NotificationService()
@@ -64,12 +63,21 @@ final class AppStore {
         }
     }
 
-    var funds: [MarketSeries] { series.filter { $0.category == .funds } }
     var macroSeries: [MarketSeries] { series.filter { $0.category != .funds } }
     var favorites: [MarketSeries] { series.filter { preferences.favoriteIDs.contains($0.id) } }
     var selectedSeries: MarketSeries { series.first { $0.id == selectedSeriesID } ?? series[0] }
-    var selectedFund: MarketSeries { funds.first { $0.id == selectedFundID } ?? funds[0] }
-    var originSummary: String { hasLoadedWebstat ? "Webstat · fonds en démonstration" : "Webstat à connecter · démonstration disponible" }
+    var originSummary: String { hasLoadedWebstat ? "Banque de France · Webstat" : "Webstat à connecter · démonstration disponible" }
+    var macroAlerts: [AlertRule] {
+        preferences.alerts.filter { rule in
+            rule.effectiveCondition == .level && macroSeries.contains { $0.id == rule.seriesID }
+        }
+    }
+    var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .teal }
+
+    func setPalette(_ palette: SemaPalette) {
+        preferences.themeID = palette.rawValue
+        save()
+    }
 
     func isFavorite(_ id: String) -> Bool { preferences.favoriteIDs.contains(id) }
 
@@ -80,8 +88,9 @@ final class AppStore {
     }
 
     func show(_ item: MarketSeries) {
-        if item.category == .funds { selectedFundID = item.id; section = .funds }
-        else { selectedSeriesID = item.id; category = item.category }
+        guard item.category != .funds else { return }
+        selectedSeriesID = item.id
+        category = item.category
         if !item.supports(period) {
             period = HistoryPeriod.allCases.last(where: { item.supports($0) }) ?? .month
         }
@@ -145,20 +154,24 @@ final class AppStore {
         merge(values)
         hasLoadedWebstat = true
         webstatError = nil
-        status = "\(values.count) repères Webstat actualisés · les fonds et les alertes restent en démonstration."
+        status = "\(values.count) repères Webstat actualisés · alertes vérifiées sur les nouvelles observations."
         do { try storage.cacheWebstat(values) }
         catch { errorMessage = "Les repères sont chargés, mais leur sauvegarde locale a échoué." }
+        evaluateAlerts(in: values)
     }
 
     func restoreDemo() {
-        series = DemoCatalog.series()
+        series = DemoCatalog.series().filter { $0.category != .funds }
+        if !series.contains(where: { $0.id == selectedSeriesID }) { selectedSeriesID = "eurusd" }
         hasLoadedWebstat = false
         status = "Données de démonstration · aucun cours actuel."
     }
 
     func addAlert(seriesID: String, direction: AlertDirection, threshold: Decimal) -> Bool {
-        let rule = AlertRule(seriesID: seriesID, direction: direction, threshold: threshold)
-        guard rule.isValid, funds.contains(where: { $0.id == seriesID }) else { return false }
+        guard let item = macroSeries.first(where: { $0.id == seriesID }) else { return false }
+        let rule = AlertRule(seriesID: seriesID, direction: direction, threshold: threshold,
+                             condition: .level, lastEvaluatedAt: item.isDemo ? nil : item.latest?.date)
+        guard rule.isValid else { return false }
         preferences.alerts.append(rule)
         save()
         section = .alerts
@@ -168,6 +181,10 @@ final class AppStore {
     func toggleAlert(_ id: UUID) {
         guard let index = preferences.alerts.firstIndex(where: { $0.id == id }) else { return }
         preferences.alerts[index].isEnabled.toggle()
+        if preferences.alerts[index].isEnabled {
+            let item = macroSeries.first { $0.id == preferences.alerts[index].seriesID }
+            preferences.alerts[index].lastEvaluatedAt = item?.isDemo == false ? item?.latest?.date : nil
+        }
         save()
     }
 
@@ -177,23 +194,51 @@ final class AppStore {
     }
 
     func simulate(_ rule: AlertRule) {
-        guard let fund = funds.first(where: { $0.id == rule.seriesID }) else { return }
-        let change = (rule.threshold + Decimal(string: "0.4")!) * (rule.direction == .fall ? -1 : 1)
-        let reference: Decimal = 100
+        guard let item = macroSeries.first(where: { $0.id == rule.seriesID }) else { return }
+        let step = Decimal(string: "0.1")!
+        let sign: Decimal = rule.direction == .fall ? -1 : 1
         let sample = MarketSeries(
-            id: fund.id, name: fund.name, subtitle: fund.subtitle, category: .funds, unit: .eur,
+            id: item.id, name: item.name, subtitle: item.subtitle, category: item.category, unit: item.unit,
             source: "Simulation explicite", isDemo: true,
-            observations: [MarketObservation(date: Date().addingTimeInterval(-86_400), value: reference),
-                           MarketObservation(date: Date(), value: reference * (1 + change / 100))]
+            observations: [MarketObservation(date: Date().addingTimeInterval(-86_400), value: rule.threshold - sign * step),
+                           MarketObservation(date: Date(), value: rule.threshold + sign * step)]
         )
         // Testing is deliberate and remains available even if the rule is paused.
-        let activeRule = AlertRule(id: rule.id, seriesID: rule.seriesID, direction: rule.direction, threshold: rule.threshold)
+        let activeRule = AlertRule(id: rule.id, seriesID: rule.seriesID, direction: rule.direction,
+                                   threshold: rule.threshold, condition: .level)
         simulatedEvent = AlertEvaluator.evaluate(activeRule, series: sample)
         if preferences.notificationsEnabled {
             Task {
                 do {
-                    try await notifications.sendDemo(title: fund.name,
-                        body: "Seuil de \(MarketFormat.number(rule.threshold, digits: 1)) % franchi dans la démonstration.")
+                    try await notifications.send(title: item.name,
+                        body: "Seuil de \(MarketFormat.number(rule.threshold, digits: item.fractionDigits)) \(item.unit.symbol) franchi dans la démonstration.", isDemo: true)
+                } catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
+            }
+        }
+    }
+
+    private func evaluateAlerts(in values: [MarketSeries]) {
+        var events: [AlertEvent] = []
+        var didAdvance = false
+        for index in preferences.alerts.indices {
+            let rule = preferences.alerts[index]
+            guard rule.isEnabled, rule.effectiveCondition == .level,
+                  let item = values.first(where: { $0.id == rule.seriesID }), !item.isDemo,
+                  let latest = item.latest,
+                  rule.lastEvaluatedAt.map({ latest.date > $0 }) ?? true else { continue }
+            events += AlertEvaluator.newEvents(rule, series: item)
+            preferences.alerts[index].lastEvaluatedAt = latest.date
+            didAdvance = true
+        }
+        guard didAdvance, save() else { return }
+        recentAlertEvents = Array((recentAlertEvents + events).suffix(20))
+        guard preferences.notificationsEnabled, !events.isEmpty else { return }
+        Task {
+            for event in events {
+                guard let item = values.first(where: { $0.id == event.seriesID }), let value = event.observedValue else { continue }
+                do {
+                    try await notifications.send(title: item.name,
+                        body: "Seuil franchi : \(MarketFormat.number(value, digits: item.fractionDigits)) \(item.unit.symbol) · observation du \(MarketFormat.date(event.observedAt)).", isDemo: false)
                 } catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
             }
         }
@@ -211,17 +256,18 @@ final class AppStore {
 
     private func merge(_ values: [MarketSeries]) {
         for value in values {
+            guard value.category != .funds else { continue }
             if let index = series.firstIndex(where: { $0.id == value.id }) { series[index] = value }
-            else { series.insert(value, at: series.firstIndex { $0.category == .funds } ?? series.endIndex) }
+            else { series.append(value) }
         }
     }
 
-    private func save() {
+    @discardableResult private func save() -> Bool {
         guard canSavePreferences else {
             errorMessage = "La sauvegarde est désactivée pour préserver le fichier de réglages illisible."
-            return
+            return false
         }
-        do { try storage.preferences.save(preferences) }
-        catch { errorMessage = "Les modifications n’ont pas été sauvegardées : \(error.localizedDescription)" }
+        do { try storage.preferences.save(preferences); return true }
+        catch { errorMessage = "Les modifications n’ont pas été sauvegardées : \(error.localizedDescription)"; return false }
     }
 }

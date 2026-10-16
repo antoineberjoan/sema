@@ -3,6 +3,7 @@ import Charts
 import MarketCore
 
 struct HistoryChart: View {
+    @Environment(\.semaAccent) private var accent
     let series: MarketSeries
     let period: HistoryPeriod
     var height: CGFloat = 190
@@ -27,15 +28,15 @@ struct HistoryChart: View {
                 ForEach(points) { point in
                     AreaMark(x: .value("Date", point.date), yStart: .value("Base", domain.lowerBound),
                              yEnd: .value(series.unit.symbol, MarketFormat.double(point.value)))
-                        .foregroundStyle(LinearGradient(colors: [SemaTheme.accent.opacity(0.09), .clear], startPoint: .top, endPoint: .bottom))
+                        .foregroundStyle(LinearGradient(colors: [accent.opacity(0.09), .clear], startPoint: .top, endPoint: .bottom))
                     LineMark(x: .value("Date", point.date), y: .value(series.unit.symbol, MarketFormat.double(point.value)))
-                        .foregroundStyle(SemaTheme.accent).lineStyle(StrokeStyle(lineWidth: 1.8))
+                        .foregroundStyle(accent).lineStyle(StrokeStyle(lineWidth: 1.8))
                 }
                 if let hovered {
                     RuleMark(x: .value("Date sélectionnée", hovered.date))
                         .foregroundStyle(Color.secondary.opacity(0.35))
                     PointMark(x: .value("Date", hovered.date), y: .value(series.unit.symbol, MarketFormat.double(hovered.value)))
-                        .foregroundStyle(SemaTheme.accent).symbolSize(35)
+                        .foregroundStyle(accent).symbolSize(35)
                         .annotation(position: .top, spacing: 8,
                                     overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
                             VStack(alignment: .leading, spacing: 3) {
@@ -89,12 +90,13 @@ struct HistoryChart: View {
 }
 
 struct Sparkline: View {
+    @Environment(\.semaAccent) private var accent
     let series: MarketSeries
     private var values: [MarketObservation] { series.history(for: .month) }
     var body: some View {
         Chart(values) { point in
             LineMark(x: .value("Date", point.date), y: .value("Valeur", MarketFormat.double(point.value)))
-                .foregroundStyle(SemaTheme.accent.opacity(0.8)).lineStyle(StrokeStyle(lineWidth: 1.4))
+                .foregroundStyle(accent.opacity(0.8)).lineStyle(StrokeStyle(lineWidth: 1.4))
         }
         .chartYScale(domain: .automatic(includesZero: false))
         .chartXAxis(.hidden).chartYAxis(.hidden)

@@ -21,7 +21,7 @@ struct WorkspaceView: View {
                             Text(section.title)
                             Spacer()
                             if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(.secondary) }
-                            if section == .alerts && !store.preferences.alerts.isEmpty { Text("\(store.preferences.alerts.count)").foregroundStyle(.secondary) }
+                            if section == .alerts && !store.macroAlerts.isEmpty { Text("\(store.macroAlerts.count)").foregroundStyle(.secondary) }
                         }
                     } icon: { Image(systemName: section.symbol).frame(width: 16) }
                     .tag(section)
@@ -51,7 +51,7 @@ struct WorkspaceView: View {
                         Text(title).font(.system(size: 29, weight: .medium)).tracking(-1)
                     }
                     Spacer()
-                    if store.section == .funds || store.section == .alerts {
+                    if store.section == .alerts {
                         Button { store.isAlertSheetPresented = true } label: { Label("Créer une alerte", systemImage: "bell.badge") }
                     } else {
                         Button { Task { await store.refreshWebstat() } } label: {
@@ -70,7 +70,6 @@ struct WorkspaceView: View {
                         switch store.section {
                         case .overview: OverviewView()
                         case .favorites: FavoritesView()
-                        case .funds: FundsView()
                         case .alerts: AlertsView()
                         }
                     }
@@ -104,7 +103,6 @@ struct WorkspaceView: View {
         switch store.section {
         case .overview: "Un peu de recul."
         case .favorites: "L’essentiel, choisi par vous."
-        case .funds: "Fonds suivis"
         case .alerts: "Mes alertes"
         }
     }

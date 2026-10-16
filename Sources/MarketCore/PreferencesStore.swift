@@ -5,14 +5,16 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var favoriteIDs: Set<String>
     public var alerts: [AlertRule]
     public var notificationsEnabled: Bool
+    public var themeID: String?
 
     public init(
         favoriteIDs: Set<String> = ["fr10", "eurusd", "livreta"],
-        alerts: [AlertRule] = [], notificationsEnabled: Bool = false
+        alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "teal"
     ) {
         self.favoriteIDs = favoriteIDs
         self.alerts = alerts
         self.notificationsEnabled = notificationsEnabled
+        self.themeID = themeID
     }
 }
 

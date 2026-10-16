@@ -43,7 +43,7 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 
 ## Démonstration et compatibilité
 
-Avant connexion, `DemoCatalog` fournit huit repères et quatre fonds fictifs à date fixe, avec `isDemo = true`. Après connexion, les repères macro sont remplacés ou ajoutés par Webstat ; les quatre fonds et les alertes restent en démonstration.
+Avant connexion, l’interface propose les huit repères fictifs de `DemoCatalog`, avec `isDemo = true`. Après connexion, les 13 repères macro sont remplacés ou ajoutés par Webstat. Les fonds ne sont plus exposés ; leurs anciennes règles et favoris restent conservés sans être actifs. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
 
 L’ancien client public `ECBExchangeRateClient` et son parseur restent présents pour compatibilité. Si aucun cache Webstat n’existe, les trois parités de l’ancien `ecb-cache.json` peuvent encore être consultées. L’interface actuelle n’appelle plus directement le flux BCE de 90 jours.
 
