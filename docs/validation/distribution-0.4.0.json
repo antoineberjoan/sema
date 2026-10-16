@@ -1,0 +1,32 @@
+{
+  "version": "0.4.0",
+  "build": "13",
+  "sha256": "81c3c017f8a7356a71abaeaacb7f27b1a48f8b59d28651f2c6ac6fa3e2abe884",
+  "byteSize": 2787414,
+  "publicDownload": {
+    "publicTapVerified": true,
+    "publicDownloadVerified": true,
+    "publicHomebrewInstallVerified": true,
+    "installedSignatureValid": true,
+    "quarantinePresent": true,
+    "appdir": "/private/tmp/sema-publish-20261017/public-install/Applications",
+    "gatekeeperInternetLaunchVerified": false,
+    "appLaunched": false,
+    "version": "0.4.0",
+    "build": "13",
+    "sha256": "81c3c017f8a7356a71abaeaacb7f27b1a48f8b59d28651f2c6ac6fa3e2abe884",
+    "url": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.4.0/Sema-0.4.0-arm64.dmg",
+    "byteSize": 2787414
+  },
+  "privateUpgrade": {
+    "previousVersion": "0.2.0",
+    "nextVersion": "0.4.0",
+    "privateInstallVerified": true,
+    "privateUpgradeVerified": true,
+    "publicTapVerified": false,
+    "publicDownloadVerified": false,
+    "gatekeeperInternetVerified": false
+  },
+  "sourceCodeValidatedAt": "599b12fa1ad3c20d8750720d3387c2f017272a53",
+  "ciMain": "https://github.com/antoineberjoan/sema/actions/runs/38977823381"
+}

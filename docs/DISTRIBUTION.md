@@ -8,7 +8,7 @@ Pré-requis de construction : macOS avec les Command Line Tools (Swift, clang, S
 
 ```sh
 ./scripts/build-app.sh dist/Sema.app
-./scripts/package-dmg.sh dist/Sema.app dist/releases/0.2.0
+./scripts/package-dmg.sh dist/Sema.app dist/releases/0.4.0
 ```
 
 Le packaging prend le bundle en argument et lit son `Info.plist`. Il ne modifie pas sa version et ne le signe pas à nouveau. Une copie temporaire est vérifiée avant le montage : identifiant de production, absence de chemin de données de développement ou de fichiers personnels, signature valide, architecture arm64 et macOS minimum cohérent avec le binaire.
@@ -35,11 +35,11 @@ Le petit outil C `finder-alias.c` utilise l’Alias Manager de macOS pour lier l
 
 ## Alimenter la page de téléchargement
 
-Le site est un projet distinct. Les métadonnées sont générées à partir du manifeste du **même DMG** :
+Le site est versionné sous `site/` dans ce même dépôt ; son hébergement reste distinct. Les métadonnées sont générées à partir du manifeste du **même DMG** :
 
 ```sh
 python3 scripts/distribution/sync-download.py \
-  dist/releases/0.2.0/release.json /chemin/site/dist --local-preview
+  dist/releases/0.4.0/release.json site/dist --local-preview
 ```
 
 `--local-preview` vérifie la taille et le SHA-256, copie le fichier sous `downloads/`, écrit le manifeste de préversion et insère un vrai lien HTML. Le téléchargement fonctionne ainsi même sans JavaScript. Ce mode est prévu pour la prévisualisation ou le site privé ; il ne décide pas de son audience.
@@ -71,3 +71,9 @@ Le DMG versionné est publié dans la release `v0.2.0` de `antoineberjoan/homebr
 Le téléchargement HTTPS sans authentification et l’installation depuis le vrai cask public ont été vérifiés dans un dossier Applications isolé. Une installation puis une mise à jour 0.1.0 → cet artefact exact ont aussi passé le test sur un tap privé. La signature stricte et la quarantaine restent valides après copie ; aucun lancement ni contournement Gatekeeper n’a été effectué. Le premier lancement Internet sur un autre compte ou Mac reste à valider.
 
 Homebrew 7 peut demander une approbation du cask tiers. Après consultation de `Casks/sema.rb`, `brew trust --cask antoineberjoan/sema/sema` permet de l’approuver explicitement, puis de relancer l’installation. La page conserve Homebrew sous une alternative repliable.
+
+## Alpha 0.4.0 publiée le 17 octobre 2026
+
+Le DMG 0.4.0, build 13, est publié dans le dépôt de distribution : 2 787 414 octets, SHA-256 `81c3c017f8a7356a71abaeaacb7f27b1a48f8b59d28651f2c6ac6fa3e2abe884`. Le cask public et `distribution/Casks/sema.rb` correspondent à cet artefact. Le manifeste source de la page se trouve dans `distribution/release.json`, sa copie publiée dans `site/dist/download/release.json`.
+
+Le téléchargement HTTPS sans session, l’installation depuis le vrai cask public et une mise à jour 0.2.0 → 0.4.0 sur tap privé ont été vérifiés dans un dossier Applications isolé. Les signatures restent valides et la quarantaine est conservée. Le test ne lance pas le binaire téléchargé ; le premier lancement Gatekeeper sur un autre compte ou Mac reste à observer. [Preuves](validation/distribution-0.4.0.json).
