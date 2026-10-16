@@ -151,6 +151,7 @@ final class AppStore {
     var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .graphite }
     var appearance: SemaAppearance { SemaAppearance(rawValue: preferences.appearanceID ?? "") ?? .system }
     var ribbonPosition: MenuRibbonPosition { MenuRibbonPosition(rawValue: preferences.ribbonPositionID ?? "") ?? .top }
+    var ribbonGlass: RibbonGlassPreferences { preferences.ribbonGlass ?? .standard }
     var canLoadMoreCatalogue: Bool { catalogueHasMore && !isSearchingCatalogue }
     var previewRequiresRefresh: Bool {
         if let value = previewSeries, let next = value.statisticalDescriptor,
@@ -168,6 +169,10 @@ final class AppStore {
         NSApplication.shared.appearance = appearance.nativeAppearance
     }
     func setRibbonPosition(_ position: MenuRibbonPosition) { mutatePreferences { $0.ribbonPositionID = position.rawValue } }
+    func setRibbonGlass(_ glass: RibbonGlassPreferences) {
+        guard glass != ribbonGlass else { return }
+        mutatePreferences { $0.ribbonGlass = glass }
+    }
     func isExchangeRateInverted(_ item: MarketSeries) -> Bool {
         guard let pair = item.exchangeRatePair else { return false }
         return (preferences.invertedCurrencyPairs ?? []).contains(pair.id)

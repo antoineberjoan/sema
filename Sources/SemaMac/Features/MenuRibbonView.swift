@@ -77,6 +77,7 @@ struct MenuRibbonView: View {
         .padding(.bottom, MenuRibbonLayout.bottomPadding)
         .environment(\.semaAccent, store.palette.accent).tint(store.palette.controlAccent)
         .environment(\.semaGlassTint, store.palette.glassTint)
+        .environment(\.semaGlassSettings, store.ribbonGlass)
         .preferredColorScheme(store.appearance.colorScheme)
         .environment(\.locale, Locale(identifier: "fr_FR"))
         .task { await store.checkWebstatKey() }
@@ -233,7 +234,7 @@ private struct RibbonPeriodPicker: NSViewRepresentable {
     }
 }
 
-private struct RibbonCard: View {
+struct RibbonCard: View {
     @Environment(\.semaAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hovered = false

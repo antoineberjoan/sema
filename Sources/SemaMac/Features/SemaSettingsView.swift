@@ -72,6 +72,7 @@ struct SemaSettingsView: View {
                     Text("La palette colore les courbes, les contrôles et légèrement le verre du bandeau. Elle reste identique lorsque vous changez de mode d’affichage.")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
+                RibbonGlassSettingsView()
             }
             .formStyle(.grouped)
             .tabItem { Label("Apparence", systemImage: "paintpalette") }
