@@ -128,7 +128,7 @@ enum MarketFormat {
     }
 
     static func change(_ series: MarketSeries, period: HistoryPeriod) -> String {
-        guard let delta = series.change(for: period) else { return series.descriptor?.variation == .unavailable ? "Variation non calculée" : "Historique insuffisant" }
+        guard let delta = series.change(for: period) else { return series.variationConvention == .unavailable ? "Variation non calculée" : "Historique insuffisant" }
         return number(delta, digits: 2, signed: true) + (series.unit == .percent ? " pt" : " %")
     }
 
@@ -190,7 +190,7 @@ struct OriginBadge: View {
     @Environment(\.semaAccent) private var accent
     let series: MarketSeries
     var body: some View {
-        Text(series.isDemo ? "Démo" : series.sourceURL?.host == "webstat.banque-france.fr" ? "BdF" : "BCE")
+        Text(series.isDemo ? "Démo" : series.originBadge)
             .font(.system(size: 11, weight: .medium))
             .foregroundStyle(series.isDemo ? Color.secondary : accent)
     }

@@ -2,7 +2,11 @@
 
 ## Promesse
 
-Permettre à un professionnel du patrimoine de consulter ses repères économiques Webstat et définir des alertes de seuil, sans disperser son attention entre plusieurs sites.
+Permettre à un professionnel du patrimoine de consulter ses repères économiques issus de sources publiques et définir des alertes de seuil, sans disperser son attention entre plusieurs sites.
+
+L’incrément local du 16 octobre ouvre sept catalogues publics supplémentaires, avec leurs jeux et dimensions : [contrat et limites](PUBLIC-CATALOGUES.md). Les treize repères Webstat et les exemples proposés ne limitent aucune sélection personnelle. Les contrats Webstat de la version 0.3 ci-dessous restent applicables à ce connecteur ; l’actualisation et les alertes sont désormais partagées entre sources.
+
+Les sources activables, le profil local facultatif, les équivalences vérifiées et le soutien Ko-fi sont décrits dans [PERSONALIZATION.md](PERSONALIZATION.md). « Mon espace » ouvre désormais Profil dans les réglages natifs ; les clés et interrupteurs sont réunis dans Sources.
 
 ## Direction retenue
 

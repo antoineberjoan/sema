@@ -54,6 +54,18 @@ struct LocalStorage {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         try JSONEncoder().encode(cache).write(to: directory.appendingPathComponent("webstat-catalogue.json"), options: .atomic)
     }
+    func cachedStatisticalCatalogues() throws -> [String: [StatisticalDataset]] {
+        let url = directory.appendingPathComponent("statistical-catalogues.json")
+        guard FileManager.default.fileExists(atPath: url.path) else { return [:] }
+        let cache = try JSONDecoder().decode(StatisticalCatalogueCache.self, from: Data(contentsOf: url))
+        guard cache.schemaVersion == 1 else { throw PreferencesStore.StoreError.unsupportedVersion(cache.schemaVersion) }
+        return cache.datasets
+    }
+    func cacheStatisticalCatalogues(_ datasets: [String: [StatisticalDataset]]) throws {
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try JSONEncoder().encode(StatisticalCatalogueCache(datasets: datasets))
+            .write(to: directory.appendingPathComponent("statistical-catalogues.json"), options: .atomic)
+    }
 }
 
 private struct WebstatCache: Codable {
@@ -64,4 +76,8 @@ struct WebstatCatalogueCache: Codable {
     var schemaVersion = 1
     let datasets: [WebstatDataset]
     let labels: [String: [String: String]]
+}
+private struct StatisticalCatalogueCache: Codable {
+    var schemaVersion = 1
+    let datasets: [String: [StatisticalDataset]]
 }

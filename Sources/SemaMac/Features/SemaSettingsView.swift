@@ -3,42 +3,18 @@ import SwiftUI
 struct SemaSettingsView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.openWindow) private var openWindow
-    @State private var apiKey = ""
     var body: some View {
-        TabView {
+        @Bindable var store = store
+        TabView(selection: $store.settingsTab) {
             Form {
-                Section("Banque de France · Webstat") {
-                    LabeledContent("Clé personnelle") { Text(store.hasWebstatKey ? "Enregistrée dans le Trousseau" : "À renseigner") }
-                    SecureField(store.hasWebstatKey ? "Nouvelle clé Webstat" : "Votre clé API Webstat", text: $apiKey)
-                        .textContentType(.password).privacySensitive()
-                        .accessibilityLabel("Clé API Webstat")
+                Section("Repères") {
+                    LabeledContent("Repères") { Text(store.originSummary) }
                     HStack {
-                        Button(store.isLoading ? "Connexion…" : "Enregistrer et connecter") {
-                            Task { if await store.connectWebstat(apiKey: apiKey) { apiKey = "" } }
-                        }
-                        .disabled(store.isLoading || apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                        if store.hasWebstatKey {
-                            Button("Retirer la clé", role: .destructive) { Task { await store.removeWebstatKey() } }
-                                .disabled(store.isLoading)
-                        }
-                    }
-                    Link("Obtenir une clé sur Webstat", destination: URL(string: "https://webstat.banque-france.fr/login/")!)
-                    Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Elle ne fait pas partie du cache ni des préférences.")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                    if let error = store.webstatError {
-                        Text(error).font(.system(size: 11)).foregroundStyle(.red)
-                    }
-                }
-                Section("Sources") {
-                    LabeledContent("Repères") { Text(store.hasLoadedWebstat ? "Banque de France · Webstat" : "Démonstration") }
-                    Text("Composez votre sélection dans Explorer : taux, inflation, crédit, indices, montants et autres séries accessibles avec votre clé Webstat. « Tout » charge l’historique publié à la demande.")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                    HStack {
-                        Button("Actualiser Webstat") { Task { await store.refreshWebstat() } }
-                            .disabled(store.isLoading || !store.hasWebstatKey)
+                        Button("Actualiser les repères") { Task { await store.refreshSeries() } }
+                            .disabled(store.isLoading || !store.canRefresh)
                         Button("Afficher la démonstration") { store.restoreDemo() }.disabled(store.isLoading)
                     }
-                    Text("Les données sources sont consultables gratuitement auprès de la Banque de France, de la BCE et d’Eurostat. Chaque repère indique sa période et sa source.")
+                    Text("Chaque repère conserve son unité, sa période et ses conditions de réutilisation. « Tout » charge l’historique disponible auprès de sa source, à la demande.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 Section("Premiers pas") {
@@ -54,12 +30,17 @@ struct SemaSettingsView: View {
                         get: { store.preferences.notificationsEnabled },
                         set: { value in Task { await store.setNotificationsEnabled(value) } }
                     ))
-                    Text("Les seuils sont vérifiés à chaque actualisation Webstat. Les signaux restent visibles dans sema sans notification système. Aucun contrôle quand l’app est quittée ou le Mac en veille.")
+                    Text("Les seuils sont vérifiés à chaque actualisation des repères. Les signaux restent visibles dans sema sans notification système. Aucun contrôle quand l’app est quittée ou le Mac en veille.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
             }
             .formStyle(.grouped)
             .tabItem { Label("Général", systemImage: "slider.horizontal.3") }
+            .tag(SemaSettingsTab.general)
+            SourceSettingsView()
+                .tabItem { Label("Sources", systemImage: "globe.europe.africa") }.tag(SemaSettingsTab.sources)
+            ProfileSettingsView()
+                .tabItem { Label("Profil", systemImage: "person.crop.circle") }.tag(SemaSettingsTab.profile)
             Form {
                 Section("Mode d’affichage") {
                     Picker("Apparence", selection: Binding(get: { store.appearance }, set: { store.setAppearance($0) })) {
@@ -94,6 +75,7 @@ struct SemaSettingsView: View {
             }
             .formStyle(.grouped)
             .tabItem { Label("Apparence", systemImage: "paintpalette") }
+            .tag(SemaSettingsTab.appearance)
             VStack(spacing: 14) {
                 SemaMark(size: 64)
                 Text("sema").font(.system(size: 28, weight: .medium)).tracking(-1)
@@ -102,12 +84,17 @@ struct SemaSettingsView: View {
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                 Text("SwiftUI · AppKit · Swift Charts\nAucune bibliothèque externe.")
                     .font(.system(size: 11)).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                Text("sema est gratuite. Vous pouvez soutenir son développement sur Ko-fi.")
+                    .font(.system(size: 12)).foregroundStyle(.secondary).multilineTextAlignment(.center)
+                    .frame(maxWidth: 330).padding(.top, 14)
+                Link(destination: SemaSupport.url) { Label("Soutenir sema", systemImage: "heart") }
+                    .font(.system(size: 13))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .tabItem { Label("À propos", systemImage: "info.circle") }
+            .tag(SemaSettingsTab.about)
         }
         .padding(15).frame(width: 620, height: 650)
         .task { await store.checkWebstatKey() }
-        .onDisappear { apiKey = "" }
     }
 }

@@ -10,7 +10,7 @@ struct OverviewView: View {
             ContentUnavailableView {
                 Label("Vos repères, à votre façon.", systemImage: "chart.xyaxis.line")
             } description: {
-                Text("Explorez le catalogue Webstat pour composer votre panorama.")
+                Text("Explorez les catalogues pour composer votre panorama.")
             } actions: {
                 Button("Explorer les repères") { store.section = .explorer }.buttonStyle(.borderedProminent)
             }
@@ -56,6 +56,7 @@ struct OverviewView: View {
 }
 
 struct IndicatorTile: View {
+    @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
@@ -71,6 +72,7 @@ struct IndicatorTile: View {
                     HStack(spacing: 6) {
                         Text(series.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
                         if series.isDemo { Text("Démo").font(.system(size: 11)).foregroundStyle(.secondary) }
+                        if !store.isSourceEnabled(for: series.id) { Image(systemName: "pause.circle").foregroundStyle(.secondary).help("Source désactivée · historique conservé") }
                     }
                     .padding(.trailing, 22)
                     HStack(alignment: .firstTextBaseline) {
@@ -140,6 +142,10 @@ struct SeriesDetailView: View {
                     Spacer(minLength: 0)
                     OriginBadge(series: series)
                 }
+                if !store.isSourceEnabled(series.statisticalDescriptor?.dataset.source.rawValue ?? store.sourceID(for: series.id)) {
+                    Label("Source désactivée · historique conservé, actualisations et alertes en pause.", systemImage: "pause.circle")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                }
                 VStack(alignment: .leading, spacing: 7) {
                     Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
                         .font(.system(size: 40, weight: .medium)).tracking(-1.2).monospacedDigit()
@@ -173,7 +179,7 @@ struct SeriesDetailView: View {
                                 .font(.system(size: 11)).foregroundStyle(.secondary)
                             Spacer()
                             Button("Charger tout l’historique") { store.loadAllHistory(series) }
-                                .buttonStyle(.borderless).disabled(!store.hasWebstatKey || series.descriptor?.firstPeriod == nil)
+                                .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series))
                         }
                     }
                 }
@@ -185,7 +191,7 @@ struct SeriesDetailView: View {
                         Button {
                             store.prepareAlert(for: series)
                         } label: { Label("Créer une alerte", systemImage: "bell.badge") }
-                        .buttonStyle(.borderless).font(.system(size: 12)).disabled(!series.canAlert)
+                        .buttonStyle(.borderless).font(.system(size: 12)).disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
                     }
                 }
                 if !series.canAlert {
@@ -208,13 +214,26 @@ struct SeriesDetailView: View {
                                 LabeledContent("Début publié", value: MarketFormat.date(descriptor.firstPeriod))
                                 LabeledContent("Dernière période", value: MarketFormat.date(descriptor.lastPeriod))
                                 if let base = descriptor.attributes["UNIT_INDEX_BASE"] { LabeledContent("Base de l’indice", value: base) }
+                            } else if let descriptor = series.statisticalDescriptor {
+                                Text(descriptor.definition).textSelection(.enabled)
+                                LabeledContent("Producteur", value: descriptor.fields["PRODUCER"] ?? series.source)
+                                LabeledContent("Fréquence", value: descriptor.frequency.title)
+                                LabeledContent("Unité et échelle", value: descriptor.displayUnit)
+                                Text(descriptor.dataset.source.attribution).textSelection(.enabled)
+                                Link("Conditions de réutilisation ↗", destination: descriptor.dataset.source.termsURL)
                             } else { Text(series.frequency?.title ?? "Fréquence non renseignée") }
                             if let status = series.latest?.status { LabeledContent("Statut de l’observation", value: status) }
                             if let updated = series.latest?.updatedAt { LabeledContent("Mise à jour source", value: MarketFormat.date(updated)) }
                             if let sync = series.syncedAt { LabeledContent("Téléchargé le", value: MarketFormat.date(sync)) }
-                            if let url = series.sourceURL { Link("Consulter sur Webstat ↗", destination: url) }
+                            let accessPoints = SeriesEquivalence.accessPoints(for: series)
+                            if accessPoints.count > 1 {
+                                Text("Accès à cette même série").fontWeight(.medium)
+                                ForEach(accessPoints, id: \.sourceID) { point in
+                                    Link("\(store.sourceName(point.sourceID)) ↗", destination: point.url)
+                                }
+                            } else if let url = series.sourceURL { Link("Consulter la source ↗", destination: url) }
                             Button("Recharger l’historique complet") { store.loadAllHistory(series, reload: true) }
-                                .buttonStyle(.borderless).disabled(!store.hasWebstatKey || store.historyLoadingID != nil)
+                                .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series) || store.historyLoadingID != nil)
                         }
                     }
                     .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -232,6 +251,19 @@ struct SeriesDetailView: View {
                                         Text(text).textSelection(.enabled)
                                     }.frame(maxWidth: .infinity, alignment: .leading)
                                 }
+                            }
+                        }.font(.system(size: 10)).padding(.top, 8)
+                    }.font(.system(size: 11)).foregroundStyle(.secondary)
+                }
+                if let descriptor = series.statisticalDescriptor {
+                    DisclosureGroup("Métadonnées de la source") {
+                        VStack(alignment: .leading, spacing: 7) {
+                            Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
+                            ForEach(descriptor.fields.keys.sorted(), id: \.self) { key in
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(key).fontWeight(.medium)
+                                    Text(descriptor.fields[key] ?? "").textSelection(.enabled)
+                                }.frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }.font(.system(size: 10)).padding(.top, 8)
                     }.font(.system(size: 11)).foregroundStyle(.secondary)

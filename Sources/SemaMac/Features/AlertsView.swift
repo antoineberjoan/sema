@@ -5,7 +5,7 @@ struct AlertsView: View {
     @Environment(AppStore.self) private var store
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Label("Vérification à chaque actualisation Webstat. Aucun contrôle quand l’app est quittée ou le Mac en veille.", systemImage: "info.circle")
+            Label("Vérification à chaque actualisation des repères. Aucun contrôle quand l’app est quittée ou le Mac en veille.", systemImage: "info.circle")
                 .font(.system(size: 12)).foregroundStyle(.secondary)
             if store.macroAlerts.isEmpty {
                 ContentUnavailableView {
@@ -52,16 +52,16 @@ private struct AlertRow: View {
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 HStack(spacing: 16) {
-                    Button("Tester la notification") { store.simulate(rule) }
+                    Button("Tester la notification") { store.simulate(rule) }.disabled(!store.isSourceEnabled(for: rule.seriesID))
                     Button(rule.isEnabled ? "Mettre en pause" : "Réactiver") { store.toggleAlert(rule.id) }
-                        .disabled(!rule.isEnabled && (!store.isFollowing(rule.seriesID) || item?.canAlert != true))
+                        .disabled(!store.isSourceEnabled(for: rule.seriesID) || (!rule.isEnabled && (!store.isFollowing(rule.seriesID) || item?.canAlert != true)))
                     Button(role: .destructive) { store.deleteAlert(rule.id) } label: { Image(systemName: "trash") }
                         .help("Supprimer cette alerte").accessibilityLabel("Supprimer l’alerte sur \(item?.name ?? "ce repère")")
                 }
                 .buttonStyle(.borderless).font(.system(size: 11))
             }
             Spacer(minLength: 0)
-            Text(!store.isFollowing(rule.seriesID) ? "Repère retiré · en pause" : !rule.isEnabled ? "En pause" : item?.canAlert == false ? "Unité à vérifier" : item?.isDemo == true ? "Démo · connexion requise" : "À l’actualisation")
+            Text(!store.isFollowing(rule.seriesID) ? "Repère retiré · en pause" : !store.isSourceEnabled(for: rule.seriesID) ? "Source désactivée · en pause" : !rule.isEnabled ? "En pause" : item?.canAlert == false ? "Unité à vérifier" : item?.isDemo == true ? "Démo · connexion requise" : "À l’actualisation")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
         }
         .padding(.vertical, 18)
@@ -103,7 +103,7 @@ struct AlertEditorView: View {
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
             }
-            Label("Un nouveau franchissement strict est nécessaire. Vérification à l’actualisation Webstat ; aucune surveillance en arrière-plan.", systemImage: "info.circle")
+            Label("Un nouveau franchissement strict est nécessaire. Vérification à l’actualisation des repères ; aucune surveillance en arrière-plan.", systemImage: "info.circle")
                 .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             HStack {
                 Button("Annuler") { dismiss() }.keyboardShortcut(.cancelAction)

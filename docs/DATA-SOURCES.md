@@ -1,5 +1,7 @@
 # Sources et conventions
 
+Les catalogues publics supplémentaires sont désormais intégrés dans l’incrément local : voir [PUBLIC-CATALOGUES.md](PUBLIC-CATALOGUES.md) pour la couverture exacte, les contrats d’unité, la découverte des jeux et les limites vérifiées. Les exemples ci-dessous restent des suggestions, sans restreindre les catalogues.
+
 ## Connexion active : Banque de France / Webstat
 
 - [Guide officiel de l’API](https://webstat.banque-france.fr/pages/guide-migration-api/?flg=fr-fr).
@@ -86,6 +88,6 @@ Les séries de taux souverains candidates sont à jour dans le catalogue au rep�
 
 ### États-Unis et autres compléments
 
-L’EFFR (taux effectif des fonds fédéraux) et le SOFR ont une [API officielle New York Fed](https://markets.newyorkfed.org/static/docs/markets-api.html). Leur disponibilité dans un jeu Webstat adapté n’a pas été confirmée. L’EFFR ne doit pas être présenté comme la fourchette cible du FOMC. Tout connecteur complémentaire et ses conditions de réutilisation restent à valider avant intégration.
+L’EFFR (taux effectif des fonds fédéraux) et le SOFR sont accessibles directement depuis la [New York Fed](https://markets.newyorkfed.org/static/docs/markets-api.html). Le connecteur découvre les familles et leurs mesures numériques ; EFFR, bornes de la cible, percentiles et volumes sont des repères distincts. Leur disponibilité équivalente dans tout Webstat n’a pas été établie. Les mentions de réutilisation accompagnent la fiche source.
 
 Le TEC 10 quotidien est distinct de l’emprunt phare mensuel actuellement intégré : [l’AFT rappelle qu’Euronext calcule et administre les indices CNO-TEC](https://www.aft.gouv.fr/fr/oat-tec-10). Aucun ajout du TEC 10 n’est décidé dans ce repérage. Le PIB, le chômage, l’inflation américaine et les prix immobiliers peuvent compléter une vue macro ensuite, avec une source officielle et des définitions vérifiées pour chaque série.

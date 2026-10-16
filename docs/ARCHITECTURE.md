@@ -18,6 +18,8 @@ flowchart TB
 ### MarketCore
 
 - `MarketSeries` : série typée, origine, source et observations triées et dédupliquées.
+- `StatisticalClient` / `SDMXParser` : découverte des catalogues publics Insee, BCE, Eurostat, BRI et OCDE, puis structure et combinaison choisie par l’utilisateur. Les listes de codes externes référencées sont téléchargées si nécessaire. Les API JSON de taux de référence New York et d’indicateurs Banque mondiale partagent ce contrat de découverte, avec un décodage adapté. Aucun secret Webstat ne leur est transmis.
+- `StatisticalSeriesDescriptor` : source, agence, jeu, version, clé, dimensions, attributs et libellés officiels. Propriété optionnelle de `MarketSeries`, compatible avec les caches précédents. L’interface n’a pas de liste autorisée de séries : elle lit les catalogues, puis charge un repère unique. Contrats détaillés dans [PUBLIC-CATALOGUES.md](PUBLIC-CATALOGUES.md).
 - `AlertRule` / `AlertEvaluator` : seuil absolu et direction sur une série macro précise, évaluation pure de chaque paire d’observations et checkpoint persistant. Une ancienne règle sans condition conserve son sens de variation relative sur fonds.
 - `ECBExchangeRateClient` : téléchargement des 90 derniers jours, validation HTTP et lecture XML sans entités externes.
 - `WebstatClient` : découverte des jeux `webstat-datasets`, recherche paginée `series` (50 résultats par offset, tri sur la clé unique). Au-delà de 9 950 résultats parcourus, un export limité aux sept champs utiles aux résultats est chargé à la demande, réutilisé pour la même recherche et paginé localement. La fiche recharge toujours le descripteur officiel complet avant ses observations, libellés `codelists`, exports `observations` bornés par dates. La clé reste dans le header `Authorization` d’un hôte fixe. Échappement ODSQL, code exact et filtres validés. L’ancien export groupé reste disponible pour compatibilité ; le catalogue et les actualisations utilisent des séries dynamiques.
@@ -48,7 +50,9 @@ Les états de sélection sont partagés volontairement entre panneau et fenêtre
 
 Les préférences et les règles restent un petit document local. Le cache des devises est séparé, car il peut être régénéré. Les préférences illisibles ne sont jamais remplacées automatiquement.
 
-Les historiques restent immuables. Une actualisation réussie fusionne les observations reçues pour chaque série ; l’échec d’une série conserve son historique et n’efface pas les autres. L’interface n’expose plus les fonds de démonstration ; leurs préférences historiques sont conservées. Le cache `webstat-cache.json` est écrit atomiquement ; l’ancien cache BCE peut encore être lu si aucun cache Webstat n’existe. Aucun appel BCE direct n’est exposé dans l’interface actuelle.
+Les champs optionnels v2 `profile`, `disabledSourceIDs` et `alertBaselineIDs` portent le profil local (dont le petit JPEG), les sources suspendues et les règles à réinitialiser après reprise. `AppStore` garde les générations des requêtes pour ignorer les réponses dépassées. `SeriesEquivalence` regroupe uniquement les correspondances de taux de change BCE/Webstat vérifiées ; les identifiants et caches d’origine restent distincts. Le contrat et la validation sont détaillés dans [PERSONALIZATION.md](PERSONALIZATION.md).
+
+Les historiques restent immuables. Une actualisation réussie fusionne les observations reçues pour chaque série ; l’échec d’une série conserve son historique et n’efface pas les autres. L’interface n’expose plus les fonds de démonstration ; leurs préférences historiques sont conservées. Le cache `webstat-cache.json` est écrit atomiquement et conserve son nom pour compatibilité ; il contient aussi les observations publiques et leur descripteur optionnel. Les catalogues publics sont écrits séparément dans `statistical-catalogues.json`. L’ancien cache BCE peut encore être lu si aucun cache Webstat n’existe. L’accès direct BCE SDMX passe désormais par Explorer.
 
 La connexion valide les données avant d’enregistrer la clé. Une erreur HTTP, un quota atteint ou une erreur de décodage conserve le cache et les données affichées ; aucun nouvel essai automatique ne tourne. Le bouton d’actualisation utilise ensuite la clé du Trousseau. Retirer la clé conserve volontairement les données publiques déjà téléchargées. Le cache est relu au lancement, l’actualisation reste manuelle.
 
@@ -56,7 +60,7 @@ Les observations Webstat conservent la fin de période, le statut et la date de 
 
 ## Alertes
 
-Le moteur est testable et indépendant du transport de notification. Il vérifie les nouvelles observations réelles lors de chaque actualisation Webstat réussie. Aucun minuteur, service en arrière-plan ou serveur ne tourne. Une simulation explicite reste disponible et ne modifie pas le checkpoint réel.
+Le moteur est testable et indépendant du transport de notification. Il vérifie les nouvelles observations réelles lors de chaque actualisation réussie d’un repère suivi, quelle que soit sa source. Aucun minuteur, service en arrière-plan ou serveur ne tourne. Une simulation explicite reste disponible et ne modifie pas le checkpoint réel.
 
 Une surveillance future s’ajoutera à l’orchestration. Si elle doit continuer indépendamment du Mac, elle exigera un service côté serveur. Une notification APNs n’assure pas une réception instantanée sur un appareil éteint ou hors ligne.
 

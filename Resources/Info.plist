@@ -8,8 +8,8 @@
     <key>CFBundleExecutable</key><string>SemaMac</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleIconFile</key><string>Sema</string>
-    <key>CFBundleShortVersionString</key><string>0.3.0</string>
-    <key>CFBundleVersion</key><string>8</string>
+    <key>CFBundleShortVersionString</key><string>0.4.0</string>
+    <key>CFBundleVersion</key><string>9</string>
     <key>SemaFeedbackFormURL</key><string>https://antoineberjoan.notion.site/5e95023c58754a8990fd16f5fd1ad5f2</string>
     <key>LSMinimumSystemVersion</key><string>14.0</string>
     <key>LSUIElement</key><true/>

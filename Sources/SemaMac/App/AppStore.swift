@@ -14,11 +14,14 @@ enum WorkspaceSection: String, CaseIterable, Identifiable {
     }
 }
 
+enum SemaSettingsTab: Hashable { case general, sources, profile, appearance, about }
+
 @Observable @MainActor
 final class AppStore {
     var series = WebstatClient.starterSeries
     var preferences = AppPreferences()
     var section: WorkspaceSection = .overview
+    var settingsTab: SemaSettingsTab = .general
     var category: SeriesCategory = .markets
     var selectedSeriesID = WebstatClient.canonicalID("eurusd")
     var period: HistoryPeriod = .month
@@ -49,6 +52,10 @@ final class AppStore {
     var previewSeries: MarketSeries?
     var isLoadingPreview = false
     var previewError: String?
+    var statisticalPreviewRequest: String?
+    private var previewSourceID: String?
+    private var statisticalCatalogues: [String: [StatisticalDataset]] = [:]
+    private var statisticalDescriptors: [String: StatisticalSeriesDescriptor] = [:]
     private let storage: LocalStorage
     private let notifications = NotificationService()
     private let webstatKeychain = WebstatKeychain()
@@ -61,6 +68,7 @@ final class AppStore {
     private var previewTask: Task<Void, Never>?
     private var historyTask: Task<Void, Never>?
     private var historyGeneration = UUID()
+    private var sourceGenerations: [String: UUID] = [:]
 
     init(storage: LocalStorage = .applicationDefault()) {
         self.storage = storage
@@ -74,8 +82,8 @@ final class AppStore {
             let cached = try storage.cachedWebstat()
             if !cached.isEmpty {
                 merge(cached.map { $0.withID(WebstatClient.canonicalID($0.id)) })
-                hasLoadedWebstat = true
-                status = "Repères Webstat conservés localement · consultez la période et la date de publication."
+                hasLoadedWebstat = cached.contains { $0.sourceURL?.host == "webstat.banque-france.fr" }
+                status = "Repères conservés localement · consultez la période et la date de publication."
             } else {
                 let previousRates = try storage.cachedRates()
                 if !previousRates.isEmpty {
@@ -87,6 +95,7 @@ final class AppStore {
                 catalogueDatasets = catalog.datasets
                 catalogueLabels = catalog.labels
             }
+            statisticalCatalogues = try storage.cachedStatisticalCatalogues()
         } catch { errorMessage = "Le cache des données est illisible. Il est conservé ; une actualisation pourra le remplacer." }
         reconcileSelection()
         isOnboardingPresented = canSavePreferences && preferences.onboardingCompleted != true
@@ -109,18 +118,44 @@ final class AppStore {
     }
 
     var starterSeries: [MarketSeries] { WebstatClient.starterSeries }
-    var followedSeries: [MarketSeries] { preferences.followedSeriesIDs.compactMap { id in series.first { $0.id == id } } }
+    private var storedFollowedSeries: [MarketSeries] { preferences.followedSeriesIDs.compactMap { id in series.first { $0.id == id } } }
+    var followedSeries: [MarketSeries] { SeriesEquivalence.unique(storedFollowedSeries) }
     var macroSeries: [MarketSeries] { followedSeries }
-    var alertableSeries: [MarketSeries] { followedSeries.filter(\.canAlert) }
-    var favorites: [MarketSeries] { followedSeries.filter { preferences.favoriteIDs.contains($0.id) } }
+    var alertableSeries: [MarketSeries] { followedSeries.filter { $0.canAlert && isSourceEnabled(for: $0.id) } }
+    var favorites: [MarketSeries] { followedSeries.filter { isFavorite($0.id) } }
     var selectedSeries: MarketSeries? { followedSeries.first { $0.id == selectedSeriesID } ?? followedSeries.first }
-    var originSummary: String { hasLoadedWebstat ? "Banque de France · Webstat" : "Webstat à connecter · démonstration disponible" }
+    var originSummary: String {
+        let sources = Set(followedSeries.filter { !$0.isDemo }.map(\.originBadge)).sorted()
+        return sources.isEmpty ? "Démonstration · sources à explorer" : sources.joined(separator: " · ")
+    }
+    var canRefresh: Bool {
+        preferences.followedSeriesIDs.contains { isSourceEnabled(for: $0) && (hasWebstatKey || statisticalDescriptors[$0] != nil) }
+    }
+    func canLoadFullHistory(_ item: MarketSeries) -> Bool {
+        !item.isDemo && isSourceEnabled(for: item.id) && (item.statisticalDescriptor != nil || (hasWebstatKey && item.descriptor?.firstPeriod != nil))
+    }
+    func statisticalDatasets(source: StatisticalSource, reload: Bool = false) async throws -> [StatisticalDataset] {
+        guard isSourceEnabled(source.rawValue) else { throw CancellationError() }
+        let generation = sourceGenerations[source.rawValue]
+        if !reload, let cached = statisticalCatalogues[source.rawValue] { return cached }
+        let datasets = try await StatisticalClient().datasets(source: source)
+        try Task.checkCancellation()
+        guard isSourceEnabled(source.rawValue), generation == sourceGenerations[source.rawValue] else { throw CancellationError() }
+        statisticalCatalogues[source.rawValue] = datasets
+        do { try storage.cacheStatisticalCatalogues(statisticalCatalogues) }
+        catch { errorMessage = "Le catalogue est chargé, mais sa sauvegarde locale a échoué." }
+        return datasets
+    }
     var macroAlerts: [AlertRule] { preferences.alerts.filter { $0.effectiveCondition == .level } }
     var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .graphite }
     var appearance: SemaAppearance { SemaAppearance(rawValue: preferences.appearanceID ?? "") ?? .system }
     var ribbonPosition: MenuRibbonPosition { MenuRibbonPosition(rawValue: preferences.ribbonPositionID ?? "") ?? .top }
     var canLoadMoreCatalogue: Bool { catalogueHasMore && !isSearchingCatalogue }
     var previewRequiresRefresh: Bool {
+        if let value = previewSeries, let next = value.statisticalDescriptor,
+           let previous = followedSeries.first(where: { $0.id == value.id })?.statisticalDescriptor {
+            return !previous.usesSameMeasurement(as: next)
+        }
         guard let descriptor = previewDescriptor,
               let previous = followedSeries.first(where: { $0.id == descriptor.key })?.descriptor else { return false }
         return !previous.usesSameMeasurement(as: descriptor)
@@ -132,12 +167,47 @@ final class AppStore {
         NSApplication.shared.appearance = appearance.nativeAppearance
     }
     func setRibbonPosition(_ position: MenuRibbonPosition) { mutatePreferences { $0.ribbonPositionID = position.rawValue } }
+    var profile: LocalProfile { preferences.profile ?? LocalProfile() }
+    @discardableResult func setProfile(_ profile: LocalProfile) -> Bool { mutatePreferences { $0.profile = profile } }
+    func isSourceEnabled(_ id: String) -> Bool { preferences.isSourceEnabled(id) }
+    func sourceID(for id: String) -> String { statisticalDescriptors[id]?.dataset.source.rawValue ?? "webstat" }
+    func isSourceEnabled(for id: String) -> Bool { isSourceEnabled(sourceID(for: id)) }
+    func sourceName(_ id: String) -> String { id == "webstat" ? "Webstat" : StatisticalSource(rawValue: id)?.title ?? id }
+    func sourceSeriesCount(_ id: String) -> Int { storedFollowedSeries.filter { sourceID(for: $0.id) == id }.count }
+    func setSourceEnabled(_ id: String, enabled: Bool) {
+        guard id == "webstat" || StatisticalSource(rawValue: id) != nil, enabled != isSourceEnabled(id) else { return }
+        guard mutatePreferences({ value in
+            var disabled = value.disabledSourceIDs ?? []
+            if enabled { disabled.remove(id) } else { disabled.insert(id) }
+            value.disabledSourceIDs = disabled
+            if !enabled {
+                let rules = value.alerts.filter { $0.isEnabled && sourceID(for: $0.seriesID) == id }.map(\.id)
+                value.alertBaselineIDs = (value.alertBaselineIDs ?? []).union(rules)
+            }
+        }) else { return }
+        sourceGenerations[id] = UUID()
+        if !enabled {
+            if id == "webstat" { cancelCatalogueSearch() }
+            if previewSourceID == id { closePreview() }
+            if let historyLoadingID, sourceID(for: historyLoadingID) == id { cancelHistory() }
+        }
+    }
+    func followedMatch(for value: MarketSeries) -> MarketSeries? {
+        followedSeries.first { SeriesEquivalence.matches($0, value) }
+    }
     func isFollowing(_ id: String) -> Bool { preferences.followedSeriesIDs.contains(WebstatClient.canonicalID(id)) }
-    func isFavorite(_ id: String) -> Bool { preferences.favoriteIDs.contains(id) }
+    func isFavorite(_ id: String) -> Bool {
+        guard let item = series.first(where: { $0.id == id }) else { return preferences.favoriteIDs.contains(id) }
+        return storedFollowedSeries.contains { preferences.favoriteIDs.contains($0.id) && SeriesEquivalence.matches($0, item) }
+    }
     func toggleFavorite(_ id: String) {
         guard isFollowing(id) else { return }
+        let equivalentIDs = Set(storedFollowedSeries.filter { candidate in
+            series.first(where: { $0.id == id }).map { SeriesEquivalence.matches($0, candidate) } ?? false
+        }.map(\.id))
+        let wasFavorite = isFavorite(id)
         mutatePreferences { value in
-            if value.favoriteIDs.contains(id) { value.favoriteIDs.remove(id) } else { value.favoriteIDs.insert(id) }
+            if wasFavorite { value.favoriteIDs.subtract(equivalentIDs) } else { value.favoriteIDs.insert(id) }
         }
     }
 
@@ -157,44 +227,100 @@ final class AppStore {
     }
 
     @discardableResult func follow(_ descriptor: WebstatSeriesDescriptor) async -> Bool {
+        guard isSourceEnabled("webstat") else { return false }
         if isFollowing(descriptor.key) { return true }
         do {
             let value: MarketSeries
             if let previewSeries, previewSeries.id == descriptor.key { value = previewSeries }
             else { value = try await fetchRecent(descriptor: descriptor, apiKey: requiredKey()) }
-            // Cache before preferences: failure never creates an apparently saved selection.
-            let merged = series.filter { $0.id != value.id } + [value]
-            try storage.cacheWebstat(merged.filter { !$0.isDemo })
-            guard mutatePreferences({ $0.followedSeriesIDs.append(value.id) }) else { return false }
-            merge([value]); hasLoadedWebstat = true
-            if selectedSeries == nil { show(value) }
-            return true
+            guard isSourceEnabled("webstat") else { return false }
+            return try saveFollowed(value)
         } catch { previewError = error.localizedDescription; return false }
     }
 
+    @discardableResult func followStatisticalPreview() -> Bool {
+        guard let value = previewSeries, value.statisticalDescriptor != nil, !value.observations.isEmpty,
+              !isLoadingPreview, previewError == nil else { return false }
+        if isFollowing(value.id) { return true }
+        do { return try saveFollowed(value) }
+        catch { previewError = error.localizedDescription; return false }
+    }
+    @discardableResult func usePreviewSource() -> Bool {
+        guard let value = previewSeries, !value.observations.isEmpty, !isLoadingPreview, previewError == nil,
+              let previous = followedMatch(for: value), previous.id != value.id,
+              isSourceEnabled(value.statisticalDescriptor?.dataset.source.rawValue ?? "webstat") else { return false }
+        let ids = Set(storedFollowedSeries.filter { SeriesEquivalence.matches($0, value) }.map(\.id))
+        do {
+            try storage.cacheWebstat((series.filter { $0.id != value.id } + [value]).filter { !$0.isDemo })
+            guard mutatePreferences({ next in
+                var inserted = false
+                next.followedSeriesIDs = next.followedSeriesIDs.compactMap { id in
+                    guard ids.contains(id) else { return id }
+                    if inserted { return nil }; inserted = true; return value.id
+                }
+                if !next.favoriteIDs.isDisjoint(with: ids) { next.favoriteIDs.subtract(ids); next.favoriteIDs.insert(value.id) }
+                next.alerts = next.alerts.map { rule in
+                    guard ids.contains(rule.seriesID) else { return rule }
+                    return AlertRule(id: rule.id, seriesID: value.id, direction: rule.direction, threshold: rule.threshold,
+                        isEnabled: rule.isEnabled, condition: rule.effectiveCondition,
+                        lastEvaluatedAt: max(rule.lastEvaluatedAt ?? .distantPast, value.latest?.date ?? .distantPast))
+                }
+            }) else { return false }
+            merge([value]); if ids.contains(selectedSeriesID) { selectedSeriesID = value.id }
+            status = "Source du repère : \(value.originBadge). Favori et règles conservés."
+            return true
+        } catch { previewError = error.localizedDescription; return false }
+    }
+    private func saveFollowed(_ value: MarketSeries) throws -> Bool {
+        let source = value.statisticalDescriptor?.dataset.source.rawValue ?? "webstat"
+        guard isSourceEnabled(source) else { return false }
+        if let existing = followedMatch(for: value) {
+            status = "Ce repère est déjà suivi via \(existing.originBadge)."
+            return true
+        }
+        // Persist the cache before preferences, for every provider.
+        let merged = series.filter { $0.id != value.id } + [value]
+        try storage.cacheWebstat(merged.filter { !$0.isDemo })
+        guard mutatePreferences({ $0.followedSeriesIDs.append(value.id) }) else { return false }
+        merge([value])
+        hasLoadedWebstat = series.contains { !$0.isDemo && $0.sourceURL?.host == "webstat.banque-france.fr" }
+        status = "Repère ajouté · \(value.source)."
+        if selectedSeries == nil { show(value) }
+        return true
+    }
+
     @discardableResult func unfollow(_ id: String) -> Bool {
+        let ids = Set(storedFollowedSeries.filter { candidate in
+            series.first(where: { $0.id == id }).map { SeriesEquivalence.matches($0, candidate) } ?? false
+        }.map(\.id)).union([id])
         let result = mutatePreferences { value in
-            value.followedSeriesIDs.removeAll { $0 == id }
-            value.favoriteIDs.remove(id)
-            for index in value.alerts.indices where value.alerts[index].seriesID == id { value.alerts[index].isEnabled = false }
+            value.followedSeriesIDs.removeAll { ids.contains($0) }
+            value.favoriteIDs.subtract(ids)
+            for index in value.alerts.indices where ids.contains(value.alerts[index].seriesID) { value.alerts[index].isEnabled = false }
         }
         if result { reconcileSelection() }
         return result
     }
 
     func moveFollowed(_ id: String, by offset: Int) {
-        guard let index = preferences.followedSeriesIDs.firstIndex(of: id) else { return }
+        var ordered = followedSeries
+        guard let index = ordered.firstIndex(where: { $0.id == id }) else { return }
         let target = index + offset
-        guard preferences.followedSeriesIDs.indices.contains(target) else { return }
-        mutatePreferences { $0.followedSeriesIDs.swapAt(index, target) }
+        guard ordered.indices.contains(target) else { return }
+        ordered.swapAt(index, target); reorderFollowed(ordered)
     }
     func moveFollowed(from offsets: IndexSet, to destination: Int) {
-        var ids = preferences.followedSeriesIDs
-        let moved = offsets.sorted().map { ids[$0] }
-        for index in offsets.sorted(by: >) { ids.remove(at: index) }
+        var ordered = followedSeries
+        guard offsets.allSatisfy({ ordered.indices.contains($0) }) else { return }
+        let moved = offsets.sorted().map { ordered[$0] }
+        for index in offsets.sorted(by: >) { ordered.remove(at: index) }
         let target = destination - offsets.filter { $0 < destination }.count
-        ids.insert(contentsOf: moved, at: min(max(0, target), ids.count))
-        mutatePreferences { $0.followedSeriesIDs = ids }
+        ordered.insert(contentsOf: moved, at: min(max(0, target), ordered.count)); reorderFollowed(ordered)
+    }
+    private func reorderFollowed(_ ordered: [MarketSeries]) {
+        let groups = ordered.flatMap { item in storedFollowedSeries.filter { SeriesEquivalence.matches(item, $0) }.map(\.id) }
+        let unknown = preferences.followedSeriesIDs.filter { id in !groups.contains(id) }
+        mutatePreferences { $0.followedSeriesIDs = groups + unknown }
     }
 
     func prepareAlert(for item: MarketSeries) {
@@ -208,7 +334,7 @@ final class AppStore {
 
     func show(_ item: MarketSeries) {
         if let historyLoadingID, historyLoadingID != item.id { cancelHistory() }
-        selectedSeriesID = item.id; category = item.category
+        selectedSeriesID = followedMatch(for: item)?.id ?? item.id; category = item.category
         if !item.supports(period) { period = .all }
     }
     private func reconcileSelection() {
@@ -227,12 +353,14 @@ final class AppStore {
     }
 
     func connectWebstat(apiKey: String) async -> Bool {
-        guard !isLoading else { return false }
+        guard !isLoading, isSourceEnabled("webstat") else { return false }
         isLoading = true; webstatError = nil
         defer { isLoading = false }
         do {
+            let generation = sourceGenerations["webstat"]
             let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
             let datasets = try await WebstatClient().datasets(apiKey: key)
+            guard isSourceEnabled("webstat"), generation == sourceGenerations["webstat"] else { return false }
             try await webstatKeychain.save(key)
             hasWebstatKey = true; catalogueDatasets = datasets
             try storage.cacheCatalogue(.init(datasets: datasets, labels: catalogueLabels))
@@ -243,24 +371,40 @@ final class AppStore {
             return false
         }
     }
-    func refreshWebstat() async {
+    func refreshSeries() async {
         guard !isLoading else { return }
         isLoading = true; webstatError = nil
         defer { isLoading = false }
-        do { await refresh(using: try await requiredKey()) }
-        catch { webstatError = error.localizedDescription; status = webstatError }
+        let key: String?
+        do { key = try await webstatKeychain.read() }
+        catch { webstatError = error.localizedDescription; await refresh(using: nil); return }
+        await refresh(using: key)
     }
-    private func refresh(using key: String) async {
+    private func refresh(using key: String?) async {
         var updated: [MarketSeries] = []; var failures: [String: String] = [:]
         var changedMeasurements: Set<String> = []
+        let generations = sourceGenerations
         for id in preferences.followedSeriesIDs {
+            let source = sourceID(for: id)
+            guard isSourceEnabled(source), generations[source] == sourceGenerations[source] else { continue }
             do {
                 try Task.checkCancellation()
-                let descriptor = try await WebstatClient().descriptor(apiKey: key, key: id)
-                let resolved = await resolve(descriptor, apiKey: key)
-                let value = try await fetchRecent(descriptor: resolved, apiKey: key)
                 let old = series.first { $0.id == id && !$0.isDemo }
-                if let previous = old?.descriptor, !previous.usesSameMeasurement(as: resolved) {
+                let value: MarketSeries
+                var measurementChanged = false
+                if let descriptor = old?.statisticalDescriptor ?? statisticalDescriptors[id] {
+                    let structure = try await StatisticalClient().structure(dataset: descriptor.dataset)
+                    value = try await StatisticalClient().fetch(dataset: descriptor.dataset, structure: structure, key: descriptor.key)
+                    measurementChanged = value.statisticalDescriptor.map { !descriptor.usesSameMeasurement(as: $0) } ?? true
+                } else {
+                    guard let key else { throw WebstatClient.ClientError.missingKey }
+                    let descriptor = try await WebstatClient().descriptor(apiKey: key, key: id)
+                    let resolved = await resolve(descriptor, apiKey: key)
+                    value = try await fetchRecent(descriptor: resolved, apiKey: key)
+                    measurementChanged = old?.descriptor.map { !$0.usesSameMeasurement(as: resolved) } ?? false
+                }
+                guard isSourceEnabled(source), generations[source] == sourceGenerations[source] else { continue }
+                if measurementChanged {
                     changedMeasurements.insert(id)
                     failures[id] = "L’unité, l’échelle ou la base a changé. Les périodes récentes remplacent l’ancienne courbe ; rechargez l’historique et vérifiez les seuils."
                     updated.append(value)
@@ -269,8 +413,9 @@ final class AppStore {
                         completeHistory: old?.hasCompleteHistory))
                 }
             } catch is CancellationError { break }
-            catch { failures[id] = error.localizedDescription }
+            catch { if isSourceEnabled(source), generations[source] == sourceGenerations[source] { failures[id] = error.localizedDescription } }
         }
+        updated.removeAll { !isSourceEnabled(for: $0.id) || generations[sourceID(for: $0.id)] != sourceGenerations[sourceID(for: $0.id)] }
         if !changedMeasurements.isEmpty {
             let paused = mutatePreferences { value in
                 for index in value.alerts.indices where changedMeasurements.contains(value.alerts[index].seriesID) {
@@ -286,16 +431,21 @@ final class AppStore {
         }
         seriesErrors = failures
         if !updated.isEmpty {
-            merge(updated); hasLoadedWebstat = true
+            merge(updated)
+            hasLoadedWebstat = series.contains { !$0.isDemo && $0.sourceURL?.host == "webstat.banque-france.fr" }
             if let preview = previewDescriptor, let value = updated.first(where: { $0.id == preview.key }) {
                 previewSeries = value; previewDescriptor = value.descriptor; previewError = nil
+            }
+            if let id = previewSeries?.id, previewDescriptor == nil, let value = updated.first(where: { $0.id == id }) {
+                previewSeries = value; previewError = nil
             }
             do { try storage.cacheWebstat(series.filter { !$0.isDemo }) }
             catch { errorMessage = "Les repères sont chargés, mais leur sauvegarde locale a échoué." }
             evaluateAlerts(in: updated.filter { !changedMeasurements.contains($0.id) })
         }
         status = "\(updated.count) repères actualisés" + (failures.isEmpty ? " · alertes vérifiées." : " · \(failures.count) à vérifier.")
-        webstatError = failures.isEmpty ? nil : "Certaines séries demandent une vérification. Consultez leur détail."
+        webstatError = failures.keys.contains { id in series.first(where: { $0.id == id })?.statisticalDescriptor == nil }
+            ? "Certaines séries Webstat demandent une vérification. Consultez leur détail." : nil
     }
     private func fetchRecent(descriptor: WebstatSeriesDescriptor, apiKey: String) async throws -> MarketSeries {
         let anchor = min(descriptor.lastPeriod ?? .now, .now)
@@ -325,7 +475,7 @@ final class AppStore {
         if summaryExportSearch != search { summaryExportSearch = nil; summaryExport = [] }
         if !loadMore { catalogueResults = []; catalogueTotal = 0; catalogueHasMore = false }
         catalogueError = nil
-        guard hasWebstatKey else { isSearchingCatalogue = false; return }
+        guard hasWebstatKey, isSourceEnabled("webstat") else { isSearchingCatalogue = false; return }
         isSearchingCatalogue = true
         searchTask = Task {
             do {
@@ -381,6 +531,9 @@ final class AppStore {
     }
     func cancelCatalogueSearch() { searchTask?.cancel(); searchGeneration = UUID(); isSearchingCatalogue = false }
     func openPreview(_ descriptor: WebstatSeriesDescriptor) {
+        guard isSourceEnabled("webstat") else { return }
+        previewSourceID = "webstat"
+        statisticalPreviewRequest = nil
         previewTask?.cancel(); previewDescriptor = descriptor
         previewSeries = series.first { $0.id == descriptor.key && !$0.isDemo }
         previewError = nil; isLoadingPreview = true
@@ -411,7 +564,36 @@ final class AppStore {
             }
         }
     }
-    func closePreview() { previewTask?.cancel(); if historyLoadingID == previewDescriptor?.key { cancelHistory() }; previewDescriptor = nil; previewSeries = nil; previewError = nil; isLoadingPreview = false }
+    func openStatisticalPreview(dataset: StatisticalDataset, structure: StatisticalStructure, key: String) {
+        guard isSourceEnabled(dataset.source.rawValue) else { return }
+        closePreview()
+        previewSourceID = dataset.source.rawValue
+        let requestID = UUID().uuidString; statisticalPreviewRequest = requestID; isLoadingPreview = true
+        previewTask = Task {
+            do {
+                let value = try await StatisticalClient().fetch(dataset: dataset, structure: structure, key: key)
+                try Task.checkCancellation()
+                guard statisticalPreviewRequest == requestID else { return }
+                if let old = series.first(where: { $0.id == value.id && !$0.isDemo }),
+                   let previous = old.statisticalDescriptor, let next = value.statisticalDescriptor,
+                   previous.usesSameMeasurement(as: next) {
+                    previewSeries = value.replacing(observations: old.observations + value.observations, completeHistory: old.hasCompleteHistory)
+                } else { previewSeries = value }
+                if previewRequiresRefresh { previewError = "L’unité, l’échelle ou la base a changé. Actualisez vos repères et vérifiez les seuils avant de l’ouvrir." }
+                isLoadingPreview = false
+            } catch is CancellationError { }
+            catch {
+                guard statisticalPreviewRequest == requestID else { return }
+                previewError = error.localizedDescription; isLoadingPreview = false
+            }
+        }
+    }
+    func closePreview() {
+        previewTask?.cancel()
+        previewSourceID = nil
+        if historyLoadingID == previewDescriptor?.key || historyLoadingID == previewSeries?.id { cancelHistory() }
+        previewDescriptor = nil; statisticalPreviewRequest = nil; previewSeries = nil; previewError = nil; isLoadingPreview = false
+    }
     private func resolvedWithCachedLabels(_ descriptor: WebstatSeriesDescriptor) -> WebstatSeriesDescriptor {
         var labels: [String: String] = [:]
         let dataset = catalogueDatasets.first { $0.id == descriptor.datasetID }
@@ -441,6 +623,10 @@ final class AppStore {
     }
 
     func loadAllHistory(_ item: MarketSeries, reload: Bool = false) {
+        guard isSourceEnabled(for: item.id) else { return }
+        if let descriptor = item.statisticalDescriptor {
+            loadStatisticalHistory(item, descriptor: descriptor); return
+        }
         guard !item.isDemo, let descriptor = item.descriptor else { return }
         historyTask?.cancel(); let generation = UUID(); historyGeneration = generation
         historyLoadingID = item.id; historyProgress = "Chargement des périodes anciennes…"
@@ -477,6 +663,25 @@ final class AppStore {
     }
     func cancelHistory() { historyTask?.cancel(); historyGeneration = UUID(); historyLoadingID = nil; historyProgress = nil }
 
+    private func loadStatisticalHistory(_ item: MarketSeries, descriptor: StatisticalSeriesDescriptor) {
+        historyTask?.cancel(); let generation = UUID(); historyGeneration = generation
+        historyLoadingID = item.id; historyProgress = "Chargement de l’historique publié…"
+        historyTask = Task {
+            defer { if historyGeneration == generation { historyLoadingID = nil; historyProgress = nil } }
+            do {
+                let value = try await StatisticalClient().fetch(descriptor, fullHistory: true)
+                try Task.checkCancellation()
+                guard historyGeneration == generation else { return }
+                if isFollowing(item.id) {
+                    try storage.cacheWebstat((series.filter { $0.id != item.id } + [value]).filter { !$0.isDemo })
+                    merge([value])
+                }
+                if previewSeries?.id == item.id { previewSeries = value }
+            } catch is CancellationError { }
+            catch { seriesErrors[item.id] = error.localizedDescription; if previewSeries?.id == item.id { previewError = error.localizedDescription } }
+        }
+    }
+
     func restoreDemo() {
         series = WebstatClient.starterSeries
         hasLoadedWebstat = false; reconcileSelection()
@@ -484,7 +689,7 @@ final class AppStore {
     }
 
     func addAlert(seriesID: String, direction: AlertDirection, threshold: Decimal) -> Bool {
-        guard let item = macroSeries.first(where: { $0.id == seriesID }), item.canAlert else { return false }
+        guard let item = macroSeries.first(where: { $0.id == seriesID }), item.canAlert, isSourceEnabled(for: seriesID) else { return false }
         let rule = AlertRule(seriesID: seriesID, direction: direction, threshold: threshold,
             condition: .level, lastEvaluatedAt: item.isDemo ? nil : item.latest?.date)
         guard rule.isValid, mutatePreferences({ $0.alerts.append(rule) }) else { return false }
@@ -494,15 +699,15 @@ final class AppStore {
         guard let index = preferences.alerts.firstIndex(where: { $0.id == id }) else { return }
         let rule = preferences.alerts[index]
         let item = followedSeries.first { $0.id == rule.seriesID }
-        guard rule.isEnabled || (item?.canAlert == true) else { return }
+        guard isSourceEnabled(for: rule.seriesID), rule.isEnabled || (item?.canAlert == true) else { return }
         mutatePreferences { value in
             value.alerts[index].isEnabled.toggle()
             if value.alerts[index].isEnabled { value.alerts[index].lastEvaluatedAt = item?.isDemo == false ? item?.latest?.date : nil }
         }
     }
-    func deleteAlert(_ id: UUID) { mutatePreferences { $0.alerts.removeAll { $0.id == id } } }
+    func deleteAlert(_ id: UUID) { mutatePreferences { $0.alerts.removeAll { $0.id == id }; $0.alertBaselineIDs?.remove(id) } }
     func simulate(_ rule: AlertRule) {
-        guard let item = series.first(where: { $0.id == rule.seriesID }), item.canAlert else { return }
+        guard let item = series.first(where: { $0.id == rule.seriesID }), item.canAlert, isSourceEnabled(for: rule.seriesID) else { return }
         let step = Decimal(string: "0.1")!; let sign: Decimal = rule.direction == .fall ? -1 : 1
         let sample = item.replacing(observations: [
             .init(date: Date().addingTimeInterval(-86_400), value: rule.threshold - sign * step),
@@ -514,6 +719,7 @@ final class AppStore {
         }
         if preferences.notificationsEnabled {
             Task {
+                guard isSourceEnabled(for: rule.seriesID) else { return }
                 do { try await notifications.send(title: item.name,
                     body: "Seuil de \(MarketFormat.number(rule.threshold, digits: item.fractionDigits)) \(item.displayUnit) franchi dans la démonstration.", isDemo: true) }
                 catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
@@ -525,8 +731,15 @@ final class AppStore {
         for index in next.alerts.indices {
             let rule = next.alerts[index]
             guard rule.isEnabled, rule.effectiveCondition == .level,
+                  isSourceEnabled(for: rule.seriesID),
                   let item = values.first(where: { $0.id == rule.seriesID }), !item.isDemo, item.canAlert,
-                  let latest = item.latest, rule.lastEvaluatedAt.map({ latest.date > $0 }) ?? true else { continue }
+                  let latest = item.latest else { continue }
+            if next.alertBaselineIDs?.contains(rule.id) == true {
+                next.alerts[index].lastEvaluatedAt = max(latest.date, rule.lastEvaluatedAt ?? latest.date)
+                next.alertBaselineIDs?.remove(rule.id); advanced = true
+                continue
+            }
+            guard rule.lastEvaluatedAt.map({ latest.date > $0 }) ?? true else { continue }
             events += AlertEvaluator.newEvents(rule, series: item)
             next.alerts[index].lastEvaluatedAt = latest.date; advanced = true
         }
@@ -535,6 +748,7 @@ final class AppStore {
         guard preferences.notificationsEnabled, !events.isEmpty else { return }
         Task {
             for event in events {
+                guard isSourceEnabled(for: event.seriesID) else { continue }
                 guard let item = values.first(where: { $0.id == event.seriesID }), let value = event.observedValue else { continue }
                 do { try await notifications.send(title: item.name,
                     body: "Seuil franchi : \(MarketFormat.number(value, digits: item.fractionDigits)) \(item.displayUnit) · observation du \(MarketFormat.date(event.observedAt)).", isDemo: false) }
@@ -554,6 +768,7 @@ final class AppStore {
     }
     private func merge(_ values: [MarketSeries]) {
         for value in values where value.category != .funds {
+            if let descriptor = value.statisticalDescriptor { statisticalDescriptors[value.id] = descriptor }
             if let index = series.firstIndex(where: { $0.id == value.id }) { series[index] = value } else { series.append(value) }
         }
     }

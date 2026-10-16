@@ -3,6 +3,7 @@ import MarketCore
 
 struct WorkspaceView: View {
     @Environment(AppStore.self) private var store
+    @Environment(\.openSettings) private var openSettings
     var body: some View {
         NavigationSplitView {
             VStack(alignment: .leading, spacing: 16) {
@@ -30,28 +31,44 @@ struct WorkspaceView: View {
                 }
                 .padding(.horizontal, 12)
                 Spacer(minLength: 0)
-                SettingsLink {
-                    Label("Mon espace", systemImage: "person.crop.circle")
-                        .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+                Button {
+                    store.settingsTab = .profile; openSettings()
+                } label: {
+                    HStack(spacing: 10) {
+                        ProfileAvatar(profile: store.profile)
+                        VStack(alignment: .leading, spacing: 3) {
+                            if !store.profile.displayName.isEmpty {
+                                Text(store.profile.displayName).font(.system(size: 12, weight: .medium))
+                                    .foregroundStyle(.primary).lineLimit(1)
+                            }
+                            Text("Mon espace").font(.system(size: store.profile.displayName.isEmpty ? 13 : 11))
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "gearshape").font(.system(size: 12))
+                    }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
                 }
                 .buttonStyle(.plain).font(.system(size: 13)).foregroundStyle(.secondary)
-                .help("Ouvrir les réglages de sema")
+                .help("Personnaliser mon profil local").accessibilityLabel(store.profile.displayName.isEmpty ? "Mon espace" : "Mon espace, \(store.profile.displayName)")
                 .padding(20)
             }
             .navigationSplitViewColumnWidth(min: 185, ideal: 200, max: 225)
         } detail: {
             VStack(spacing: 0) {
+                if store.section == .explorer {
+                    ExplorerView().padding(26).frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
                         switch store.section {
                         case .overview: OverviewView()
                         case .favorites: FavoritesView()
                         case .alerts: AlertsView()
-                        case .explorer: ExplorerView()
+                        case .explorer: EmptyView()
                         }
                     }
                     .padding(26)
                     .frame(maxWidth: .infinity, alignment: .topLeading)
+                }
                 }
                 dataStatus.padding(.horizontal, 26).padding(.vertical, 14)
             }
@@ -63,11 +80,11 @@ struct WorkspaceView: View {
                         Button { store.isAlertSheetPresented = true } label: { Label("Créer une alerte", systemImage: "bell.badge") }
                             .disabled(store.alertableSeries.isEmpty)
                     }
-                    Button { Task { await store.refreshWebstat() } } label: {
-                        Label(store.isLoading ? "Actualisation…" : "Actualiser Webstat", systemImage: "arrow.clockwise")
+                    Button { Task { await store.refreshSeries() } } label: {
+                        Label(store.isLoading ? "Actualisation…" : "Actualiser les repères", systemImage: "arrow.clockwise")
                     }
-                    .labelStyle(.iconOnly).disabled(store.isLoading || !store.hasWebstatKey)
-                    .help(store.hasWebstatKey ? "Actualiser les repères" : "Ajoutez votre clé Webstat dans les réglages")
+                    .labelStyle(.iconOnly).disabled(store.isLoading || !store.canRefresh)
+                    .help(store.canRefresh ? "Actualiser les repères" : "Ajoutez un repère public ou connectez Webstat")
                     SettingsLink { Label("Réglages", systemImage: "slider.horizontal.3") }
                         .labelStyle(.iconOnly).help("Réglages de sema")
                 }
@@ -104,7 +121,7 @@ struct WorkspaceView: View {
                 .lineLimit(2).help(store.status ?? "Les valeurs de démonstration ne sont pas des cours actuels.")
             Spacer(minLength: 12)
             if !store.hasWebstatKey {
-                SettingsLink { Text("Connecter Webstat") }.buttonStyle(.borderless)
+                Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
             }
         }
         .font(.system(size: 11)).foregroundStyle(.secondary)

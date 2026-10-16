@@ -86,13 +86,15 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public let descriptor: WebstatSeriesDescriptor?
     public let syncedAt: Date?
     public let hasCompleteHistory: Bool?
+    public let statisticalDescriptor: StatisticalSeriesDescriptor?
 
     public init(
         id: String, name: String, subtitle: String, category: SeriesCategory,
         unit: ValueUnit, fractionDigits: Int = 2, source: String,
         sourceURL: URL? = nil, isDemo: Bool, frequency: ObservationFrequency? = nil,
         observations: [MarketObservation], descriptor: WebstatSeriesDescriptor? = nil,
-        syncedAt: Date? = nil, hasCompleteHistory: Bool? = nil
+        syncedAt: Date? = nil, hasCompleteHistory: Bool? = nil,
+        statisticalDescriptor: StatisticalSeriesDescriptor? = nil
     ) {
         self.id = id
         self.name = name
@@ -107,28 +109,34 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         self.descriptor = descriptor
         self.syncedAt = syncedAt
         self.hasCompleteHistory = hasCompleteHistory
+        self.statisticalDescriptor = statisticalDescriptor
         // One publication per date; the last input for that date wins.
         let unique = Dictionary(observations.map { ($0.date, $0) }, uniquingKeysWith: { _, latest in latest })
         self.observations = unique.values.sorted { $0.date < $1.date }
     }
 
     public var latest: MarketObservation? { observations.last }
-    public var displayUnit: String { descriptor?.displayUnit ?? unit.symbol }
-    public var canAlert: Bool { descriptor?.canAlert ?? (unit != .unknown) }
+    public var originBadge: String { statisticalDescriptor?.dataset.source.title ?? (sourceURL?.host == "webstat.banque-france.fr" ? "BdF" : "BCE") }
+    public var variationConvention: VariationConvention {
+        descriptor?.variation ?? statisticalDescriptor?.variation ?? (unit == .percent ? .points : .relativePercent)
+    }
+    public var displayUnit: String { descriptor?.displayUnit ?? statisticalDescriptor?.displayUnit ?? unit.symbol }
+    public var canAlert: Bool { descriptor?.canAlert ?? statisticalDescriptor?.canAlert ?? (unit != .unknown) }
 
     public func replacing(observations: [MarketObservation], syncedAt: Date? = nil,
                           completeHistory: Bool? = nil, descriptor: WebstatSeriesDescriptor? = nil) -> MarketSeries {
         MarketSeries(id: id, name: name, subtitle: subtitle, category: category, unit: unit,
             fractionDigits: fractionDigits, source: source, sourceURL: sourceURL, isDemo: isDemo,
             frequency: frequency, observations: observations, descriptor: descriptor ?? self.descriptor,
-            syncedAt: syncedAt ?? self.syncedAt, hasCompleteHistory: completeHistory ?? hasCompleteHistory)
+            syncedAt: syncedAt ?? self.syncedAt, hasCompleteHistory: completeHistory ?? hasCompleteHistory,
+            statisticalDescriptor: statisticalDescriptor)
     }
 
     public func withID(_ id: String) -> MarketSeries {
         MarketSeries(id: id, name: name, subtitle: subtitle, category: category, unit: unit,
             fractionDigits: fractionDigits, source: source, sourceURL: sourceURL, isDemo: isDemo,
             frequency: frequency, observations: observations, descriptor: descriptor,
-            syncedAt: syncedAt, hasCompleteHistory: hasCompleteHistory)
+            syncedAt: syncedAt, hasCompleteHistory: hasCompleteHistory, statisticalDescriptor: statisticalDescriptor)
     }
 
     public func history(for period: HistoryPeriod) -> [MarketObservation] {
@@ -159,7 +167,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public func change(for period: HistoryPeriod) -> Decimal? {
         let points = history(for: period)
         guard points.count > 1, let first = points.first, let last = points.last else { return nil }
-        guard descriptor?.variation != .unavailable else { return nil }
+        guard variationConvention != .unavailable else { return nil }
         if unit == .percent { return last.value - first.value }
         guard first.value > 0, last.value >= 0 else { return nil }
         return (last.value - first.value) / first.value * 100

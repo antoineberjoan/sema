@@ -6,6 +6,9 @@ struct SemaCommands: Commands {
     let showRibbon: () -> Void
 
     var body: some Commands {
+        CommandGroup(after: .appInfo) {
+            Link("Soutenir sema…", destination: SemaSupport.url)
+        }
         CommandGroup(after: .newItem) {
             Button("Rechercher un repère…") {
                 openWindow(id: "workspace")
@@ -21,7 +24,7 @@ struct SemaCommands: Commands {
             Button("Panorama") { navigate(to: .overview) }.keyboardShortcut("1").disabled(hasModal)
             Button("Favoris") { navigate(to: .favorites) }.keyboardShortcut("2").disabled(hasModal)
             Button("Alertes") { navigate(to: .alerts) }.keyboardShortcut("3").disabled(hasModal)
-            Button("Explorer Webstat") { navigate(to: .explorer) }.keyboardShortcut("4").disabled(hasModal)
+            Button("Explorer les catalogues") { navigate(to: .explorer) }.keyboardShortcut("4").disabled(hasModal)
             Divider()
             Button("Monter le repère") { if let item = store.selectedSeries { store.moveFollowed(item.id, by: -1) } }
                 .keyboardShortcut(.upArrow, modifiers: [.command, .option]).disabled(hasModal || store.section != .overview || store.selectedSeries == nil)
@@ -33,8 +36,8 @@ struct SemaCommands: Commands {
                 store.isAlertSheetPresented = true
             }
             .disabled(hasModal || store.alertableSeries.isEmpty)
-            Button("Actualiser Webstat") { Task { await store.refreshWebstat() } }
-                .keyboardShortcut("r").disabled(store.isLoading || !store.hasWebstatKey || store.isOnboardingPresented)
+            Button("Actualiser les repères") { Task { await store.refreshSeries() } }
+                .keyboardShortcut("r").disabled(store.isLoading || !store.canRefresh || store.isOnboardingPresented)
         }
     }
 

@@ -2,12 +2,13 @@ import SwiftUI
 import MarketCore
 
 struct ExplorerView: View {
-    var body: some View { CatalogueBrowserView().frame(minHeight: 510) }
+    var body: some View { SourceExplorerView().frame(minHeight: 510) }
 }
 
 /// Shared by Explorer and ⌘K. Result rows stay in place while the detail loads.
 struct CatalogueBrowserView: View {
     @Environment(AppStore.self) private var store
+    @Environment(\.openSettings) private var openSettings
     @Environment(\.semaAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let selectionDuration = 0.14
@@ -60,7 +61,7 @@ struct CatalogueBrowserView: View {
                     Label("Tout Webstat, à portée de main.", systemImage: "globe.europe.africa")
                 } description: {
                     Text("Connectez votre clé personnelle pour explorer les jeux de données. Vos repères déjà enregistrés restent consultables.")
-                } actions: { SettingsLink { Text("Connecter Webstat") }.buttonStyle(.borderedProminent) }
+                } actions: { Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderedProminent) }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 HStack(alignment: .top, spacing: 20) {
@@ -110,7 +111,7 @@ struct CatalogueBrowserView: View {
                         Label(error, systemImage: "exclamationmark.triangle")
                             .font(.system(size: 11)).foregroundStyle(.secondary)
                         if store.previewRequiresRefresh {
-                            Button("Actualiser mes repères") { Task { await store.refreshWebstat() } }
+                            Button("Actualiser mes repères") { Task { await store.refreshSeries() } }
                                 .buttonStyle(.borderless).disabled(store.isLoading)
                         } else {
                             Button("Réessayer") { store.openPreview(descriptor) }.buttonStyle(.borderless)
@@ -119,13 +120,14 @@ struct CatalogueBrowserView: View {
                 }.padding(.bottom, 10)
             }
             HStack {
-                if store.isFollowing(descriptor.key) {
-                    Label("Ajouté", systemImage: "checkmark").foregroundStyle(accent)
+                if let existing = store.followedMatch(for: store.previewSeries ?? descriptor.series(observations: [])) {
+                    Label("Déjà suivi via \(existing.originBadge)", systemImage: "checkmark").foregroundStyle(accent)
                     Spacer()
+                    if let value = store.previewSeries, existing.id != value.id {
+                        Button("Utiliser cette source") { _ = store.usePreviewSource() }.buttonStyle(.borderless)
+                    }
                     Button("Ouvrir le repère") {
-                        if let item = store.followedSeries.first(where: { $0.id == descriptor.key }) {
-                            store.show(item); store.section = .overview; store.closePreview(); close?()
-                        }
+                        store.show(existing); store.section = .overview; store.closePreview(); close?()
                     }.buttonStyle(.borderedProminent).disabled(store.previewRequiresRefresh)
                 } else {
                     Button {
@@ -156,7 +158,7 @@ struct CatalogueBrowserView: View {
                                 HStack(alignment: .top, spacing: 8) {
                                     Text(item.title).font(.system(size: 12, weight: .medium)).lineLimit(3)
                                     Spacer(minLength: 0)
-                                    if store.isFollowing(item.key) { Image(systemName: "checkmark").foregroundStyle(accent).accessibilityLabel("Ajouté") }
+                                    if store.followedMatch(for: item.series(observations: [])) != nil { Image(systemName: "checkmark").foregroundStyle(accent).accessibilityLabel("Déjà suivi") }
                                 }
                                 Text([item.area, item.frequencyTitle, item.displayUnit].compactMap { $0 }.joined(separator: " · "))
                                     .font(.system(size: 10)).foregroundStyle(.secondary).lineLimit(2)

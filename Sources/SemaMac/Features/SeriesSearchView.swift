@@ -19,10 +19,10 @@ struct SeriesSearchView: View {
         VStack(spacing: 18) {
             Picker("Où rechercher", selection: $catalogue) {
                 Text("Mes repères").tag(false)
-                Text("Catalogue Webstat").tag(true)
+                Text("Catalogues").tag(true)
             }.pickerStyle(.segmented).frame(width: 300)
             if catalogue {
-                CatalogueBrowserView(compact: true, close: { dismiss() }).frame(height: 420)
+                SourceExplorerView(compact: true, close: { dismiss() }).frame(height: 420)
                 HStack { Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
             } else {
             HStack(spacing: 12) {
