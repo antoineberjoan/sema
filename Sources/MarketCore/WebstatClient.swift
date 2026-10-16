@@ -3,7 +3,7 @@ import Foundation
 /// Authenticated Banque de France observations. The user's key travels only in an HTTP header.
 public struct WebstatClient: Sendable {
     public enum ClientError: Error, LocalizedError {
-        case missingKey, accessDenied, quotaReached, unavailable, invalidData, incompleteData
+        case missingKey, accessDenied, quotaReached, unavailable, invalidData, incompleteData, metadataChanged
 
         public var errorDescription: String? {
             switch self {
@@ -12,7 +12,8 @@ public struct WebstatClient: Sendable {
             case .quotaReached: "Le quota Webstat est atteint. Réessayez le lendemain."
             case .unavailable: "La connexion à Webstat a échoué. Réessayez plus tard."
             case .invalidData: "Le format des données Webstat n’a pas pu être lu."
-            case .incompleteData: "Webstat n’a pas fourni toutes les séries attendues. Les données précédentes sont conservées."
+            case .incompleteData: "Webstat n’a pas fourni les données attendues. Les observations précédentes sont conservées."
+            case .metadataChanged: "L’unité, l’échelle ou la base de cette série a changé. Actualisez le repère avant de recharger son historique."
             }
         }
     }

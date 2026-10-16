@@ -131,6 +131,11 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
         if [.usd, .jpy, .chf, .gbp].contains(unit), multiplier == 0 { return .relativePercent }
         return .unavailable
     }
+    /// Never splice values expressed in two scales or index bases into one curve.
+    public func usesSameMeasurement(as other: WebstatSeriesDescriptor) -> Bool {
+        unitCode == other.unitCode && multiplier == other.multiplier &&
+        attributes["UNIT_INDEX_BASE"] == other.attributes["UNIT_INDEX_BASE"]
+    }
     public var dimensions: [String: String] { Self.dictionary(raw["series_dimensions_and_values"]?.text) }
     public var attributes: [String: String] { Self.dictionary(raw["series_attributes_and_values"]?.text) }
     static func dictionary(_ text: String?) -> [String: String] {

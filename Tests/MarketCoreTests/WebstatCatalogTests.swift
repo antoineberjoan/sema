@@ -47,6 +47,18 @@ struct WebstatCatalogTests {
         #expect(try JSONDecoder().decode(WebstatSeriesDescriptor.self, from: JSONEncoder().encode(value)) == value)
     }
 
+    @Test func rebasingOrScaleChangesCannotBeSplicedIntoTheOldCurve() throws {
+        let initial = try descriptor(["unit": .string("IX"), "unit_mult": .string("0"),
+            "series_attributes_and_values": .string("{\"UNIT_INDEX_BASE\":\"2015 = 100\"}")])
+        let rebased = try descriptor(["unit": .string("IX"), "unit_mult": .string("0"),
+            "series_attributes_and_values": .string("{\"UNIT_INDEX_BASE\":\"2025 = 100\"}")])
+        #expect(!initial.usesSameMeasurement(as: rebased))
+        let millions = try descriptor()
+        let billions = try descriptor(["unit_mult": .string("9")])
+        #expect(!millions.usesSameMeasurement(as: billions))
+        #expect(initial.usesSameMeasurement(as: initial.resolving(labels: ["unit": "Indice"])))
+    }
+
     @Test func sourceCodeLabelsAllowGenericAbsoluteThresholds() throws {
         let value = try descriptor(["unit": .string("NBRE"), "unit_mult": .string("0")])
             .resolving(labels: ["unit": "Nombre", "source_agency": "Banque de France"])

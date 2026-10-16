@@ -234,6 +234,7 @@ final class AppStore {
     }
     private func refresh(using key: String) async {
         var updated: [MarketSeries] = []; var failures: [String: String] = [:]
+        var changedMeasurements: Set<String> = []
         for id in preferences.followedSeriesIDs {
             do {
                 try Task.checkCancellation()
@@ -241,20 +242,39 @@ final class AppStore {
                 let resolved = await resolve(descriptor, apiKey: key)
                 let value = try await fetchRecent(descriptor: resolved, apiKey: key)
                 let old = series.first { $0.id == id && !$0.isDemo }
-                updated.append(value.replacing(observations: (old?.observations ?? []) + value.observations,
-                    completeHistory: old?.hasCompleteHistory))
+                if let previous = old?.descriptor, !previous.usesSameMeasurement(as: resolved) {
+                    changedMeasurements.insert(id)
+                    failures[id] = "L’unité, l’échelle ou la base a changé. Les périodes récentes remplacent l’ancienne courbe ; rechargez l’historique et vérifiez les seuils."
+                    updated.append(value)
+                } else {
+                    updated.append(value.replacing(observations: (old?.observations ?? []) + value.observations,
+                        completeHistory: old?.hasCompleteHistory))
+                }
             } catch is CancellationError { break }
             catch { failures[id] = error.localizedDescription }
+        }
+        if !changedMeasurements.isEmpty {
+            let paused = mutatePreferences { value in
+                for index in value.alerts.indices where changedMeasurements.contains(value.alerts[index].seriesID) {
+                    value.alerts[index].isEnabled = false
+                }
+            }
+            // Keep the old descriptor too when pausing cannot be persisted. A later refresh
+            // must detect the scale change again instead of resuming a stale threshold.
+            if !paused {
+                updated.removeAll { changedMeasurements.contains($0.id) }
+                for id in changedMeasurements { failures[id] = "La source a changé d’unité, d’échelle ou de base. La sauvegarde des alertes en pause a échoué ; les anciennes données restent affichées." }
+            }
         }
         seriesErrors = failures
         if !updated.isEmpty {
             merge(updated); hasLoadedWebstat = true
             do { try storage.cacheWebstat(series.filter { !$0.isDemo }) }
             catch { errorMessage = "Les repères sont chargés, mais leur sauvegarde locale a échoué." }
-            evaluateAlerts(in: updated)
+            evaluateAlerts(in: updated.filter { !changedMeasurements.contains($0.id) })
         }
-        status = "\(updated.count) repères actualisés" + (failures.isEmpty ? " · alertes vérifiées." : " · \(failures.count) indisponibles, données conservées.")
-        webstatError = failures.isEmpty ? nil : "Certaines séries n’ont pas été actualisées. Leur détail précise l’erreur."
+        status = "\(updated.count) repères actualisés" + (failures.isEmpty ? " · alertes vérifiées." : " · \(failures.count) à vérifier.")
+        webstatError = failures.isEmpty ? nil : "Certaines séries demandent une vérification. Consultez leur détail."
     }
     private func fetchRecent(descriptor: WebstatSeriesDescriptor, apiKey: String) async throws -> MarketSeries {
         let anchor = min(descriptor.lastPeriod ?? .now, .now)
@@ -376,6 +396,8 @@ final class AppStore {
             defer { if historyGeneration == generation { historyLoadingID = nil; historyProgress = nil } }
             do {
                 let key = try await requiredKey()
+                let current = try await WebstatClient().descriptor(apiKey: key, key: descriptor.key)
+                guard descriptor.usesSameMeasurement(as: current) else { throw WebstatClient.ClientError.metadataChanged }
                 guard let first = descriptor.firstObservationStart else { throw WebstatClient.ClientError.incompleteData }
                 var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!
                 var end = reload ? min(descriptor.lastPeriod ?? .now, .now) : item.observations.first?.date ?? .now
