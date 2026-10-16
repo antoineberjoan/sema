@@ -47,6 +47,7 @@ struct WorkspaceView: View {
                         case .overview: OverviewView()
                         case .favorites: FavoritesView()
                         case .alerts: AlertsView()
+                        case .explorer: ExplorerView()
                         }
                     }
                     .padding(26)
@@ -74,7 +75,7 @@ struct WorkspaceView: View {
         .frame(minWidth: 980, minHeight: 680)
         .task { await store.checkWebstatKey() }
         .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
-        .sheet(isPresented: searchSheetBinding) { SeriesSearchView().environment(store) }
+        .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
         .alert("Sema", isPresented: errorBinding) {
             Button("Compris", role: .cancel) { store.errorMessage = nil }
         } message: { Text(store.errorMessage ?? "") }

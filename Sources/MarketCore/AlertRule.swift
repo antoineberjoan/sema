@@ -14,7 +14,8 @@ public enum AlertThreshold {
     /// A level may be zero or negative (inflation and policy rates), or exceed 100 (JPY).
     public static func parseLevel(_ text: String) -> Decimal? {
         let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard normalized.range(of: "^-?[0-9]+([,.][0-9]{1,4})?$", options: .regularExpression) != nil,
+        guard normalized.range(of: "^-?[0-9]+([,.][0-9]{1,18})?$", options: .regularExpression) != nil,
+              normalized.filter(\.isNumber).count <= 38,
               let value = Decimal(string: normalized.replacingOccurrences(of: ",", with: "."),
                                   locale: Locale(identifier: "en_US_POSIX")), !value.isNaN else { return nil }
         return value
@@ -89,7 +90,7 @@ public enum AlertEvaluator {
               let latest = series.latest,
               lastNotifiedAt.map({ latest.date > $0 }) ?? true else { return nil }
         if rule.effectiveCondition == .level {
-            guard series.category != .funds, series.observations.count > 1 else { return nil }
+            guard series.canAlert, series.category != .funds, series.observations.count > 1 else { return nil }
             return crossing(rule, previous: series.observations[series.observations.count - 2],
                             latest: latest, isDemo: series.isDemo)
         }
@@ -104,7 +105,7 @@ public enum AlertEvaluator {
     /// Revisions of an already processed date do not emit a second notification.
     public static func newEvents(_ rule: AlertRule, series: MarketSeries) -> [AlertEvent] {
         guard rule.isEnabled, rule.isValid, rule.effectiveCondition == .level,
-              rule.seriesID == series.id, series.category != .funds, !series.isDemo,
+              rule.seriesID == series.id, series.canAlert, series.category != .funds, !series.isDemo,
               let checkpoint = rule.lastEvaluatedAt else { return [] }
         return zip(series.observations, series.observations.dropFirst()).compactMap { previous, latest in
             guard latest.date > checkpoint else { return nil }

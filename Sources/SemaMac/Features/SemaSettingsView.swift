@@ -30,7 +30,7 @@ struct SemaSettingsView: View {
                 }
                 Section("Sources") {
                     LabeledContent("Repères") { Text(store.hasLoadedWebstat ? "Banque de France · Webstat" : "Démonstration") }
-                    Text("13 repères : épargne réglementée, taux BCE, €STR, inflation, changes, crédit immobilier et emprunt français à dix ans. Historique jusqu’à cinq ans selon la série.")
+                    Text("Composez votre sélection dans Explorer : taux, inflation, crédit, indices, montants et autres séries accessibles avec votre clé Webstat. « Tout » charge l’historique publié à la demande.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                     HStack {
                         Button("Actualiser Webstat") { Task { await store.refreshWebstat() } }

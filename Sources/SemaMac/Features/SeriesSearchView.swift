@@ -8,6 +8,7 @@ struct SeriesSearchView: View {
     @FocusState private var isSearchFocused: Bool
     @State private var query = ""
     @State private var selectedID: String?
+    @State private var catalogue = false
 
     private var results: [MarketSeries] {
         let ordered = store.favorites + store.macroSeries.filter { !store.isFavorite($0.id) }
@@ -16,6 +17,14 @@ struct SeriesSearchView: View {
 
     var body: some View {
         VStack(spacing: 18) {
+            Picker("Où rechercher", selection: $catalogue) {
+                Text("Mes repères").tag(false)
+                Text("Catalogue Webstat").tag(true)
+            }.pickerStyle(.segmented).frame(width: 300)
+            if catalogue {
+                CatalogueBrowserView(compact: true, close: { dismiss() }).frame(height: 420)
+                HStack { Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
+            } else {
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
                 TextField("Rechercher un repère…", text: $query)
@@ -71,9 +80,14 @@ struct SeriesSearchView: View {
             }
             .padding(.horizontal, 12)
         }
-        .padding(18).frame(width: 580).background(SemaTheme.surface)
+            }
+        .padding(18).frame(width: 880, height: 520).background(SemaTheme.surface)
         .onAppear { selectedID = results.first?.id; isSearchFocused = true }
         .onChange(of: query) { _, _ in selectedID = results.first?.id }
+        .onChange(of: catalogue) { _, selected in
+            if selected { store.catalogueSearch.query = query } else { query = store.catalogueSearch.query }
+        }
+        .onDisappear { store.closePreview() }
     }
 
     private func moveSelection(by offset: Int) {
@@ -84,10 +98,7 @@ struct SeriesSearchView: View {
 
     private func context(for item: MarketSeries) -> String {
         if item.isDemo { return "Démo" }
-        if item.unit == .percent, let frequency = item.frequency {
-            return frequency == .monthly ? "Mensuel" : "Quotidien"
-        }
-        return item.unit.symbol
+        return item.frequency?.title ?? "Fréquence non renseignée"
     }
 
     private func openSelected() {

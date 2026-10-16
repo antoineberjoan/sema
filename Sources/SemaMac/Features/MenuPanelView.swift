@@ -8,7 +8,7 @@ struct MenuPanelView: View {
     @State private var showsFavorites = false
     private var items: [MarketSeries] {
         if showsFavorites { return store.favorites }
-        return Array(store.macroSeries.filter { $0.category == .markets }.prefix(4))
+        return Array(store.macroSeries.prefix(4))
     }
 
     var body: some View {
@@ -41,12 +41,14 @@ struct MenuPanelView: View {
                 if items.isEmpty { Text("Ajoutez vos premiers favoris dans la fenêtre Sema.").font(.system(size: 12)).foregroundStyle(.secondary).padding(20) }
             }
             .frame(height: showsFavorites && items.count > 4 ? 300 : 205)
+            if let selectedSeries = store.selectedSeries {
             HStack {
-                Text(store.selectedSeries.name).font(.system(size: 12, weight: .medium))
+                Text(selectedSeries.name).font(.system(size: 12, weight: .medium))
                 Spacer()
-                OriginBadge(series: store.selectedSeries)
+                OriginBadge(series: selectedSeries)
             }
-            HistoryChart(series: store.selectedSeries, period: .month, height: 110)
+            HistoryChart(series: selectedSeries, period: .month, height: 110)
+            }
             HStack {
                 Text("Dates et sources dans le détail").font(.system(size: 10)).foregroundStyle(.secondary)
                 Spacer()

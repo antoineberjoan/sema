@@ -32,7 +32,7 @@ private struct AlertRow: View {
     @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
     let rule: AlertRule
-    private var item: MarketSeries? { store.macroSeries.first { $0.id == rule.seriesID } }
+    private var item: MarketSeries? { store.series.first { $0.id == rule.seriesID } }
     private var lastEvent: AlertEvent? { store.recentAlertEvents.last { $0.ruleID == rule.id } }
 
     var body: some View {
@@ -41,22 +41,23 @@ private struct AlertRow: View {
                 .frame(width: 30, height: 30)
             VStack(alignment: .leading, spacing: 9) {
                 Text(item?.name ?? "Repère indisponible").font(.system(size: 14, weight: .medium))
-                Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item?.unit.symbol ?? "").")
+                Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "").")
                     .font(.system(size: 12)).foregroundStyle(.secondary)
                 if let event = lastEvent, let value = event.observedValue {
-                    Text("Dernier signal : \(MarketFormat.number(value, digits: item?.fractionDigits ?? 2)) \(item?.unit.symbol ?? "") · \(MarketFormat.date(event.observedAt))")
+                    Text("Dernier signal : \(MarketFormat.number(value, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "") · \(MarketFormat.date(event.observedAt))")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 HStack(spacing: 16) {
                     Button("Tester la notification") { store.simulate(rule) }
                     Button(rule.isEnabled ? "Mettre en pause" : "Réactiver") { store.toggleAlert(rule.id) }
+                        .disabled(!rule.isEnabled && (!store.isFollowing(rule.seriesID) || item?.canAlert != true))
                     Button(role: .destructive) { store.deleteAlert(rule.id) } label: { Image(systemName: "trash") }
                         .help("Supprimer cette alerte").accessibilityLabel("Supprimer l’alerte sur \(item?.name ?? "ce repère")")
                 }
                 .buttonStyle(.borderless).font(.system(size: 11))
             }
             Spacer(minLength: 0)
-            Text(!rule.isEnabled ? "En pause" : item?.isDemo == true ? "Démo · connexion requise" : "À l’actualisation")
+            Text(!store.isFollowing(rule.seriesID) ? "Repère retiré · en pause" : !rule.isEnabled ? "En pause" : item?.canAlert == false ? "Unité à vérifier" : item?.isDemo == true ? "Démo · connexion requise" : "À l’actualisation")
                 .font(.system(size: 11)).foregroundStyle(.secondary)
         }
         .padding(.vertical, 18)
@@ -77,21 +78,21 @@ struct AlertEditorView: View {
             Text("Créer une alerte").font(.title2)
             Form {
                 Picker("Repère", selection: $seriesID) {
-                    ForEach(store.macroSeries) { Text($0.name).tag($0.id) }
+                    ForEach(store.macroSeries.filter(\.canAlert)) { Text($0.name).tag($0.id) }
                 }
                 Picker("Me prévenir quand la valeur", selection: $direction) {
                     ForEach(AlertDirection.allCases, id: \.self) { Text($0.crossingTitle.lowercased()).tag($0) }
                 }
                 HStack {
                     TextField("Seuil", text: $thresholdText).textFieldStyle(.roundedBorder).frame(width: 190)
-                    Text(item?.unit.symbol ?? "").foregroundStyle(.secondary)
+                    Text(item?.displayUnit ?? "").foregroundStyle(.secondary)
                 }
                 if threshold == nil {
                     Text("Saisissez un nombre, par exemple 3,5. Zéro et les valeurs négatives sont acceptés.")
                         .font(.system(size: 11)).foregroundStyle(.red)
                 }
                 if let item {
-                    LabeledContent("Dernière valeur") { Text(MarketFormat.value(item) + (item.unit == .percent ? "" : " " + item.unit.symbol)) }
+                    LabeledContent("Dernière valeur") { Text(MarketFormat.value(item) + (item.unit == .percent ? "" : " " + item.displayUnit)) }
                     Text(item.isDemo ? "Valeurs fictives : connectez Webstat pour activer la vérification réelle."
                          : item.frequency == .monthly ? "Publication mensuelle : l’alerte suit les nouveaux mois publiés."
                          : "L’alerte suit les nouvelles observations publiées par la source.")
@@ -106,13 +107,13 @@ struct AlertEditorView: View {
                 Button("Créer l’alerte") {
                     if let threshold, store.addAlert(seriesID: seriesID, direction: direction, threshold: threshold) { dismiss() }
                 }
-                .buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction).disabled(threshold == nil || item == nil)
+                .buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction).disabled(threshold == nil || item?.canAlert != true)
             }
         }
         .padding(30).frame(width: 530)
         .onAppear {
             seriesID = store.selectedSeriesID
-            thresholdText = store.selectedSeries.latest.map { NSDecimalNumber(decimal: $0.value).stringValue.replacingOccurrences(of: ".", with: ",") } ?? "3,0"
+            thresholdText = store.selectedSeries?.latest.map { NSDecimalNumber(decimal: $0.value).stringValue.replacingOccurrences(of: ".", with: ",") } ?? "3,0"
         }
         .onChange(of: seriesID) { _, _ in
             if let value = item?.latest?.value {
@@ -125,14 +126,14 @@ struct AlertEditorView: View {
 struct DemoNotificationView: View {
     @Environment(AppStore.self) private var store
     let event: AlertEvent
-    private var item: MarketSeries? { store.macroSeries.first { $0.id == event.seriesID } }
+    private var item: MarketSeries? { store.series.first { $0.id == event.seriesID } }
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             SemaMark(size: 30)
             VStack(alignment: .leading, spacing: 6) {
                 Text("SEMA · TEST DE NOTIFICATION").font(.system(size: 9, weight: .medium)).tracking(0.5).foregroundStyle(.secondary)
                 Text(item?.name ?? "Repère de démonstration").font(.system(size: 13, weight: .medium))
-                Text("Valeur simulée : \(MarketFormat.number(event.observedValue ?? 0, digits: item?.fractionDigits ?? 2)) \(item?.unit.symbol ?? "").")
+                Text("Valeur simulée : \(MarketFormat.number(event.observedValue ?? 0, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "").")
                     .font(.system(size: 12)).foregroundStyle(.secondary)
             }
             Spacer(minLength: 0)

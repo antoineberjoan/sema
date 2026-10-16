@@ -10,6 +10,21 @@ struct HistoryChart: View {
     @State private var hoveredDate: Date?
 
     private var points: [MarketObservation] { series.history(for: period) }
+    // Drawing is bounded; hover and analysis always retain every original observation.
+    private var drawnPoints: [MarketObservation] {
+        guard points.count > 1_200 else { return points }
+        let bucket = max(1, points.count / 500)
+        var reduced: [MarketObservation] = []
+        for start in stride(from: 0, to: points.count, by: bucket) {
+            let slice = points[start..<min(start + bucket, points.count)]
+            if let low = slice.min(by: { $0.value < $1.value }), let high = slice.max(by: { $0.value < $1.value }) {
+                reduced += low.date == high.date ? [low] : [low, high].sorted { $0.date < $1.date }
+            }
+        }
+        if let first = points.first, reduced.first?.date != first.date { reduced.insert(first, at: 0) }
+        if let last = points.last, reduced.last?.date != last.date { reduced.append(last) }
+        return reduced
+    }
     private var domain: ClosedRange<Double> {
         let values = points.map { MarketFormat.double($0.value) }
         let low = values.min() ?? 0
@@ -29,23 +44,23 @@ struct HistoryChart: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             Chart {
-                ForEach(points) { point in
+                ForEach(drawnPoints) { point in
                     AreaMark(x: .value("Date", point.date), yStart: .value("Base", domain.lowerBound),
-                             yEnd: .value(series.unit.symbol, MarketFormat.double(point.value)))
+                             yEnd: .value(series.displayUnit, MarketFormat.double(point.value)))
                         .foregroundStyle(LinearGradient(colors: [accent.opacity(0.09), .clear], startPoint: .top, endPoint: .bottom))
-                    LineMark(x: .value("Date", point.date), y: .value(series.unit.symbol, MarketFormat.double(point.value)))
+                    LineMark(x: .value("Date", point.date), y: .value(series.displayUnit, MarketFormat.double(point.value)))
                         .foregroundStyle(accent).lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
                 }
                 if let hovered {
                     RuleMark(x: .value("Date sélectionnée", hovered.date))
                         .foregroundStyle(Color.secondary.opacity(0.35))
-                    PointMark(x: .value("Date", hovered.date), y: .value(series.unit.symbol, MarketFormat.double(hovered.value)))
+                    PointMark(x: .value("Date", hovered.date), y: .value(series.displayUnit, MarketFormat.double(hovered.value)))
                         .foregroundStyle(accent).symbolSize(35)
                         .annotation(position: .top, spacing: 8,
                                     overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(MarketFormat.date(hovered.date)).foregroundStyle(.secondary)
-                                Text(MarketFormat.number(hovered.value, digits: series.fractionDigits) + " " + series.unit.symbol)
+                                Text(MarketFormat.number(hovered.value, digits: series.fractionDigits) + " " + series.displayUnit)
                                     .fontWeight(.medium).monospacedDigit()
                             }
                             .font(.system(size: 11))
@@ -77,13 +92,13 @@ struct HistoryChart: View {
                 }
             }
             .frame(height: height)
-            .accessibilityLabel("Historique de \(series.name), en \(series.unit.symbol)")
+            .accessibilityLabel("Historique de \(series.name), en \(series.displayUnit)")
 
             HStack {
                 Text(MarketFormat.date(hovered?.date ?? series.latest?.date))
                 Spacer()
                 if let value = hovered?.value ?? series.latest?.value {
-                    Text(MarketFormat.number(value, digits: series.fractionDigits) + " " + series.unit.symbol).monospacedDigit()
+                    Text(MarketFormat.number(value, digits: series.fractionDigits) + " " + series.displayUnit).monospacedDigit()
                 }
             }
             .font(.system(size: 11)).foregroundStyle(.secondary)

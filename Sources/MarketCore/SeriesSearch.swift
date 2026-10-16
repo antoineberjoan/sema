@@ -6,7 +6,7 @@ public enum SeriesSearch {
         let tokens = normalize(query).split(separator: " ")
         return series.filter { item in
             guard item.category != .funds else { return false }
-            let text = normalize([item.name, item.subtitle, item.id, item.unit.symbol, aliases[item.id] ?? ""].joined(separator: " "))
+            let text = normalize([item.name, item.subtitle, item.id, item.displayUnit, item.descriptor?.definition ?? "", aliases[item.id] ?? aliases.first(where: { WebstatClient.canonicalID($0.key) == item.id })?.value ?? ""].joined(separator: " "))
             return tokens.allSatisfy { text.contains($0) }
         }
     }

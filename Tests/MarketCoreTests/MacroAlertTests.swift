@@ -60,7 +60,8 @@ struct MacroAlertTests {
         #expect(AlertThreshold.parseLevel(" -0,25 ") == Decimal(string: "-0.25"))
         #expect(AlertThreshold.parseLevel("0") == 0)
         #expect(AlertThreshold.parseLevel("175.1234") == Decimal(string: "175.1234"))
-        for input in ["", "3%", "3foo", "NaN", "1e2", "2,5,6", "0,12345"] {
+        #expect(AlertThreshold.parseLevel("0,123456789012345") == Decimal(string: "0.123456789012345"))
+        for input in ["", "3%", "3foo", "NaN", "1e2", "2,5,6", "0,1234567890123456789"] {
             #expect(AlertThreshold.parseLevel(input) == nil)
         }
     }

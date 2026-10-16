@@ -17,6 +17,12 @@ struct SemaCommands: Commands {
             Button("Panorama") { navigate(to: .overview) }.keyboardShortcut("1").disabled(hasModal)
             Button("Favoris") { navigate(to: .favorites) }.keyboardShortcut("2").disabled(hasModal)
             Button("Alertes") { navigate(to: .alerts) }.keyboardShortcut("3").disabled(hasModal)
+            Button("Explorer Webstat") { navigate(to: .explorer) }.keyboardShortcut("4").disabled(hasModal)
+            Divider()
+            Button("Monter le repère") { if let item = store.selectedSeries { store.moveFollowed(item.id, by: -1) } }
+                .keyboardShortcut(.upArrow, modifiers: [.command, .option]).disabled(hasModal || store.section != .overview || store.selectedSeries == nil)
+            Button("Descendre le repère") { if let item = store.selectedSeries { store.moveFollowed(item.id, by: 1) } }
+                .keyboardShortcut(.downArrow, modifiers: [.command, .option]).disabled(hasModal || store.section != .overview || store.selectedSeries == nil)
             Divider()
             Button("Créer une alerte") {
                 openWindow(id: "workspace")

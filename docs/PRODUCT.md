@@ -13,22 +13,30 @@ Deux surfaces partagent la même information :
 1. Panneau dans la barre de menus : accès rapide aux repères et favoris.
 2. Fenêtre principale : sélection des séries, historiques et gestion des alertes macroéconomiques.
 
-## Contrats de la version 0.1
+## Contrats de la version 0.2
 
 | Fonction | Comportement attendu |
 | --- | --- |
-| Panorama | Basculer entre Marchés & devises et Épargne & économie ; sélectionner une série et consulter son historique. |
-| Recherche | ⌘K ouvre une recherche locale ; accents ignorés et noms usuels comme OAT ou prêt immobilier. Flèches pour choisir, Entrée pour ouvrir, Échap pour fermer. |
+| Panorama | Consulter la sélection personnelle ordonnée ; ajouter depuis Explorer, retirer, déplacer par glissement ou avec ⌘⌥↑ / ⌘⌥↓. Une sélection vide est valide. |
+| Recherche | ⌘K propose Mes repères et Catalogue Webstat. Recherche locale immédiate, catalogue après 250 ms, annulation des requêtes dépassées, pagination de 50, code exact, filtres jeu/zone/fréquence. Flèches pour choisir, Entrée pour ouvrir l’aperçu, Échap pour fermer. |
 | Raccourcis | ⌘1 Panorama, ⌘2 Favoris, ⌘3 Alertes et ⌘R pour actualiser Webstat lorsque la connexion est disponible. Raccourcis internes à Sema, sans raccourci système global. |
 | Graphiques | Au survol, afficher la date, la valeur et l’unité du point historique le plus proche dans une infobulle, avec un repère sur la courbe et la même lecture sous le graphique. Effacer la sélection lorsque la série ou la période change. |
 | Origine | Identifier clairement les données fictives et les repères Webstat réellement téléchargés ; conserver leur producteur et leur période. |
-| Favoris | Ajouter ou retirer un repère Webstat, et retrouver la sélection après relancement. |
-| Webstat | Connecter une clé personnelle, actualiser 13 repères sur cinq ans au maximum, conserver les données si le réseau échoue et afficher leur période et leur mise à jour source. |
+| Favoris | Épingler un sous-ensemble des séries suivies ; retrouver sélection, ordre et favoris après relancement. Retirer une série met ses alertes en pause et conserve leur règle et le cache. |
+| Webstat | Connecter une clé personnelle et découvrir les séries accessibles, sans liste fermée. Les 13 repères constituent une sélection initiale. Actualisation par série avec conservation du cache en cas d’erreur. Six ans chargés à l’ouverture ; « Tout » permet de charger les tranches anciennes jusqu’au début publié et d’annuler. |
 | Clé | Valider la clé avant de l’enregistrer dans le Trousseau de ce Mac ; pouvoir la remplacer ou la retirer sans effacer le cache. |
 | Réglages | « Mon espace » en bas de la sidebar ouvre les mêmes réglages natifs que le bouton de la barre d’outils et le menu Sema. |
 | Apparence | Choisir Sarcelle, Menthe, Lavande, Bleu ciel, Bleu polaire ou Graphite dans les réglages. Choix local persistant, appliqué aux deux surfaces. |
 | Alertes | Créer une règle « passe au-dessus/en dessous » sur un repère macro, la mettre en pause, la supprimer et tester un franchissement explicite. Vérifier les nouvelles observations à chaque actualisation Webstat. |
 | Notifications | Signaux de la session visibles dans l’app ; notifications système optionnelles après activation. Déduplication persistante par règle et date d’observation. |
+
+### Catalogue et fidélité des données
+
+L’aperçu affiche le titre et la définition officiels, la fréquence, l’unité et son multiplicateur, le producteur, les bornes publiées, la base d’un indice, les dates d’observation et de mise à jour, ainsi que les métadonnées brutes. Les libellés proviennent des listes de codes du jeu. Une définition longue contradictoire reste visible ; fréquence et périodes de la source font référence.
+
+Les nombres conservent l’échelle de `obs_value` : un encours en milliards n’est pas multiplié à nouveau. Toute unité explicitement traduite par Webstat peut porter un seuil absolu ; `_Z`, `_X`, une unité sans libellé connu ou un multiplicateur absent suspendent les alertes. Une variation relative n’est pas inventée sur les indices et montants. Les données manquantes restent absentes du graphique.
+
+Les préférences et le cache v1 migrent atomiquement vers v2, avec copie `.v1-backup`. Les identifiants locaux deviennent les clés Webstat, les anciennes règles et checkpoints sont préservés. Les préférences illisibles ne sont pas remplacées. La migration marque les utilisateurs existants comme déjà accueillis.
 
 ## Hors de cette version
 
@@ -49,3 +57,7 @@ Deux surfaces partagent la même information :
 7. Changer de thème dans Apparence, vérifier la fenêtre et le panneau, puis relancer pour vérifier la persistance.
 
 8. Ouvrir la recherche avec ⌘K, saisir « OAT », ouvrir au clavier ; contrôler les résultats sans accents, la navigation par flèches, la fermeture avec Échap et les raccourcis de rubrique.
+
+9. Dans Explorer, rechercher un code exact, changer de jeu, de fréquence et de zone ; ouvrir un aperçu puis l’ajouter. Rechercher aussi une unité non interprétée : vérifier l’explication et l’absence d’alerte active.
+10. Réorganiser les séries, retirer un repère avec alerte puis le dernier repère ; relancer et vérifier les états persistants.
+11. Choisir « Tout », charger les périodes anciennes puis annuler ; contrôler la couverture réellement reçue et la première période publiée. Tester le rechargement explicite et la révision sans nouvelle alerte historique.

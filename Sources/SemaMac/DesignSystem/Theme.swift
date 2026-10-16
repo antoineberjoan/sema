@@ -104,11 +104,11 @@ enum MarketFormat {
     static func value(_ series: MarketSeries) -> String {
         guard let value = series.latest?.value else { return "—" }
         let n = number(value, digits: series.fractionDigits)
-        return series.unit == .percent || series.unit == .eur ? n + " " + series.unit.symbol : n
+        return n + (series.displayUnit.isEmpty ? "" : " " + series.displayUnit)
     }
 
     static func change(_ series: MarketSeries, period: HistoryPeriod) -> String {
-        guard let delta = series.change(for: period) else { return "Historique insuffisant" }
+        guard let delta = series.change(for: period) else { return series.descriptor?.variation == .unavailable ? "Variation non calculée" : "Historique insuffisant" }
         return number(delta, digits: 2, signed: true) + (series.unit == .percent ? " pt" : " %")
     }
 

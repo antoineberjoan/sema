@@ -28,11 +28,40 @@ struct LocalStorage {
     func cachedWebstat() throws -> [MarketSeries] {
         let url = directory.appendingPathComponent("webstat-cache.json")
         guard FileManager.default.fileExists(atPath: url.path) else { return [] }
-        return try JSONDecoder().decode([MarketSeries].self, from: Data(contentsOf: url))
+        let data = try Data(contentsOf: url)
+        if let cache = try? JSONDecoder().decode(WebstatCache.self, from: data) {
+            guard cache.schemaVersion == 2 else { throw PreferencesStore.StoreError.unsupportedVersion(cache.schemaVersion) }
+            return cache.series
+        }
+        let legacy = try JSONDecoder().decode([MarketSeries].self, from: data)
+        let migrated = legacy.map { $0.withID(WebstatClient.canonicalID($0.id)) }
+        let backup = url.appendingPathExtension("v1-backup")
+        if !FileManager.default.fileExists(atPath: backup.path) { try data.write(to: backup, options: .atomic) }
+        try cacheWebstat(migrated)
+        return migrated
     }
 
     func cacheWebstat(_ series: [MarketSeries]) throws {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        try JSONEncoder().encode(series).write(to: directory.appendingPathComponent("webstat-cache.json"), options: .atomic)
+        try JSONEncoder().encode(WebstatCache(series: series)).write(to: directory.appendingPathComponent("webstat-cache.json"), options: .atomic)
     }
+    func cachedCatalogue() throws -> WebstatCatalogueCache? {
+        let url = directory.appendingPathComponent("webstat-catalogue.json")
+        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
+        return try JSONDecoder().decode(WebstatCatalogueCache.self, from: Data(contentsOf: url))
+    }
+    func cacheCatalogue(_ cache: WebstatCatalogueCache) throws {
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try JSONEncoder().encode(cache).write(to: directory.appendingPathComponent("webstat-catalogue.json"), options: .atomic)
+    }
+}
+
+private struct WebstatCache: Codable {
+    var schemaVersion = 2
+    let series: [MarketSeries]
+}
+struct WebstatCatalogueCache: Codable {
+    var schemaVersion = 1
+    let datasets: [WebstatDataset]
+    let labels: [String: [String: String]]
 }

@@ -73,6 +73,170 @@ public struct WebstatClient: Sendable {
 
     public init() {}
 
+    public static var legacyIDs: [String: String] {
+        Dictionary(uniqueKeysWithValues: definitions.map { ($0.id, $0.key) })
+    }
+    public static func canonicalID(_ id: String) -> String { legacyIDs[id] ?? id }
+    public static var starterIDs: [String] { definitions.map(\.key) }
+    public static var starterSeries: [MarketSeries] {
+        let demos = DemoCatalog.series()
+        return definitions.map { definition in
+            let sample = demos.first { $0.id == definition.id }
+            return MarketSeries(id: definition.key, name: definition.name, subtitle: definition.subtitle,
+                category: definition.category, unit: definition.unit, fractionDigits: definition.digits,
+                source: definition.producer, isDemo: true, frequency: definition.frequency,
+                observations: sample?.observations ?? [])
+        }
+    }
+
+    public static func request(table: String, apiKey: String, parameters: [URLQueryItem]) throws -> URLRequest {
+        guard ["series", "webstat-datasets", "codelists", "observations"].contains(table) else { throw ClientError.invalidData }
+        let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !key.isEmpty, key.rangeOfCharacter(from: .controlCharacters) == nil else { throw ClientError.missingKey }
+        var url = URLComponents(string: "https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/\(table)/records")!
+        url.queryItems = parameters
+        var request = URLRequest(url: url.url!)
+        request.setValue("Apikey \(key)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.timeoutInterval = 30
+        return request
+    }
+
+    /// Quotes are escaped inside ODSQL string literals; fields and tables are never supplied by users.
+    public static func literal(_ value: String) -> String {
+        "'" + value.replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "'", with: "\\'") + "'"
+    }
+
+    public static func searchRequest(apiKey: String, search: WebstatSearch, offset: Int = 0) throws -> URLRequest {
+        var filters: [String] = []
+        let query = search.query.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty {
+            if WebstatSeriesDescriptor.isValidKey(query), query.contains(".") {
+                filters.append("series_key = \(literal(query))")
+            } else { filters.append("search(\(literal(String(query.prefix(300)))))") }
+        }
+        if !search.datasetID.isEmpty { filters.append("dataset_id = \(literal(search.datasetID))") }
+        if !search.area.isEmpty {
+            guard ["ref_area", "ame_ref_area", "zone_geo"].contains(search.areaField) else { throw ClientError.invalidData }
+            filters.append("\(search.areaField) = \(literal(search.area))")
+        }
+        if !search.frequency.isEmpty { filters.append("freq = \(literal(search.frequency))") }
+        var parameters = [URLQueryItem(name: "limit", value: "50"),
+                          URLQueryItem(name: "offset", value: String(max(0, offset))),
+                          URLQueryItem(name: "order_by", value: "title_fr,series_key")]
+        if !filters.isEmpty { parameters.append(URLQueryItem(name: "where", value: filters.joined(separator: " and "))) }
+        return try request(table: "series", apiKey: apiKey, parameters: parameters)
+    }
+
+    public func search(apiKey: String, search: WebstatSearch, offset: Int = 0) async throws -> WebstatPage<WebstatSeriesDescriptor> {
+        let data = try await send(Self.searchRequest(apiKey: apiKey, search: search, offset: offset))
+        return try Self.parseSeriesPage(data, offset: offset)
+    }
+
+    public static func parseSeriesPage(_ data: Data, offset: Int = 0) throws -> WebstatPage<WebstatSeriesDescriptor> {
+        let page = try decodePage(data)
+        return WebstatPage(items: try page.results.map { try WebstatSeriesDescriptor(raw: $0) }, total: page.totalCount, offset: offset)
+    }
+
+    public func datasets(apiKey: String) async throws -> [WebstatDataset] {
+        var items: [WebstatDataset] = []; var offset = 0
+        while true {
+            let data = try await send(Self.request(table: "webstat-datasets", apiKey: apiKey,
+                parameters: [.init(name: "limit", value: "100"), .init(name: "offset", value: String(offset)), .init(name: "order_by", value: "dataset_id")]))
+            let page = try Self.decodePage(data)
+            items += try page.results.map { try WebstatDataset(raw: $0) }
+            offset += page.results.count
+            if offset >= page.totalCount || page.results.isEmpty { break }
+            try Task.checkCancellation()
+        }
+        return items
+    }
+
+    public func descriptor(apiKey: String, key: String) async throws -> WebstatSeriesDescriptor {
+        guard WebstatSeriesDescriptor.isValidKey(key) else { throw ClientError.invalidData }
+        let page = try await search(apiKey: apiKey, search: WebstatSearch(query: key))
+        guard let descriptor = page.items.first(where: { $0.key == key }) else { throw ClientError.incompleteData }
+        return descriptor
+    }
+
+    /// Exports are bounded by date. The caller requests older history in six-year slices.
+    public func observations(apiKey: String, descriptor: WebstatSeriesDescriptor,
+                             start: Date, end: Date = .now) async throws -> [MarketObservation] {
+        let date = ISO8601DateFormatter(); date.formatOptions = [.withFullDate]
+        let filter = "series_key = \(Self.literal(descriptor.key)) and time_period_start >= date'\(date.string(from: start))' and time_period_start <= date'\(date.string(from: end))'"
+        var request = try Self.request(table: "observations", apiKey: apiKey, parameters: [
+            .init(name: "select", value: "series_key,time_period_start,time_period_end,obs_value,obs_status,updated_at"),
+            .init(name: "where", value: filter), .init(name: "order_by", value: "time_period_start,updated_at")])
+        var url = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
+        url.path = url.path.replacingOccurrences(of: "/records", with: "/exports/json")
+        request.url = url.url
+        let data = try await send(request)
+        let points = try Self.parseObservations(data, expectedKey: descriptor.key, now: end)
+        return descriptor.series(observations: points).observations
+    }
+
+    public func codeLabels(apiKey: String, ids: [String]) async throws -> [String: [String: String]] {
+        guard !ids.isEmpty else { return [:] }
+        let filter = "codelist_id in (" + ids.map(Self.literal).joined(separator: ",") + ")"
+        var request = try Self.request(table: "codelists", apiKey: apiKey, parameters: [
+            .init(name: "where", value: filter), .init(name: "order_by", value: "codelist_id,code")])
+        var url = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
+        url.path = url.path.replacingOccurrences(of: "/records", with: "/exports/json"); request.url = url.url
+        let data = try await send(request)
+        let rows: [[String: WebstatValue]]
+        do { rows = try JSONDecoder().decode([[String: WebstatValue]].self, from: data) } catch { throw ClientError.invalidData }
+        return Self.parseCodeLabels(rows)
+    }
+    public static func parseCodeLabels(_ rows: [[String: WebstatValue]]) -> [String: [String: String]] {
+        var labels: [String: [String: String]] = [:]
+        for row in rows {
+            if let list = row["codelist_id"]?.text, let code = row["code"]?.text,
+               let label = row["label_fr"]?.text ?? row["label_en"]?.text { labels[list, default: [:]][code] = label }
+        }
+        return labels
+    }
+
+    public static func parseObservations(_ data: Data, expectedKey: String, now: Date = .now) throws -> [MarketObservation] {
+        let rows: [Row]
+        do { rows = try JSONDecoder().decode([Row].self, from: data) } catch { throw ClientError.invalidData }
+        let timestamp = ISO8601DateFormatter(); timestamp.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let fallback = ISO8601DateFormatter()
+        return rows.sorted { ($0.updatedAt ?? "") < ($1.updatedAt ?? "") }.compactMap { row in
+            guard row.key == expectedKey, let value = row.value, !value.isNaN,
+                  let date = WebstatSeriesDescriptor.date(row.start), date <= now,
+                  let end = WebstatSeriesDescriptor.date(row.end), end >= date,
+                  row.status != "M", row.status != "Q" else { return nil }
+            return MarketObservation(date: date, value: value, periodEnd: end,
+                updatedAt: row.updatedAt.flatMap { timestamp.date(from: $0) ?? fallback.date(from: $0) }, status: row.status)
+        }
+    }
+
+    private struct Page: Decodable {
+        let totalCount: Int
+        let results: [[String: WebstatValue]]
+        enum CodingKeys: String, CodingKey { case totalCount = "total_count", results }
+    }
+    private static func decodePage(_ data: Data) throws -> Page {
+        do { return try JSONDecoder().decode(Page.self, from: data) } catch { throw ClientError.invalidData }
+    }
+    private func send(_ request: URLRequest) async throws -> Data {
+        let session = URLSession(configuration: .ephemeral)
+        defer { session.finishTasksAndInvalidate() }
+        let data: Data; let response: URLResponse
+        do { (data, response) = try await session.data(for: request) }
+        catch is CancellationError { throw CancellationError() }
+        catch { if Task.isCancelled { throw CancellationError() }; throw ClientError.unavailable }
+        guard let http = response as? HTTPURLResponse else { throw ClientError.unavailable }
+        switch http.statusCode {
+        case 200: return data
+        case 401, 403, 404: throw ClientError.accessDenied
+        case 429: throw ClientError.quotaReached
+        default: throw ClientError.unavailable
+        }
+    }
+
+
     /// Six years cover a full five-year window even when the latest monthly release lags behind today.
     public static func request(apiKey: String, now: Date = .now) throws -> URLRequest {
         let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)

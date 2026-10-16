@@ -4,16 +4,16 @@
 
 Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoan/sema`.
 
-## Version 0.1
+## Version 0.2
 
 - Une fenêtre de travail inspirée du mélange Panorama / Atelier : navigation latérale, indicateurs, historiques et détail d’une série.
 - Un panneau compact dans la barre de menus, partageant les mêmes données et favoris.
-- Treize repères macro réels via Webstat après connexion d’une clé personnelle : Livret A, LDDS, LEP, taux de dépôt BCE, €STR, inflation France et zone euro, quatre changes, crédit immobilier et emprunt français à dix ans.
-- Vues sur 1 mois, 3 mois, 1 an, 3 ans et 5 ans selon la profondeur disponible ; source, période et date de mise à jour. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
-- Recherche locale **⌘K** (noms et alias : OAT, BCE, prêt immobilier…), navigation par flèches puis Entrée. **⌘1/⌘2/⌘3** ouvrent Panorama/Favoris/Alertes ; **⌘R** actualise Webstat.
+- Catalogue Webstat dynamique avec clé personnelle : rechercher, filtrer et prévisualiser les séries accessibles, puis composer une sélection ordonnée. Les treize repères macro précédents restent une sélection de départ.
+- Vues sur 1 mois, 3 mois, 1 an, 3 ans, 5 ans et Tout selon la profondeur disponible ; chargement des périodes anciennes par tranches annulables. Définition, unité, échelle, fréquence, périodes, base des indices et métadonnées officielles. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
+- **⌘K** propose Mes repères et Catalogue Webstat ; recherche par noms ou codes, filtres jeu/zone/fréquence, navigation par flèches puis Entrée. **⌘1/⌘2/⌘3/⌘4** ouvrent Panorama/Favoris/Alertes/Explorer ; **⌘R** actualise Webstat. **⌘⌥↑ / ⌘⌥↓** réordonnent le repère sélectionné.
 - Composition native sans contours décoratifs : sidebar sobre, liste de repères et panneau de graphique avec une ombre légère.
 - Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Sarcelle, Menthe, Lavande, Bleu ciel, Bleu polaire et Graphite.
-- Alertes de franchissement strict au-dessus ou en dessous d’un seuil, sur chaque repère Webstat. Création, pause, suppression et test ; vérification des nouvelles observations à chaque actualisation, sans doublon par date.
+- Alertes de franchissement strict au-dessus ou en dessous d’un seuil, sur les repères dont l’unité et l’échelle sont explicites. Création, pause, suppression et test ; vérification des nouvelles observations à chaque actualisation, sans doublon par date.
 
 Le périmètre est limité aux repères Webstat. Les fonds suivis ont été retirés de l’interface ; les anciennes préférences sont conservées. Aucun minuteur ni service de surveillance en arrière-plan ne tourne : les alertes sont vérifiées à l’actualisation manuelle, pas quand l’app est quittée ou le Mac en veille. Les notifications système restent optionnelles.
 
@@ -59,7 +59,7 @@ Sources/
   SemaMac/
     App/                  Cycle de vie et état partagé
     DesignSystem/         Couleurs, typographie, composants et graphiques
-    Features/             Panorama, favoris, alertes macro, menu et réglages
+    Features/             Catalogue, aperçu, panorama, favoris, alertes, menu et réglages
     Infrastructure/       Fichiers, Trousseau et notifications macOS
 Tests/MarketCoreTests/    Règles métier et contrats des données
 Resources/               Métadonnées du bundle et logos SVG
@@ -73,7 +73,7 @@ L’interface utilise **SF Pro**, les contrôles macOS et six palettes avec des 
 
 ## Données locales
 
-Par défaut, les favoris et alertes sont dans `~/Library/Application Support/Sema/preferences.json`. Les observations Webstat sont dans `webstat-cache.json`, sans clé API. L’ancien `ecb-cache.json` reste lisible. Les écritures sont atomiques. Un fichier de préférences illisible ou d’une version inconnue est conservé ; l’app signale le problème et désactive sa sauvegarde.
+Par défaut, les favoris et alertes sont dans `~/Library/Application Support/Sema/preferences.json`. Les observations Webstat sont dans `webstat-cache.json`, sans clé API. L’ancien `ecb-cache.json` reste lisible. Les préférences et le cache v1 migrent vers v2 avec copie du fichier original. Les écritures sont atomiques. Un fichier de préférences illisible ou d’une version inconnue est conservé ; l’app signale le problème et désactive sa sauvegarde.
 
 Pour une session de validation isolée, `SEMA_DEVELOPMENT_DATA_DIRECTORY` peut définir l’emplacement des données lors de la création du bundle. `SEMA_CONFIGURATION=debug` permet de produire une app de développement. Ces valeurs ne sont pas nécessaires à une utilisation normale.
 
