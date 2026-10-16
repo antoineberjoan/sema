@@ -31,8 +31,8 @@ public struct WebstatClient: Sendable {
     }
 
     private static let definitions: [Definition] = [
-        .init(id: "fr10", key: "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", name: "France · 10 ans",
-              subtitle: "Emprunt phare · publication mensuelle", category: .markets, unit: .percent,
+        .init(id: "fr10", key: "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", name: "Emprunt phare FR · 10 ans",
+              subtitle: "Rendement · série mensuelle", category: .markets, unit: .percent,
               digits: 2, frequency: .monthly, producer: "Banque de France"),
         .init(id: "ecb", key: "FM.D.U2.EUR.4F.KR.DFR.LEV", name: "Taux de dépôt BCE",
               subtitle: "Facilité de dépôt · politique monétaire", category: .savings, unit: .percent,

@@ -27,7 +27,7 @@
 | `eurchf` | `EXR.D.CHF.EUR.SP00.A` | Référence quotidienne ; CHF pour 1 EUR. |
 | `eurgbp` | `EXR.D.GBP.EUR.SP00.A` | Référence quotidienne ; GBP pour 1 EUR. |
 | `mortgage-fr` | `MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N` | Mensuelle ; nouveaux crédits à l’habitat hors renégociations, pas un TAEG ni une offre bancaire. |
-| `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Publication mensuelle de l’emprunt phare français à dix ans. Aucun cours en direct. |
+| `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage compact : « Emprunt phare FR · 10 ans ». Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
 
 Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. Les anciens identifiants Sema sont migrés vers la clé Webstat, qui devient l’identifiant stable des observations, favoris et alertes.
 

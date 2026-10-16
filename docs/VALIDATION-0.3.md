@@ -17,6 +17,7 @@ Le petit panneau de barre de menus est remplacé par un bandeau horizontal sous 
 - Sans favori, le bandeau affiche une invitation et « Choisir mes favoris » ramène au Panorama.
 - L’actualisation est désactivée sans clé. Le bandeau n’ajoute aucune requête automatique.
 - Identité monochrome : Graphite est sélectionné en l’absence de thème enregistré. Les six palettes restent proposées ; passage Sarcelle puis retour Graphite vérifiés dans les réglages de la copie isolée. Le logo natif, l’icône SVG et son rendu PNG sont monochromes. La compilation et la signature stricte du bundle sont valides après changement.
+- Libellé obligataire précisé : « Emprunt phare FR · 10 ans », avec le sous-titre « Rendement · série mensuelle ». La clé Webstat reste `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD`. Le nouveau titre est vérifié dans l’app relancée ; le site et le guide distinguent cette série du TEC 10 quotidien.
 
 Le script local `./scripts/check.sh` rencontre l’absence du module Swift Testing dans les Command Line Tools installés. Les tests du cœur et la compilation du bundle sont aussi exécutés par GitHub Actions avec le SDK complet.
 

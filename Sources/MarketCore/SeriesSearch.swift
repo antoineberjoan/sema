@@ -12,7 +12,7 @@ public enum SeriesSearch {
     }
 
     private static let aliases = [
-        "fr10": "OAT France dix ans emprunt obligataire",
+        "fr10": "OAT France français dix ans emprunt phare obligataire rendement mensuel",
         "ecb": "BCE Banque centrale européenne facilité dépôt taux directeur",
         "estr": "ESTR euro short term monétaire",
         "mortgage-fr": "crédit immobilier immo emprunt prêt habitat logement",

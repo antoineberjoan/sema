@@ -10,6 +10,8 @@ Lire `docs/PRODUCT.md`, `docs/ARCHITECTURE.md` et les fichiers concernés avant 
 - L’interface est rangée par fonctionnalité dans `SemaMac/Features`. Le panneau et la fenêtre partagent `AppStore`.
 - Ne pas ajouter de framework d’architecture, de cible, de service serveur ou de dépendance de production sans nécessité explicite et accord préalable pour une dépendance.
 - Préférer les composants natifs Apple. Centraliser les choix visuels réutilisés dans `DesignSystem`.
+- Respecter Interface Craft dans l’app et ses supports : hiérarchie nette, couleur intentionnelle, profondeur par ombres discrètes, cohérence des espacements et conventions natives. Consulter la skill et `docs/IDENTITY.md` avant une modification de design ou de mouvement.
+- Les animations ont des constantes nommées, restent interruptibles et respectent Réduire les animations. Valider le flux au clavier et le rendu natif ; distinguer ce qui est observé de ce qui reste à vérifier.
 
 ## Données et calculs
 
