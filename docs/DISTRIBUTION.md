@@ -50,7 +50,7 @@ La page contient une démonstration, pas une mesure du téléchargement ou de la
 
 ## Activer Homebrew
 
-Le dépôt envisagé est `antoineberjoan/homebrew-sema`. Le cask se place sous `Casks/sema.rb` dans ce dépôt de distribution ; le code source de Sema n’a pas besoin de devenir public. L’adresse immuable de release proposée est inscrite dans le manifeste et dans le modèle de cask.
+Le dépôt de distribution public est `antoineberjoan/homebrew-sema`. Le cask se place sous `Casks/sema.rb` dans ce dépôt de distribution ; le code source de Sema n’a pas besoin de devenir public. L’adresse immuable de release proposée est inscrite dans le manifeste et dans le modèle de cask.
 
 Avant activation : créer le dépôt de distribution avec l’audience décidée, publier exactement le DMG contrôlé et son empreinte, vérifier le téléchargement sans authentification, puis tester installation **et** mise à jour sur un environnement distinct. La commande attendue est `brew install --cask antoineberjoan/sema/sema`. Elle n’est pas opérationnelle tant que ces étapes ne sont pas terminées.
 
@@ -63,3 +63,11 @@ Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade
 3. Télécharger le fichier via le navigateur sur un autre compte ou Mac pour observer les contrôles de quarantaine et confirmer l’aide Gatekeeper.
 4. Vérifier la page desktop et mobile, le clavier, la copie Homebrew, Réduire les animations, JavaScript absent et les relectures rapides.
 5. Ne cocher les contrôles de `release.json` qu’après les essais correspondants. Le succès de `hdiutil verify` et de la signature locale ne vaut pas validation de l’installation Internet.
+
+## Alpha 0.2.0 vérifiée le 16 octobre 2026
+
+Le DMG versionné est publié dans la release `v0.2.0` de `antoineberjoan/homebrew-sema` : 3 064 325 octets, SHA-256 `71660035ef0bcd16ef2006515989ef3ab7abec3b4c8c363576062bbc3016c96e`. Le source de l’app reste privé ; le site conserve son audience privée.
+
+Le téléchargement HTTPS sans authentification et l’installation depuis le vrai cask public ont été vérifiés dans un dossier Applications isolé. Une installation puis une mise à jour 0.1.0 → cet artefact exact ont aussi passé le test sur un tap privé. La signature stricte et la quarantaine restent valides après copie ; aucun lancement ni contournement Gatekeeper n’a été effectué. Le premier lancement Internet sur un autre compte ou Mac reste à valider.
+
+Homebrew 7 peut demander une approbation du cask tiers. Après consultation de `Casks/sema.rb`, `brew trust --cask antoineberjoan/sema/sema` permet de l’approuver explicitement, puis de relancer l’installation. La page conserve Homebrew sous une alternative repliable.

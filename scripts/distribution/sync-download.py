@@ -62,7 +62,7 @@ def main():
     if brew["enabled"]:
         if not brew.get("command") or not all(manifest["validation"].get(key) for key in ("homebrewInstall", "homebrewUpgrade", "internetDownload")):
             raise ValueError("La commande Homebrew ne peut être activée avant les tests d’installation et de mise à jour")
-        markup = f'<div class="brew-command"><code id="homebrew-command">{escape(brew["command"])}</code><button type="button" id="copy-homebrew" hidden>Copier</button></div><p id="homebrew-copy-status" role="status"></p><p>Les contrôles de sécurité de macOS s’appliquent aussi à cette installation.</p>'
+        markup = f'<div class="brew-command"><code id="homebrew-command">{escape(brew["command"])}</code><button type="button" id="copy-homebrew" hidden>Copier</button></div><p id="homebrew-copy-status" role="status"></p><p>Si Homebrew demande une approbation, consultez <a href="https://github.com/antoineberjoan/homebrew-sema/blob/main/Casks/sema.rb" target="_blank" rel="noopener noreferrer">le cask Sema</a>, puis utilisez <code>brew trust --cask antoineberjoan/sema/sema</code> avant de relancer l’installation. Les contrôles de sécurité de macOS s’appliquent aussi à cette installation.</p>'
     else:
         markup = '<p>Le tap Homebrew sera proposé après les tests d’installation et de mise à jour.</p>'
     source = replace_block(source, "homebrew", markup)

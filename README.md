@@ -28,7 +28,7 @@ cd sema
 open dist/Sema.app
 ```
 
-Le script crée une app locale avec une signature ad hoc. Pour une distribution à des clients, utiliser une signature Developer ID et une notarisation Apple, ou le circuit Mac App Store. La signature ad hoc sert au développement local.
+Le script crée une app avec une signature ad hoc. L’alpha distribuée conserve cette signature et reste non notarisée : macOS peut demander une autorisation manuelle à la première ouverture. Une signature Developer ID et une notarisation Apple permettront de fluidifier une distribution ultérieure.
 
 Dans Xcode : ouvrir `Package.swift`. Pour tester les comportements dépendant d’un vrai bundle (dont les notifications), lancer l’app produite par le script.
 
@@ -87,4 +87,4 @@ Voir [ROADMAP.md](docs/ROADMAP.md). Les priorités sont l’intégration des aut
 
 ## Distribution
 
-Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, le manifeste de release, la page de téléchargement et la préparation Homebrew. Le packaging reste local et ne publie aucun artefact.
+Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, le manifeste de release, la page de téléchargement et la préparation Homebrew. Les scripts de packaging restent locaux et ne publient aucun artefact. Le dépôt public [homebrew-sema](https://github.com/antoineberjoan/homebrew-sema) ne contient que le cask et les versions binaires ; ce dépôt source reste privé.
