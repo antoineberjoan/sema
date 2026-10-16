@@ -1,0 +1,16 @@
+:root {
+  --ink: #141414;
+  --paper: #FAFAFA;
+  --secondary: #AAAAAA;
+  --surface: #262626;
+  --graphite: #474747;
+  --signal: #D6D6D6;
+  --motion-feedback: 120ms;
+  --motion-selection: 180ms;
+  --motion-panel: 240ms;
+  --motion-exit: 160ms;
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --radius-control: 8px;
+  --radius-surface: 16px;
+  --shadow-panel: 0 2px 4px #0003, 0 12px 26px #0002;
+}
