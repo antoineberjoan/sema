@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101010">
+    <title>Sema — L’économie, à portée de Mac.</title>
+    <meta name="description" content="Taux, inflation, devises. Sema réunit vos repères économiques dans une app native pour Mac, avec favoris, historiques et alertes de seuil.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="Sema — L’économie, à portée de Mac.">
+    <meta property="og:description" content="Taux. Inflation. Devises. D’un coup d’œil, sur votre Mac.">
+    <meta property="og:url" content="https://sema.raregoat8192.chatgpt.site/">
+    <meta property="og:image" content="https://sema.raregoat8192.chatgpt.site/assets/sema-macos.jpg">
+    <link rel="icon" type="image/svg+xml" href="assets/sema.svg">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Aller au contenu</a>
+    <header class="site-header wrap">
+      <a class="brand" href="#top" aria-label="Sema, accueil">
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M29 17H23C19.7 17 17 19.7 17 23V29M35 47H41C44.3 47 47 44.3 47 41V35" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="32" r="5" fill="currentColor"/></svg>
+        <span>Sema</span>
+      </a>
+      <nav aria-label="Navigation principale">
+        <a href="#app">L’app</a>
+        <a href="#questions">Questions</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero wrap" id="top" aria-labelledby="hero-title">
+        <p class="eyebrow">Une app native pour Mac</p>
+        <h1 id="hero-title">Taux. Inflation. Devises.<br><span>D’un coup d’œil, sur votre Mac.</span></h1>
+        <a class="button" href="#app">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          Découvrir Sema
+        </a>
+        <p class="availability">En développement <span aria-hidden="true">·</span> macOS 14 et versions ultérieures</p>
+      </section>
+
+      <section class="product wrap" id="app" aria-label="Aperçu de Sema">
+        <figure>
+          <button class="screenshot-button" type="button" data-enlarge aria-label="Agrandir la capture de Sema">
+            <img class="app-screenshot" src="assets/sema-macos.jpg" width="2240" height="1520" alt="Sema sur Mac : une barre latérale avec Panorama, Favoris et Alertes, les taux et devises à gauche, et l’historique Euro/Yen sur cinq ans à droite." fetchpriority="high" decoding="async">
+          </button>
+          <figcaption>
+            <span>Sema pour macOS · Données Banque de France.</span>
+            <button class="text-button" type="button" data-enlarge>Agrandir <span aria-hidden="true">↗</span></button>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="closer wrap" aria-labelledby="closer-title">
+        <div class="section-copy">
+          <h2 id="closer-title">Gardez vos repères.</h2>
+          <p>Vos favoris, plusieurs années d’historique, des alertes de seuil. Et <kbd>⌘ K</kbd> pour retrouver le taux qu’il vous faut.</p>
+        </div>
+        <div class="search-demo">
+          <div class="search-surface">
+            <label class="search-field" for="rate-search">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input id="rate-search" type="search" aria-label="Rechercher un indicateur" placeholder="Un taux, une devise…" autocomplete="off" spellcheck="false" aria-controls="rate-results" aria-describedby="search-hint">
+              <kbd aria-hidden="true">⌘ K</kbd>
+            </label>
+            <div class="rate-results" id="rate-results" aria-label="Indicateurs disponibles"></div>
+            <p class="no-results" hidden>Aucun repère trouvé. Essayez « BCE » ou « immobilier ».</p>
+            <div class="search-bottom"><span id="result-count" aria-live="polite"></span><span>↑ ↓ <span class="key-hint">pour naviguer</span> <span aria-hidden="true">·</span> ↵ <span class="key-hint">pour ouvrir</span></span></div>
+          </div>
+          <p class="demo-caption" id="search-hint">Essayez la recherche <span aria-hidden="true">·</span> Aperçu interactif du catalogue</p>
+        </div>
+      </section>
+
+      <section class="questions wrap" id="questions" aria-labelledby="questions-title">
+        <h2 id="questions-title">Quelques réponses.</h2>
+        <div class="faq-list">
+          <details>
+            <summary>Quels repères peut-on suivre ?<span class="plus" aria-hidden="true"></span></summary>
+            <p>Les taux de la BCE et l’€STR, le taux français à 10 ans, le crédit immobilier, l’inflation en France et en zone euro, le Livret A, le LDDS, le LEP et quatre taux de change de l’euro. Les données proviennent de <a href="https://webstat.banque-france.fr/" target="_blank" rel="noopener noreferrer">Webstat, le portail de la Banque de France ↗</a>.</p>
+          </details>
+          <details>
+            <summary>Comment se connecter aux données ?<span class="plus" aria-hidden="true"></span></summary>
+            <p>Vous renseignez votre propre clé Webstat dans les réglages de Sema. Elle reste dans le Trousseau de votre Mac. Les données téléchargées sont conservées localement pour pouvoir les consulter hors connexion.</p>
+          </details>
+          <details>
+            <summary>Comment fonctionnent les alertes ?<span class="plus" aria-hidden="true"></span></summary>
+            <p>Choisissez un indicateur, un seuil et le sens du franchissement. Sema vérifie vos règles quand vous actualisez les données dans l’app et peut envoyer une notification macOS, si vous l’autorisez. La surveillance automatique en arrière-plan n’est pas encore disponible.</p>
+          </details>
+          <details>
+            <summary>Les données sont-elles en temps réel ?<span class="plus" aria-hidden="true"></span></summary>
+            <p>Chaque série suit son rythme de publication, quotidien ou mensuel selon l’indicateur. Sema affiche la date et la source de chaque observation. Le taux français à 10 ans et le taux du crédit immobilier sont des séries mensuelles.</p>
+          </details>
+          <details>
+            <summary>Quand pourrai-je télécharger Sema ?<span class="plus" aria-hidden="true"></span></summary>
+            <p>Sema est en développement. Cette page présente l’app actuelle ; le téléchargement public n’est pas encore ouvert et aucune date de sortie n’est annoncée.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer wrap">
+      <p>Sema <span aria-hidden="true">·</span> Une app Mac par Antoine Berjoan.</p>
+      <a href="#top">Tout en haut <span aria-hidden="true">↑</span></a>
+    </footer>
+
+    <dialog id="screenshot-dialog" aria-label="Capture de Sema en grand">
+      <form method="dialog"><button class="dialog-close" aria-label="Fermer la capture">Fermer <kbd>esc</kbd></button></form>
+      <img src="assets/sema-macos.jpg" alt="Capture en grand de Sema : les taux, devises et l’historique Euro/Yen sur cinq ans." width="2240" height="1520">
+    </dialog>
+    <dialog id="indicator-dialog" aria-labelledby="indicator-title">
+      <form method="dialog"><button class="dialog-close" aria-label="Fermer l’indicateur">Fermer <kbd>esc</kbd></button></form>
+      <p class="eyebrow">Dans le catalogue de Sema</p>
+      <h2 id="indicator-title"></h2>
+      <p id="indicator-description"></p>
+      <p class="indicator-source">Source : Webstat · Banque de France</p>
+    </dialog>
+  </body>
+</html>
