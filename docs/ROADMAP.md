@@ -1,5 +1,7 @@
 # Feuille de route
 
+Le [plan catalogue et distribution du 16 octobre 2026](PLAN.md) précise les prochains lots, les parcours et leurs critères de validation.
+
 ## Première version native
 
 - [x] Nom Sema et direction Panorama / Atelier.
@@ -19,7 +21,8 @@
 - [x] Brancher 13 indicateurs officiels via Webstat et une clé personnelle dans le Trousseau.
 - [x] Proposer des vues sur 1 mois, 3 mois, 1 an, 3 ans et 5 ans selon l’historique disponible.
 - [x] Utiliser l’emprunt phare français à dix ans, publié mensuellement par la Banque de France ; ne pas intégrer le TEC 10 quotidien sous droits Euronext.
-- [ ] Ajouter ensuite la collecte agrégée des OPC et les autres repères du catalogue vérifié.
+- [ ] Ouvrir la recherche au catalogue Webstat et permettre une sélection personnelle des séries, avec métadonnées, fréquences et unités génériques.
+- [ ] Charger l’historique ancien à la demande et adapter les alertes aux séries ajoutées.
 - [ ] Ajouter une restauration persistante du mode de données et des préférences de présentation si elle est utile à l’usage.
 
 ## Fonds réels et surveillance
@@ -31,7 +34,9 @@
 
 ## Bêta distribuable
 
-- [ ] Identité de signature Apple et notarisation ou distribution App Store.
+- [ ] Alpha en DMG personnalisé, avec aide d’ouverture sans notarisation.
+- [ ] Page de téléchargement, accueil natif et Homebrew comme alternative discrète.
+- [ ] Identité Developer ID et notarisation lors du passage à une distribution plus large.
 - [ ] Icône d’app finalisée, assets et versionnement de publication.
 - [ ] Mécanisme de mise à jour choisi selon le circuit de distribution.
 - [ ] Validation sur les versions de macOS supportées et plusieurs tailles d’écran.

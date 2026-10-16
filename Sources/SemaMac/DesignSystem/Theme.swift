@@ -140,8 +140,8 @@ struct SemaSymbol: View {
         GeometryReader { geometry in
             let side = min(geometry.size.width, geometry.size.height)
             let scale = side / 64
-            // At 18 pt, the menu-bar stroke is 1.50 pt instead of the compact 0.81 pt.
-            let lineWidth = isMenuBarIcon ? 5.338 : (side < 28 ? 2.89 : side < 96 ? 2.04 : 1.224)
+            // The 18 pt menu-bar symbol uses a 2 pt stroke.
+            let lineWidth = isMenuBarIcon ? 64.0 / 9 : (side < 28 ? 2.89 : side < 96 ? 2.04 : 1.224)
             SemaSignalPath()
                 .stroke(style: StrokeStyle(lineWidth: lineWidth * scale,
                                           lineCap: .round, lineJoin: .round))
