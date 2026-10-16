@@ -28,7 +28,7 @@ Retenir un fond statique dessiné pour cette fenêtre. La personnalisation du Fi
 
 - Cible de départ : fenêtre de contenu 640 × 400 pt, fond papier clair `#F5F6F3`. Les vrais noms noirs du Finder restent ainsi lisibles dans les deux apparences de macOS. Préparer une image Retina et vérifier son échelle dans le Finder.
 - Icône sema à gauche et raccourci vers le véritable dossier Applications à droite, alignés sur le même axe. Icônes indicatives de 96 pt ; positions à régler dans la fenêtre réelle.
-- La courbe D3 forme un chemin discret entre les deux icônes, avec un indice de direction clair. Les noms et les cibles restent reconnaissables.
+- La courbe Palier — Référence forme un chemin discret entre les deux icônes, avec un indice de direction clair. Les noms et les cibles restent reconnaissables.
 - Titre « Faites une place à vos repères. » puis instruction « Glissez sema dans le dossier Applications. » Le geste ne dépend pas du slogan.
 - Aucun contrôle dessiné qui ressemble à un bouton actif. Ni faux pourcentage de copie, ni effet décoratif masquant les fichiers ou la destination.
 

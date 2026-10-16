@@ -41,7 +41,23 @@ enum MenuRibbonPosition: String, CaseIterable, Identifiable {
     }
 }
 
-/// A thin highlight describes the glass edge; the content carries no decorative border.
+/// A separate native backdrop per card leaves the space between cards transparent.
+private struct RibbonGlassBackdrop: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .behindWindow
+        view.state = .active
+        view.wantsLayer = true
+        view.layer?.cornerRadius = MenuRibbonLayout.cardCornerRadius
+        view.layer?.masksToBounds = true
+        return view
+    }
+
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+}
+
+/// A thin highlight describes the glass edge; labels stay outside its vibrancy.
 struct RibbonSurface: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -55,6 +71,8 @@ struct RibbonSurface: ViewModifier {
             .background {
                 if opaque { shape.fill(SemaTheme.surface) }
                 else {
+                    RibbonGlassBackdrop()
+                    shape.fill(colorScheme == .dark ? Color.black.opacity(0.35) : Color.white.opacity(0.35))
                     shape.fill(colorScheme == .dark ? Color.white.opacity(emphasized ? 0.11 : 0.065)
                                                     : Color.white.opacity(emphasized ? 0.65 : 0.42))
                 }

@@ -20,8 +20,7 @@ final class MenuRibbonController: NSObject {
     private func ribbonContent(presentationID: UUID?) -> AnyView {
         AnyView(MenuRibbonView(presentationID: presentationID,
             openWorkspace: { [weak self] in self?.showWorkspace() },
-            openSettings: { [weak self] in self?.showSettings() },
-            dismiss: { [weak self] in self?.dismiss() }).environment(store))
+            openSettings: { [weak self] in self?.showSettings() }).environment(store))
     }
 
     private lazy var panel: RibbonPanel = {
@@ -30,29 +29,15 @@ final class MenuRibbonController: NSObject {
         panel.title = "Vos favoris · sema"
         panel.identifier = NSUserInterfaceItemIdentifier("sema-favorites-ribbon")
         panel.isOpaque = false; panel.backgroundColor = .clear
-        panel.hasShadow = true; panel.hidesOnDeactivate = false
+        panel.hasShadow = false; panel.hidesOnDeactivate = false
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient, .ignoresCycle]
         panel.isReleasedWhenClosed = false
-        // Keep the backdrop outside SwiftUI’s rendering/clipping hierarchy.
+        // Each card owns its glass. The panel and the gaps remain transparent.
         let container = NSView()
-        container.wantsLayer = true
-        container.layer?.cornerRadius = MenuRibbonLayout.cornerRadius
-        container.layer?.masksToBounds = true
-        let glass = NSVisualEffectView()
-        glass.material = .hudWindow
-        glass.blendingMode = .behindWindow
-        glass.state = .active
-        glass.translatesAutoresizingMaskIntoConstraints = false
         hostedContent.translatesAutoresizingMaskIntoConstraints = false
-        // Siblings keep vibrancy from altering the financial labels’ semantic colours.
-        container.addSubview(glass)
         container.addSubview(hostedContent)
         NSLayoutConstraint.activate([
-            glass.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            glass.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            glass.topAnchor.constraint(equalTo: container.topAnchor),
-            glass.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             hostedContent.leadingAnchor.constraint(equalTo: container.leadingAnchor),
             hostedContent.trailingAnchor.constraint(equalTo: container.trailingAnchor),
             hostedContent.topAnchor.constraint(equalTo: container.topAnchor),

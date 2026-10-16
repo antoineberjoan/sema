@@ -3,16 +3,16 @@ import SwiftUI
 
 // SIGNATURE — une lecture, sans boucle. Le texte reste disponible à VoiceOver.
 //    0 ms  Le cartouche est posé, le signe attend la fin de l’entrée du panneau.
-//  240 ms  Le signe se trace pendant 920 ms, de la boucle vers la sortie.
-//  660 ms  « L’économie bouge. » apparaît en fondu, sur 420 ms.
-//  900 ms  « Gardez vos repères. » se pose avec un ressort amorti, sur 420 ms.
+//  300 ms  Le signe se trace pendant 1 800 ms, de la boucle vers le palier.
+// 1250 ms  « L’économie bouge. » apparaît en fondu, sur 800 ms.
+// 1850 ms  « Gardez vos repères. » se pose avec un ressort amorti, sur 800 ms.
 // Réduire les animations : le cartouche est immédiatement dans son état final.
 private enum SignatureMotion {
-    static let drawDelay = 240
-    static let contextDelay = 660
-    static let missionDelay = 900
-    static let drawDuration = 0.92
-    static let textDuration = 0.42
+    static let drawDelay = 300
+    static let contextDelay = 1_250
+    static let missionDelay = 1_850
+    static let drawDuration = 1.8
+    static let textDuration = 0.8
     static let textOffset: CGFloat = 4
     static let lineWidth: CGFloat = 1.5
     static let markSize: CGFloat = 72
@@ -23,27 +23,16 @@ struct RibbonSignatureView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let presentationID: UUID?
     @State private var stage = 0
-    @State private var replayID = UUID()
     @State private var formUnavailable = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .top) {
-                Text("sema").font(.system(size: 12, weight: .medium)).tracking(-0.2).foregroundStyle(.white.opacity(0.85))
-                Spacer()
-                Button { replayID = UUID() } label: {
-                    Image(systemName: "arrow.counterclockwise").font(.system(size: 10)).foregroundStyle(.white.opacity(0.85))
-                        .frame(width: 22, height: 22).contentShape(Circle())
-                }
-                .buttonStyle(.plain).help("Rejouer la signature").accessibilityLabel("Rejouer la signature de sema")
-            }
-            Spacer(minLength: 0)
             SemaSignalPath().trim(from: 0, to: stage >= 1 ? 1 : 0)
                 .stroke(.white, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
                 .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
-                .frame(height: 36).accessibilityHidden(true)
+                .frame(height: 48).accessibilityHidden(true)
                 .animation(reduceMotion ? nil : .easeInOut(duration: SignatureMotion.drawDuration), value: stage >= 1)
-            Spacer(minLength: 6)
+            Spacer(minLength: 8)
             Text("L’économie bouge.")
                 .font(.system(size: 12)).foregroundStyle(.white.opacity(0.85))
                 .opacity(stage >= 2 ? 1 : 0)
@@ -58,7 +47,7 @@ struct RibbonSignatureView: View {
                     .font(.system(size: 11, weight: .medium)).padding(.horizontal, 10)
                     .frame(height: 26).background(.white.opacity(0.12), in: Capsule())
             }
-            .buttonStyle(SemaPressStyle()).padding(.top, 10)
+            .buttonStyle(SemaPressStyle()).padding(.top, 18)
             .help(SemaFeedback.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
             .accessibilityLabel("Une idée ou un bug ? Ouvrir le formulaire Notion")
             .disabled(SemaFeedback.formURL == nil)
@@ -78,7 +67,7 @@ struct RibbonSignatureView: View {
                 .allowsHitTesting(false).accessibilityHidden(true)
         }
         .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 3)
-        .task(id: [presentationID, replayID]) { await play() }
+        .task(id: presentationID) { await play() }
         .onChange(of: reduceMotion) { _, value in if value { stage = 3 } }
         .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $formUnavailable) {
             Button("Copier le lien") {
@@ -98,7 +87,7 @@ struct RibbonSignatureView: View {
     }
 
     private func play() async {
-        // A new presentation or replay cancels the previous task before resetting its stage.
+        // A new presentation cancels the previous task before resetting its stage.
         var transaction = Transaction(); transaction.disablesAnimations = true
         withTransaction(transaction) { stage = reduceMotion || presentationID == nil ? 3 : 0 }
         guard !reduceMotion, presentationID != nil else { return }
@@ -109,6 +98,6 @@ struct RibbonSignatureView: View {
             if !reduceMotion { stage = 2 }
             try await Task.sleep(for: .milliseconds(SignatureMotion.missionDelay - SignatureMotion.contextDelay))
             if !reduceMotion { stage = 3 }
-        } catch { /* Presentation or replay interrupted. */ }
+        } catch { /* Presentation interrupted. */ }
     }
 }

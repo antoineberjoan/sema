@@ -133,7 +133,7 @@ struct SemaMark: View {
     }
 }
 
-/// Déploiement D3: the original curve, with optical weights for small sizes.
+/// Palier — Référence: Antoine’s original curve, with optical weights for small sizes.
 struct SemaSymbol: View {
     var isMenuBarIcon = false
 
@@ -158,13 +158,13 @@ struct SemaSignalPath: Shape {
     func path(in rect: CGRect) -> Path {
         let scale = min(rect.width, rect.height) / 64
         var path = Path()
-        path.move(to: CGPoint(x: 43, y: 149.348))
-        path.addCurve(to: CGPoint(x: 89.6292, y: 114.842), control1: CGPoint(x: 84.0337, y: 149.348), control2: CGPoint(x: 95.2247, y: 128.831))
-        path.addCurve(to: CGPoint(x: 74.7079, y: 128.831), control1: CGPoint(x: 84.0337, y: 100.854), control2: CGPoint(x: 64.4494, y: 112.045))
-        path.addCurve(to: CGPoint(x: 155.843, y: 92.4604), control1: CGPoint(x: 95.2247, y: 162.404), control2: CGPoint(x: 137.191, y: 119.505))
-        path.addCurve(to: CGPoint(x: 209, y: 81.2694), control1: CGPoint(x: 174.494, y: 65.4155), control2: CGPoint(x: 187.551, y: 81.2694))
+        path.move(to: CGPoint(x: 43, y: 166.683))
+        path.addCurve(to: CGPoint(x: 118.362, y: 76.0449), control1: CGPoint(x: 92.9018, y: 166.683), control2: CGPoint(x: 111.233, y: 118.818))
+        path.addCurve(to: CGPoint(x: 90.865, y: 86.229), control1: CGPoint(x: 122.436, y: 49.5664), control2: CGPoint(x: 94.9387, y: 55.6768))
+        path.addCurve(to: CGPoint(x: 159.098, y: 96.413), control1: CGPoint(x: 84.7546, y: 136.131), control2: CGPoint(x: 140.767, y: 111.689))
+        path.addCurve(to: CGPoint(x: 209, y: 94.3762), control1: CGPoint(x: 180.485, y: 79.1001), control2: CGPoint(x: 196.779, y: 95.3946))
         return path.applying(CGAffineTransform(a: 0.34 * scale, b: 0, c: 0,
-                                             d: 0.34 * scale, tx: -10.84 * scale, ty: -6.76 * scale))
+                                             d: 0.34 * scale, tx: -10.84 * scale, ty: -6.41998 * scale))
     }
 }
 
