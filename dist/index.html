@@ -15,6 +15,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/sema.svg">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <script src="motion.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Aller au contenu</a>
@@ -40,7 +41,7 @@
         <p class="availability">En développement <span aria-hidden="true">·</span> macOS 14 et versions ultérieures</p>
       </section>
 
-      <section class="product wrap" id="app" aria-label="Aperçu de Sema">
+      <section class="product wrap" id="app" aria-label="Aperçu de Sema" data-scroll-visual="product">
         <figure>
           <button class="screenshot-button" type="button" data-enlarge aria-label="Agrandir la capture de Sema">
             <img class="app-screenshot" src="assets/sema-macos.jpg" width="2240" height="1520" alt="Sema sur Mac : une barre latérale avec Panorama, Favoris et Alertes, les taux et devises à gauche, et l’historique Euro/Yen sur cinq ans à droite." fetchpriority="high" decoding="async">
@@ -55,9 +56,9 @@
       <section class="closer wrap" aria-labelledby="closer-title">
         <div class="section-copy">
           <h2 id="closer-title">Gardez vos repères.</h2>
-          <p>Vos favoris, plusieurs années d’historique, des alertes de seuil. Et <kbd>⌘ K</kbd> pour retrouver le taux qu’il vous faut.</p>
+          <p data-scroll-text>Vos favoris, plusieurs années d’historique, des alertes de seuil. Et <kbd>⌘ K</kbd> pour retrouver le taux qu’il vous faut.</p>
         </div>
-        <div class="search-demo">
+        <div class="search-demo" data-scroll-visual="search">
           <div class="search-surface">
             <label class="search-field" for="rate-search">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>

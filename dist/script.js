@@ -16,6 +16,15 @@ const indicators = [
   { name: "Euro / Livre sterling", category: "Devise · EUR / GBP", icon: "£", aliases: "eur gbp livre sterling royaume uni change euro", description: "Le taux de change de référence de la livre sterling pour un euro, avec l’historique disponible sur Webstat." }
 ];
 
+// One outline family: identical size, stroke weight and rounded terminals.
+const RESULT_ICON_PATHS = {
+  rate: ["M7 17 17 7", "M9 7a2 2 0 1 1-4 0 2 2 0 0 1 4 0", "M19 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0"],
+  bank: ["m3 8 9-5 9 5H3Z", "M5 11v7m7-7v7m7-7v7M3 21h18"],
+  home: ["m3 11 9-8 9 8", "M5 10v10h5v-6h4v6h5V10"],
+  exchange: ["M4 8h16m-4-4 4 4-4 4", "M20 16H4m4-4-4 4 4 4"]
+};
+const RESULT_ICON_TYPES = { "↗": "bank", "%": "rate", "⌂": "home", "$": "exchange", "¥": "exchange", "↔": "exchange", "£": "exchange" };
+
 const searchInput = document.querySelector("#rate-search");
 const resultsContainer = document.querySelector("#rate-results");
 const resultCount = document.querySelector("#result-count");
@@ -53,7 +62,14 @@ function renderResults() {
     const icon = document.createElement("span");
     icon.className = "result-icon";
     icon.setAttribute("aria-hidden", "true");
-    icon.textContent = indicator.icon;
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    Object.entries({ viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "1.65", "stroke-linecap": "round", "stroke-linejoin": "round" }).forEach(([key, value]) => svg.setAttribute(key, value));
+    RESULT_ICON_PATHS[RESULT_ICON_TYPES[indicator.icon]].forEach((shape) => {
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path.setAttribute("d", shape);
+      svg.append(path);
+    });
+    icon.append(svg);
     const text = document.createElement("span");
     const name = document.createElement("span");
     name.className = "result-name";
