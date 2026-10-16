@@ -32,6 +32,7 @@ struct MenuRibbonView: View {
     let openWorkspace: () -> Void
     let openSettings: () -> Void
     @State private var period: HistoryPeriod = .year
+    @State private var showsExtendedPeriods = false
 
     private var items: [MarketSeries] { store.favorites }
     private var isVertical: Bool { store.ribbonPosition.isVertical }
@@ -101,21 +102,13 @@ struct MenuRibbonView: View {
             Spacer()
             HStack(spacing: 8) {
                 if !items.isEmpty {
-                    RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent).frame(width: 174)
-                    Menu {
-                        ForEach([HistoryPeriod.month, .threeYears, .fiveYears, .all]) { option in
-                            Button { period = option } label: {
-                                let title = option == .all ? "Tout l’historique en cache" : option.title
-                                if period == option { Label(title, systemImage: "checkmark") }
-                                else { Text(title) }
-                            }
-                        }
-                    } label: {
-                        Text([.quarter, .halfYear, .year].contains(period) ? "Plus" : period.title)
-                            .font(.system(size: 11, weight: .medium))
-                    }
-                    .menuStyle(.borderlessButton).fixedSize()
-                    .help("Autres périodes · historique disponible sur ce Mac")
+                    RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent,
+                        periods: showsExtendedPeriods ? [.month, .threeYears, .fiveYears, .all] : [.quarter, .halfYear, .year])
+                        .frame(width: showsExtendedPeriods ? 210 : 174)
+                    Button(showsExtendedPeriods ? "Retour" : "Plus") { showsExtendedPeriods.toggle() }
+                        .buttonStyle(.plain).font(.system(size: 11, weight: .medium)).fixedSize()
+                        .accessibilityLabel(showsExtendedPeriods ? "Afficher les périodes courtes" : "Afficher les périodes longues")
+                        .help("Historique disponible sur ce Mac · Tout utilise le cache chargé")
                 }
                 Button(action: openSettings) {
                     Image(systemName: "gearshape").frame(width: 26, height: 26).contentShape(Circle())
@@ -147,12 +140,12 @@ struct MenuRibbonView: View {
 private struct RibbonPeriodPicker: NSViewRepresentable {
     @Binding var selection: HistoryPeriod
     let accent: Color
-    private static let periods: [HistoryPeriod] = [.quarter, .halfYear, .year]
+    let periods: [HistoryPeriod]
 
-    func makeCoordinator() -> Coordinator { Coordinator(selection: $selection) }
+    func makeCoordinator() -> Coordinator { Coordinator(selection: $selection, periods: periods) }
 
     func makeNSView(context: Context) -> NSSegmentedControl {
-        let control = NSSegmentedControl(labels: Self.periods.map(\.title), trackingMode: .selectOne,
+        let control = NSSegmentedControl(labels: periods.map(\.title), trackingMode: .selectOne,
             target: context.coordinator, action: #selector(Coordinator.selectPeriod(_:)))
         control.controlSize = .small
         control.segmentStyle = .rounded
@@ -162,17 +155,23 @@ private struct RibbonPeriodPicker: NSViewRepresentable {
 
     func updateNSView(_ control: NSSegmentedControl, context: Context) {
         context.coordinator.selection = $selection
+        context.coordinator.periods = periods
+        control.segmentCount = periods.count
+        for (index, period) in periods.enumerated() { control.setLabel(period.title, forSegment: index) }
         control.selectedSegmentBezelColor = NSColor(accent)
-        control.selectedSegment = Self.periods.firstIndex(of: selection) ?? -1
+        control.selectedSegment = periods.firstIndex(of: selection) ?? -1
     }
 
     @MainActor final class Coordinator: NSObject {
         var selection: Binding<HistoryPeriod>
-        init(selection: Binding<HistoryPeriod>) { self.selection = selection }
+        var periods: [HistoryPeriod]
+        init(selection: Binding<HistoryPeriod>, periods: [HistoryPeriod]) {
+            self.selection = selection; self.periods = periods
+        }
 
         @objc func selectPeriod(_ sender: NSSegmentedControl) {
-            guard RibbonPeriodPicker.periods.indices.contains(sender.selectedSegment) else { return }
-            selection.wrappedValue = RibbonPeriodPicker.periods[sender.selectedSegment]
+            guard periods.indices.contains(sender.selectedSegment) else { return }
+            selection.wrappedValue = periods[sender.selectedSegment]
         }
     }
 }
