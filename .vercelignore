@@ -1,0 +1,6 @@
+.git/
+.openai/
+AGENTS.md
+README.md
+*.tar.gz
+*.log
