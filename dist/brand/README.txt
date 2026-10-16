@@ -12,6 +12,8 @@ assets/ : symboles Display (96 px et plus), Standard (28–95 px), Compact (16�
 version blanche, signature horizontale vectorisée et icône SVG/PNG 1024 px.
 Les traits 3,6 / 6 / 8,5 sont exprimés dans les coordonnées du dessin source ;
 la transformation du SVG les ramène respectivement à 1,224 / 2,04 / 2,89 sur 64 unités.
+La variante sema-symbol-menubar.svg utilise un trait source de 15,7, soit 5,338
+sur 64 unités et 1,50 pt à 18 pt. Elle est réservée à la barre de menus.
 Ne pas appliquer un second épaississement.
 
 tokens.json contient les choix de référence ; tokens.css les variables web.
