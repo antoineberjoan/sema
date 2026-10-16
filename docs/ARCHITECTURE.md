@@ -2,7 +2,7 @@
 
 ## Organisation actuelle
 
-Un seul package Swift, deux cibles de production et une cible de tests. Aucun service distant propre à Sema.
+Un seul package Swift, deux cibles de production et une cible de tests. Aucun service distant propre à sema.
 
 ```mermaid
 flowchart TB
@@ -35,7 +35,7 @@ flowchart TB
 - `MenuRibbonView` affiche les favoris partagés, sans deuxième sélection ni requête automatique. `MenuRibbonController` utilise un `NSStatusItem` et un `NSPanel` non activant pour se placer en haut, en bas, à gauche ou à droite dans la zone visible de l’écran. Le champ optionnel `ribbonPositionID` conserve ce choix en v2 ; un identifiant absent ou inconnu se replie sur le haut sans effacer les préférences. Un `NSVisualEffectView` en mode `behindWindow` et matière `hudWindow` forme le fond ; le contenu SwiftUI est un frère du fond pour préserver ses couleurs sémantiques. Une surface opaque remplace le verre avec Réduire la transparence ou Augmenter le contraste. Le délégué de l’app le conserve quand le hub est fermé. Le contenu reste en SwiftUI, les mini-courbes en Swift Charts. Les écouteurs de souris et de clavier local sont installés uniquement pendant la présentation, puis retirés à la fermeture ; aucun raccourci global ni permission d’accessibilité supplémentaire n’est demandé. Les transitions interrompues vérifient leur génération avant de masquer le panneau. Les actions vers le hub et les réglages utilisent les actions SwiftUI de scène.
 - `RibbonSignatureView` réutilise `SemaSignalPath` avec `trim` : une seule tâche annulable pilote trois étapes nommées, déclenchées par la présentation ou le bouton Rejouer. Aucun minuteur permanent ; Réduire les animations présente immédiatement le résultat. La fermeture termine la présentation et annule la séquence.
 - `DesignSystem` contient les couleurs adaptées à l’apparence système, les composants partagés et les graphiques.
-- `Infrastructure` contient les effets dépendants de macOS : chemins de stockage et notifications système.
+- `Infrastructure` contient les effets dépendants de macOS : chemins de stockage et notifications système. `SemaFeedback` lit l’URL HTTPS du formulaire dans `SemaFeedbackFormURL` du bundle. Le bouton utilise `NSWorkspace.open` sur le MainActor ; son échec propose de copier le lien. Aucun jeton Notion ni service serveur n’est embarqué.
 - `WebstatKeychain` utilise Security dans un acteur séparé du MainActor. La clé n’est jamais incluse dans les fichiers de préférences, dans le cache, dans une URL ou dans le binaire. Aucun service serveur ni bibliothèque externe n’est ajouté.
 
 Les états de sélection sont partagés volontairement entre panneau et fenêtre. Une action sur un favori doit être visible immédiatement dans les deux.

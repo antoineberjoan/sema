@@ -27,7 +27,7 @@ final class MenuRibbonController: NSObject {
     private lazy var panel: RibbonPanel = {
         let panel = RibbonPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel],
                                 backing: .buffered, defer: true)
-        panel.title = "Vos favoris · Sema"
+        panel.title = "Vos favoris · sema"
         panel.identifier = NSUserInterfaceItemIdentifier("sema-favorites-ribbon")
         panel.isOpaque = false; panel.backgroundColor = .clear
         panel.hasShadow = true; panel.hidesOnDeactivate = false
@@ -68,8 +68,8 @@ final class MenuRibbonController: NSObject {
         if let button = statusItem.button {
             button.image = SemaTheme.menuBarIcon
             button.imagePosition = .imageOnly
-            button.toolTip = "Sema · Vos favoris"
-            button.setAccessibilityLabel("Sema, afficher les favoris")
+            button.toolTip = "sema · Vos favoris"
+            button.setAccessibilityLabel("sema, afficher les favoris")
             button.target = self; button.action = #selector(toggle)
         }
         screenObserver = NotificationCenter.default.addObserver(

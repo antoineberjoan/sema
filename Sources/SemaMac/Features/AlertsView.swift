@@ -135,7 +135,7 @@ struct DemoNotificationView: View {
         HStack(alignment: .top, spacing: 12) {
             SemaMark(size: 30)
             VStack(alignment: .leading, spacing: 6) {
-                Text("SEMA · TEST DE NOTIFICATION").font(.system(size: 9, weight: .medium)).tracking(0.5).foregroundStyle(.secondary)
+                Text("sema · TEST DE NOTIFICATION").font(.system(size: 9, weight: .medium)).tracking(0.5).foregroundStyle(.secondary)
                 Text(item?.name ?? "Repère de démonstration").font(.system(size: 13, weight: .medium))
                 Text("Valeur simulée : \(MarketFormat.number(event.observedValue ?? 0, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "").")
                     .font(.system(size: 12)).foregroundStyle(.secondary)

@@ -1,4 +1,4 @@
-# Identité de Sema
+# Identité de sema
 
 ## Direction
 
@@ -6,7 +6,7 @@ Une petite application Mac calme et précise. Mise en page et contrôles en Swif
 
 ### Référence complémentaire : Resurf
 
-Ajoutée par Antoine le 15 octobre 2026. Les vues officielles de [Resurf](https://resurf.so/) servent de référence pour une sidebar compacte, une barre d’outils discrète, des surfaces neutres légèrement chaudes et une distinction claire entre navigation, contenu et inspecteur. Pour Sema, ces principes guideront les prochains ajustements de densité et de hiérarchie ; la typographie système reste retenue et les accents suivent le thème choisi dans les réglages.
+Ajoutée par Antoine le 15 octobre 2026. Les vues officielles de [Resurf](https://resurf.so/) servent de référence pour une sidebar compacte, une barre d’outils discrète, des surfaces neutres légèrement chaudes et une distinction claire entre navigation, contenu et inspecteur. Pour sema, ces principes guideront les prochains ajustements de densité et de hiérarchie ; la typographie système reste retenue et les accents suivent le thème choisi dans les réglages.
 
 ### Surfaces et hiérarchie
 
@@ -18,7 +18,7 @@ La fenêtre et son séparateur restent un `NavigationSplitView`. Les lignes de s
 
 Les captures de Monocle fournies par Antoine guident la matière : un fond macOS réellement translucide, une mince lumière sur le bord, des coins continus et des cartes légèrement éclaircies. Le fond reste neutre en Graphite ; sa couleur perçue vient aussi du contenu derrière le panneau. Le flou repose sur [NSVisualEffectView](https://developer.apple.com/documentation/appkit/nsvisualeffectview), en mode derrière la fenêtre, sans dépendance externe ni imitation d’un fond d’écran. Le voile de contraste laisse passer la matière et protège la lecture des chiffres. Réduire la transparence ou Augmenter le contraste impose une surface opaque.
 
-Le cartouche dit **« L’économie bouge. Gardez vos repères. »**. Le tracé original commence après 240 ms et dure 920 ms ; le contexte apparaît à 660 ms, puis la signature à 900 ms. Ces valeurs sont centralisées dans `SignatureMotion`. Une séquence à chaque présentation, aucune boucle ; un bouton permet de la rejouer et interrompt proprement le passage précédent. Réduire les animations affiche directement le résultat. Les données restent accessibles pendant toute la séquence. Ce cartouche est intégré au bandeau natif ; la landing n’est pas modifiée par cet incrément.
+Le cartouche dit **« L’économie bouge. Gardez vos repères. »**. Le tracé original commence après 240 ms et dure 920 ms ; le contexte apparaît à 660 ms, puis la signature à 900 ms. Ces valeurs sont centralisées dans `SignatureMotion`. Une séquence à chaque présentation, aucune boucle ; un bouton permet de la rejouer et interrompt proprement le passage précédent. Réduire les animations affiche directement le résultat. Les données restent accessibles pendant toute la séquence. Ce cartouche est intégré au bandeau natif. Son fond bleu ardoise (`#355A80`) constitue l’unique surface éditoriale colorée en Graphite ; les thèmes personnels réemploient leur accent approfondi. Un fond noir sous le dégradé et des textes blancs préservent le contraste. Le bouton « Une idée ou un bug ? » ouvre le formulaire Notion public, sans accès aux réponses. La marque et l’icône restent monochromes.
 
 ## Typographie
 
@@ -52,6 +52,8 @@ La géométrie est identique en SVG, SwiftUI et Core Graphics. Trois poids optiq
 - `scripts/render-icon.swift` : PNG et icône du bundle.
 
 ## Marque et rédaction
+
+Le nom s’écrit **sema**, toujours en minuscules, y compris en début de phrase et dans le mot-symbole. Les noms techniques des cibles Swift, des fichiers distribués et du dossier de stockage existant restent stables.
 
 Signature : **Gardez vos repères.** La promesse est de réunir les repères économiques du conseiller dans une petite app Mac. Trois qualités guident les choix : calme, précision, attention aux détails. Le ton est direct, posé et concret ; vouvoiement, phrases courtes, vocabulaire financier explicité. Toujours afficher source, période et unité. Une hausse de taux n’est pas automatiquement une bonne nouvelle : garder une couleur neutre et une variation signée.
 

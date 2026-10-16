@@ -63,7 +63,7 @@ struct OnboardingView: View {
                 HStack(spacing: 8) {
                     WelcomeSignal(progress: reduceMotion ? 1 : drawProgress)
                         .foregroundStyle(accent).frame(width: 44, height: 44)
-                    Text("Sema").font(.system(size: 16, weight: .semibold)).tracking(-0.5)
+                    Text("sema").font(.system(size: 16, weight: .semibold)).tracking(-0.5)
                 }
                 Spacer()
                 HStack(spacing: 6) {
@@ -225,7 +225,7 @@ struct OnboardingView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Label("À votre rythme", systemImage: "leaf")
                     .font(.system(size: 12, weight: .medium))
-                Text("Vous pouvez découvrir Sema en démonstration et connecter vos données plus tard.")
+                Text("Vous pouvez découvrir sema en démonstration et connecter vos données plus tard.")
                     .font(.system(size: 12)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -259,7 +259,7 @@ struct OnboardingView: View {
                 .buttonStyle(.borderless).disabled(store.isLoading)
                 Spacer(minLength: 0)
                 if store.hasWebstatKey {
-                    Button("Ouvrir Sema", action: complete)
+                    Button("Ouvrir sema", action: complete)
                         .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
                 } else {
                     Button("Découvrir la démo", action: complete)

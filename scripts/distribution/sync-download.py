@@ -48,7 +48,7 @@ def main():
     source = page.read_text()
     escape = lambda value: html.escape(str(value), quote=True)
     if download["enabled"]:
-        source = replace_block(source, "primary", f'<a class="button" href="{escape(download["url"])}" download="{escape(download["filename"])}" data-download><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Télécharger Sema</a>')
+        source = replace_block(source, "primary", f'<a class="button" href="{escape(download["url"])}" download="{escape(download["filename"])}" data-download><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Télécharger sema</a>')
     else:
         source = replace_block(source, "primary", '<span class="button download-pending">Préversion en préparation</span>')
     megabytes = f'{download["byteSize"] / 1000000:.1f}'.replace(".", ",")
@@ -62,7 +62,7 @@ def main():
     if brew["enabled"]:
         if not brew.get("command") or not all(manifest["validation"].get(key) for key in ("homebrewInstall", "homebrewUpgrade", "internetDownload")):
             raise ValueError("La commande Homebrew ne peut être activée avant les tests d’installation et de mise à jour")
-        markup = f'<div class="brew-command"><code id="homebrew-command">{escape(brew["command"])}</code><button type="button" id="copy-homebrew" hidden>Copier</button></div><p id="homebrew-copy-status" role="status"></p><p>Si Homebrew demande une approbation, consultez <a href="https://github.com/antoineberjoan/homebrew-sema/blob/main/Casks/sema.rb" target="_blank" rel="noopener noreferrer">le cask Sema</a>, puis utilisez <code>brew trust --cask antoineberjoan/sema/sema</code> avant de relancer l’installation. Les contrôles de sécurité de macOS s’appliquent aussi à cette installation.</p>'
+        markup = f'<div class="brew-command"><code id="homebrew-command">{escape(brew["command"])}</code><button type="button" id="copy-homebrew" hidden>Copier</button></div><p id="homebrew-copy-status" role="status"></p><p>Si Homebrew demande une approbation, consultez <a href="https://github.com/antoineberjoan/homebrew-sema/blob/main/Casks/sema.rb" target="_blank" rel="noopener noreferrer">le cask sema</a>, puis utilisez <code>brew trust --cask antoineberjoan/sema/sema</code> avant de relancer l’installation. Les contrôles de sécurité de macOS s’appliquent aussi à cette installation.</p>'
     else:
         markup = '<p>Le tap Homebrew sera proposé après les tests d’installation et de mise à jour.</p>'
     source = replace_block(source, "homebrew", markup)
@@ -70,7 +70,7 @@ def main():
     source = replace_block(source, "updates", f'<p class="alpha-note">Les mises à jour se feront pour l’instant {update_method}. Vos préférences restent sur votre Mac.</p>')
     page.write_text(source)
     (args.site_dist / "download/release.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
-    print(f'Page synchronisée : Sema {manifest["version"]} · {megabytes} Mo · {manifest["architecture"]} · {manifest["channel"]}')
+    print(f'Page synchronisée : sema {manifest["version"]} · {megabytes} Mo · {manifest["architecture"]} · {manifest["channel"]}')
 
 
 if __name__ == "__main__":

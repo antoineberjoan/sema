@@ -1,22 +1,22 @@
-# Téléchargement et premier lancement de Sema
+# Téléchargement et premier lancement de sema
 
 16 octobre 2026. Plan d’implémentation. Le parcours, le DMG et Homebrew sont approuvés. La section de validation de livraison distingue les essais locaux et les accès publics.
 
 ## Direction retenue
 
-Le signe D3 accompagne trois moments : comprendre le geste sur le site, installer Sema dans Applications, puis choisir ses premiers repères. L’expérience est brève et soignée. Un utilisateur pressé peut toujours accéder immédiatement à l’action utile.
+Le signe D3 accompagne trois moments : comprendre le geste sur le site, installer sema dans Applications, puis choisir ses premiers repères. L’expérience est brève et soignée. Un utilisateur pressé peut toujours accéder immédiatement à l’action utile.
 
 L’app reste native en SwiftUI. La landing conserve HTML, CSS et JavaScript. Les animations web utilisent les capacités du navigateur ; aucune dépendance de production supplémentaire n’est prévue.
 
 ## Page de téléchargement
 
-Préparer une page `/download/` dans la continuité de la landing : police système, espace généreux, fond neutre, accent sarcelle. Un bouton principal « Télécharger Sema » est accompagné de la version, de la taille, de macOS minimum et de l’architecture réellement disponible.
+Préparer une page `/download/` dans la continuité de la landing : police système, espace généreux, fond neutre, accent sarcelle. Un bouton principal « Télécharger sema » est accompagné de la version, de la taille, de macOS minimum et de l’architecture réellement disponible.
 
 Le bundle actuel est arm64 et cible macOS 14+. La première version téléchargeable sera annoncée pour les Mac avec puce Apple. Ajouter une version Intel ou universelle seulement après compilation et vérification sur cette architecture ; ne pas déduire la compatibilité de la seule version de macOS.
 
 Sous le bouton, un lien textuel « Installer avec Homebrew » ouvre un petit bloc de commande avec copie et confirmation accessible. Il ne concurrence pas visuellement le téléchargement direct. Le bouton de copie n’apparaît qu’avec une commande réellement opérationnelle.
 
-La page présente les étapes « Ouvrez le fichier », « Glissez Sema dans Applications », « Ouvrez Sema ». Une démonstration animée du geste est rejouable. Elle n’est ni une progression réelle du téléchargement ni une preuve que l’installation a réussi. Le lien de téléchargement reste disponible si JavaScript échoue.
+La page présente les étapes « Ouvrez le fichier », « Glissez sema dans Applications », « Ouvrez sema ». Une démonstration animée du geste est rejouable. Elle n’est ni une progression réelle du téléchargement ni une preuve que l’installation a réussi. Le lien de téléchargement reste disponible si JavaScript échoue.
 
 ## DMG personnalisé
 
@@ -27,9 +27,9 @@ Retenir un fond statique dessiné pour cette fenêtre. La personnalisation du Fi
 ### Composition Le fil
 
 - Cible de départ : fenêtre de contenu 640 × 400 pt, fond papier clair `#F5F6F3`. Les vrais noms noirs du Finder restent ainsi lisibles dans les deux apparences de macOS. Préparer une image Retina et vérifier son échelle dans le Finder.
-- Icône Sema à gauche et raccourci vers le véritable dossier Applications à droite, alignés sur le même axe. Icônes indicatives de 96 pt ; positions à régler dans la fenêtre réelle.
+- Icône sema à gauche et raccourci vers le véritable dossier Applications à droite, alignés sur le même axe. Icônes indicatives de 96 pt ; positions à régler dans la fenêtre réelle.
 - La courbe D3 forme un chemin discret entre les deux icônes, avec un indice de direction clair. Les noms et les cibles restent reconnaissables.
-- Titre « Faites une place à vos repères. » puis instruction « Glissez Sema dans le dossier Applications. » Le geste ne dépend pas du slogan.
+- Titre « Faites une place à vos repères. » puis instruction « Glissez sema dans le dossier Applications. » Le geste ne dépend pas du slogan.
 - Aucun contrôle dessiné qui ressemble à un bouton actif. Ni faux pourcentage de copie, ni effet décoratif masquant les fichiers ou la destination.
 
 Le packaging sera reproductible et distinct de `build-app.sh`. Il prend un bundle validé et un numéro de version, fabrique un volume temporaire, ajoute le lien Applications et le fond, fixe la présentation, puis produit un DMG compressé en lecture seule et son SHA-256. Les volumes temporaires sont démontés même en cas d’erreur.
@@ -44,11 +44,11 @@ L’accueil s’affiche seulement au premier lancement ou sur demande depuis les
 2. **Vos données Webstat.** Expliquer comment obtenir et connecter sa clé personnelle. Réutiliser la validation et le stockage dans le Trousseau. Proposer « Découvrir en démonstration » ; un refus réseau conserve la saisie en mémoire et permet de réessayer ou de passer.
 3. **Arrivée dans l’espace.** Les choix apparaissent dans la liste de repères, avec une brève transition de continuité. Si l’on a choisi la démonstration, les données fictives restent signalées. La permission de notifications est demandée au moment de créer une alerte, avec une action explicite.
 
-Le lien « Passer » est visible. Les boutons sont utilisables pendant les transitions. Tester le lancement depuis le DMG, depuis Applications et via Homebrew : même accueil, sans copie automatique surprise de l’app et sans demande administrateur ajoutée par Sema.
+Le lien « Passer » est visible. Les boutons sont utilisables pendant les transitions. Tester le lancement depuis le DMG, depuis Applications et via Homebrew : même accueil, sans copie automatique surprise de l’app et sans demande administrateur ajoutée par sema.
 
 ## Storyboards et réglage des animations
 
-Les valeurs suivantes sont des points de départ Sema à régler dans les prototypes. Elles seront regroupées dans des constantes nommées, avec une séquence d’états lisible et l’annulation des animations à la fermeture.
+Les valeurs suivantes sont des points de départ sema à régler dans les prototypes. Elles seront regroupées dans des constantes nommées, avec une séquence d’états lisible et l’annulation des animations à la fermeture.
 
 | Moment | Séquence initiale | Accessibilité et interruption |
 | --- | --- | --- |
@@ -66,7 +66,7 @@ Créer un cask dans notre propre tap, suivant la [documentation Homebrew](https:
 
 Proposition de dépôt de distribution : `antoineberjoan/homebrew-sema`, avec le cask et les fichiers de version publiés en Releases. Le code source de `antoineberjoan/sema` reste privé. La commande envisagée serait `brew install --cask antoineberjoan/sema/sema` ; elle ne doit être affichée comme utilisable qu’après création du dépôt et test effectif.
 
-Le site Sema actuel est privé. Un visiteur non connecté et Homebrew ne peuvent pas dépendre de cette session pour obtenir le DMG. Il faut donc choisir et vérifier l’audience du site et du dépôt de distribution au moment de publier. Les artefacts privés de test précèdent cette ouverture ; aucun jeton GitHub ou clé Webstat ne doit être transmis aux téléchargeurs.
+Le site sema actuel est privé. Un visiteur non connecté et Homebrew ne peuvent pas dépendre de cette session pour obtenir le DMG. Il faut donc choisir et vérifier l’audience du site et du dépôt de distribution au moment de publier. Les artefacts privés de test précèdent cette ouverture ; aucun jeton GitHub ou clé Webstat ne doit être transmis aux téléchargeurs.
 
 Chaque version possède une URL immuable, une empreinte et des notes de changement. Le même DMG sert au site et au cask. Tester une installation fraîche et `brew upgrade` d’une version précédente. L’auto-mise à jour dans l’app reste un chantier séparé.
 

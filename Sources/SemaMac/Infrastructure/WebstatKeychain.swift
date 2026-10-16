@@ -35,7 +35,7 @@ actor WebstatKeychain {
         if status == errSecItemNotFound {
             var item = identity
             item[kSecValueData as String] = Data(key.utf8)
-            item[kSecAttrLabel as String] = "Sema · clé personnelle Webstat"
+            item[kSecAttrLabel as String] = "sema · clé personnelle Webstat"
             status = SecItemAdd(item as CFDictionary, nil)
         }
         guard status == errSecSuccess else { throw KeychainError(status: status) }

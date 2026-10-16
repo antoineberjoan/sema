@@ -14,7 +14,7 @@ import sys
 def bundle_facts(bundle):
     info = plistlib.loads((bundle / "Contents/Info.plist").read_bytes())
     if info.get("CFBundleIdentifier") != "com.antoineberjoan.sema":
-        raise ValueError("Le bundle doit être celui de Sema, pas une app de revue.")
+        raise ValueError("Le bundle doit être celui de sema, pas une app de revue.")
     if "SemaDevelopmentDataDirectory" in info:
         raise ValueError("Le bundle contient une configuration de développement.")
     version = info.get("CFBundleShortVersionString", "")
@@ -59,7 +59,7 @@ def main():
     checksum = hashlib.sha256(dmg.read_bytes()).hexdigest()
     version = facts["version"]
     manifest = {
-        "schemaVersion": 1, "product": "Sema", **facts,
+        "schemaVersion": 1, "product": "sema", **facts,
         "createdAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
         "channel": "private-alpha", "download": {"enabled": False, "url": None,
             "filename": dmg.name, "byteSize": dmg.stat().st_size, "sha256": checksum,
@@ -80,7 +80,7 @@ cask "sema" do
   sha256 "{checksum}"
 
   url "https://github.com/antoineberjoan/homebrew-sema/releases/download/v#{{version}}/Sema-#{{version}}-arm64.dmg"
-  name "Sema"
+  name "sema"
   desc "Vos repères économiques Webstat sur Mac"
   homepage "https://sema.raregoat8192.chatgpt.site/"
 

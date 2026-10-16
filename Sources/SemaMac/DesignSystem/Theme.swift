@@ -52,6 +52,8 @@ enum SemaPalette: String, CaseIterable, Identifiable, Sendable {
     }
     // Native selected controls use white labels, so pastel swatches need a deeper tint.
     var controlAccent: Color { Color(nsColor: Self.nsColor(lightAccent)) }
+    // The signature is the one coloured editorial surface in the Graphite ribbon.
+    var signatureAccent: Color { self == .graphite ? Self.swatch(0x355A80) : controlAccent }
     static func swatch(_ hex: UInt32) -> Color { Color(nsColor: nsColor(hex)) }
     private static func nsColor(_ hex: UInt32) -> NSColor {
         NSColor(srgbRed: CGFloat((hex >> 16) & 255) / 255,
@@ -84,7 +86,7 @@ enum SemaTheme {
     static let menuBarIcon: NSImage = {
         let renderer = ImageRenderer(content: SemaSymbol(isMenuBarIcon: true).foregroundStyle(.black).frame(width: 18, height: 18))
         renderer.scale = 2
-        let image = renderer.nsImage ?? NSImage(systemSymbolName: "waveform.path", accessibilityDescription: "Sema")!
+        let image = renderer.nsImage ?? NSImage(systemSymbolName: "waveform.path", accessibilityDescription: "sema")!
         image.isTemplate = true
         return image
     }()

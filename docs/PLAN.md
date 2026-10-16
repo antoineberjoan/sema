@@ -1,8 +1,8 @@
-# Plan Sema pour le catalogue et la distribution
+# Plan sema pour le catalogue et la distribution
 
 16 octobre 2026. Direction validée avec Antoine ; fonctionnalités ci-dessous à réaliser. Le logo de barre de menus à 2 pt est déjà intégré et compilé.
 
-Sema doit permettre à chaque utilisateur de composer ses repères dans le catalogue Webstat. La première installation doit prolonger la même identité, du site au DMG puis à l’accueil natif. L’ouverture du catalogue et la distribution sont deux chantiers distincts, avec une exigence commune : une interface calme, précise et attentive.
+sema doit permettre à chaque utilisateur de composer ses repères dans le catalogue Webstat. La première installation doit prolonger la même identité, du site au DMG puis à l’accueil natif. L’ouverture du catalogue et la distribution sont deux chantiers distincts, avec une exigence commune : une interface calme, précise et attentive.
 
 ## Deux plans exécutables
 
@@ -29,10 +29,10 @@ SF Pro système, SwiftUI et SF Symbols dans l’app ; fond neutre, accent choisi
 
 Chaque lot passe par trois revues distinctes : parcours et contenu, présentation, puis interactions. La validation comporte l’état au repos et le comportement réel : retour arrière, interruption d’une animation, saisie rapide, erreur réseau et reprise. Une capture seule ne valide pas une animation.
 
-Les séquences sont décrites avant codage, avec des constantes nommées pour les durées et déplacements. Un réglage réservé au développement permet de comparer immédiatement les valeurs. Les valeurs proposées dans les plans sont des points de départ Sema, pas des prescriptions d’Interface Craft.
+Les séquences sont décrites avant codage, avec des constantes nommées pour les durées et déplacements. Un réglage réservé au développement permet de comparer immédiatement les valeurs. Les valeurs proposées dans les plans sont des points de départ sema, pas des prescriptions d’Interface Craft.
 
 ## Références relues
 
-Les leçons membres suivantes d’Interface Craft guident la méthode : [Separation of Concerns](https://www.interfacecraft.dev/library/separation-of-concerns), [Conceptual Depth](https://www.interfacecraft.dev/library/conceptual-depth), [Live Tuning](https://www.interfacecraft.dev/library/live-tuning), [Animations as Proof of Care](https://www.interfacecraft.dev/library/animations-as-proof-of-care), [Less, but Better](https://www.interfacecraft.dev/library/less-but-better) et [Facets of Quality](https://www.interfacecraft.dev/library/facets-of-quality). Les critères de Sema privilégient la précision, la rapidité, la retenue et la continuité.
+Les leçons membres suivantes d’Interface Craft guident la méthode : [Separation of Concerns](https://www.interfacecraft.dev/library/separation-of-concerns), [Conceptual Depth](https://www.interfacecraft.dev/library/conceptual-depth), [Live Tuning](https://www.interfacecraft.dev/library/live-tuning), [Animations as Proof of Care](https://www.interfacecraft.dev/library/animations-as-proof-of-care), [Less, but Better](https://www.interfacecraft.dev/library/less-but-better) et [Facets of Quality](https://www.interfacecraft.dev/library/facets-of-quality). Les critères de sema privilégient la précision, la rapidité, la retenue et la continuité.
 
 Les contrats de la version actuelle restent décrits dans [PRODUCT.md](PRODUCT.md). Ce plan décrit la prochaine évolution ; il ne vaut pas annonce de fonctionnalités déjà disponibles.

@@ -8,7 +8,7 @@ struct WorkspaceView: View {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 9) {
                     SemaMark(size: 27)
-                    Text("Sema").font(.system(size: 19, weight: .semibold)).tracking(-0.5)
+                    Text("sema").font(.system(size: 19, weight: .semibold)).tracking(-0.5)
                 }
                 .padding(.horizontal, 20).padding(.top, 22)
                 VStack(spacing: 16) {
@@ -35,7 +35,7 @@ struct WorkspaceView: View {
                         .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
                 }
                 .buttonStyle(.plain).font(.system(size: 13)).foregroundStyle(.secondary)
-                .help("Ouvrir les réglages de Sema")
+                .help("Ouvrir les réglages de sema")
                 .padding(20)
             }
             .navigationSplitViewColumnWidth(min: 185, ideal: 200, max: 225)
@@ -69,7 +69,7 @@ struct WorkspaceView: View {
                     .labelStyle(.iconOnly).disabled(store.isLoading || !store.hasWebstatKey)
                     .help(store.hasWebstatKey ? "Actualiser les repères" : "Ajoutez votre clé Webstat dans les réglages")
                     SettingsLink { Label("Réglages", systemImage: "slider.horizontal.3") }
-                        .labelStyle(.iconOnly).help("Réglages de Sema")
+                        .labelStyle(.iconOnly).help("Réglages de sema")
                 }
             }
         }
@@ -77,7 +77,7 @@ struct WorkspaceView: View {
         .task { await store.checkWebstatKey() }
         .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
         .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
-        .alert("Sema", isPresented: errorBinding) {
+        .alert("sema", isPresented: errorBinding) {
             Button("Compris", role: .cancel) { store.errorMessage = nil }
         } message: { Text(store.errorMessage ?? "") }
         .overlay(alignment: .topTrailing) {

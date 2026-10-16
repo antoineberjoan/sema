@@ -9,7 +9,7 @@ final class NotificationService {
 
     func send(title: String, body: String, isDemo: Bool) async throws {
         let content = UNMutableNotificationContent()
-        content.title = isDemo ? "Sema · test de notification" : "Sema · seuil franchi"
+        content.title = isDemo ? "sema · test de notification" : "sema · seuil franchi"
         content.subtitle = title
         content.body = body
         content.sound = .default

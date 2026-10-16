@@ -1,4 +1,4 @@
-# Vérification du bandeau Sema 0.3
+# Vérification du bandeau sema 0.3
 
 16 octobre 2026. Version locale 0.3.0, build 3, arm64, macOS 14+.
 
@@ -37,5 +37,14 @@ Les comportements Réduire les animations, Réduire la transparence et Augmenter
 ## Contrôles restant à effectuer
 
 L’ouverture par clic sur le status item depuis une autre app, le clic extérieur, la persistance après fermeture du hub, les changements d’espace, les écrans multiples, le plein écran, VoiceOver et Réduire les animations demandent encore une vérification manuelle dédiée. Les gestionnaires correspondants sont présents, mais ne sont pas présentés ici comme validés de bout en bout. Une revue de toutes les palettes dans les deux apparences reste à faire.
+
+## Retours et nom de marque — build 4
+
+- Nom visible « sema » en minuscules dans la fenêtre, les menus, l’accueil, les notifications et les aides ; nom technique du dossier de stockage inchangé.
+- Cartouche bleu ardoise en Graphite, accent approfondi dans les cinq autres thèmes ; contraste minimal calculé de 4,86:1 pour le texte secondaire blanc à 85 % sur le haut du dégradé.
+- Formulaire public Notion : envoi sans compte, champs obligatoires respectés, e-mail laissé vide, réception dans la base privée avec le statut « À lire », puis classement du test en « Terminé ».
+- Le premier test natif a révélé un retour SwiftUI `OpenURLAction` hors du MainActor sous Swift 6. L’ouverture utilise désormais `NSWorkspace.open` synchrone. Le clic a été rejoué dans une nouvelle copie isolée du binaire final ; l’app reste ouverte et ne présente pas d’erreur.
+- Compilation Swift 6 de production, bundle ad hoc et signature stricte réussis sur une copie de HEAD contenant uniquement cet incrément. Les évolutions de fournisseurs d’une autre session dans le même checkout sont conservées et exclues de cette validation.
+- `./scripts/check.sh` reste bloqué localement par le module Swift Testing absent des Command Line Tools ; les tests du dépôt sont confiés au SDK complet de GitHub Actions.
 
 Cette version reste locale pour revue. Le DMG et le cask publics 0.2.0 ne sont pas remplacés.

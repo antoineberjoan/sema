@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 // SIGNATURE — une lecture, sans boucle. Le texte reste disponible à VoiceOver.
@@ -14,35 +15,37 @@ private enum SignatureMotion {
     static let textDuration = 0.42
     static let textOffset: CGFloat = 4
     static let lineWidth: CGFloat = 1.5
-    static let markSize: CGFloat = 86
+    static let markSize: CGFloat = 72
 }
 
 struct RibbonSignatureView: View {
+    @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let presentationID: UUID?
     @State private var stage = 0
     @State private var replayID = UUID()
+    @State private var formUnavailable = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top) {
-                Text("SEMA").font(.system(size: 10, weight: .medium)).tracking(2).foregroundStyle(.secondary)
+                Text("sema").font(.system(size: 12, weight: .medium)).tracking(-0.2).foregroundStyle(.white.opacity(0.85))
                 Spacer()
                 Button { replayID = UUID() } label: {
-                    Image(systemName: "arrow.counterclockwise").font(.system(size: 10)).foregroundStyle(.secondary)
+                    Image(systemName: "arrow.counterclockwise").font(.system(size: 10)).foregroundStyle(.white.opacity(0.85))
                         .frame(width: 22, height: 22).contentShape(Circle())
                 }
-                .buttonStyle(.plain).help("Rejouer la signature").accessibilityLabel("Rejouer la signature de Sema")
+                .buttonStyle(.plain).help("Rejouer la signature").accessibilityLabel("Rejouer la signature de sema")
             }
             Spacer(minLength: 0)
             SemaSignalPath().trim(from: 0, to: stage >= 1 ? 1 : 0)
-                .stroke(.primary, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
+                .stroke(.white, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
                 .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
-                .frame(height: 49).accessibilityHidden(true)
+                .frame(height: 36).accessibilityHidden(true)
                 .animation(reduceMotion ? nil : .easeInOut(duration: SignatureMotion.drawDuration), value: stage >= 1)
             Spacer(minLength: 6)
             Text("L’économie bouge.")
-                .font(.system(size: 12)).foregroundStyle(.secondary)
+                .font(.system(size: 12)).foregroundStyle(.white.opacity(0.85))
                 .opacity(stage >= 2 ? 1 : 0)
                 .animation(reduceMotion ? nil : .easeOut(duration: SignatureMotion.textDuration), value: stage >= 2)
             Text("Gardez vos repères.")
@@ -50,11 +53,48 @@ struct RibbonSignatureView: View {
                 .opacity(stage >= 3 ? 1 : 0)
                 .offset(y: stage >= 3 || reduceMotion ? 0 : SignatureMotion.textOffset)
                 .animation(reduceMotion ? nil : .spring(response: SignatureMotion.textDuration, dampingFraction: 1), value: stage >= 3)
+            Button(action: openFeedback) {
+                Label("Une idée ou un bug ?", systemImage: "bubble.left")
+                    .font(.system(size: 11, weight: .medium)).padding(.horizontal, 10)
+                    .frame(height: 26).background(.white.opacity(0.12), in: Capsule())
+            }
+            .buttonStyle(SemaPressStyle()).padding(.top, 10)
+            .help(SemaFeedback.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
+            .accessibilityLabel("Une idée ou un bug ? Ouvrir le formulaire Notion")
+            .disabled(SemaFeedback.formURL == nil)
         }
-        .padding(18).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .modifier(RibbonSurface(emphasized: true))
+        .foregroundStyle(.white)
+        .padding(16).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .background {
+            let shape = RoundedRectangle(cornerRadius: MenuRibbonLayout.cardCornerRadius, style: .continuous)
+            shape.fill(.black)
+            shape.fill(LinearGradient(colors: [store.palette.signatureAccent.opacity(0.85), store.palette.signatureAccent.opacity(0.65)],
+                                      startPoint: .topLeading, endPoint: .bottomTrailing))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: MenuRibbonLayout.cardCornerRadius, style: .continuous)
+                .strokeBorder(LinearGradient(colors: [.white.opacity(0.22), .white.opacity(0.03)],
+                                              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 0.5)
+                .allowsHitTesting(false).accessibilityHidden(true)
+        }
+        .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 3)
         .task(id: [presentationID, replayID]) { await play() }
         .onChange(of: reduceMotion) { _, value in if value { stage = 3 } }
+        .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $formUnavailable) {
+            Button("Copier le lien") {
+                guard let url = SemaFeedback.formURL else { return }
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(url.absoluteString, forType: .string)
+            }
+            Button("Fermer", role: .cancel) {}
+        } message: {
+            Text("Copiez le lien pour l’ouvrir dans votre navigateur.")
+        }
+    }
+
+    private func openFeedback() {
+        guard let url = SemaFeedback.formURL else { return }
+        formUnavailable = !NSWorkspace.shared.open(url)
     }
 
     private func play() async {

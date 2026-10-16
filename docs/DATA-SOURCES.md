@@ -4,7 +4,7 @@
 
 - [Guide officiel de l’API](https://webstat.banque-france.fr/pages/guide-migration-api/?flg=fr-fr).
 - API Explore 2.1 : `https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/`.
-- Une clé personnelle est nécessaire. Sema la valide puis la conserve dans le Trousseau local, sans synchronisation iCloud. Aucun secret partagé n’est embarqué dans l’app ou le dépôt.
+- Une clé personnelle est nécessaire. sema la valide puis la conserve dans le Trousseau local, sans synchronisation iCloud. Aucun secret partagé n’est embarqué dans l’app ou le dépôt.
 - Authentification : header `Authorization: Apikey …`, jamais un paramètre d’URL.
 - `webstat-datasets/records` découvre les jeux, `series/records` recherche les séries par pages de 50 et offsets standards. Au plafond d’offset de 10 000, un export léger de sept champs de métadonnées (sans observation) permet de poursuivre localement ; cet export reste à la demande, annulable et réutilisé pour la requête courante. ODSQL ne permet pas de curseur `>` sur un champ textuel ([documentation Explore 2.1](https://help.opendatasoft.com/apis/ods-explore-v2/explore_v2.1.html)), `codelists/exports/json` traduit les codes officiels nécessaires au jeu consulté. Les métadonnées brutes restent conservées.
 - `observations/exports/json` charge uniquement les séries consultées ou suivies avec des bornes explicites. Les six dernières années publiées sont chargées à l’ouverture ; « Tout » permet d’atteindre le début publié en tranches de six années annulables. Les fréquences mensuelles, trimestrielles, semestrielles et annuelles utilisent le début de la première période publiée, même si le catalogue renseigne sa date de fin.
@@ -13,7 +13,7 @@
 
 ### Sélection de départ et identifiants historiques
 
-| Identifiant Sema | Série Webstat | Fréquence / convention |
+| Identifiant sema | Série Webstat | Fréquence / convention |
 | --- | --- | --- |
 | `livreta` | `MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O` | Mensuelle ; taux du Livret A. |
 | `ldds` | `MIR1.M.FR.B.L23FRLD.D.R.A.2254U6.EUR.O` | Mensuelle ; taux du LDDS. |
@@ -29,7 +29,7 @@
 | `mortgage-fr` | `MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N` | Mensuelle ; nouveaux crédits à l’habitat hors renégociations, pas un TAEG ni une offre bancaire. |
 | `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage compact : « Emprunt phare FR · 10 ans ». Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
 
-Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. Les anciens identifiants Sema sont migrés vers la clé Webstat, qui devient l’identifiant stable des observations, favoris et alertes.
+Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. Les anciens identifiants sema sont migrés vers la clé Webstat, qui devient l’identifiant stable des observations, favoris et alertes.
 
 Les anciennes séries `ICP…` d’inflation s’arrêtent fin 2025. Le flux actuel est `HICP…`. L’IPCH harmonisé ne doit pas être confondu avec l’IPC national de l’Insee.
 
@@ -41,7 +41,7 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 
 - Les [mentions légales Banque de France](https://www.banque-france.fr/fr/infos-legales) permettent la réutilisation de ses données propres, y compris commercialement, sauf spécification contraire, avec respect de leur intégrité et mention de source et de date.
 - Les [conditions Webstat](https://webstat.banque-france.fr/terms/terms-and-conditions/?flg=fr-fr) demandent de respecter les licences particulières des jeux de données et les droits des tiers. Une clé personnelle ne remplace pas ces droits.
-- La [BCE](https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html) demande notamment l’attribution, l’identification des modifications et l’information sur la disponibilité gratuite à la source pour un contenu vendu. Les réglages Sema indiquent cette disponibilité gratuite ; les variations affichées sont des calculs de Sema.
+- La [BCE](https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html) demande notamment l’attribution, l’identification des modifications et l’information sur la disponibilité gratuite à la source pour un contenu vendu. Les réglages sema indiquent cette disponibilité gratuite ; les variations affichées sont des calculs de sema.
 - Vérifier les conditions des producteurs pour tout ajout ou changement de source et pour la distribution commerciale finale. Aucune autorisation Morningstar, Leeway ou de place boursière n’est déduite de cet accès Webstat.
 
 ## Démonstration et compatibilité

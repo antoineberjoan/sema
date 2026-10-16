@@ -42,7 +42,7 @@ struct SemaSettingsView: View {
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 Section("Premiers pas") {
-                    Button("Revoir l’accueil de Sema") {
+                    Button("Revoir l’accueil de sema") {
                         store.beginOnboarding()
                         openWindow(id: "workspace")
                     }
@@ -54,7 +54,7 @@ struct SemaSettingsView: View {
                         get: { store.preferences.notificationsEnabled },
                         set: { value in Task { await store.setNotificationsEnabled(value) } }
                     ))
-                    Text("Les seuils sont vérifiés à chaque actualisation Webstat. Les signaux restent visibles dans Sema sans notification système. Aucun contrôle quand l’app est quittée ou le Mac en veille.")
+                    Text("Les seuils sont vérifiés à chaque actualisation Webstat. Les signaux restent visibles dans sema sans notification système. Aucun contrôle quand l’app est quittée ou le Mac en veille.")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
             }
@@ -68,10 +68,10 @@ struct SemaSettingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    Text("Au clic sur l’icône Sema, retrouvez vos favoris sur le bord choisi. La matière translucide suit l’apparence de votre Mac.")
+                    Text("Au clic sur l’icône sema, retrouvez vos favoris sur le bord choisi. La matière translucide suit l’apparence de votre Mac.")
                         .font(.system(size: 12)).foregroundStyle(.secondary)
                 }
-                Section("Couleurs de Sema") {
+                Section("Couleurs de sema") {
                     Picker("Thème", selection: Binding(get: { store.palette }, set: { store.setPalette($0) })) {
                         ForEach(SemaPalette.allCases) { Text($0.title).tag($0) }
                     }
@@ -90,7 +90,7 @@ struct SemaSettingsView: View {
             .tabItem { Label("Apparence", systemImage: "paintpalette") }
             VStack(spacing: 14) {
                 SemaMark(size: 64)
-                Text("Sema").font(.system(size: 28, weight: .medium)).tracking(-1)
+                Text("sema").font(.system(size: 28, weight: .medium)).tracking(-1)
                 Text("Vos repères, à portée de main.").foregroundStyle(.secondary)
                 Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") · macOS 14+")
                     .font(.system(size: 11)).foregroundStyle(.secondary)

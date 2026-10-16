@@ -1,15 +1,15 @@
-# Sema
+# sema
 
 **Vos repères, à portée de main.** Une application macOS native pour consulter ses repères économiques, conserver ses favoris et suivre des seuils sur les taux, l’inflation et les devises.
 
-Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoan/sema`.
+sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoan/sema`.
 
 ## Version 0.2
 
 - Une fenêtre de travail inspirée du mélange Panorama / Atelier : navigation latérale, indicateurs, historiques et détail d’une série.
 - Catalogue Webstat dynamique avec clé personnelle : rechercher, filtrer et prévisualiser les séries accessibles, puis composer une sélection ordonnée. Les treize repères macro précédents restent une sélection de départ.
 - Vues sur 1 mois, 3 mois, 1 an, 3 ans, 5 ans et Tout selon la profondeur disponible ; chargement des périodes anciennes par tranches annulables. Définition, unité, échelle, fréquence, périodes, base des indices et métadonnées officielles. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
-- Un bandeau natif translucide affiche les favoris, leurs valeurs, variations, courbes et dates. Sa position se choisit dans Réglages → Apparence : haut, bas, gauche ou droite ; un encart trace le signe Sema puis révèle sa signature. Clic sur une carte pour approfondir dans le hub ; défilement horizontal quand nécessaire et fermeture avec Échap ou clic extérieur. **⌘⇧B** permet aussi de l’ouvrir dans Sema.
+- Un bandeau natif translucide affiche les favoris, leurs valeurs, variations, courbes et dates. Sa position se choisit dans Réglages → Apparence : haut, bas, gauche ou droite ; un encart trace le signe sema puis révèle sa signature. Clic sur une carte pour approfondir dans le hub ; défilement horizontal quand nécessaire et fermeture avec Échap ou clic extérieur. **⌘⇧B** permet aussi de l’ouvrir dans sema.
 - **⌘K** propose Mes repères et Catalogue Webstat ; recherche par noms ou codes, filtres jeu/zone/fréquence, navigation par flèches puis Entrée. **⌘1/⌘2/⌘3/⌘4** ouvrent Panorama/Favoris/Alertes/Explorer ; **⌘R** actualise Webstat. **⌘⌥↑ / ⌘⌥↓** réordonnent le repère sélectionné.
 - Composition native sans contours décoratifs : sidebar sobre, liste de repères et panneau de graphique avec une ombre légère.
 - Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Graphite par défaut, puis Sarcelle, Menthe, Lavande, Bleu ciel et Bleu polaire. La marque et l’icône d’app restent monochromes.
@@ -35,7 +35,7 @@ Dans Xcode : ouvrir `Package.swift`. Pour tester les comportements dépendant d�
 ## Connecter Webstat
 
 1. Créer un compte gratuit sur [Webstat](https://webstat.banque-france.fr/login/), puis générer une clé dans l’espace utilisateur.
-2. Ouvrir **Sema → Réglages → Général**, coller la clé dans le champ sécurisé et cliquer sur **Enregistrer et connecter**.
+2. Ouvrir **sema → Réglages → Général**, coller la clé dans le champ sécurisé et cliquer sur **Enregistrer et connecter**.
 3. Les données sont validées avant l’enregistrement de la clé dans le Trousseau macOS. La clé reste sur ce Mac et est envoyée uniquement à Webstat dans un header HTTP.
 4. Utiliser **Actualiser Webstat** pour les mises à jour suivantes. Les données du cache restent consultables sans clé ; **Retirer la clé** supprime uniquement la connexion.
 
@@ -88,3 +88,7 @@ Voir [ROADMAP.md](docs/ROADMAP.md). Les priorités sont l’intégration des aut
 ## Distribution
 
 Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, le manifeste de release, la page de téléchargement et la préparation Homebrew. Les scripts de packaging restent locaux et ne publient aucun artefact. Le dépôt public [homebrew-sema](https://github.com/antoineberjoan/homebrew-sema) ne contient que le cask et les versions binaires ; ce dépôt source reste privé.
+
+## Retours
+
+Le bouton « Une idée ou un bug ? » du bandeau ouvre le [formulaire public](https://antoineberjoan.notion.site/5e95023c58754a8990fd16f5fd1ad5f2). Les réponses sont privées ; [configuration et vérification](docs/FEEDBACK.md).

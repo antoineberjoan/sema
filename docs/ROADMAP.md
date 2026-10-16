@@ -4,7 +4,7 @@ Le [plan catalogue et distribution du 16 octobre 2026](PLAN.md) précise les pro
 
 ## Première version native
 
-- [x] Nom Sema et direction Panorama / Atelier.
+- [x] Nom sema et direction Panorama / Atelier.
 - [x] Fenêtre principale et panneau de barre de menus partageant le même état.
 - [x] Repères de démonstration, historiques et favoris persistants.
 - [x] Flux public BCE, cache et indication de la provenance.

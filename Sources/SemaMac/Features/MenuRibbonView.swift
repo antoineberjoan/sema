@@ -60,7 +60,7 @@ struct MenuRibbonView: View {
                     sourceNote.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 RibbonSignatureView(presentationID: presentationID).frame(height: MenuRibbonLayout.signatureHeight)
-                Button(action: openWorkspace) { Label("Ouvrir Sema", systemImage: "arrow.up.right") }
+                Button(action: openWorkspace) { Label("Ouvrir sema", systemImage: "arrow.up.right") }
                     .buttonStyle(.plain).font(.system(size: 12, weight: .medium)).padding(.vertical, 4)
             } else {
                 HStack(alignment: .top, spacing: MenuRibbonLayout.spacing) {
@@ -159,9 +159,9 @@ struct MenuRibbonView: View {
             } label: { Image(systemName: "magnifyingglass") }
                 .help("Rechercher un repère · ⌘K").accessibilityLabel("Rechercher un repère")
             Button(action: openSettings) { Image(systemName: "slider.horizontal.3") }
-                .help("Réglages de Sema").accessibilityLabel("Réglages de Sema")
+                .help("Réglages de sema").accessibilityLabel("Réglages de sema")
             if !isVertical {
-                Button(action: openWorkspace) { Label("Ouvrir Sema", systemImage: "arrow.up.right") }
+                Button(action: openWorkspace) { Label("Ouvrir sema", systemImage: "arrow.up.right") }
                     .font(.system(size: 12)).foregroundStyle(store.palette.accent)
             }
             Button(action: dismiss) { Image(systemName: "xmark").frame(width: 24, height: 24) }
@@ -230,7 +230,7 @@ private struct RibbonCard: View {
         .buttonStyle(SemaPressStyle())
         .onHover { hovered = $0 }
         .animation(reduceMotion ? nil : .easeOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
-        .help(series.name + " · Ouvrir le détail dans Sema")
+        .help(series.name + " · Ouvrir le détail dans sema")
         .accessibilityLabel(accessibilityDescription)
     }
 

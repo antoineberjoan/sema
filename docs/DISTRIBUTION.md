@@ -1,10 +1,10 @@
-# Préparer une version de Sema
+# Préparer une version de sema
 
 La construction de l’app et sa distribution sont deux opérations distinctes. Le dépôt source reste privé. Ces outils ne créent aucun dépôt distant, aucune release et aucun téléchargement public.
 
 ## Construire l’image disque
 
-Pré-requis de construction : macOS avec les Command Line Tools (Swift, clang, SetFile), Python 3 et les outils système `hdiutil`, `ditto` et `tiffutil`. Aucune dépendance supplémentaire n’est installée ou embarquée dans Sema.
+Pré-requis de construction : macOS avec les Command Line Tools (Swift, clang, SetFile), Python 3 et les outils système `hdiutil`, `ditto` et `tiffutil`. Aucune dépendance supplémentaire n’est installée ou embarquée dans sema.
 
 ```sh
 ./scripts/build-app.sh dist/Sema.app
@@ -50,7 +50,7 @@ La page contient une démonstration, pas une mesure du téléchargement ou de la
 
 ## Activer Homebrew
 
-Le dépôt de distribution public est `antoineberjoan/homebrew-sema`. Le cask se place sous `Casks/sema.rb` dans ce dépôt de distribution ; le code source de Sema n’a pas besoin de devenir public. L’adresse immuable de release proposée est inscrite dans le manifeste et dans le modèle de cask.
+Le dépôt de distribution public est `antoineberjoan/homebrew-sema`. Le cask se place sous `Casks/sema.rb` dans ce dépôt de distribution ; le code source de sema n’a pas besoin de devenir public. L’adresse immuable de release proposée est inscrite dans le manifeste et dans le modèle de cask.
 
 Avant activation : créer le dépôt de distribution avec l’audience décidée, publier exactement le DMG contrôlé et son empreinte, vérifier le téléchargement sans authentification, puis tester installation **et** mise à jour sur un environnement distinct. La commande attendue est `brew install --cask antoineberjoan/sema/sema`. Elle n’est pas opérationnelle tant que ces étapes ne sont pas terminées.
 
@@ -59,7 +59,7 @@ Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade
 ## Vérification avant diffusion
 
 1. Monter le DMG par le Finder, contrôler le fond Retina, les deux icônes, leur nom, les ombres et l’absence d’éléments superflus.
-2. Glisser réellement Sema dans Applications sur un compte de test, éjecter le disque et ouvrir la copie. Vérifier l’accueil, le parcours passé, la reprise et l’ouverture suivante.
+2. Glisser réellement sema dans Applications sur un compte de test, éjecter le disque et ouvrir la copie. Vérifier l’accueil, le parcours passé, la reprise et l’ouverture suivante.
 3. Télécharger le fichier via le navigateur sur un autre compte ou Mac pour observer les contrôles de quarantaine et confirmer l’aide Gatekeeper.
 4. Vérifier la page desktop et mobile, le clavier, la copie Homebrew, Réduire les animations, JavaScript absent et les relectures rapides.
 5. Ne cocher les contrôles de `release.json` qu’après les essais correspondants. Le succès de `hdiutil verify` et de la signature locale ne vaut pas validation de l’installation Internet.

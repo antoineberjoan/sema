@@ -1,4 +1,4 @@
-# Vérification de Sema 0.2
+# Vérification de sema 0.2
 
 16 octobre 2026. Alpha native arm64, macOS 14+, sans dépendance externe.
 
