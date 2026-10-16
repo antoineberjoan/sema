@@ -20,7 +20,7 @@ La fenêtre et son séparateur restent un `NavigationSplitView`. Les lignes de s
 
 ## Couleurs
 
-Six thèmes sont disponibles dans **Réglages → Apparence**. Sarcelle conserve le choix initial ; Lavande, Bleu polaire et Graphite reprennent les propositions, complétées par Menthe et Bleu ciel.
+Graphite est le thème par défaut : noir, blanc et gris. Six thèmes restent disponibles dans **Réglages → Apparence** ; les choix enregistrés sont conservés. Sarcelle, Menthe, Lavande, Bleu ciel et Bleu polaire sont des personnalisations facultatives.
 
 | Thème | Palette de référence |
 | --- | --- |
@@ -31,13 +31,13 @@ Six thèmes sont disponibles dans **Réglages → Apparence**. Sarcelle conserve
 | Bleu polaire | `#053F56` · `#21A5EC` · `#90D2F5` · `#F2F3F7` |
 | Graphite | `#333333` · `#707070` · `#D6D6D6` · `#FAFAFA` |
 
-Les références pastel sont conservées dans l’aperçu. Les accents sont approfondis sur fond clair pour les textes, les courbes et les contrôles sélectionnés, puis éclaircis pour les courbes en mode sombre. Surfaces et typographie restent sémantiques macOS. Le choix est local, persistant et partagé par la fenêtre et le panneau. L’icône d’app conserve un fond encre et le symbole en sarcelle claire, indépendamment du thème.
+Les références pastel sont conservées dans l’aperçu. Les accents sont approfondis sur fond clair pour les textes, les courbes et les contrôles sélectionnés, puis éclaircis pour les courbes en mode sombre. Surfaces et typographie restent sémantiques macOS. Le choix est local, persistant et partagé par la fenêtre et le panneau. La marque, le site, la page de téléchargement et l’icône d’app sont monochromes. L’icône présente le signe blanc sur un fond graphite, indépendamment du thème personnel.
 
 ## Symbole — Déploiement D3 · Apaisé
 
 Retenu le 16 octobre 2026. Le dessin d’Antoine est conservé : une boucle, une progression, une sortie calme. Il évoque un signal sans représenter une donnée réelle. Il remplace Balise.
 
-La géométrie est identique en SVG, SwiftUI et Core Graphics. Trois poids optiques dans le kit : Display (trait source 3,6, à partir de 96 px), Standard (6, de 28 à 95 px), Compact (8,5, de 16 à 27 px). Le symbole ne descend pas sous 16 px. L’icône d’app utilise le poids Compact dans un carré encre aux coins arrondis, avec un signe sarcelle claire.
+La géométrie est identique en SVG, SwiftUI et Core Graphics. Trois poids optiques dans le kit : Display (trait source 3,6, à partir de 96 px), Standard (6, de 28 à 95 px), Compact (8,5, de 16 à 27 px). Le symbole ne descend pas sous 16 px. L’icône d’app utilise le poids Compact dans un carré encre aux coins arrondis, avec un signe blanc.
 
 - `Resources/Brand/sema-symbol.svg` : Standard, transparent.
 - `Resources/Brand/sema-symbol-mono.svg` : variante renforcée pour la barre de menus, trait source 20,915033 (2 pt à 18 pt). Le poids Compact général reste inchangé.

@@ -12,7 +12,7 @@ Sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoa
 - Un bandeau natif sous la barre des menus affiche les favoris, leurs valeurs, variations, courbes et dates. Clic sur une carte pour approfondir dans le hub ; défilement horizontal quand nécessaire et fermeture avec Échap ou clic extérieur. **⌘⇧B** permet aussi de l’ouvrir dans Sema.
 - **⌘K** propose Mes repères et Catalogue Webstat ; recherche par noms ou codes, filtres jeu/zone/fréquence, navigation par flèches puis Entrée. **⌘1/⌘2/⌘3/⌘4** ouvrent Panorama/Favoris/Alertes/Explorer ; **⌘R** actualise Webstat. **⌘⌥↑ / ⌘⌥↓** réordonnent le repère sélectionné.
 - Composition native sans contours décoratifs : sidebar sobre, liste de repères et panneau de graphique avec une ombre légère.
-- Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Sarcelle, Menthe, Lavande, Bleu ciel, Bleu polaire et Graphite.
+- Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Graphite par défaut, puis Sarcelle, Menthe, Lavande, Bleu ciel et Bleu polaire. La marque et l’icône d’app restent monochromes.
 - Alertes de franchissement strict au-dessus ou en dessous d’un seuil, sur les repères dont l’unité et l’échelle sont explicites. Création, pause, suppression et test ; vérification des nouvelles observations à chaque actualisation, sans doublon par date.
 
 Le périmètre est limité aux repères Webstat. Les fonds suivis ont été retirés de l’interface ; les anciennes préférences sont conservées. Aucun minuteur ni service de surveillance en arrière-plan ne tourne : les alertes sont vérifiées à l’actualisation manuelle, pas quand l’app est quittée ou le Mac en veille. Les notifications système restent optionnelles.

@@ -114,7 +114,7 @@ final class AppStore {
     var selectedSeries: MarketSeries? { followedSeries.first { $0.id == selectedSeriesID } ?? followedSeries.first }
     var originSummary: String { hasLoadedWebstat ? "Banque de France · Webstat" : "Webstat à connecter · démonstration disponible" }
     var macroAlerts: [AlertRule] { preferences.alerts.filter { $0.effectiveCondition == .level } }
-    var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .teal }
+    var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .graphite }
     var canLoadMoreCatalogue: Bool { catalogueHasMore && !isSearchingCatalogue }
     var previewRequiresRefresh: Bool {
         guard let descriptor = previewDescriptor,

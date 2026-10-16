@@ -27,7 +27,7 @@ Deux surfaces partagent la même information :
 | Webstat | Connecter une clé personnelle et découvrir les séries accessibles, sans liste fermée. Les 13 repères constituent une sélection initiale. Actualisation par série avec conservation du cache en cas d’erreur. Six ans chargés à l’ouverture ; « Tout » permet de charger les tranches anciennes jusqu’au début publié et d’annuler. |
 | Clé | Valider la clé avant de l’enregistrer dans le Trousseau de ce Mac ; pouvoir la remplacer ou la retirer sans effacer le cache. |
 | Réglages | « Mon espace » en bas de la sidebar ouvre les mêmes réglages natifs que le bouton de la barre d’outils et le menu Sema. |
-| Apparence | Choisir Sarcelle, Menthe, Lavande, Bleu ciel, Bleu polaire ou Graphite dans les réglages. Choix local persistant, appliqué aux deux surfaces. |
+| Apparence | Graphite par défaut. Choisir Graphite, Sarcelle, Menthe, Lavande, Bleu ciel ou Bleu polaire dans les réglages. Choix local persistant, appliqué aux deux surfaces. La marque et l’icône d’app restent monochromes. |
 | Alertes | Créer une règle « passe au-dessus/en dessous » sur un repère macro, la mettre en pause, la supprimer et tester un franchissement explicite. Vérifier les nouvelles observations à chaque actualisation Webstat. |
 | Notifications | Signaux de la session visibles dans l’app ; notifications système optionnelles après activation. Déduplication persistante par règle et date d’observation. |
 

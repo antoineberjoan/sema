@@ -69,7 +69,7 @@ Une surveillance future s’ajoutera à l’orchestration. Si elle doit continue
 - Une nouvelle règle prend la dernière observation réelle comme point de départ. Une première connexion après création en démonstration établit ce point sans émettre de signal historique. La réactivation reprend à la dernière observation disponible.
 - Chaque paire nouvelle depuis `lastEvaluatedAt` est évaluée, y compris les franchissements intermédiaires si plusieurs publications arrivent entre deux actualisations. Les révisions d’une date déjà traitée ne renvoient pas de notification.
 - Les checkpoints sont enregistrés atomiquement avant l’envoi système ; si la sauvegarde échoue, aucun envoi n’est effectué. Il n’y a pas de nouvelle tentative automatique après un échec de livraison. Les derniers signaux restent visibles pendant la session, les checkpoints persistent après relancement.
-- Les thèmes sont identifiés par une chaîne optionnelle dans les préférences de version 1. Un ancien document sans thème utilise Sarcelle ; aucune migration destructive n’est nécessaire.
+- Les thèmes sont identifiés par une chaîne optionnelle dans les préférences de version 1. Graphite est le thème initial et le repli d’un document sans thème ou avec un identifiant inconnu. Les choix déjà enregistrés restent conservés ; aucune migration destructive n’est nécessaire.
 
 ### Sélection et migration v2
 

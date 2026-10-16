@@ -21,7 +21,7 @@ func render(pixels: Int, name: String) throws {
     context.addPath(background)
     context.clip()
     let gradient = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB),
-        colors: [color(32, 39, 37), color(16, 22, 20)] as CFArray, locations: [0, 1])!
+        colors: [color(39, 39, 39), color(22, 22, 22)] as CFArray, locations: [0, 1])!
     context.drawLinearGradient(gradient, start: CGPoint(x: 4, y: 4), end: CGPoint(x: 60, y: 60), options: [])
     context.restoreGState()
 
@@ -36,7 +36,7 @@ func render(pixels: Int, name: String) throws {
     context.setLineWidth(8.5)
     context.setLineCap(.round)
     context.setLineJoin(.round)
-    context.setStrokeColor(color(154, 208, 194))
+    context.setStrokeColor(color(250, 250, 250))
     context.strokePath()
 
     let bitmap = NSBitmapImageRep(cgImage: context.makeImage()!)

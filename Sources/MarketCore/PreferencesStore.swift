@@ -10,7 +10,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var onboardingCompleted: Bool?
 
     public init(favoriteIDs: Set<String> = ["fr10", "eurusd", "livreta"],
-                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "teal",
+                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "graphite",
                 followedSeriesIDs: [String] = WebstatClient.starterIDs, onboardingCompleted: Bool? = nil) {
         self.favoriteIDs = Set(favoriteIDs.map(WebstatClient.canonicalID))
         self.followedSeriesIDs = followedSeriesIDs.map(WebstatClient.canonicalID)

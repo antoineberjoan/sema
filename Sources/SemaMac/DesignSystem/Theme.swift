@@ -3,7 +3,7 @@ import SwiftUI
 import MarketCore
 
 enum SemaPalette: String, CaseIterable, Identifiable, Sendable {
-    case teal, mint, lavender, sky, polar, graphite
+    case graphite, teal, mint, lavender, sky, polar
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -60,7 +60,7 @@ enum SemaPalette: String, CaseIterable, Identifiable, Sendable {
 }
 
 private struct SemaAccentKey: EnvironmentKey {
-    static let defaultValue: Color = SemaPalette.teal.accent
+    static let defaultValue: Color = SemaPalette.graphite.accent
 }
 
 extension EnvironmentValues {
@@ -74,7 +74,7 @@ extension EnvironmentValues {
 enum SemaTheme {
     static let surface = Color(nsColor: NSColor(name: "SemaElevatedSurface") { appearance in
         appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            ? NSColor(srgbRed: 0.16, green: 0.165, blue: 0.175, alpha: 1)
+            ? NSColor(srgbRed: 0.16, green: 0.16, blue: 0.16, alpha: 1)
             : .controlBackgroundColor
     })
     static let background = Color(nsColor: .windowBackgroundColor)
@@ -121,11 +121,10 @@ enum MarketFormat {
 }
 
 struct SemaMark: View {
-    @Environment(\.semaAccent) private var accent
     var size: CGFloat = 30
     var body: some View {
         SemaSymbol()
-            .foregroundStyle(accent)
+            .foregroundStyle(.primary)
             .padding(size * 0.08)
             .frame(width: size, height: size)
             .accessibilityHidden(true)
