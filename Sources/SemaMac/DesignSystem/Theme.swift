@@ -79,7 +79,15 @@ private struct SemaGlassTintKey: EnvironmentKey {
     static let defaultValue: Color = .clear
 }
 
+private struct SemaGlassSettingsKey: EnvironmentKey {
+    static let defaultValue = RibbonGlassPreferences.standard
+}
+
 extension EnvironmentValues {
+    var semaGlassSettings: RibbonGlassPreferences {
+        get { self[SemaGlassSettingsKey.self] }
+        set { self[SemaGlassSettingsKey.self] = newValue }
+    }
     var semaGlassTint: Color {
         get { self[SemaGlassTintKey.self] }
         set { self[SemaGlassTintKey.self] = newValue }

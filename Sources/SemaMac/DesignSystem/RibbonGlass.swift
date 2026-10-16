@@ -66,12 +66,32 @@ private enum RibbonGlassStyle {
     static let lightVeil = 0.20
     static let darkTint = 0.22
     static let lightTint = 0.12
+    static let maximumGrainOpacity = 0.16
+}
+
+/// A fixed tile keeps the texture still and avoids a render loop per card.
+@MainActor
+private enum RibbonGrain {
+    static let image: CGImage? = {
+        let size = 128
+        var seed: UInt32 = 0x53454D41
+        let pixels = (0..<(size * size)).map { _ -> UInt8 in
+            seed = 1_664_525 &* seed &+ 1_013_904_223
+            return UInt8(truncatingIfNeeded: seed >> 24)
+        }
+        guard let provider = CGDataProvider(data: Data(pixels) as CFData) else { return nil }
+        return CGImage(width: size, height: size, bitsPerComponent: 8, bitsPerPixel: 8,
+                       bytesPerRow: size, space: CGColorSpaceCreateDeviceGray(),
+                       bitmapInfo: CGBitmapInfo(rawValue: 0), provider: provider,
+                       decode: nil, shouldInterpolate: false, intent: .defaultIntent)
+    }()
 }
 
 /// A thin highlight describes the glass edge; labels stay outside its vibrancy.
 struct RibbonSurface: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.semaGlassTint) private var glassTint
+    @Environment(\.semaGlassSettings) private var glass
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
     var emphasized = false
@@ -79,6 +99,10 @@ struct RibbonSurface: ViewModifier {
     func body(content: Content) -> some View {
         let opaque = reduceTransparency || contrast == .increased
         let shape = RoundedRectangle(cornerRadius: MenuRibbonLayout.cardCornerRadius, style: .continuous)
+        // NSVisualEffectView owns the blur. Only the contrast veil changes opacity.
+        let veil = (colorScheme == .dark ? RibbonGlassStyle.darkVeil : RibbonGlassStyle.lightVeil)
+            * (1 - glass.transparency) * 4
+        let tint = (colorScheme == .dark ? RibbonGlassStyle.darkTint : RibbonGlassStyle.lightTint) * glass.tint * 2
         content
             .background {
                 if opaque {
@@ -87,10 +111,17 @@ struct RibbonSurface: ViewModifier {
                 }
                 else {
                     RibbonGlassBackdrop()
-                    shape.fill(colorScheme == .dark ? Color.black.opacity(RibbonGlassStyle.darkVeil)
-                                                    : Color.white.opacity(RibbonGlassStyle.lightVeil))
-                    shape.fill(LinearGradient(colors: [glassTint.opacity(colorScheme == .dark ? RibbonGlassStyle.darkTint : RibbonGlassStyle.lightTint), glassTint.opacity(0.04)],
+                    shape.fill(colorScheme == .dark ? Color.black.opacity(veil) : Color.white.opacity(veil))
+                    shape.fill(LinearGradient(colors: [glassTint.opacity(tint), glassTint.opacity(0.08 * glass.tint)],
                                               startPoint: .topLeading, endPoint: .bottomTrailing))
+                    if glass.grain > 0, let texture = RibbonGrain.image {
+                        Image(decorative: texture, scale: 2)
+                            .resizable(resizingMode: .tile).interpolation(.none)
+                            .clipShape(shape)
+                            .opacity(glass.grain * RibbonGlassStyle.maximumGrainOpacity)
+                            .blendMode(.softLight)
+                            .allowsHitTesting(false).accessibilityHidden(true)
+                    }
                     shape.fill(Color.white.opacity(emphasized ? 0.07 : 0.025))
                 }
             }

@@ -9,7 +9,7 @@ import MarketCore
 // 160 ms  Un survol change seulement la profondeur de la carte.
 // Le défilement des cartes reste natif, au trackpad et au clavier.
 enum MenuRibbonLayout {
-    static let height = topPadding + headerHeight + headerSpacing + cardHeight + bottomPadding
+    static let height = topPadding + cardHeight + bottomPadding
     static let verticalWidth: CGFloat = 368
     static let signatureWidth: CGFloat = 252
     static let signatureHeight: CGFloat = 184
@@ -24,6 +24,9 @@ enum MenuRibbonLayout {
     static let minimumCardWidth: CGFloat = 248
     static let maximumCardWidth: CGFloat = 600
     static let cardHeight: CGFloat = 184
+    static let controlColumnWidth: CGFloat = 76
+    static let periodRowHeight: CGFloat = 20
+    static let controlColumnPadding: CGFloat = 8
     static let revealDuration = 0.22
     static let dismissDuration = 0.13
     static let hoverDuration = 0.16
@@ -48,15 +51,17 @@ struct MenuRibbonView: View {
                     ScrollView(.vertical) {
                         LazyVStack(spacing: MenuRibbonLayout.spacing) {
                             ForEach(items) { item in
-                                RibbonCard(series: item, period: period) { open(item) }
+                                RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
                                     .frame(height: MenuRibbonLayout.cardHeight)
                             }
                         }.padding(.vertical, 2)
                     }.scrollIndicators(.automatic).scrollClipDisabled()
                 }
                 RibbonSignatureView(presentationID: presentationID).frame(height: MenuRibbonLayout.signatureHeight)
+                header
             } else {
                 HStack(alignment: .top, spacing: MenuRibbonLayout.spacing) {
+                    controlColumn
                     horizontalFavorites
                     ViewThatFits(in: .horizontal) {
                         RibbonSignatureView(presentationID: presentationID)
@@ -64,14 +69,15 @@ struct MenuRibbonView: View {
                         Color.clear.frame(width: 0, height: 0)
                     }
                 }
+                .frame(height: MenuRibbonLayout.cardHeight)
             }
-            header
         }
         .padding(.horizontal, MenuRibbonLayout.padding)
         .padding(.top, MenuRibbonLayout.topPadding)
         .padding(.bottom, MenuRibbonLayout.bottomPadding)
         .environment(\.semaAccent, store.palette.accent).tint(store.palette.controlAccent)
         .environment(\.semaGlassTint, store.palette.glassTint)
+        .environment(\.semaGlassSettings, store.ribbonGlass)
         .preferredColorScheme(store.appearance.colorScheme)
         .environment(\.locale, Locale(identifier: "fr_FR"))
         .task { await store.checkWebstatKey() }
@@ -90,7 +96,7 @@ struct MenuRibbonView: View {
                 ScrollView(.horizontal) {
                     LazyHStack(spacing: MenuRibbonLayout.spacing) {
                         ForEach(items) { item in
-                            RibbonCard(series: item, period: period) { open(item) }
+                            RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
                                 .frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
                         }
                     }
@@ -104,6 +110,43 @@ struct MenuRibbonView: View {
         }
     }
 
+    private var controlColumn: some View {
+        VStack(spacing: 0) {
+            if !items.isEmpty {
+                ForEach(HistoryPeriod.allCases) { candidate in
+                    Button { period = candidate } label: {
+                        Text(candidate.title)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(period == candidate ? Color.white : Color.primary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: MenuRibbonLayout.periodRowHeight)
+                            .background(period == candidate ? store.palette.controlAccent : Color.clear,
+                                in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                            .contentShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(SemaPressStyle())
+                    .accessibilityAddTraits(period == candidate ? .isSelected : [])
+                    .help(candidate.title + " · Historique disponible sur ce Mac")
+                }
+            }
+            Spacer(minLength: 2)
+            settingsButton
+        }
+        .padding(MenuRibbonLayout.controlColumnPadding)
+        .frame(width: MenuRibbonLayout.controlColumnWidth, height: MenuRibbonLayout.cardHeight)
+        .modifier(RibbonSurface())
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Période de comparaison et réglages")
+    }
+
+    private var settingsButton: some View {
+        Button(action: openSettings) {
+            Image(systemName: "gearshape").frame(width: 26, height: 26).contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .help("Réglages de sema").accessibilityLabel("Réglages de sema")
+    }
+
     private var header: some View {
         HStack(spacing: 0) {
             Spacer()
@@ -114,11 +157,7 @@ struct MenuRibbonView: View {
                         .frame(width: isVertical ? 278 : 350)
                         .help("Historique disponible sur ce Mac · Tout utilise le cache chargé")
                 }
-                Button(action: openSettings) {
-                    Image(systemName: "gearshape").frame(width: 26, height: 26).contentShape(Circle())
-                }
-                .buttonStyle(.plain)
-                .help("Réglages de sema").accessibilityLabel("Réglages de sema")
+                settingsButton
             }
             .padding(.horizontal, 10).padding(.vertical, 3)
             .modifier(RibbonSurface())
@@ -195,7 +234,7 @@ private struct RibbonPeriodPicker: NSViewRepresentable {
     }
 }
 
-private struct RibbonCard: View {
+struct RibbonCard: View {
     @Environment(\.semaAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hovered = false

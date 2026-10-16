@@ -38,7 +38,8 @@ struct HistoryChart: View {
     }
     private var axisDigits: Int {
         let step = (domain.upperBound - domain.lowerBound) / 2
-        return max(min(series.fractionDigits, 4), min(4, max(0, Int(ceil(-log10(step))))))
+        let limit = max(4, min(series.fractionDigits, 6))
+        return max(min(series.fractionDigits, limit), min(limit, max(0, Int(ceil(-log10(step))))))
     }
 
     var body: some View {
@@ -104,6 +105,7 @@ struct HistoryChart: View {
             .font(.system(size: 11)).foregroundStyle(.secondary)
         }
         .onChange(of: series.id) { _, _ in hoveredDate = nil }
+        .onChange(of: series.unit) { _, _ in hoveredDate = nil }
         .onChange(of: period) { _, _ in hoveredDate = nil }
     }
 }

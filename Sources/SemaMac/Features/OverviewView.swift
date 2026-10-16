@@ -66,21 +66,22 @@ struct IndicatorTile: View {
     let action: () -> Void
 
     var body: some View {
+        let displayed = store.displayedSeries(series)
         ZStack(alignment: .topTrailing) {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: compact ? 14 : 10) {
                     HStack(spacing: 6) {
-                        Text(series.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
+                        Text(displayed.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
                         if series.isDemo { Text("Démo").font(.system(size: 11)).foregroundStyle(.secondary) }
                         if !store.isSourceEnabled(for: series.id) { Image(systemName: "pause.circle").foregroundStyle(.secondary).help("Source désactivée · historique conservé") }
                     }
-                    .padding(.trailing, 22)
+                    .padding(.trailing, series.exchangeRatePair == nil ? 22 : 48)
                     HStack(alignment: .firstTextBaseline) {
-                        Text(MarketFormat.value(series))
+                        Text(MarketFormat.value(displayed))
                             .font(.system(size: compact ? 24 : 22, weight: .regular))
                             .tracking(-0.6).monospacedDigit().lineLimit(1).minimumScaleFactor(0.85)
                         Spacer(minLength: 6)
-                        Text(MarketFormat.change(series, period: .month))
+                        Text(MarketFormat.change(displayed, period: .month))
                             .font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
                             .lineLimit(1)
                     }
@@ -92,9 +93,12 @@ struct IndicatorTile: View {
                 .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .buttonStyle(SemaPressStyle())
-            .accessibilityLabel("\(series.name), \(MarketFormat.value(series))\(series.isDemo ? ", démonstration" : "")")
+            .accessibilityLabel("\(displayed.name), \(MarketFormat.value(displayed))\(series.isDemo ? ", démonstration" : "")")
             .accessibilityValue(selected ? "Sélectionné" : "")
-            FavoriteButton(seriesID: series.id).padding(8)
+            HStack(spacing: 0) {
+                ExchangeDirectionButton(series: series)
+                FavoriteButton(seriesID: series.id, seriesName: displayed.name)
+            }.padding(8)
         }
         .onHover { isHovered = $0 }
         .animation(reduceMotion ? nil : .easeOut(duration: 0.14), value: isHovered)
@@ -111,7 +115,7 @@ struct FavoriteButton: View {
     @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
     let seriesID: String
-    private var seriesName: String { store.series.first { $0.id == seriesID }?.name ?? "ce repère" }
+    let seriesName: String
     var body: some View {
         Button { store.toggleFavorite(seriesID) } label: {
             Image(systemName: store.isFavorite(seriesID) ? "star.fill" : "star")
@@ -124,6 +128,28 @@ struct FavoriteButton: View {
     }
 }
 
+struct ExchangeDirectionButton: View {
+    @Environment(AppStore.self) private var store
+    @Environment(\.semaAccent) private var accent
+    let series: MarketSeries
+
+    var body: some View {
+        if let pair = series.exchangeRatePair {
+            let inverted = store.isExchangeRateInverted(series)
+            let target = inverted ? pair.publishedDescription : pair.inverseDescription
+            Button { store.toggleExchangeRateDirection(series) } label: {
+                Image(systemName: "arrow.left.arrow.right")
+                    .font(.system(size: 12)).foregroundStyle(inverted ? accent : Color.secondary)
+                    .frame(width: 26, height: 26).contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .disabled(!series.canInvertExchangeRate)
+            .help(series.canInvertExchangeRate ? "Afficher " + target : "Inversion indisponible : les cours doivent être strictement positifs.")
+            .accessibilityLabel("Inverser la paire · afficher " + target)
+        }
+    }
+}
+
 struct SeriesDetailView: View {
     @Environment(AppStore.self) private var store
     let series: MarketSeries
@@ -131,15 +157,17 @@ struct SeriesDetailView: View {
     @State private var period: HistoryPeriod = .year
 
     var body: some View {
+        let displayed = store.displayedSeries(series)
         Surface {
             VStack(alignment: .leading, spacing: 22) {
                 HStack(alignment: .top, spacing: 12) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(series.name).font(.system(size: 18, weight: .semibold)).textSelection(.enabled)
-                        Text(series.subtitle).font(.system(size: 12)).foregroundStyle(.secondary)
+                        Text(displayed.name).font(.system(size: 18, weight: .semibold)).textSelection(.enabled)
+                        Text(displayed.subtitle).font(.system(size: 12)).foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     Spacer(minLength: 0)
+                    ExchangeDirectionButton(series: series)
                     OriginBadge(series: series)
                 }
                 if !store.isSourceEnabled(series.statisticalDescriptor?.dataset.source.rawValue ?? store.sourceID(for: series.id)) {
@@ -147,12 +175,12 @@ struct SeriesDetailView: View {
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 VStack(alignment: .leading, spacing: 7) {
-                    Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
+                    Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
                         .font(.system(size: 40, weight: .medium)).tracking(-1.2).monospacedDigit()
                         .lineLimit(1).minimumScaleFactor(0.8)
-                    Text(series.displayUnit).font(.system(size: 12)).foregroundStyle(.secondary)
+                    Text(displayed.displayUnit).font(.system(size: 12)).foregroundStyle(.secondary)
                     if series.latest != nil {
-                        Text(MarketFormat.change(series, period: period) + " sur " + period.title)
+                        Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
                             .font(.system(size: 11)).foregroundStyle(.secondary)
                     }
                 }
@@ -165,7 +193,7 @@ struct SeriesDetailView: View {
                         ForEach(HistoryPeriod.allCases.filter { $0 == .all || series.supports($0) }) { Text($0.title).tag($0) }
                     }
                     .pickerStyle(.segmented).labelsHidden()
-                    HistoryChart(series: series, period: period, height: preview ? 170 : 235)
+                    HistoryChart(series: displayed, period: period, height: preview ? 170 : 235)
                 }
                 if period == .all, !series.isDemo, series.hasCompleteHistory != true {
                     HStack(spacing: 12) {
@@ -193,6 +221,10 @@ struct SeriesDetailView: View {
                         } label: { Label("Créer une alerte", systemImage: "bell.badge") }
                         .buttonStyle(.borderless).font(.system(size: 12)).disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
                     }
+                }
+                if store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
+                    Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 if !series.canAlert {
                     Text("Alertes suspendues : l’unité ou son échelle n’est pas interprétée. Les codes de la source restent disponibles ci-dessous.")

@@ -73,11 +73,18 @@ final class MenuRibbonController: NSObject {
         }
         dismiss()
         let menu = NSMenu()
-        menu.addItem(withTitle: "Ouvrir sema", action: #selector(showWorkspace), keyEquivalent: "").target = self
-        menu.addItem(withTitle: "Réglages…", action: #selector(showSettings), keyEquivalent: ",").target = self
+        let settings = menu.addItem(withTitle: "Réglages…", action: #selector(showSettings), keyEquivalent: ",")
+        settings.target = self
+        settings.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Quitter sema", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-            .target = NSApplication.shared
+        let updates = menu.addItem(withTitle: "Rechercher des mises à jour…", action: #selector(showReleases), keyEquivalent: "")
+        updates.target = self
+        updates.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
+        updates.toolTip = "Voir les versions disponibles et leurs téléchargements dans le navigateur."
+        menu.addItem(.separator())
+        let quit = menu.addItem(withTitle: "Quitter sema", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        quit.target = NSApplication.shared
+        quit.image = NSImage(systemSymbolName: "xmark.rectangle", accessibilityDescription: nil)
         NSMenu.popUpContextMenu(menu, with: event, for: button)
     }
 
@@ -136,6 +143,9 @@ final class MenuRibbonController: NSObject {
 
     @objc private func showWorkspace() { dismiss(); openWorkspace() }
     @objc private func showSettings() { dismiss(); openSettings() }
+    @objc private func showReleases() {
+        NSWorkspace.shared.open(URL(string: "https://github.com/antoineberjoan/homebrew-sema/releases")!)
+    }
 
     private func installMonitors() {
         removeMonitors()
