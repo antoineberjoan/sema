@@ -27,7 +27,7 @@ Un fichier DMG versionné existant n’est jamais écrasé. Pour un nouvel essai
 
 ## Fond et disposition Finder
 
-Le fond source est `Resources/Distribution/dmg-background.svg`. `scripts/render-dmg.swift` le rend avec AppKit à 640 × 400 pt, en représentations 1× et 2× réunies dans un TIFF HiDPI. La présentation est écrite dans `.DS_Store` sans automatiser le Finder : fenêtre 640 × 400, affichage par icônes, icônes de 96 pt centrées en (164, 226) et (476, 226), noms sous les icônes, barres du Finder masquées.
+Le fond source est `Resources/Distribution/dmg-background.svg` : papier clair `#F5F6F3`, titre encre `#18221D` et courbe sarcelle. Ce fond conserve la lisibilité des vrais noms noirs du Finder sans changer l’apparence de macOS. `scripts/render-dmg.swift` le rend avec AppKit à 640 × 400 pt, en représentations 1× et 2× réunies dans un TIFF HiDPI. La présentation est écrite dans `.DS_Store` sans automatiser le Finder : fenêtre 640 × 400, affichage par icônes, icônes de 96 pt centrées en (164, 226) et (476, 226), noms sous les icônes, barres du Finder masquées.
 
 Le petit outil C `finder-alias.c` utilise l’Alias Manager de macOS pour lier le fond au fichier **sur le volume monté**. Ces API sont dépréciées mais produisent le format `backgroundImageAlias` encore employé par le Finder ; elles ne sont jamais utilisées dans l’app livrée. Le writer Python est volontairement limité à cette disposition : une seule feuille B-tree, aucun éditeur DS_Store générique.
 

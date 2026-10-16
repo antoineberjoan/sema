@@ -38,8 +38,8 @@ def write_layout(mount, alias_path):
     icons = {
         "viewOptionsVersion": 1, "backgroundType": 2,
         "backgroundImageAlias": background_alias,
-        "backgroundColorRed": 0.0863, "backgroundColorGreen": 0.1020,
-        "backgroundColorBlue": 0.0941,
+        "backgroundColorRed": 245 / 255, "backgroundColorGreen": 246 / 255,
+        "backgroundColorBlue": 243 / 255,
         "iconSize": 96.0, "textSize": 13.0, "gridSpacing": 100.0,
         "gridOffsetX": 0.0, "gridOffsetY": 0.0, "arrangeBy": "none",
         "labelOnBottom": True, "showIconPreview": True, "showItemInfo": False,
