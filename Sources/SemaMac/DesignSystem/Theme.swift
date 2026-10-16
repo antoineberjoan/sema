@@ -82,7 +82,7 @@ enum SemaTheme {
     static let corner: CGFloat = 22
 
     static let menuBarIcon: NSImage = {
-        let renderer = ImageRenderer(content: SemaSymbol().foregroundStyle(.black).frame(width: 18, height: 18))
+        let renderer = ImageRenderer(content: SemaSymbol(isMenuBarIcon: true).foregroundStyle(.black).frame(width: 18, height: 18))
         renderer.scale = 2
         let image = renderer.nsImage ?? NSImage(systemSymbolName: "waveform.path", accessibilityDescription: "Sema")!
         image.isTemplate = true
@@ -134,12 +134,16 @@ struct SemaMark: View {
 
 /// Déploiement D3: the original curve, with optical weights for small sizes.
 struct SemaSymbol: View {
+    var isMenuBarIcon = false
+
     var body: some View {
         GeometryReader { geometry in
             let side = min(geometry.size.width, geometry.size.height)
             let scale = side / 64
+            // At 18 pt, the menu-bar stroke is 1.50 pt instead of the compact 0.81 pt.
+            let lineWidth = isMenuBarIcon ? 5.338 : (side < 28 ? 2.89 : side < 96 ? 2.04 : 1.224)
             SemaSignalPath()
-                .stroke(style: StrokeStyle(lineWidth: (side < 28 ? 2.89 : side < 96 ? 2.04 : 1.224) * scale,
+                .stroke(style: StrokeStyle(lineWidth: lineWidth * scale,
                                           lineCap: .round, lineJoin: .round))
             .frame(width: side, height: side)
             .frame(maxWidth: .infinity, maxHeight: .infinity)

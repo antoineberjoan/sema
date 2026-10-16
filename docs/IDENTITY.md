@@ -40,7 +40,7 @@ Retenu le 16 octobre 2026. Le dessin d’Antoine est conservé : une boucle, une
 La géométrie est identique en SVG, SwiftUI et Core Graphics. Trois poids optiques dans le kit : Display (trait source 3,6, à partir de 96 px), Standard (6, de 28 à 95 px), Compact (8,5, de 16 à 27 px). Le symbole ne descend pas sous 16 px. L’icône d’app utilise le poids Compact dans un carré encre aux coins arrondis, avec un signe sarcelle claire.
 
 - `Resources/Brand/sema-symbol.svg` : Standard, transparent.
-- `Resources/Brand/sema-symbol-mono.svg` : Compact, template de barre de menus.
+- `Resources/Brand/sema-symbol-mono.svg` : variante renforcée pour la barre de menus, trait source 15,7 (1,50 pt à 18 pt). Le poids Compact général reste inchangé.
 - `Resources/Brand/sema-icon.svg` : icône de l’app.
 - `SemaSymbol` : géométrie native, poids adapté à la taille.
 - `scripts/render-icon.swift` : PNG et icône du bundle.
