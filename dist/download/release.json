@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "product": "Sema",
+  "version": "0.2.0",
+  "build": "2",
+  "architecture": "arm64",
+  "minimumMacOS": "14.0",
+  "signature": "ad-hoc",
+  "notarized": false,
+  "createdAt": "2026-10-16T14:25:06+00:00",
+  "channel": "public-alpha",
+  "download": {
+    "enabled": true,
+    "url": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.2.0/Sema-0.2.0-arm64.dmg",
+    "filename": "Sema-0.2.0-arm64.dmg",
+    "byteSize": 3064325,
+    "sha256": "71660035ef0bcd16ef2006515989ef3ab7abec3b4c8c363576062bbc3016c96e",
+    "proposedURL": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.2.0/Sema-0.2.0-arm64.dmg"
+  },
+  "homebrew": {
+    "enabled": true,
+    "command": "brew install --cask antoineberjoan/sema/sema",
+    "proposedCommand": "brew install --cask antoineberjoan/sema/sema"
+  },
+  "validation": {
+    "bundleSignature": true,
+    "finderInstall": false,
+    "internetDownload": true,
+    "firstLaunch": false,
+    "homebrewInstall": true,
+    "homebrewUpgrade": true,
+    "homebrewUpgradeScope": "private tap, exact artifact",
+    "publicTap": true,
+    "gatekeeperInternetLaunch": false
+  }
+}
