@@ -113,6 +113,11 @@ final class AppStore {
     var macroAlerts: [AlertRule] { preferences.alerts.filter { $0.effectiveCondition == .level } }
     var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .teal }
     var canLoadMoreCatalogue: Bool { catalogueHasMore && !isSearchingCatalogue }
+    var previewRequiresRefresh: Bool {
+        guard let descriptor = previewDescriptor,
+              let previous = followedSeries.first(where: { $0.id == descriptor.key })?.descriptor else { return false }
+        return !previous.usesSameMeasurement(as: descriptor)
+    }
 
     func setPalette(_ palette: SemaPalette) { mutatePreferences { $0.themeID = palette.rawValue } }
     func isFollowing(_ id: String) -> Bool { preferences.followedSeriesIDs.contains(WebstatClient.canonicalID(id)) }
@@ -270,6 +275,9 @@ final class AppStore {
         seriesErrors = failures
         if !updated.isEmpty {
             merge(updated); hasLoadedWebstat = true
+            if let preview = previewDescriptor, let value = updated.first(where: { $0.id == preview.key }) {
+                previewSeries = value; previewDescriptor = value.descriptor; previewError = nil
+            }
             do { try storage.cacheWebstat(series.filter { !$0.isDemo }) }
             catch { errorMessage = "Les repères sont chargés, mais leur sauvegarde locale a échoué." }
             evaluateAlerts(in: updated.filter { !changedMeasurements.contains($0.id) })
@@ -350,9 +358,13 @@ final class AppStore {
                 try Task.checkCancellation()
                 guard previewDescriptor?.key == descriptor.key else { return }
                 previewDescriptor = resolved
-                let existing = previewSeries?.observations ?? []
+                let compatible = previewSeries?.descriptor?.usesSameMeasurement(as: resolved) ?? true
+                let existing = compatible ? previewSeries?.observations ?? [] : []
                 previewSeries = value.replacing(observations: existing + value.observations,
-                    completeHistory: previewSeries?.hasCompleteHistory)
+                    completeHistory: compatible ? previewSeries?.hasCompleteHistory : false)
+                if previewRequiresRefresh {
+                    previewError = "La source a changé d’unité, d’échelle ou de base. Cet aperçu utilise les nouvelles valeurs ; actualisez vos repères avant de l’ouvrir."
+                }
                 isLoadingPreview = false
             } catch is CancellationError { }
             catch {
@@ -400,6 +412,7 @@ final class AppStore {
                 let key = try await requiredKey()
                 let current = try await WebstatClient().descriptor(apiKey: key, key: descriptor.key)
                 guard descriptor.usesSameMeasurement(as: current) else { throw WebstatClient.ClientError.metadataChanged }
+                let descriptor = current.resolving(labels: descriptor.labels)
                 guard let first = descriptor.firstObservationStart else { throw WebstatClient.ClientError.incompleteData }
                 var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!
                 var end = reload ? min(descriptor.lastPeriod ?? .now, .now) : item.observations.first?.date ?? .now

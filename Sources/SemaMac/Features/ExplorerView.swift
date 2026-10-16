@@ -109,7 +109,12 @@ struct CatalogueBrowserView: View {
                     if let error = store.previewError {
                         Label(error, systemImage: "exclamationmark.triangle")
                             .font(.system(size: 11)).foregroundStyle(.secondary)
-                        Button("Réessayer") { store.openPreview(descriptor) }.buttonStyle(.borderless)
+                        if store.previewRequiresRefresh {
+                            Button("Actualiser mes repères") { Task { await store.refreshWebstat() } }
+                                .buttonStyle(.borderless).disabled(store.isLoading)
+                        } else {
+                            Button("Réessayer") { store.openPreview(descriptor) }.buttonStyle(.borderless)
+                        }
                     }
                 }.padding(.bottom, 10)
             }
@@ -121,7 +126,7 @@ struct CatalogueBrowserView: View {
                         if let item = store.followedSeries.first(where: { $0.id == descriptor.key }) {
                             store.show(item); store.section = .overview; store.closePreview(); close?()
                         }
-                    }.buttonStyle(.borderedProminent)
+                    }.buttonStyle(.borderedProminent).disabled(store.previewRequiresRefresh)
                 } else {
                     Button {
                         isAdding = true
