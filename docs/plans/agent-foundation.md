@@ -1,10 +1,10 @@
 # Socle agentique
 
-Statut : socle implémenté et contrôles validés, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Vérification des clients partielle : scénario Claude en attente de reconnexion. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
+Statut : socle implémenté et contrôles validés, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Scénarios Cursor et Claude validés en lecture seule. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
 
 ## Résultat
 
-Une entrée commune, des procédures chargées à la demande et les mêmes contrôles exécutables pour Codex, Claude Code, Cursor et Antigravity. Aucun changement de comportement produit ni nouvelle dépendance de production. Le [test des clients](../validation/agent-clients.md) prouve l’usage des règles et des trois skills dans Cursor ; Claude découvre maintenant les fichiers et skills, mais son scénario reste bloqué par une connexion expirée. Antigravity reste à éprouver.
+Une entrée commune, des procédures chargées à la demande et les mêmes contrôles exécutables pour Codex, Claude Code, Cursor et Antigravity. Aucun changement de comportement produit ni nouvelle dépendance de production. Le [test des clients](../validation/agent-clients.md) prouve la découverte et la lecture des trois skills, ainsi que la restitution des règles dans Cursor et Claude. Antigravity reste à éprouver.
 
 - Autorité Notion/GitHub explicite et arbitrage humain en cas de divergence.
 - Carte des responsabilités, vocabulaire commun et descriptifs des fichiers de code.
@@ -40,9 +40,9 @@ Une entrée commune, des procédures chargées à la demande et les mêmes contr
 ## Vérification des clients du 17 octobre
 
 - Cursor 3.25.6 : instructions communes présentes, trois skills découvertes et utilisées, instructions Mac lues, autorité et validation correctement restituées. Les trois entrées du menu restent uniques après la correction Claude.
-- Claude Code 2.1.236 : import des instructions reconnu ; absence des skills natives reproduite puis corrigée par trois liens vers les sources communes. Catalogue natif confirmé après correction. L’application par le modèle attend une reconnexion OAuth ; aucun succès de scénario n’est revendiqué.
+- Claude Code 2.1.236 : import des instructions reconnu ; absence des skills natives reproduite puis corrigée par trois liens vers les sources communes. Après reconnexion CLI, quatre lectures réussies couvrent les trois skills et les instructions Mac ; autorité, arbitrage et commande documentaire sont correctement restitués. Une invocation distincte de `/sema-change` charge aussi la procédure native. Résultats sans erreur ni refus de permission.
 - 22 tests Python passent. Le garde-fou refuse la suppression, la copie, la mauvaise cible et les liens orphelins, dans le travail local et l’index Git.
-- Prochaine action : après `claude auth login`, reprendre le scénario en lecture seule décrit dans la preuve. La fusion reste interdite sans autorisation.
+- Les deux scénarios demandés sont terminés. Ils ne valident ni une implémentation fonctionnelle complète dans chaque client ni leurs connecteurs externes. La fusion reste interdite sans autorisation.
 
 ## Livraison
 
