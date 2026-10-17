@@ -79,3 +79,9 @@ Le DMG 0.4.0, build 13, est publié dans le dépôt de distribution : 2 787 414 
 Le téléchargement HTTPS sans session, l’installation depuis le vrai cask public et une mise à jour 0.2.0 → 0.4.0 sur tap privé ont été vérifiés dans un dossier Applications isolé. Les signatures restent valides et la quarantaine est conservée. Le test ne lance pas le binaire téléchargé ; le premier lancement Gatekeeper sur un autre compte ou Mac reste à observer. [Preuves](validation/distribution-0.4.0.json).
 
 La release publique 0.2.0 a été retirée lors du nettoyage GitHub du 17 octobre ; ses fichiers et ses métadonnées restent récupérables dans [l’archive privée](ARCHIVES.md). La 0.4.0 reste la seule version publique active.
+
+## Alpha 0.5.0 publiée le 17 octobre 2026
+
+Focus et sa sidebar au survol sont distribués dans le DMG 0.5.0, build 14 : 2 847 366 octets, SHA-256 `88ca20dc010b33f7132ed0e57902541a612ae7daca31c39c520d4c13e96b7f7d`. Le téléchargement HTTPS sans authentification, une vraie mise à jour du cask public 0.4.0 → 0.5.0, puis une installation neuve ont été vérifiés dans un dossier Applications temporaire. Le binaire installé correspond au bundle de production ; signature stricte valide et quarantaine conservée. Aucun premier lancement Gatekeeper sur un autre compte ou Mac n’est déclaré validé.
+
+La revue native utilise des préférences séparées : sélection, périodes, inversion de devise, recherche et ouverture au clavier, accès puis annulation d’une alerte, profil via « Mon espace », mode sombre et passage bandeau → Focus. Antoine a confirmé le comportement du survol. Les Command Line Tools locaux n’incluent pas Swift Testing ; la suite et le bundle ont passé la CI macOS sur le commit source exact. [Preuves UI](validation/focus-0.5.0.json) · [preuves de distribution](validation/distribution-0.5.0.json).

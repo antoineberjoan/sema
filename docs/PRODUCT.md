@@ -52,7 +52,7 @@ Les préférences et le cache v1 migrent atomiquement vers v2, avec copie `.v1-b
 - Actualisation automatique, exécution en arrière-plan, serveur de notifications.
 - Compte utilisateur, synchronisation, abonnement et facturation.
 - Widgets de bureau et îlot autour de l’encoche.
-- Distribution publique ou bêta client notarialisée.
+- Notarisation Apple, distribution sur le Mac App Store et bêta client signée Developer ID.
 
 ## Vérification manuelle d’un incrément
 

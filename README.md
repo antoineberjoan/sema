@@ -6,13 +6,13 @@ sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoa
 
 ## Version 0.4
 
-- Une fenêtre de travail inspirée du mélange Panorama / Atelier : navigation latérale, indicateurs, historiques et détail d’une série.
+- Un hub Focus : un repère et son grand historique, une sidebar repliable qui apparaît au survol de son icône, et « Mon espace » fixé en bas. Le bandeau de favoris en verre reste accessible depuis la barre de menus.
 - Catalogue Webstat dynamique avec clé personnelle : rechercher, filtrer et prévisualiser les séries accessibles, puis composer une sélection ordonnée. Les treize repères macro précédents restent une sélection de départ.
 - Catalogues publics Insee, BCE, Eurostat, BRI et OCDE, indicateurs Banque mondiale et taux de référence de la Fed de New York : jeux et dimensions provenant des sources, sans liste fermée d’indices. Voir [le périmètre précis et les limites](docs/PUBLIC-CATALOGUES.md).
 - Sources activables dans les réglages, profil local avec prénom, nom et photo facultatifs, lien discret pour soutenir sema sur Ko-fi. Les équivalences vérifiées entre Webstat et la BCE évitent les doublons ; le choix du fournisseur reste explicite. Voir [la personnalisation](docs/PERSONALIZATION.md).
 - Vues sur 1 mois, 3 mois, 1 an, 3 ans, 5 ans et Tout selon la profondeur disponible ; chargement des périodes anciennes par tranches annulables. Définition, unité, échelle, fréquence, périodes, base des indices et métadonnées officielles. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
 - Un bandeau natif translucide affiche les favoris, leurs valeurs, variations, courbes et dates. Sa position se choisit dans Réglages → Apparence : haut, bas, gauche ou droite ; un encart trace le signe sema puis révèle sa signature. Clic sur une carte pour approfondir dans le hub ; défilement horizontal quand nécessaire et fermeture avec Échap ou clic extérieur. **⌘⇧B** permet aussi de l’ouvrir dans sema.
-- **⌘K** propose Mes repères et Catalogue Webstat ; recherche par noms ou codes, filtres jeu/zone/fréquence, navigation par flèches puis Entrée. **⌘1/⌘2/⌘3/⌘4** ouvrent Panorama/Favoris/Alertes/Explorer ; **⌘R** actualise Webstat. **⌘⌥↑ / ⌘⌥↓** réordonnent le repère sélectionné.
+- **⌘K** propose Mes repères et Catalogue Webstat ; recherche par noms ou codes, filtres jeu/zone/fréquence, navigation par flèches puis Entrée. **⌘1/⌘2/⌘3/⌘4** ouvrent Mes repères/Favoris/Alertes/Explorer ; **⌘R** actualise Webstat. **⌘⌥↑ / ⌘⌥↓** réordonnent le repère sélectionné.
 - Composition native sans contours décoratifs : sidebar sobre, liste de repères et panneau de graphique avec une ombre légère.
 - Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Graphite par défaut, puis Sarcelle, Menthe, Lavande, Bleu ciel et Bleu polaire. La marque et l’icône d’app restent monochromes.
 - Alertes de franchissement strict au-dessus ou en dessous d’un seuil, sur les repères dont l’unité et l’échelle sont explicites. Création, pause, suppression et test ; vérification des nouvelles observations à chaque actualisation, sans doublon par date.

@@ -1,6 +1,6 @@
 cask "sema" do
-  version "0.4.0"
-  sha256 "81c3c017f8a7356a71abaeaacb7f27b1a48f8b59d28651f2c6ac6fa3e2abe884"
+  version "0.5.0"
+  sha256 "88ca20dc010b33f7132ed0e57902541a612ae7daca31c39c520d4c13e96b7f7d"
 
   url "https://github.com/antoineberjoan/homebrew-sema/releases/download/v#{version}/Sema-#{version}-arm64.dmg"
   name "sema"
