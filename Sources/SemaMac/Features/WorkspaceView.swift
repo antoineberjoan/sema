@@ -5,61 +5,17 @@ struct WorkspaceView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var sidebarPresentation: SidebarPresentation = .pinned
+    @State private var hoveredSidebarZone: SidebarHoverZone?
+    @State private var sidebarCloseTask: Task<Void, Never>?
     @State private var removal: MarketSeries?
 
     var body: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
-            VStack(alignment: .leading, spacing: 18) {
-                Button { store.isSearchPresented = true } label: {
-                    HStack(spacing: 9) {
-                        Image(systemName: "magnifyingglass")
-                        Text("Rechercher")
-                        Spacer()
-                        Text("⌘K").font(.system(size: 11))
-                    }
-                    .font(.system(size: 12)).foregroundStyle(.secondary)
-                    .padding(11).background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 9))
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(SemaPressStyle()).help("Rechercher un repère · ⌘K")
-                .padding(.horizontal, 14).padding(.top, 20)
-
-                VStack(spacing: 2) {
-                    ForEach(WorkspaceSection.allCases.filter { $0 != .overview }) { SidebarItem(section: $0) }
-                }
-                .padding(.horizontal, 10)
-
-                VStack(spacing: 8) {
-                    HStack {
-                        Text("Mes repères").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
-                        Spacer()
-                        Button { store.section = .explorer } label: { Image(systemName: "plus") }
-                            .buttonStyle(.borderless).help("Ajouter un repère")
-                    }.padding(.horizontal, 22)
-                    List {
-                        ForEach(store.followedSeries) { item in
-                            SidebarSeriesRow(series: item)
-                                .listRowInsets(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10))
-                                .listRowSeparator(.hidden).listRowBackground(Color.clear)
-                                .contextMenu {
-                                    Button(store.isFavorite(item.id) ? "Retirer des favoris" : "Ajouter aux favoris") { store.toggleFavorite(item.id) }
-                                    Divider()
-                                    Button("Monter") { store.moveFollowed(item.id, by: -1) }
-                                    Button("Descendre") { store.moveFollowed(item.id, by: 1) }
-                                    Divider()
-                                    Button("Retirer de mes repères", role: .destructive) { removal = item }
-                                }
-                        }
-                        .onMove { store.moveFollowed(from: $0, to: $1) }
-                    }
-                    .listStyle(.plain).scrollContentBackground(.hidden)
-                }
-                .frame(maxHeight: .infinity)
-
-                profileButton.padding(.horizontal, 22).padding(.bottom, 22)
-            }
-            .navigationSplitViewColumnWidth(min: 220, ideal: 232, max: 280)
+        NavigationSplitView(columnVisibility: sidebarVisibilityBinding) {
+            sidebarContent
+                .toolbar(removing: .sidebarToggle)
+                .navigationSplitViewColumnWidth(min: 220, ideal: FocusMotion.sidebarWidth, max: 280)
         } detail: {
             VStack(spacing: 0) {
                 if store.section == .explorer {
@@ -101,12 +57,45 @@ struct WorkspaceView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button {
+                    setSidebarPresentation(sidebarPresentation == .pinned ? .hidden : .pinned)
+                } label: { Label("Barre latérale", systemImage: "sidebar.left") }
+                .labelStyle(.iconOnly)
+                .help("Survolez pour un aperçu ; cliquez pour ouvrir ou fermer la barre latérale.")
+                .accessibilityLabel(sidebarPresentation == .pinned ? "Fermer la barre latérale" : "Garder la barre latérale ouverte")
+                .onHover { sidebarHover(.control, inside: $0) }
+            }
+        }
+        .overlay(alignment: .topLeading) {
+            if sidebarPresentation == .preview {
+                sidebarContent
+                    .frame(width: FocusMotion.sidebarWidth)
+                    .frame(maxHeight: .infinity)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .shadow(color: .black.opacity(0.12), radius: 14, x: 4, y: 6)
+                    .padding(.leading, 10).padding(.vertical, 6)
+                    .onHover { sidebarHover(.panel, inside: $0) }
+                    .transition(.move(edge: .leading).combined(with: .opacity))
+            }
+        }
         .frame(minWidth: 980, minHeight: 680)
         .onExitCommand {
             guard store.section == .overview, !store.isSearchPresented, !store.isAlertSheetPresented,
-                  !store.isOnboardingPresented, columnVisibility != .detailOnly else { return }
-            withAnimation(reduceMotion ? nil : FocusMotion.sidebar) { columnVisibility = .detailOnly }
+                  !store.isOnboardingPresented, sidebarPresentation != .hidden else { return }
+            setSidebarPresentation(.hidden)
         }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { dismissSidebarPreview() }
+        }
+        .onChange(of: store.isSearchPresented) { _, presented in
+            if presented { dismissSidebarPreview() }
+        }
+        .onChange(of: store.isAlertSheetPresented) { _, presented in
+            if presented { dismissSidebarPreview() }
+        }
+        .onDisappear { sidebarCloseTask?.cancel() }
         .task { await store.checkWebstatKey() }
         .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
         .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
@@ -126,8 +115,100 @@ struct WorkspaceView: View {
         }
     }
 
+    private var columnVisibility: NavigationSplitViewVisibility {
+        sidebarPresentation == .pinned ? .all : .detailOnly
+    }
+
+    private var sidebarVisibilityBinding: Binding<NavigationSplitViewVisibility> {
+        Binding(get: { columnVisibility }, set: { visibility in
+            guard visibility != columnVisibility else { return }
+            setSidebarPresentation(visibility == .detailOnly ? .hidden : .pinned)
+        })
+    }
+
+    private func setSidebarPresentation(_ presentation: SidebarPresentation) {
+        sidebarCloseTask?.cancel()
+        withAnimation(reduceMotion ? nil : FocusMotion.sidebar) { sidebarPresentation = presentation }
+    }
+
+    private func dismissSidebarPreview() {
+        hoveredSidebarZone = nil
+        sidebarCloseTask?.cancel()
+        if sidebarPresentation == .preview { setSidebarPresentation(.hidden) }
+    }
+
+    private func sidebarHover(_ zone: SidebarHoverZone, inside: Bool) {
+        if inside {
+            hoveredSidebarZone = zone
+            sidebarCloseTask?.cancel()
+            if sidebarPresentation == .hidden { setSidebarPresentation(.preview) }
+        } else if hoveredSidebarZone == zone {
+            hoveredSidebarZone = nil
+            guard sidebarPresentation == .preview else { return }
+            sidebarCloseTask?.cancel()
+            sidebarCloseTask = Task { @MainActor in
+                do { try await Task.sleep(for: FocusMotion.hoverExitDelay) } catch { return }
+                guard !Task.isCancelled, hoveredSidebarZone == nil, sidebarPresentation == .preview else { return }
+                setSidebarPresentation(.hidden)
+            }
+        }
+    }
+
+    private var sidebarContent: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Button { store.isSearchPresented = true } label: {
+                HStack(spacing: 9) {
+                    Image(systemName: "magnifyingglass")
+                    Text("Rechercher")
+                    Spacer()
+                    Text("⌘K").font(.system(size: 11))
+                }
+                .font(.system(size: 12)).foregroundStyle(.secondary)
+                .padding(11).background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 9))
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(SemaPressStyle()).help("Rechercher un repère · ⌘K")
+            .padding(.horizontal, 14).padding(.top, 20)
+
+            VStack(spacing: 2) {
+                ForEach(WorkspaceSection.allCases.filter { $0 != .overview }) { SidebarItem(section: $0) }
+            }
+            .padding(.horizontal, 10)
+
+            VStack(spacing: 8) {
+                HStack {
+                    Text("Mes repères").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
+                    Spacer()
+                    Button { store.section = .explorer } label: { Image(systemName: "plus") }
+                        .buttonStyle(.borderless).help("Ajouter un repère")
+                }.padding(.horizontal, 22)
+                List {
+                    ForEach(store.followedSeries) { item in
+                        SidebarSeriesRow(series: item)
+                            .listRowInsets(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10))
+                            .listRowSeparator(.hidden).listRowBackground(Color.clear)
+                            .contextMenu {
+                                Button(store.isFavorite(item.id) ? "Retirer des favoris" : "Ajouter aux favoris") { store.toggleFavorite(item.id) }
+                                Divider()
+                                Button("Monter") { store.moveFollowed(item.id, by: -1) }
+                                Button("Descendre") { store.moveFollowed(item.id, by: 1) }
+                                Divider()
+                                Button("Retirer de mes repères", role: .destructive) { removal = item }
+                            }
+                    }
+                    .onMove { store.moveFollowed(from: $0, to: $1) }
+                }
+                .listStyle(.plain).scrollContentBackground(.hidden)
+            }
+            .frame(maxHeight: .infinity)
+
+            profileButton.padding(.horizontal, 22).padding(.bottom, 22)
+        }
+    }
+
     private var profileButton: some View {
         Button {
+            dismissSidebarPreview()
             store.settingsTab = .profile; openSettings()
         } label: {
             HStack(spacing: 10) {
@@ -227,7 +308,13 @@ private struct SidebarItem: View {
     }
 }
 
-// La sidebar se replie sur demande ; aucun déclenchement au survol ni séquence différée.
+private enum SidebarPresentation { case pinned, hidden, preview }
+private enum SidebarHoverZone { case control, panel }
+
+// Survol de l’icône → aperçu superposé ; sortie de l’icône ET du panneau → fermeture.
+// Le délai couvre le passage du pointeur entre la barre d’outils et la sidebar.
 private enum FocusMotion {
+    static let sidebarWidth: CGFloat = 232
     static let sidebar = Animation.snappy(duration: 0.24, extraBounce: 0)
+    static let hoverExitDelay: Duration = .milliseconds(220)
 }

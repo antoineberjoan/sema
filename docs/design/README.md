@@ -1,6 +1,6 @@
 # Cinq directions pour sema
 
-Maquettes de composition demandées le 17 octobre 2026. Aucun changement de l’interface SwiftUI n’est appliqué à ce stade.
+Maquettes de composition demandées le 17 octobre 2026. La direction Focus et le bandeau de verre ont ensuite été retenus pour l’app native 0.5.0. Ces fichiers conservent les études de composition ; le comportement natif courant est décrit dans `../PRODUCT.md`, notamment la sidebar en aperçu au survol et « Mon espace » fixé en bas.
 
 Ouvrir `app-directions.html` dans un navigateur : le fichier est autonome, sans dépendance, sans connexion réseau et sans API. Les cinq boutons changent de composition ; Clair / Sombre change l’apparence. Dans Focus, le bouton de sidebar ouvre et replie les repères ; leur sélection met à jour la valeur, l’unité, la courbe, les graduations et la source fictives. Échap replie la sidebar et replace le focus sur son bouton. Les autres contrôles dessinés restent des intentions de maquette, notamment les réglages, les périodes et les alertes ; ils ne pilotent pas l’app native.
 
@@ -18,6 +18,6 @@ Principes communs : Graphite, typographie système, une action principale, absen
 
 Vérifications : les cinq compositions ont été vues dans le navigateur ; le changement de composition fonctionne au clavier ; le mode sombre a été contrôlé sur Journal et Horizon. Aucun test fonctionnel Swift n’est requis pour ces maquettes indépendantes.
 
-Le 17 octobre, Focus est prolongé avec une sidebar à la demande, selon le retour d’Antoine. Ouverture explicite, sans déclenchement au survol ; transition de largeur de 240 ms, supprimée avec Réduire les animations. La navigation en bas est masquée et retirée du parcours clavier lorsque la sidebar est ouverte, pour éviter la répétition. Le bouton Réglages reste placé en haut à droite. Cette évolution est une proposition interactive, pas une refonte SwiftUI déjà livrée.
+Le 17 octobre, Focus est prolongé avec une sidebar à la demande, selon le retour d’Antoine. Ouverture explicite, sans déclenchement au survol ; transition de largeur de 240 ms, supprimée avec Réduire les animations. La navigation en bas est masquée et retirée du parcours clavier lorsque la sidebar est ouverte, pour éviter la répétition. Le bouton Réglages reste placé en haut à droite. Cette interaction reste celle de la maquette ; la version native ajoute un aperçu au survol de l’icône lorsque la sidebar est fermée.
 
 Vérification du prototype Focus : ouverture et fermeture au clavier avec retour de focus, sélection de l’emprunt phare avec mise à jour des graduations et de la source, retour Euro / Dollar, apparences claire et sombre. Aucune erreur de console observée. Le mode sans mouvement est prévu par la media query système ; son activation n’a pas été simulée dans le navigateur.
