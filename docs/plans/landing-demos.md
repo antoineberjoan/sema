@@ -1,26 +1,23 @@
 # Démonstrations de la landing
 
-Statut : implémenté, validation visuelle bloquée par l’accès à l’aperçu privé. Demande d’Antoine du 17 octobre 2026 : mieux montrer sema, en s’alignant sur la retenue de Monocle, Hoy et Resurf. Marque Notion relue : `3fbd18bb0dea818fa7f4fc7483c767b3`.
+Statut : implémenté et vérifié en aperçu ; publication en attente. Demande d’Antoine du 17 octobre 2026 : mieux montrer sema, avec la retenue de Monocle, Hoy et Resurf. Marque Notion relue : `3fbd18bb0dea818fa7f4fc7483c767b3`.
 
-## Résultat attendu
+## Résultat
 
-Une seule scène produit avec trois vues : bandeau de verre, recherche locale de démonstration, historique Focus. Illustrations originales HTML/SVG, sans dépendance ni vidéo lourde. Toutes les valeurs sont fictives et signalées. Aucun appel fournisseur, aucun changement natif, aucune promesse de surveillance automatique.
+Une scène produit présente trois gestes : bandeau de favoris, recherche locale de démonstration, historique Focus avec choix de série et de période. Illustrations originales HTML/SVG, sans dépendance, appel fournisseur ni préférence persistante. Toutes les valeurs sont fictives et signalées. Téléchargement, Homebrew, logo tracé, CTA au défilement, Ko-fi et liens légaux sont conservés.
 
-La landing conserve téléchargement, Homebrew, logo tracé, CTA au défilement, Ko-fi et liens légaux. Les contrôles fonctionnent au clavier et au toucher ; sans animation, la scène reste entièrement utilisable.
+L’animation suit une entrée courte par scène, sans boucle automatique. Le CSS et la requête média donnent un état sans mouvement pour « Réduire les animations » ; la préférence système du Mac n’a pas été changée pour cette revue.
 
-## Validation et suite
+## Preuves
 
-- Syntaxe JavaScript et inspection des liens et assets.
-- Aperçu Vercel : vérifier les trois vues, recherche avec résultat/vide, périodes, clavier, mobile et mouvement réduit.
-- Relire puis publier uniquement les changements de landing selon l’autorisation de la tâche. La publication de l’app 0.5.2 reste une action distincte.
+- Code vérifié : `f316272`, branche `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2).
+- Aperçu Vercel READY : `dpl_27WiSckBXBjbPMEw1msZbrP3wnMM`, https://sema-54ypqvdzp-antoine-berjoan.vercel.app/.
+- Antoine a autorisé le 17 octobre un lien temporaire de 23 heures pour vérifier et montrer cet aperçu. Le lien d’accès n’est pas conservé dans le dépôt.
+- Navigateur : les trois scènes, résultat de recherche et état vide, flèches/Entrée, onglets et tabulation, changement de série et de période, CTA au défilement vérifiés. Aucun message d’erreur console observé.
+- Mobile 390 × 844 : cadrage des trois scènes vérifié, largeur du document égale à 390 px ; périodes du bandeau sur une ligne. Format temporaire du navigateur réinitialisé après revue.
+- Captures locales : `sema-landing-demos-20261017.png` et `sema-landing-demo-mobile-20261017.png`, dans le dossier d’artefacts du chat.
+- Syntaxe JavaScript, IDs, liens/assets locaux et références ARIA vérifiés.
 
-Implémentation isolée dans la branche `codex/landing-demos` pour ne pas toucher l’index du chantier de fondation en cours.
+## Suite
 
-## État vérifié et reprise
-
-- PR brouillon : https://github.com/antoineberjoan/sema/pull/2
-- Branche : `codex/landing-demos`, code `8937c67`. Syntaxe JS, assets locaux, IDs et références ARIA vérifiés ; Vercel READY.
-- Aperçu de ce code : https://sema-9cgzpg11n-antoine-berjoan.vercel.app/ (authentification Vercel).
-- Le contrôle automatique a refusé la création d’un lien d’accès temporaire : élargissement d’accès non explicitement autorisé. Une question est en attente auprès d’Antoine pour un lien de 23 heures. Ne pas contourner ce refus.
-- Après accord : créer le lien pour le dernier aperçu, vérifier les trois vues, clavier, mobile et mouvement réduit, corriger si nécessaire. La landing n’a pas été fusionnée ni publiée. Le téléchargement natif reste en 0.5.1.
-- L’index du checkout canonique et la branche `codex/agent-foundation` ont été préservés. Le worktree temporaire peut être recréé depuis la branche distante ; aucune copie source durable supplémentaire n’est nécessaire.
+La PR est prête à présenter. Aucun changement fusionné sur main, aucun changement du site public ni du téléchargement natif 0.5.1. Le checkout canonique et son index `codex/agent-foundation` sont préservés. Après autorisation de publication couvrant cette version : fusionner, contrôler le déploiement et le rendu public. La publication de l’app 0.5.2 reste une action distincte.
