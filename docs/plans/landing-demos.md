@@ -1,6 +1,6 @@
 # Démonstrations de la landing
 
-Statut : sections successives implémentées ; revue en cours ; publication en attente. Demande d’Antoine du 17 octobre 2026 : mieux montrer sema, avec la retenue de Monocle, Hoy et Resurf. Marque Notion relue : `3fbd18bb0dea818fa7f4fc7483c767b3`.
+Statut : sections successives implémentées et vérifiées en aperçu ; publication en attente. Demande d’Antoine du 17 octobre 2026 : mieux montrer sema, avec la retenue de Monocle, Hoy et Resurf. Marque Notion relue : `3fbd18bb0dea818fa7f4fc7483c767b3`.
 
 ## Résultat
 
@@ -10,19 +10,18 @@ Storyboard par section : le visuel apparaît en 650 ms à l’approche de l’é
 
 Critères : trois sections distinctes dans l’ordre du document et à l’écran ; aucun épinglage ; lecture et navigation clavier naturelles ; pas de débordement sur mobile ; aucun contrôle simulé actif. Téléchargement, Homebrew, logo tracé, Ko-fi et liens légaux sont conservés.
 
-## Preuves de la version précédente (à actualiser après revue)
+## Preuves
 
-- Code vérifié : `5199896`, branche `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2).
-- Aperçu Vercel READY : `dpl_3eFQMJMqXaJ57Rxgm2tVwB4VpYTU`, https://sema-4m0m9h6fy-antoine-berjoan.vercel.app/. Il remplace la présentation à onglets du précédent aperçu.
-- Accès temporaire repris dans le périmètre des 23 heures autorisées par Antoine ; expiration avant celle de l’autorisation initiale. Le lien d’accès n’est pas conservé dans le dépôt.
-- Navigateur à 1280 × 720 : quatre cartes, recherche, courbe progressive, état final, retour en arrière et texte épinglé observés. Le CTA du header apparaît après la sortie du téléchargement principal.
-- Mobile 390 × 844 : bandeau de deux cartes lisibles, recherche et hub observés ; largeur du document de 390 px, sans débordement.
-- Fenêtre 1280 × 540 : épinglage désactivé, trois vues visibles dans le flux. Les trois vues restent également la présentation HTML/CSS de base sans JS.
-- Clavier : téléchargement puis Homebrew puis FAQ, sans arrêt sur les commandes dessinées. Aucun gestionnaire clavier de la démonstration. Aucun message console attribué au code de la landing ; la page de connexion Vercel précédente a émis ses propres messages FedCM.
-- Vérification d’exécution JavaScript : progression et retour entre scènes, défilement passif, annulation de frame lorsque l’onglet est masqué ou le mouvement réduit, retour à la lecture statique et requête complète. Réduire les animations testé dans ce contrôle isolé et dans les styles ; la préférence système du Mac n’a pas été changée et ce mode n’a pas été observé dans le navigateur.
-- Syntaxe JS, IDs, assets et ARIA vérifiés ; diff sans erreur d’espacement. CI GitHub verte sur `5199896` : run `39020677206`. Garde-fous du checkout canonique vérifiés séparément ; cette branche antérieure ne contient pas encore le script de fondation.
-- Captures locales : `sema-landing-scroll-focus-20261017.png` et `sema-landing-scroll-mobile-20261017.png`, dans le dossier d’artefacts du chat.
-- Intention de présentation au défilement reportée dans la page Notion Marque le 17 octobre 2026.
+- Code vérifié : `7b66a05`, branche `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2).
+- Aperçu Vercel READY : `dpl_5Sj8sGG4oDrz8mUrZGr55b9kss5D`, https://sema-r7r6ax9c3-antoine-berjoan.vercel.app/.
+- Accès temporaire de dix heures dans le périmètre de la revue autorisée par Antoine, sans extension au-delà de son autorisation initiale. Le lien d’accès n’est pas conservé dans le dépôt.
+- Navigateur 1280 × 720 : trois sections successives en position statique, chacune avec son titre et son visuel ; quatre cartes dans le bandeau ; recherche avec apparition ordonnée des trois résultats ; hub complet et courbe finale. Retour en arrière sans rejouer l’animation. Aucun épinglage ni onglet.
+- Mobile 390 × 844 : trois sections observées, deux cartes lisibles dans le bandeau, recherche et hub cadrés ; document de 390 px sans débordement.
+- Syntaxe JS, attributs HTML uniques, IDs, références ARIA, assets locaux, absence de faux contrôles et diff vérifiés. Aucune dépendance ajoutée.
+- Contrôle d’exécution isolé : révélations indépendantes, observation interrompue après la première entrée, arrêt des animations à la réduction du mouvement et au masquage de l’onglet. La préférence système du Mac n’a pas été changée ; le mode réduit n’a pas été observé dans le navigateur.
+- CI GitHub verte sur `7b66a05` : run `39030004436`.
+- Captures locales : `sema-features-desktop-20261017.png` et `sema-features-mobile-20261017.png`, dans le dossier d’artefacts du chat.
+- Précision d’Antoine reportée dans la page Notion Marque : la présentation verticale remplace la scène unique au texte fixe.
 
 ## Suite
 
