@@ -236,14 +236,7 @@ struct SeriesDetailView: View {
                 .font(.system(size: 11)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 8)
-                if store.isFollowing(series.id) {
-                    Button {
-                        store.prepareAlert(for: series)
-                    } label: { Label("Créer une alerte", systemImage: "bell.badge") }
-                    .buttonStyle(.borderedProminent).controlSize(.regular)
-                    .font(.callout.weight(.medium)).tint(store.palette.controlAccent)
-                    .disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
-                }
+                if !focus { alertButton }
             }
             if !focus, store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
                 Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
@@ -275,16 +268,35 @@ struct SeriesDetailView: View {
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: SemaTheme.majorSpacing) {
                     focusValue(displayed)
-                    variationBadge(displayed)
+                    focusActions(displayed)
                 }
                 VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
                     focusValue(displayed)
-                    variationBadge(displayed)
+                    focusActions(displayed)
                 }
             }
             Spacer(minLength: SemaTheme.minorSpacing)
             ExchangeDirectionButton(series: series)
             FavoriteButton(seriesID: series.id, seriesName: displayed.name)
+        }
+    }
+
+    private func focusActions(_ displayed: MarketSeries) -> some View {
+        VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+            variationBadge(displayed)
+            alertButton
+        }
+        .fixedSize(horizontal: true, vertical: false)
+    }
+
+    @ViewBuilder private var alertButton: some View {
+        if store.isFollowing(series.id) {
+            Button {
+                store.prepareAlert(for: series)
+            } label: { Label("Créer une alerte", systemImage: "bell.badge") }
+            .buttonStyle(.borderedProminent).controlSize(.regular)
+            .font(.callout.weight(.medium)).tint(store.palette.controlAccent)
+            .disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
         }
     }
 

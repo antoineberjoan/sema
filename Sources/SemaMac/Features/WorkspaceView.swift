@@ -71,7 +71,7 @@ struct WorkspaceView: View {
                 }
             }
             .background(SemaTheme.background)
-            .navigationTitle(store.section == .overview ? "sema" : store.section.title)
+            .navigationTitle(store.section == .overview ? "" : store.section.title)
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
                     if store.section == .alerts {
