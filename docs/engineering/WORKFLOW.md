@@ -57,7 +57,7 @@ Après un clone, exécuter `./scripts/setup.sh`. Il configure uniquement ce dép
 - `python3 scripts/guardrails.py --staged` lit l’index Git exact, y compris les liens et fichiers supprimés. C’est le contrôle pre-commit ; il ne modifie et n’indexe rien.
 - `./scripts/check.sh` ajoute les tests des contrôles et les tests Swift, puis la syntaxe des scripts concernés et le plist.
 - `./scripts/build-app.sh` construit et signe le bundle local ad hoc.
-- La CI existante exécute `check.sh` et construit un bundle pour chaque push et PR. Aucune dépendance de production n’a été ajoutée.
+- La CI exécute `check.sh` et construit un bundle pour chaque PR, chaque push sur `main` et les lancements manuels. Aucune dépendance de production n’a été ajoutée.
 
 Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, duplication des instructions dans `CLAUDE.md`, divergence entre les manifestes de release local et web.
 
