@@ -66,7 +66,7 @@ struct WorkspaceView: View {
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }
-                if store.section != .overview {
+                if store.section != .overview && store.section != .explorer {
                     dataStatus.padding(.horizontal, 26).padding(.vertical, 14)
                 }
             }

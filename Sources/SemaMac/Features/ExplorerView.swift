@@ -1,4 +1,4 @@
-// Permet de chercher et prévisualiser les séries Webstat avant de les ajouter à sa sélection.
+// Présente le catalogue Webstat et le champ de recherche partagé avec les sources publiques.
 import SwiftUI
 import MarketCore
 
@@ -17,54 +17,50 @@ struct CatalogueBrowserView: View {
     @State private var showsFilters = false
     @State private var selectedID: String?
     @State private var isAdding = false
-    @FocusState private var searchFocused: Bool
     var compact = false
     var close: (() -> Void)?
 
     var body: some View {
         @Bindable var store = store
         VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                TextField("Titre, thème ou code Webstat…", text: $store.catalogueSearch.query)
-                    .textFieldStyle(.plain).font(.system(size: 16)).focused($searchFocused)
-                    .accessibilityLabel("Rechercher dans le catalogue Webstat")
-                    .onSubmit(openSelection)
-                    .onKeyPress(.downArrow) { moveSelection(1); return .handled }
-                    .onKeyPress(.upArrow) { moveSelection(-1); return .handled }
-                if store.isSearchingCatalogue { ProgressView().controlSize(.small) }
-                Button { showsFilters.toggle() } label: { Label("Filtres", systemImage: "line.3.horizontal.decrease") }
-                    .buttonStyle(.borderless).font(.system(size: 12))
-            }.padding(.horizontal, 4)
-            if showsFilters || hasFilters {
-                HStack(alignment: .top, spacing: 14) {
-                    Picker("Jeu", selection: $store.catalogueSearch.datasetID) {
-                        Text("Tous les jeux").tag("")
-                        ForEach(store.catalogueDatasets) { Text($0.title).tag($0.id) }
-                    }.frame(maxWidth: .infinity)
-                    Picker("Zone", selection: $store.catalogueSearch.area) {
-                        Text("Toutes les zones").tag("")
-                        ForEach(areas, id: \.key) { Text($0.value).tag($0.key) }
-                    }.frame(maxWidth: .infinity)
-                    Picker("Fréquence", selection: $store.catalogueSearch.frequency) {
-                        Text("Toutes").tag("")
-                        ForEach(frequencies, id: \.key) { Text($0.value).tag($0.key) }
-                    }.frame(maxWidth: .infinity)
-                    if hasFilters {
-                        Button { store.catalogueSearch.datasetID = ""; store.catalogueSearch.area = ""; store.catalogueSearch.frequency = "" } label: {
-                            Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
-                        }.buttonStyle(.plain).help("Retirer les filtres").padding(.top, 4)
-                    }
-                }.font(.system(size: 11))
-            }
             if !store.hasWebstatKey {
-                ContentUnavailableView {
-                    Label("Tout Webstat, à portée de main.", systemImage: "globe.europe.africa")
-                } description: {
-                    Text("Connectez votre clé personnelle pour explorer les jeux de données. Vos repères déjà enregistrés restent consultables.")
-                } actions: { Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderedProminent) }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                HStack(spacing: 16) {
+                    Label("Clé personnelle requise", systemImage: "key").foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }
+                        .buttonStyle(.borderedProminent).tint(store.palette.controlAccent)
+                }.padding(18).background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+                Spacer(minLength: 0)
             } else {
+                HStack(spacing: 12) {
+                    CatalogueSearchField(query: $store.catalogueSearch.query, prompt: "Rechercher dans Webstat…",
+                        isSearching: store.isSearchingCatalogue, submit: openSelection, move: moveSelection)
+                    Button { showsFilters.toggle() } label: {
+                        Label("Filtres", systemImage: hasFilters ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease")
+                    }.buttonStyle(.borderless).help("Filtrer les résultats")
+                        .accessibilityValue(showsFilters ? "Ouverts" : "Fermés")
+                }
+                if showsFilters {
+                    HStack(alignment: .top, spacing: 14) {
+                        Picker("Jeu", selection: $store.catalogueSearch.datasetID) {
+                            Text("Tous les jeux").tag("")
+                            ForEach(store.catalogueDatasets) { Text($0.title).tag($0.id) }
+                        }.frame(maxWidth: .infinity)
+                        Picker("Zone", selection: $store.catalogueSearch.area) {
+                            Text("Toutes les zones").tag("")
+                            ForEach(areas, id: \.key) { Text($0.value).tag($0.key) }
+                        }.frame(maxWidth: .infinity)
+                        Picker("Fréquence", selection: $store.catalogueSearch.frequency) {
+                            Text("Toutes").tag("")
+                            ForEach(frequencies, id: \.key) { Text($0.value).tag($0.key) }
+                        }.frame(maxWidth: .infinity)
+                        if hasFilters {
+                            Button { store.catalogueSearch.datasetID = ""; store.catalogueSearch.area = ""; store.catalogueSearch.frequency = "" } label: {
+                                Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                            }.buttonStyle(.plain).help("Retirer les filtres").padding(.top, 4)
+                        }
+                    }.font(.callout)
+                }
                 HStack(alignment: .top, spacing: 20) {
                     results.frame(minWidth: compact ? 260 : 300, maxWidth: store.previewDescriptor == nil ? .infinity : 350)
                     if let descriptor = store.previewDescriptor {
@@ -76,8 +72,8 @@ struct CatalogueBrowserView: View {
                 .animation(reduceMotion ? nil : .easeOut(duration: previewDuration), value: store.previewDescriptor?.key)
             }
         }
-        .onAppear { store.searchCatalogue(); searchFocused = true }
-         .onChange(of: store.catalogueSearch) { old, new in
+        .onAppear { store.searchCatalogue() }
+        .onChange(of: store.catalogueSearch) { old, new in
             if old.datasetID != new.datasetID { store.catalogueSearch.area = "" }
             store.searchCatalogue(); selectedID = nil
         }
@@ -151,19 +147,17 @@ struct CatalogueBrowserView: View {
                     HStack {
                         Text(store.isSearchingCatalogue && store.catalogueResults.isEmpty ? "Recherche…" : "\(store.catalogueTotal.formatted()) \(store.catalogueTotal == 1 ? "série" : "séries")")
                         Spacer()
-                        Text("Webstat")
-                    }.font(.system(size: 10)).foregroundStyle(.secondary).padding(.horizontal, 12).padding(.bottom, 8)
+                    }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, 12).padding(.bottom, 8)
                     ForEach(store.catalogueResults) { item in
                         Button { selectedID = item.id; store.openPreview(item) } label: {
                             VStack(alignment: .leading, spacing: 7) {
                                 HStack(alignment: .top, spacing: 8) {
-                                    Text(item.title).font(.system(size: 12, weight: .medium)).lineLimit(3)
+                                    Text(MarketFormat.name(item.series(observations: []))).font(.system(size: 13, weight: .medium)).lineLimit(3)
                                     Spacer(minLength: 0)
                                     if store.followedMatch(for: item.series(observations: [])) != nil { Image(systemName: "checkmark").foregroundStyle(accent).accessibilityLabel("Déjà suivi") }
                                 }
                                 Text([item.area, item.frequencyTitle, item.displayUnit].compactMap { $0 }.joined(separator: " · "))
-                                    .font(.system(size: 10)).foregroundStyle(.secondary).lineLimit(2)
-                                Text(item.datasetID).font(.system(size: 9)).foregroundStyle(.tertiary)
+                                    .font(.caption).foregroundStyle(.secondary).lineLimit(2)
                             }
                             .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(12)
                             .background(selectedID == item.id ? accent.opacity(0.09) : .clear, in: RoundedRectangle(cornerRadius: 11))
@@ -177,8 +171,7 @@ struct CatalogueBrowserView: View {
                         Label(error, systemImage: "exclamationmark.triangle").font(.system(size: 12)).foregroundStyle(.secondary).padding(16)
                         Button("Réessayer") { store.searchCatalogue() }.buttonStyle(.borderless).padding(.horizontal, 16)
                     } else if !store.isSearchingCatalogue && store.catalogueResults.isEmpty {
-                        ContentUnavailableView("Aucun repère trouvé", systemImage: "magnifyingglass",
-                            description: Text("Essayez un autre terme, un code exact ou retirez un filtre."))
+                        ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass")
                     }
                     if store.canLoadMoreCatalogue {
                         Button("Afficher les résultats suivants") { store.searchCatalogue(loadMore: true) }
@@ -203,5 +196,32 @@ struct CatalogueBrowserView: View {
     }
     private func openSelection() {
         if let item = store.catalogueResults.first(where: { $0.id == selectedID }) { store.openPreview(item) }
+    }
+}
+
+struct CatalogueSearchField: View {
+    @Binding var query: String
+    let prompt: String
+    var isSearching = false
+    let submit: () -> Void
+    let move: (Int) -> Void
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+            TextField(prompt, text: $query).textFieldStyle(.plain).focused($focused)
+                .accessibilityLabel(prompt).onSubmit(submit)
+                .onKeyPress(.downArrow) { move(1); return .handled }
+                .onKeyPress(.upArrow) { move(-1); return .handled }
+            if isSearching { ProgressView().controlSize(.small) }
+            if !query.isEmpty {
+                Button { query = ""; focused = true } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary) }
+                    .buttonStyle(.plain).accessibilityLabel("Effacer la recherche").help("Effacer la recherche")
+            }
+        }
+        .font(.system(size: 15)).padding(12)
+        .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: 10))
+        .onAppear { focused = true }
     }
 }
