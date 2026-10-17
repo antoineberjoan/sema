@@ -23,6 +23,14 @@ Critères : trois sections distinctes dans l’ordre du document et à l’écra
 - Captures locales : `sema-features-desktop-20261017.png` et `sema-features-mobile-20261017.png`, dans le dossier d’artefacts du chat.
 - Précision d’Antoine reportée dans la page Notion Marque : la présentation verticale remplace la scène unique au texte fixe.
 
+## Téléchargement — proposition en aperçu
+
+Antoine questionne le 17 octobre l’utilité de la page de téléchargement et son écart de sobriété avec la landing. Proposition préparée pour revue : le CTA de la landing télécharge directement le DMG publié ; `/download/` devient une aide facultative, sans nouvelle présentation du produit, démonstration ni replay. Trois étapes, puis aide macOS, Homebrew et mises à jour repliées. Cette proposition n’est pas encore une décision produit validée par Antoine.
+
+La landing conserve la compatibilité et la mention de préversion non notarisée près du téléchargement. `sync-download.py` génère les deux CTA et les informations de version à partir du seul manifeste publié 0.5.1 ; la version native et son artefact ne changent pas. Le header reprend le lien principal et reste inerte si aucun téléchargement n’est actif.
+
+Critères : téléchargement direct fonctionnel ; aide lisible sur ordinateur et mobile ; liens d’ancre ouvrant la bonne réponse ; parcours clavier ; copie Homebrew ; manifeste et SHA-256 de la release inchangés. Synchronisation idempotente et désactivation des CTA déjà vérifiées localement. Revue navigateur et CI en cours.
+
 ## Suite
 
 La PR est prête à présenter. Aucun changement fusionné sur main, aucun changement du site public ni du téléchargement natif 0.5.1. Le checkout canonique et son index `codex/agent-foundation` sont préservés. Après autorisation de publication couvrant cette version : fusionner, contrôler le déploiement et le rendu public. La publication de l’app 0.5.2 reste une action distincte.

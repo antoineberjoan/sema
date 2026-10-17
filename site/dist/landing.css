@@ -6,7 +6,11 @@
 .landing h1 span { color: #808080; }
 .landing .button { margin-top: 32px; min-height: 52px; font-size: 15px; padding-inline: 26px; }
 .landing .button:hover { transform: none; }
-.brew-line { margin: 24px 0 0; font-size: 13px; line-height: 1.6; }
+.download-requirements { margin: 17px 0 0; color: #929292; font-size: 12px; line-height: 1.6; }
+.download-requirements a { text-decoration: underline dotted #555; text-underline-offset: 4px; }
+.download-requirements a:hover { color: #ddd; }
+.download-pending { color: #aaa; background: #292929; box-shadow: none; }
+.brew-line { margin: 18px 0 0; font-size: 13px; line-height: 1.6; }
 .brew-link { color: #929292; text-decoration: underline dotted #555; text-underline-offset: 5px; }
 .brew-link:hover { color: #ddd; }
 .landing .product {

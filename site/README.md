@@ -1,6 +1,6 @@
 # Landing sema
 
-Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` contient le site, le téléchargement et le guide de marque.
+Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` contient le site, l’aide d’installation et le guide de marque. Le CTA de la landing pointe directement vers le DMG publié ; `/download/` reste une aide facultative. `scripts/distribution/sync-download.py` synchronise les deux CTA et leurs métadonnées à partir de `distribution/release.json`. Les liens Homebrew et de première ouverture ciblent les réponses correspondantes de l’aide.
 
 ## Hébergement Vercel
 

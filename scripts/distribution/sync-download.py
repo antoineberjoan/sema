@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare static download HTML from an actual release manifest; no remote publication."""
+"""Synchronise les liens de téléchargement et l’aide depuis le manifeste, sans publication."""
 import argparse
 import hashlib
 import html
@@ -46,29 +46,38 @@ def main():
         raise ValueError("URL de téléchargement non prise en charge")
     page = args.site_dist / "download/index.html"
     source = page.read_text()
+    landing_page = args.site_dist / "index.html"
+    landing = landing_page.read_text()
     escape = lambda value: html.escape(str(value), quote=True)
     if download["enabled"]:
-        source = replace_block(source, "primary", f'<a class="button" href="{escape(download["url"])}" download="{escape(download["filename"])}" data-download><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Télécharger sema</a>')
+        icon = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.5 7.59 9.04 7.31c1.35.07 2.29.76 3.08.82 1.18-.24 2.31-.94 3.57-.85 1.51.12 2.65.72 3.4 1.8-3.11 1.87-2.37 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg>'
+        primary = f'<a class="button" href="{escape(download["url"])}" download="{escape(download["filename"])}" data-download>{icon}télécharger</a>'
     else:
-        source = replace_block(source, "primary", '<span class="button download-pending">Préversion en préparation</span>')
+        primary = '<span class="button download-pending">préversion en préparation</span>'
+    source = replace_block(source, "primary", primary)
+    landing = replace_block(landing, "primary", primary)
     megabytes = f'{download["byteSize"] / 1000000:.1f}'.replace(".", ",")
-    fields = [f'Version {escape(manifest["version"])}', f'{megabytes} Mo', 'Puce Apple', f'macOS {escape(manifest["minimumMacOS"])}+']
+    fields = [f'version {escape(manifest["version"])}', f'{megabytes} Mo', 'puce apple', f'macos {escape(manifest["minimumMacOS"])}+']
     metadata = '<p class="release-metadata">' + '<span class="separator" aria-hidden="true">·</span>'.join(f'<span>{field}</span>' for field in fields) + '</p>'
     source = replace_block(source, "metadata", metadata)
-    label = "Préversion privée" if manifest["channel"] == "private-preview" else "Version alpha"
-    trust = f'<p class="release-trust">{label} · Non notarisée · <a href="#premiere-ouverture">Aide à la première ouverture</a></p>'
+    label = "préversion privée" if manifest["channel"] == "private-preview" else "préversion"
+    trust_label = label if manifest["notarized"] else label + " non notarisée"
+    trust = f'<p class="release-trust">{trust_label} · <a href="#premiere-ouverture">aide à la première ouverture</a></p>'
     source = replace_block(source, "trust", trust)
+    requirements = f'<p class="download-requirements">macos {escape(manifest["minimumMacOS"])}+ · puce apple · <a href="/download/#premiere-ouverture">{trust_label}</a></p>'
+    landing = replace_block(landing, "requirements", requirements)
     brew = manifest["homebrew"]
     if brew["enabled"]:
         if not brew.get("command") or not all(manifest["validation"].get(key) for key in ("homebrewInstall", "homebrewUpgrade", "internetDownload")):
             raise ValueError("La commande Homebrew ne peut être activée avant les tests d’installation et de mise à jour")
-        markup = f'<div class="brew-command"><code id="homebrew-command">{escape(brew["command"])}</code><button type="button" id="copy-homebrew" hidden>Copier</button></div><p id="homebrew-copy-status" role="status"></p><p>Si Homebrew demande une approbation, consultez <a href="https://github.com/antoineberjoan/homebrew-sema/blob/main/Casks/sema.rb" target="_blank" rel="noopener noreferrer">le cask sema</a>, puis utilisez <code>brew trust --cask antoineberjoan/sema/sema</code> avant de relancer l’installation. Les contrôles de sécurité de macOS s’appliquent aussi à cette installation.</p>'
+        markup = f'<div class="brew-command"><code id="homebrew-command">{escape(brew["command"])}</code><button type="button" id="copy-homebrew" hidden>copier</button></div><p class="sr-only" id="homebrew-copy-status" role="status"></p><p>si une approbation est demandée, consultez <a href="https://github.com/antoineberjoan/homebrew-sema/blob/main/Casks/sema.rb" target="_blank" rel="noopener noreferrer">le cask sema</a> avant d’accepter. les contrôles de sécurité de macos s’appliquent aussi à cette installation.</p>'
     else:
-        markup = '<p>Le tap Homebrew sera proposé après les tests d’installation et de mise à jour.</p>'
+        markup = '<p>homebrew sera proposé après les tests d’installation et de mise à jour.</p>'
     source = replace_block(source, "homebrew", markup)
     update_method = "en téléchargeant une nouvelle version, ou avec Homebrew" if brew["enabled"] else "en téléchargeant une nouvelle version"
-    source = replace_block(source, "updates", f'<p class="alpha-note">Les mises à jour se feront pour l’instant {update_method}. Vos préférences restent sur votre Mac.</p>')
+    source = replace_block(source, "updates", f'<p class="alpha-note">les mises à jour se font {update_method}. vos préférences restent sur votre mac.</p>')
     page.write_text(source)
+    landing_page.write_text(landing)
     (args.site_dist / "download/release.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
     print(f'Page synchronisée : sema {manifest["version"]} · {megabytes} Mo · {manifest["architecture"]} · {manifest["channel"]}')
 
