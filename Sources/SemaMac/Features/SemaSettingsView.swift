@@ -79,7 +79,7 @@ struct SemaSettingsView: View {
                 .scrollContentBackground(.hidden)
                 .overlay {
                     if matches.isEmpty {
-                        ContentUnavailableView.search(text: search).controlSize(.small)
+                        Text("Aucun réglage trouvé").font(.system(size: 12)).foregroundStyle(.secondary)
                     }
                 }
 

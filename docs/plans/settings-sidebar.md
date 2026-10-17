@@ -1,6 +1,6 @@
 # Réglages — sidebar et groupes sobres
 
-Statut : en cours, 17 octobre 2026. Antoine demande dans le chat de reprendre l’organisation des réglages de Resurf, à partir de cinq captures. Référence de marque : Notion `3fbd18bb0dea818fa7f4fc7483c767b3`.
+Statut : terminé en version de revue, 17 octobre 2026. Antoine demande dans le chat de reprendre l’organisation des réglages de Resurf, à partir de cinq captures. Référence de marque : Notion `3fbd18bb0dea818fa7f4fc7483c767b3`, direction reportée le même jour.
 
 ## Résultat attendu
 
@@ -14,11 +14,13 @@ Base : `codex/keyboard-navigation` (`0716ad6`), dans une branche isolée `codex/
 
 Une étude de faisabilité distincte répond à la question sur Foundation Models d’Apple. Aucun appel de modèle, compte fournisseur, téléchargement de modèle ou module IA n’est ajouté dans cette refonte des réglages.
 
-## Vérification restante
+## Preuves et limites
 
-Bundle debug compilé et signé le 17 octobre avec `scripts/build-app.sh`. La première revue native a conduit à remplacer `NavigationSplitView`, qui ajoutait une grande barre d’outils, par deux colonnes fixes avec liste native. La recherche « grain » + Entrée ouvre bien Apparence. `guardrails.py` et `git diff --check` passent ; les 17 tests Python de `check.sh` passent. Les tests Swift sont empêchés localement par l’absence du module `Testing` dans Command Line Tools ; ils seront contrôlés par la CI macOS.
+Bundle debug compilé et signé le 17 octobre avec `scripts/build-app.sh`. La première revue native a conduit à remplacer `NavigationSplitView`, qui ajoutait une grande barre d’outils, par deux colonnes fixes avec liste native. `guardrails.py` et `git diff --check` passent ; les 17 tests Python de `check.sh` passent. Les tests Swift sont empêchés localement par l’absence du module `Testing` dans Command Line Tools ; la [CI macOS](https://github.com/antoineberjoan/sema/actions/runs/39035580071) a passé les 77 tests Swift, les 17 tests Python et la construction du bundle.
 
-À terminer : état vide et retour de recherche, navigation des rubriques, comparaison clair/sombre et palettes, capture du rendu final et CI. Aucune publication de version ni fusion vers main couverte par cette demande.
+Parcours natifs observés sur profil de revue isolé : « grain » + Entrée ouvre Apparence ; recherche sans résultat en français, Échap et effacement ; navigation des rubriques au clic et avec les flèches ; accès Mon espace depuis le hub ; clair avec Bleu polaire et sombre avec Graphite ; sélection mode/palette/position conservée après relance ; verre accessible au défilement avec profil toujours fixé en bas ; Sources, connexion Webstat, À propos/Ko-fi visibles ; annulation du recorder par Échap sans changement de combinaison. La version habituelle tournait aussi : sa réservation des accès globaux provoque un conflit correctement affiché dans l’aperçu ; ce test ne revalide donc pas le déclenchement global des raccourcis. Aucune clé enregistrée ou retirée, aucune permission de notification activée, aucun réglage d’accessibilité système modifié.
+
+[PR de revue #4](https://github.com/antoineberjoan/sema/pull/4), basée sur le chantier clavier. Captures clair/sombre conservées comme pièces de revue locales. Aucune publication de version ni fusion vers main couverte par cette demande. L’IA reste une proposition à arbitrer, indépendante de la refonte terminée.
 
 ## Faisabilité IA Apple — proposition à arbitrer
 
