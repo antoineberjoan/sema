@@ -1,5 +1,7 @@
 # Plan sema pour le catalogue et la distribution
 
+Évaluation terminée : [recherche naturelle Apple Intelligence non activée](plans/natural-search.md), précision insuffisante sur le Mac de développement ; recherche classique conservée.
+
 À revoir avant publication : [Explorer simple et lisible](plans/explorer.md), accès direct aux séries publié dans la branche de revue ; essai réel Insee réussi, nouvelle revue native bloquée.
 
 À revoir avant publication : [navigation clavier et bandeau Repère, correction terminée et validée en CI dans la PR nº 5](plans/keyboard-navigation.md).
