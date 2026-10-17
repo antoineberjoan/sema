@@ -221,7 +221,7 @@ struct SeriesDetailView: View {
                         }
                         .buttonStyle(.plain)
                         .help("Source et définition")
-                        .accessibilityLabel("Source et définition, " + observationPeriod)
+                        .accessibilityLabel((series.isDemo ? "Données fictives, " : "") + "source et définition, " + observationPeriod)
                         .popover(isPresented: $showsSource) {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 16) {
@@ -234,6 +234,7 @@ struct SeriesDetailView: View {
                             .frame(width: 380)
                             .frame(maxHeight: 440)
                             .fixedSize(horizontal: false, vertical: true)
+                            .onExitCommand { showsSource = false }
                         }
                     } else { Label(observationPeriod, systemImage: "calendar") }
                 }
