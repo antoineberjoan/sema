@@ -3,6 +3,12 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ProfileSettingsView: View {
+    private static let avatarSize: CGFloat = 76
+    private static let nameFont = Font.system(size: 20, weight: .medium)
+    private static let avatarSpacing: CGFloat = 20
+    private static let nameSpacing: CGFloat = 10
+    private static let actionSpacing: CGFloat = 14
+    private static let headerPadding: CGFloat = 12
     @Environment(AppStore.self) private var store
     @State private var showsImporter = false
     @State private var isImporting = false
@@ -11,12 +17,12 @@ struct ProfileSettingsView: View {
     var body: some View {
         Form {
             Section {
-                HStack(spacing: 20) {
-                    ProfileAvatar(profile: store.profile, size: 76)
-                    VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: Self.avatarSpacing) {
+                    ProfileAvatar(profile: store.profile, size: Self.avatarSize)
+                    VStack(alignment: .leading, spacing: Self.nameSpacing) {
                         Text(store.profile.displayName.isEmpty ? "Votre espace" : store.profile.displayName)
-                            .font(.system(size: 20, weight: .medium))
-                        HStack(spacing: 14) {
+                            .font(Self.nameFont)
+                        HStack(spacing: Self.actionSpacing) {
                             Button(isImporting ? "Importation…" : "Choisir une photo…") { showsImporter = true }
                                 .disabled(isImporting)
                             if store.profile.avatarJPEG != nil {
@@ -24,10 +30,10 @@ struct ProfileSettingsView: View {
                                     var profile = store.profile; profile.avatarJPEG = nil; store.setProfile(profile)
                                 }.disabled(isImporting)
                             }
-                        }.font(.system(size: 12))
+                        }.font(.callout)
                     }
                     Spacer()
-                }.padding(.vertical, 12)
+                }.padding(.vertical, Self.headerPadding)
             }
             Section("Identité") {
                 TextField("Prénom", text: Binding(get: { store.profile.firstName }, set: {
@@ -41,7 +47,7 @@ struct ProfileSettingsView: View {
             }
             Section {
                 Text("Ces informations sont facultatives et restent sur ce Mac. La photo est recadrée au centre et enregistrée en petit format, sans les métadonnées du fichier d’origine.")
-                    .font(.system(size: 12)).foregroundStyle(.secondary)
+                    .font(.callout).foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

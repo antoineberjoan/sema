@@ -27,7 +27,7 @@ Une correction technique à périmètre inchangé n’exige pas de créer une pa
 | [sema-change](../../.agents/skills/sema-change/SKILL.md) | Exécuter un changement vérifiable | Fonctionnalité ou chantier complexe |
 | [sema-design](../../.agents/skills/sema-design/SKILL.md) | Interface Craft appliqué aux supports de sema | Design, copy ou mouvement |
 | [sema-handoff](../../.agents/skills/sema-handoff/SKILL.md) | Préserver le contexte utile | Relais ou fin de chantier |
-| [guardrails.py](../../scripts/guardrails.py) | Contrats mécaniques | Local, pre-commit et CI |
+| [guardrails.py](../../scripts/guardrails.py) | Contrats mécaniques | Hooks d’agent, local, pre-commit et CI |
 
 Pas de copie des règles dans quatre configurations, pas de rôles permanents ni de flotte d’agents sans besoin. Une « compétence » répétable est une skill ; une contrainte brève est une règle ; un fait vérifiable est un contrôle ; une décision durable est une note de décision. Ne pas ajouter un de ces objets pour une préférence ponctuelle.
 
@@ -55,15 +55,16 @@ Références : [OpenAI, AGENTS.md](https://learn.chatgpt.com/docs/agent-configur
 
 Après un clone, exécuter `./scripts/setup.sh`. Il configure uniquement ce dépôt et refuse de remplacer un autre chemin de hooks. Le hook est versionné ; son activation Git reste locale et doit être refaite après un nouveau clone. Pour le désactiver intentionnellement : `git config --local --unset core.hooksPath`.
 
+- Hooks d’agent : [.claude/settings.json](../../.claude/settings.json) appelle [agent-hook.py](../../scripts/agent-hook.py) après chaque édition, avec les refus du seul fichier édité, puis en fin de tour sur tout le dépôt, avec une seule relance. Cursor lit ce même fichier par défaut (réglage Third-Party Imports) ; aucun `.cursor/hooks.json` ne le double. Codex et Antigravity restent couverts par le hook Git et la CI.
 - `python3 scripts/guardrails.py` vérifie le travail local, nouveaux fichiers non ignorés inclus.
 - `python3 scripts/guardrails.py --staged` lit l’index Git exact, y compris les liens et fichiers supprimés. C’est le contrôle pre-commit ; il ne modifie et n’indexe rien.
 - `./scripts/check.sh` ajoute les tests des contrôles et les tests Swift, puis la syntaxe des scripts concernés et le plist.
 - `./scripts/build-app.sh` construit et signe le bundle local ad hoc.
 - La CI exécute `check.sh` et construit un bundle pour chaque PR, chaque push sur `main` et les lancements manuels. Aucune dépendance de production n’a été ajoutée.
 
-Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, entrée commune `AGENTS.md` absente, duplication des instructions dans `CLAUDE.md`, adaptateur de skill Claude absent ou divergent, absence ou divergence des manifestes de release local et web.
+Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, valeur visuelle, ombre ou code de touche en dur selon les [conventions](CONVENTIONS.md), type Swift hors du fichier à son nom, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, entrée commune `AGENTS.md` absente, duplication des instructions dans `CLAUDE.md`, adaptateur de skill Claude absent ou divergent, absence ou divergence des manifestes de release local et web.
 
-Ces vérifications sont volontairement bornées : le contrôle des liens Markdown en ligne ignore les exemples en code et ne résout ni les liens par référence, ni les URL réseau, ni les ancres. L’analyse des imports masque commentaires et chaînes Swift mais ne remplace pas le compilateur. L’en-tête est détecté mais son utilité se relit ; le contrôle de secrets par nom ne remplace pas une revue des valeurs. Duplication sémantique, code mort, bonne abstraction, exactitude de la copy et qualité native demandent une revue. Aucun script ne prétend vérifier « zéro hardcode » en interdisant tous les littéraux.
+Ces vérifications sont volontairement bornées : le contrôle des liens Markdown en ligne ignore les exemples en code et ne résout ni les liens par référence, ni les URL réseau, ni les ancres. L’analyse des imports masque commentaires et chaînes Swift mais ne remplace pas le compilateur. L’en-tête est détecté mais son utilité se relit ; le contrôle de secrets par nom ne remplace pas une revue des valeurs. Duplication sémantique, code mort, bonne abstraction, exactitude de la copy et qualité native demandent une revue. Le contrôle des valeurs en dur lit ligne par ligne les modificateurs et arguments de mise en page de l’app ; les règles métier du cœur se relisent, et aucun script ne juge la pertinence d’un nom.
 
 ## GitHub et production
 

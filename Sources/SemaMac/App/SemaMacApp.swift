@@ -1,10 +1,11 @@
 // Assemble les scènes SwiftUI et le cycle de vie de l’app accessible depuis la barre de menus.
 import AppKit
 import SwiftUI
-import UserNotifications
 
 @main
 struct SemaMacApp: App {
+    private static let defaultWidth: CGFloat = 1120
+    private static let defaultHeight: CGFloat = 760
     @NSApplicationDelegateAdaptor(SemaAppDelegate.self) private var appDelegate
     @State private var store = AppStore()
 
@@ -25,7 +26,7 @@ struct SemaMacApp: App {
                         .environment(\.locale, Locale(identifier: "fr_FR"))
                 }
         }
-        .defaultSize(width: 1120, height: 760)
+        .defaultSize(width: Self.defaultWidth, height: Self.defaultHeight)
         .windowStyle(.automatic)
         .windowToolbarStyle(.unifiedCompact)
         .commands {
@@ -38,31 +39,5 @@ struct SemaMacApp: App {
                 .environment(\.semaAccent, store.palette.accent)
                 .preferredColorScheme(store.appearance.colorScheme)
         }
-    }
-}
-
-@MainActor
-final class SemaAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
-    private var menuRibbon: MenuRibbonController?
-
-    func installRibbon(store: AppStore, openWorkspace: @escaping () -> Void, openSettings: @escaping () -> Void) {
-        guard menuRibbon == nil else { return }
-        menuRibbon = MenuRibbonController(store: store, openWorkspace: openWorkspace, openSettings: openSettings)
-    }
-
-    func toggleRibbon() { menuRibbon?.toggle() }
-
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        UNUserNotificationCenter.current().delegate = self
-        NSApplication.shared.activate(ignoringOtherApps: true)
-    }
-
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
-
-    func applicationWillTerminate(_ notification: Notification) { menuRibbon?.tearDown() }
-
-    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-        [.banner, .sound]
     }
 }

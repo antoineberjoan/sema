@@ -21,7 +21,7 @@ class GuardrailsTests(unittest.TestCase):
         self.git("init", "--quiet")
         self.write(".agents/structure.json", json.dumps({
             ".agents/": "Procédures", ".claude/skills/": "Liens des skills", "AGENTS.md": "Instructions", "CLAUDE.md": "Import",
-            "Sources/MarketCore/": "Cœur", "docs/": "Documentation",
+            "Sources/MarketCore/": "Cœur", "Sources/SemaMac/": "App", "docs/": "Documentation",
             "distribution/": "Release", "site/": "Site", ".env": "Configuration"
         }))
         self.write("AGENTS.md", "# Instructions\n")
@@ -228,6 +228,87 @@ class GuardrailsTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertTrue(guardrails.has_header(source))
         self.assertFalse(guardrails.has_header("#!/bin/sh\nset -eu\n"))
+
+    def test_hardcoded_values_are_rejected(self):
+        for line in (
+            ".background(.clear, in: RoundedRectangle(cornerRadius: 12))",
+            ".font(.system(size: 11, weight: .medium))",
+            ".font(.system(size: focus ? 14 : 18))",
+            ".font(.system(size: side * 0.4))",
+            "withAnimation(.easeOut(duration: 0.2)) { open = true }",
+            ".stroke(style: StrokeStyle(lineWidth: 2.3))",
+            "let shape = RoundedRectangle(cornerRadius: 24)",
+            ".padding(.horizontal, 26)",
+            ".padding(compact ? 16 : 14)",
+            "VStack(alignment: .leading, spacing: 10) {",
+            "Spacer(minLength: 6)",
+            ".frame(width: index == step ? 18 : 6, height: Layout.dot)",
+            ".frame(minWidth: 230, maxWidth: .infinity)",
+            ".background(Color.primary.opacity(0.035))",
+            ".tracking(-0.6).lineLimit(2)",
+            ".offset(y: reduceMotion ? 0 : 6)",
+            ".listRowInsets(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10))",
+            "if event.keyCode == 53 { close() }",
+            "if [36, 76].contains(event.keyCode) { commit() }",
+            "static let standard = Shortcut(key: kVK_ANSI_B)\nif event.keyCode == 53 { close() }",
+        ):
+            with self.subTest(line=line):
+                self.write("Sources/SemaMac/Card.swift", "// Décrit un rendu de série.\n" + line + "\n")
+                errors = self.errors()
+                self.assertEqual(len(errors), 1)
+                self.assertIn(f"Sources/SemaMac/Card.swift:{line.count(chr(10)) + 2} ", errors[0])
+
+    def test_named_and_structural_values_are_accepted(self):
+        for line in (
+            "static let corner: CGFloat = 12",
+            "private static let selection = Animation.snappy(duration: 0.18, extraBounce: 0)",
+            ".background(.clear, in: RoundedRectangle(cornerRadius: Layout.corner))",
+            ".stroke(style: StrokeStyle(lineWidth: 1))",
+            "if Int(event.keyCode) == kVK_Escape { close() }",
+            'let label = "size: 12, keyCode == 53"',
+            "// cornerRadius: 12 reste un commentaire",
+            "var size: CGFloat = 32",
+            'static let standard = Self(\n    ribbon: Shortcut(keyCode: 11, key: "B"))',
+            ".padding(SemaTheme.rowPadding).frame(width: 0, height: 0)",
+            ".opacity(stage >= 2 ? 1 : 0)",
+            ".frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight)",
+            ".lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)",
+            "let step = (upper - lower) / 2",
+        ):
+            with self.subTest(line=line):
+                self.write("Sources/SemaMac/Card.swift", "// Décrit un rendu de série.\n" + line + "\n")
+                self.assertEqual(self.errors(), [])
+
+    def test_layout_values_are_checked_only_in_the_app(self):
+        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nlet window = Window(width: 300, spacing: 4)\n")
+        self.assertEqual(self.errors(), [])
+
+    def test_one_visible_type_per_file(self):
+        for path, source in (
+            ("Sources/MarketCore/Series.swift", "public struct Series {}\npublic enum SeriesUnit {}\n"),
+            ("Sources/MarketCore/Series.swift", "public struct Observation {}\n"),
+            ("Sources/MarketCore/Series+Format.swift", "extension Observation {}\n"),
+            ("Sources/MarketCore/Format.swift", "extension Series {}\n"),
+        ):
+            with self.subTest(path=path, source=source):
+                self.write(path, "// Décrit une série.\n" + source)
+                self.assertTrue(any(path in error and "fichier" in error for error in self.errors()))
+                (self.root / path).unlink()
+
+    def test_private_helpers_and_extension_files_are_accepted(self):
+        self.write("Sources/MarketCore/Series.swift",
+                   "// Décrit une série.\n@MainActor\npublic struct Series<Value> {\n    struct Point {}\n}\nprivate enum Parser {}\nextension Series {}\n")
+        self.write("Sources/MarketCore/Series+Format.swift", "// Formate une série.\nextension Series {}\n")
+        self.assertEqual(self.errors(), [])
+
+    def test_shadow_belongs_to_design_system(self):
+        source = "// Décrit une surface flottante.\n.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius)\n"
+        self.write("Sources/SemaMac/Features/Panel.swift", source)
+        self.write("Sources/SemaMac/DesignSystem/Shadow.swift", source)
+        self.write("Sources/SemaMac/Features/Card.swift", "// Décrit une carte.\n.shadow(.card)\n")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Features/Panel.swift:2 : ombre", errors[0])
 
 
 if __name__ == "__main__":

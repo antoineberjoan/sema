@@ -1,5 +1,6 @@
 // Place et ferme le panneau macOS des favoris en coordonnant écrans, événements et transitions.
 import AppKit
+import Carbon
 import SwiftUI
 import QuartzCore
 
@@ -142,7 +143,7 @@ final class MenuRibbonController: NSObject {
         }
     }
 
-    @objc private func showWorkspace() { dismiss(); openWorkspace() }
+    @objc func showWorkspace() { dismiss(); openWorkspace() }
     @objc private func showSettings() { dismiss(); openSettings() }
     @objc private func showReleases() {
         NSWorkspace.shared.open(URL(string: "https://github.com/antoineberjoan/homebrew-sema/releases")!)
@@ -157,7 +158,7 @@ final class MenuRibbonController: NSObject {
             let consumed = MainActor.assumeIsolated {
                 guard let self else { return false }
                 if event.type == .keyDown {
-                    if event.keyCode == 53 { self.dismiss(); return true }
+                    if Int(event.keyCode) == kVK_Escape { self.dismiss(); return true }
                     if event.modifierFlags.contains(.command), event.charactersIgnoringModifiers == "k" {
                         self.showWorkspace(); self.store.isSearchPresented = true; return true
                     }
@@ -201,23 +202,4 @@ final class MenuRibbonController: NSObject {
 private final class RibbonPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
-}
-
-struct MenuRibbonAttachment: NSViewRepresentable {
-    @Environment(\.openWindow) private var openWindow
-    @Environment(\.openSettings) private var openSettings
-    let store: AppStore
-    let appDelegate: SemaAppDelegate
-
-    func makeNSView(context: Context) -> NSView {
-        appDelegate.installRibbon(store: store, openWorkspace: {
-            openWindow(id: "workspace")
-            NSApplication.shared.activate(ignoringOtherApps: true)
-        }, openSettings: {
-            openSettings()
-            NSApplication.shared.activate(ignoringOtherApps: true)
-        })
-        return NSView()
-    }
-    func updateNSView(_ nsView: NSView, context: Context) {}
 }

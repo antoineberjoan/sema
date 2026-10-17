@@ -4,18 +4,39 @@ import Charts
 import MarketCore
 
 struct HistoryChart: View {
+    static let defaultHeight: CGFloat = 190
+    /// Beyond this many points, the line keeps one point per bucket so that drawing stays fluid.
+    private static let decimationThreshold = 1_200
+    private static let decimationTarget = 500
+    /// Vertical margin around the curve: a share of its range, with floors for flat or near-zero series.
+    private static let domainMargin = 0.2
+    private static let relativeMarginFloor = 0.002
+    private static let marginFloor = 0.0001
+    private static let minimumAxisDigits = 4
+    private static let maximumAxisDigits = 6
+    private static let axisTickCount = 3
+    private static let plotPadding: CGFloat = 12
+    private static let pointSize: CGFloat = 35
+    private static let contentSpacing: CGFloat = 9
+    private static let readingSpacing: CGFloat = 3
+    private static let readingHorizontalPadding: CGFloat = 10
+    private static let readingVerticalPadding: CGFloat = 7
+    private static let areaOpacity = 0.09
+    private static let ruleOpacity = 0.35
+    private static let lineWidth: CGFloat = 2
+    private static let tooltipCorner: CGFloat = 8
     @Environment(\.semaAccent) private var accent
     let series: MarketSeries
     let period: HistoryPeriod
-    var height: CGFloat = 190
+    var height = Self.defaultHeight
     var showsReading = true
     @State private var hoveredDate: Date?
 
     private var points: [MarketObservation] { series.history(for: period) }
     // Drawing is bounded; hover and analysis always retain every original observation.
     private var drawnPoints: [MarketObservation] {
-        guard points.count > 1_200 else { return points }
-        let bucket = max(1, points.count / 500)
+        guard points.count > Self.decimationThreshold else { return points }
+        let bucket = max(1, points.count / Self.decimationTarget)
         var reduced: [MarketObservation] = []
         for start in stride(from: 0, to: points.count, by: bucket) {
             let slice = points[start..<min(start + bucket, points.count)]
@@ -31,7 +52,7 @@ struct HistoryChart: View {
         let values = points.map { MarketFormat.double($0.value) }
         let low = values.min() ?? 0
         let high = values.max() ?? 1
-        let padding = max((high - low) * 0.2, abs(high) * 0.002, 0.0001)
+        let padding = max((high - low) * Self.domainMargin, abs(high) * Self.relativeMarginFloor, Self.marginFloor)
         return (low - padding)...(high + padding)
     }
     private var hovered: MarketObservation? {
@@ -40,52 +61,52 @@ struct HistoryChart: View {
     }
     private var axisDigits: Int {
         let step = (domain.upperBound - domain.lowerBound) / 2
-        let limit = max(4, min(series.fractionDigits, 6))
+        let limit = max(Self.minimumAxisDigits, min(series.fractionDigits, Self.maximumAxisDigits))
         return max(min(series.fractionDigits, limit), min(limit, max(0, Int(ceil(-log10(step))))))
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 9) {
+        VStack(alignment: .leading, spacing: Self.contentSpacing) {
             Chart {
                 ForEach(drawnPoints) { point in
                     AreaMark(x: .value("Date", point.date), yStart: .value("Base", domain.lowerBound),
                              yEnd: .value(series.displayUnit, MarketFormat.double(point.value)))
-                        .foregroundStyle(LinearGradient(colors: [accent.opacity(0.09), .clear], startPoint: .top, endPoint: .bottom))
+                        .foregroundStyle(LinearGradient(colors: [accent.opacity(Self.areaOpacity), .clear], startPoint: .top, endPoint: .bottom))
                     LineMark(x: .value("Date", point.date), y: .value(series.displayUnit, MarketFormat.double(point.value)))
-                        .foregroundStyle(accent).lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+                        .foregroundStyle(accent).lineStyle(StrokeStyle(lineWidth: Self.lineWidth, lineCap: .round, lineJoin: .round))
                 }
                 if let hovered {
                     RuleMark(x: .value("Date sélectionnée", hovered.date))
-                        .foregroundStyle(Color.secondary.opacity(0.35))
+                        .foregroundStyle(Color.secondary.opacity(Self.ruleOpacity))
                     PointMark(x: .value("Date", hovered.date), y: .value(series.displayUnit, MarketFormat.double(hovered.value)))
-                        .foregroundStyle(accent).symbolSize(35)
-                        .annotation(position: .top, spacing: 8,
+                        .foregroundStyle(accent).symbolSize(Self.pointSize)
+                        .annotation(position: .top, spacing: SemaTheme.minorSpacing,
                                     overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
-                            VStack(alignment: .leading, spacing: 3) {
+                            VStack(alignment: .leading, spacing: Self.readingSpacing) {
                                 Text(MarketFormat.date(hovered.date)).foregroundStyle(.secondary)
                                 Text(MarketFormat.number(hovered.value, digits: series.fractionDigits) + " " + series.displayUnit)
                                     .fontWeight(.medium).monospacedDigit()
                             }
-                            .font(.system(size: 11))
-                            .padding(.horizontal, 10).padding(.vertical, 7)
-                            .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: 8))
+                            .font(.subheadline)
+                            .padding(.horizontal, Self.readingHorizontalPadding).padding(.vertical, Self.readingVerticalPadding)
+                            .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: Self.tooltipCorner))
                             .modifier(SemaElevation())
                             .allowsHitTesting(false)
                         }
                 }
             }
             .chartYScale(domain: domain)
-            .chartXScale(range: .plotDimension(padding: 12))
+            .chartXScale(range: .plotDimension(padding: Self.plotPadding))
             .chartXSelection(value: $hoveredDate)
             .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: 3)) { _ in
-                    AxisValueLabel(format: period.days > 365
+                AxisMarks(values: .automatic(desiredCount: Self.axisTickCount)) { _ in
+                    AxisValueLabel(format: period.days > HistoryPeriod.year.days
                         ? .dateTime.month(.abbreviated).year()
                         : .dateTime.day().month(.abbreviated))
                 }
             }
             .chartYAxis {
-                AxisMarks(position: .trailing, values: .automatic(desiredCount: 3)) { value in
+                AxisMarks(position: .trailing, values: .automatic(desiredCount: Self.axisTickCount)) { value in
                     AxisGridLine().foregroundStyle(SemaTheme.separator)
                     AxisValueLabel {
                         if let number = value.as(Double.self) {
@@ -105,7 +126,7 @@ struct HistoryChart: View {
                     Text(MarketFormat.number(value, digits: series.fractionDigits) + " " + series.displayUnit).monospacedDigit()
                 }
             }
-            .font(.system(size: 11)).foregroundStyle(.secondary)
+            .font(.subheadline).foregroundStyle(.secondary)
             }
         }
         .onChange(of: series.id) { _, _ in hoveredDate = nil }

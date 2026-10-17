@@ -9,6 +9,7 @@ xcuserdata/
 .env
 .env.*
 !.env.example
+.claude/settings.local.json
 
 # Site linking and generated release archives
 .vercel/

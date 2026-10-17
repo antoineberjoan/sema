@@ -3,6 +3,9 @@ import SwiftUI
 import MarketCore
 
 struct RibbonGlassSettingsView: View {
+    private static let sliderSpacing: CGFloat = 16
+    private static let labelWidth: CGFloat = 136
+    private static let valueWidth: CGFloat = 38
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
@@ -38,7 +41,7 @@ struct RibbonGlassSettingsView: View {
             }))
             .disabled(opaque)
 
-            Text(explanation).font(.system(size: 12)).foregroundStyle(.secondary)
+            Text(explanation).font(.callout).foregroundStyle(.secondary)
             Button("Réinitialiser le verre") { store.setRibbonGlass(.standard) }
                 .disabled(store.ribbonGlass == .standard)
         }
@@ -53,14 +56,14 @@ struct RibbonGlassSettingsView: View {
     }
 
     private func glassSlider(_ title: String, symbol: String, value: Binding<Double>) -> some View {
-        HStack(spacing: 16) {
-            Label(title, systemImage: symbol).frame(width: 136, alignment: .leading)
+        HStack(spacing: Self.sliderSpacing) {
+            Label(title, systemImage: symbol).frame(width: Self.labelWidth, alignment: .leading)
             Slider(value: value, in: 0...1)
                 .accessibilityLabel(title)
                 .accessibilityValue("\(Int((value.wrappedValue * 100).rounded())) %")
             Text(value.wrappedValue, format: .percent.precision(.fractionLength(0)))
-                .font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
-                .frame(width: 38, alignment: .trailing).accessibilityHidden(true)
+                .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+                .frame(width: Self.valueWidth, alignment: .trailing).accessibilityHidden(true)
         }
     }
 }

@@ -23,6 +23,18 @@ LOCAL_LINK = re.compile(
 )
 CONFLICT = re.compile(r"^(?:<{7} |={7}$|>{7} )", re.MULTILINE)
 SWIFT_TEXT = re.compile(r'//[^\n]*|/\*|(?P<hashes>\#*)(?P<quote>"""|")')
+# Une valeur visuelle ou un code de touche se nomme une fois dans une constante `static let` de son propriétaire.
+NAMED_CONSTANT = re.compile(r"^\s*(?:@\w+\s+)*(?:(?:private|fileprivate|internal|public|package|nonisolated)\s+)*static\s+(?:let|var)\b")
+LAYOUT_LABELS = ("size|cornerRadius|lineWidth|radius|duration|response|dampingFraction|spacing|minLength|padding|width|height|"
+                 "minWidth|idealWidth|maxWidth|minHeight|idealHeight|maxHeight|minimum|maximum|min|ideal|max|desiredCount")
+VISUAL_ARGUMENT = re.compile(r"(?:[(,]|^)\s*(?:%s):([^,)\n]*)" % LAYOUT_LABELS, re.MULTILINE)
+VISUAL_CALL = re.compile(r"(?:\.(?:padding|opacity|offset|tracking|kerning|scaleEffect|blur|lineLimit|minimumScaleFactor|symbolSize)|\bEdgeInsets)\(")
+NUMBER = re.compile(r"(?<![\w.])(?:\d+\.\d+|\.\d+|\d+)(?![\w.])")
+STRUCTURAL_NUMBERS = {"0", "1"}
+# Un fichier Swift porte un seul type visible, à son nom ; un fichier d’extensions se nomme `Type+Rôle.swift`.
+TOP_TYPE = re.compile(r"^(?:@\w+(?:\([^)\n]*\))?\s+)*(?P<access>(?:public|internal|package|open|private|fileprivate)\s+)?"
+                      r"(?:(?:final|indirect|nonisolated)\s+)*(?:struct|enum|class|actor|protocol)\s+(?P<name>\w+)", re.MULTILINE)
+TOP_EXTENSION = re.compile(r"^(?:@\w+\s+)*(?:(?:public|internal|private|fileprivate)\s+)?extension\s+(?P<name>\w+)", re.MULTILINE)
 
 
 class Snapshot:
@@ -99,6 +111,69 @@ def swift_code(source):
     return "".join(parts)
 
 
+def call_arguments(line, start):
+    """Découpe les arguments d’un appel ouvert à `start`, au premier niveau de parenthèses."""
+    arguments, current, depth = [], "", 0
+    for character in line[start:]:
+        if character in "([{":
+            depth += 1
+            if depth == 1:
+                continue
+        elif character in ")]}":
+            depth -= 1
+            if depth == 0:
+                break
+        if character == "," and depth == 1:
+            arguments.append(current); current = ""
+        else:
+            current += character
+    return arguments + [current]
+
+
+def literal_values(argument):
+    """Garde la valeur d’un argument : sans son libellé ni la condition d’un ternaire."""
+    value = re.sub(r"^\s*\w+\s*:", "", argument, count=1)
+    if "?" in value:
+        value = value.split("?", 1)[1]
+    return [number for number in NUMBER.findall(value) if number not in STRUCTURAL_NUMBERS]
+
+
+def hardcoded(path, source):
+    """Signale les valeurs visuelles, ombres et codes de touche écrits en dur dans le code Swift."""
+    errors = []
+    depth = 0  # Une constante nommée peut s’étendre sur plusieurs lignes jusqu’à la fermeture de ses délimiteurs.
+    for number, line in enumerate(swift_code(source).splitlines(), 1):
+        if depth > 0 or NAMED_CONSTANT.match(line):
+            depth = max(0, depth + sum(line.count(c) for c in "([{") - sum(line.count(c) for c in ")]}"))
+            continue
+        if path.startswith("Sources/SemaMac/"):
+            arguments = VISUAL_ARGUMENT.findall(line) + [argument for call in VISUAL_CALL.finditer(line)
+                                                         for argument in call_arguments(line, call.end() - 1)]
+            if any(literal_values(argument) for argument in arguments):
+                errors.append(f"{path}:{number} : valeur visuelle en dur ; la nommer dans un rôle de `SemaTheme` "
+                              "ou un `static let` de son propriétaire.")
+        if "keyCode" in line and any(value not in STRUCTURAL_NUMBERS for value in NUMBER.findall(line)):
+            errors.append(f"{path}:{number} : code de touche en dur ; utiliser `kVK_…` ou une constante nommée.")
+        if ".shadow(color" in line and not path.startswith("Sources/SemaMac/DesignSystem/"):
+            errors.append(f"{path}:{number} : ombre composée hors DesignSystem ; utiliser une `SemaTheme.Shadow`.")
+    return errors
+
+
+def misplaced_types(path, source):
+    """Vérifie qu’un nom de type suffit à retrouver son fichier."""
+    code = swift_code(source)
+    stem = pathlib.PurePosixPath(path).stem
+    visible = [m["name"] for m in TOP_TYPE.finditer(code) if (m["access"] or "").strip() not in ("private", "fileprivate")]
+    if visible:
+        if visible != [stem]:
+            return [f"{path} : un seul type visible par fichier, nommé comme lui ; trouvé {', '.join(visible)}."]
+        return []
+    extended = {m["name"] for m in TOP_EXTENSION.finditer(code)}
+    if extended and ("+" not in stem or stem.split("+")[0] not in extended):
+        return [f"{path} : un fichier d’extensions se nomme `Type+Rôle.swift` d’après le type qu’il étend."]
+    return []
+
+
 def markdown_prose(source):
     """Écarte les exemples en blocs délimités ou en code en ligne du contrôle des liens."""
     lines = []
@@ -151,6 +226,9 @@ def check(snapshot):
             # Les imports sont contrôlés ; ce n’est pas une analyse sémantique Swift.
             if CORE_IMPORT.search(swift_code(source)):
                 errors.append(f"{path} : le cœur ne dépend pas de SwiftUI, AppKit ou UserNotifications.")
+        if path.startswith("Sources/") and suffix == ".swift":
+            errors.extend(hardcoded(path, source))
+            errors.extend(misplaced_types(path, source))
         if suffix == ".json":
             try:
                 json.loads(source)

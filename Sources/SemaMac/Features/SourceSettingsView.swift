@@ -31,8 +31,8 @@ struct SourceSettingsView: View {
                 }
                 Link("Obtenir une clé sur Webstat", destination: URL(string: "https://webstat.banque-france.fr/login/")!)
                 Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Les autres sources sont accessibles sans clé.")
-                    .font(.system(size: 11)).foregroundStyle(.secondary)
-                if let error = store.webstatError { Text(error).font(.system(size: 11)).foregroundStyle(.red) }
+                    .font(.subheadline).foregroundStyle(.secondary)
+                if let error = store.webstatError { Text(error).font(.subheadline).foregroundStyle(.red) }
             }
         }
         .formStyle(.grouped).onDisappear { apiKey = "" }
@@ -40,15 +40,15 @@ struct SourceSettingsView: View {
 
     private func sourceRow(id: String, title: String, summary: String) -> some View {
         Toggle(isOn: Binding(get: { store.isSourceEnabled(id) }, set: { store.setSourceEnabled(id, enabled: $0) })) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: SemaTheme.settingsTextSpacing) {
                 Text(title)
-                Text(summary).font(.system(size: 11)).foregroundStyle(.secondary)
+                Text(summary).font(.subheadline).foregroundStyle(.secondary)
                 if store.sourceSeriesCount(id) > 0 {
                     let count = store.sourceSeriesCount(id)
                     Text("\(count) \(count == 1 ? "repère suivi" : "repères suivis")" + (store.isSourceEnabled(id) ? "" : " · en pause"))
-                        .font(.system(size: 10)).foregroundStyle(.secondary)
+                        .font(.caption).foregroundStyle(.secondary)
                 }
-            }.padding(.vertical, 5)
+            }.padding(.vertical, SemaTheme.settingsRowPadding)
         }.toggleStyle(.switch).accessibilityLabel("Activer \(title)")
     }
 

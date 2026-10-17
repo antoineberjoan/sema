@@ -17,9 +17,25 @@ private enum SignatureMotion {
     static let textOffset: CGFloat = 4
     static let lineWidth: CGFloat = 1.5
     static let markSize: CGFloat = 72
+    static let drawStage = 1
+    static let contextStage = 2
+    static let missionStage = 3
 }
 
 struct RibbonSignatureView: View {
+    private static let titleFont = Font.system(size: 18, weight: .medium)
+    private static let titleTracking: CGFloat = -0.5
+    private static let titleTopPadding: CGFloat = 3
+    private static let markAreaHeight: CGFloat = 48
+    private static let contextOpacity = 0.85
+    private static let feedbackPadding: CGFloat = 10
+    private static let feedbackHeight: CGFloat = 26
+    private static let feedbackFillOpacity = 0.12
+    private static let feedbackTopPadding: CGFloat = 18
+    private static let backgroundTopOpacity = 0.85
+    private static let backgroundBottomOpacity = 0.65
+    private static let edgeTopOpacity = 0.22
+    private static let edgeBottomOpacity = 0.03
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let presentationID: UUID?
@@ -28,48 +44,48 @@ struct RibbonSignatureView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SemaSignalPath().trim(from: 0, to: stage >= 1 ? 1 : 0)
+            SemaSignalPath().trim(from: 0, to: stage >= SignatureMotion.drawStage ? 1 : 0)
                 .stroke(.white, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
                 .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
-                .frame(height: 48).accessibilityHidden(true)
-                .animation(reduceMotion ? nil : .easeInOut(duration: SignatureMotion.drawDuration), value: stage >= 1)
-            Spacer(minLength: 8)
+                .frame(height: Self.markAreaHeight).accessibilityHidden(true)
+                .animation(reduceMotion ? nil : .easeInOut(duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
+            Spacer(minLength: SemaTheme.minorSpacing)
             Text("L’économie bouge.")
-                .font(.system(size: 12)).foregroundStyle(.white.opacity(0.85))
-                .opacity(stage >= 2 ? 1 : 0)
-                .animation(reduceMotion ? nil : .easeOut(duration: SignatureMotion.textDuration), value: stage >= 2)
+                .font(.callout).foregroundStyle(.white.opacity(Self.contextOpacity))
+                .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
+                .animation(reduceMotion ? nil : .easeOut(duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             Text("Gardez vos repères.")
-                .font(.system(size: 18, weight: .medium)).tracking(-0.5).padding(.top, 3)
-                .opacity(stage >= 3 ? 1 : 0)
-                .offset(y: stage >= 3 || reduceMotion ? 0 : SignatureMotion.textOffset)
-                .animation(reduceMotion ? nil : .spring(response: SignatureMotion.textDuration, dampingFraction: 1), value: stage >= 3)
+                .font(Self.titleFont).tracking(Self.titleTracking).padding(.top, Self.titleTopPadding)
+                .opacity(stage >= SignatureMotion.missionStage ? 1 : 0)
+                .offset(y: stage >= SignatureMotion.missionStage || reduceMotion ? 0 : SignatureMotion.textOffset)
+                .animation(reduceMotion ? nil : .spring(response: SignatureMotion.textDuration, dampingFraction: 1), value: stage >= SignatureMotion.missionStage)
             Button(action: openFeedback) {
                 Label("Une idée ou un bug ?", systemImage: "bubble.left")
-                    .font(.system(size: 11, weight: .medium)).padding(.horizontal, 10)
-                    .frame(height: 26).background(.white.opacity(0.12), in: Capsule())
+                    .font(.subheadline.weight(.medium)).padding(.horizontal, Self.feedbackPadding)
+                    .frame(height: Self.feedbackHeight).background(.white.opacity(Self.feedbackFillOpacity), in: Capsule())
             }
-            .buttonStyle(SemaPressStyle()).padding(.top, 18)
+            .buttonStyle(SemaPressStyle()).padding(.top, Self.feedbackTopPadding)
             .help(SemaFeedback.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
             .accessibilityLabel("Une idée ou un bug ? Ouvrir le formulaire Notion")
             .disabled(SemaFeedback.formURL == nil)
         }
         .foregroundStyle(.white)
-        .padding(16).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .padding(MenuRibbonLayout.cardPadding).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
-            let shape = RoundedRectangle(cornerRadius: MenuRibbonLayout.cardCornerRadius, style: .continuous)
+            let shape = RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner, style: .continuous)
             shape.fill(.black)
-            shape.fill(LinearGradient(colors: [store.palette.signatureAccent.opacity(0.85), store.palette.signatureAccent.opacity(0.65)],
+            shape.fill(LinearGradient(colors: [store.palette.signatureAccent.opacity(Self.backgroundTopOpacity), store.palette.signatureAccent.opacity(Self.backgroundBottomOpacity)],
                                       startPoint: .topLeading, endPoint: .bottomTrailing))
         }
         .overlay {
-            RoundedRectangle(cornerRadius: MenuRibbonLayout.cardCornerRadius, style: .continuous)
-                .strokeBorder(LinearGradient(colors: [.white.opacity(0.22), .white.opacity(0.03)],
-                                              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner, style: .continuous)
+                .strokeBorder(LinearGradient(colors: [.white.opacity(Self.edgeTopOpacity), .white.opacity(Self.edgeBottomOpacity)],
+                                              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: SemaTheme.hairline)
                 .allowsHitTesting(false).accessibilityHidden(true)
         }
-        .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 3)
+        .shadow(.card)
         .task(id: presentationID) { await play() }
-        .onChange(of: reduceMotion) { _, value in if value { stage = 3 } }
+        .onChange(of: reduceMotion) { _, value in if value { stage = SignatureMotion.missionStage } }
         .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $formUnavailable) {
             Button("Copier le lien") {
                 guard let url = SemaFeedback.formURL else { return }
@@ -90,15 +106,15 @@ struct RibbonSignatureView: View {
     private func play() async {
         // A new presentation cancels the previous task before resetting its stage.
         var transaction = Transaction(); transaction.disablesAnimations = true
-        withTransaction(transaction) { stage = reduceMotion || presentationID == nil ? 3 : 0 }
+        withTransaction(transaction) { stage = reduceMotion || presentationID == nil ? SignatureMotion.missionStage : 0 }
         guard !reduceMotion, presentationID != nil else { return }
         do {
             try await Task.sleep(for: .milliseconds(SignatureMotion.drawDelay))
-            if !reduceMotion { stage = 1 }
+            if !reduceMotion { stage = SignatureMotion.drawStage }
             try await Task.sleep(for: .milliseconds(SignatureMotion.contextDelay - SignatureMotion.drawDelay))
-            if !reduceMotion { stage = 2 }
+            if !reduceMotion { stage = SignatureMotion.contextStage }
             try await Task.sleep(for: .milliseconds(SignatureMotion.missionDelay - SignatureMotion.contextDelay))
-            if !reduceMotion { stage = 3 }
+            if !reduceMotion { stage = SignatureMotion.missionStage }
         } catch { /* Presentation interrupted. */ }
     }
 }

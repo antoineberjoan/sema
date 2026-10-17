@@ -12,13 +12,13 @@ Quel que soit l’agent utilisé, commencer par [AGENTS.md](AGENTS.md), l’entr
 
 - **Règles et rangement** : instructions de la zone touchée, [responsabilité des emplacements](.agents/structure.json), [conventions](docs/engineering/CONVENTIONS.md) et [vocabulaire partagé](docs/engineering/GLOSSARY.md).
 - **Procédures à la demande** : [sema-change](.agents/skills/sema-change/SKILL.md) pour réaliser un changement, [sema-design](.agents/skills/sema-design/SKILL.md) pour Interface Craft, [sema-handoff](.agents/skills/sema-handoff/SKILL.md) pour transmettre le contexte utile.
-- **Contrôles et mémoire** : mêmes scripts en local, au commit et en CI ; revue du diff, preuves dans la PR, plans et décisions conservés sous forme condensée. Le [fonctionnement du socle](docs/engineering/WORKFLOW.md) décrit ce circuit et les adaptateurs des clients.
+- **Contrôles et mémoire** : mêmes scripts dans les hooks Claude et Cursor, en local, au commit et en CI ; revue du diff, preuves dans la PR, plans et décisions conservés sous forme condensée. Le [fonctionnement du socle](docs/engineering/WORKFLOW.md) décrit ce circuit et les adaptateurs des clients.
 
 Après un clone, lancer `./scripts/setup.sh` pour activer le hook local. Les contrôles demandent Python 3.9 ou plus récent, sans module externe.
 
 Le système partage les règles et les contrôles ; il ne rend pas les modèles déterministes. Le chargement effectif doit être vérifié dans chaque client : voir les [essais et leurs limites](docs/validation/agent-clients.md). Le README oriente ; les fichiers liés restent les références à maintenir.
 
-## Version 0.4
+## Fonctionnalités
 
 - Un hub Focus : un repère et son grand historique, une sidebar repliable qui apparaît au survol de son icône, et « Mon espace » fixé en bas. Le bandeau de favoris en verre reste accessible depuis la barre de menus.
 - Catalogue Webstat dynamique avec clé personnelle : rechercher, filtrer et prévisualiser les séries accessibles, puis composer une sélection ordonnée. Les treize repères macro précédents restent une sélection de départ.
@@ -101,7 +101,7 @@ Aucune dépendance externe : SwiftUI, AppKit, Swift Charts, Observation, Foundat
 
 ## Suite
 
-Voir [ROADMAP.md](docs/ROADMAP.md). Les priorités sont l’intégration des autres sources officielles, la validation des droits sur les données de fonds et la préparation d’une bêta signée.
+Les priorités font foi dans Notion Stratégie ([carte des sources](docs/engineering/SOURCES.md)) ; les chantiers techniques sont indexés dans [PLAN.md](docs/PLAN.md).
 
 ## Distribution
 

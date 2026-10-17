@@ -3,6 +3,20 @@ import SwiftUI
 import MarketCore
 
 struct SeriesSearchView: View {
+    private static let sheetWidth: CGFloat = 880
+    private static let sheetHeight: CGFloat = 560
+    private static let sheetPadding: CGFloat = 18
+    private static let sectionSpacing: CGFloat = 18
+    private static let modePickerWidth: CGFloat = 300
+    private static let catalogueHeight: CGFloat = 420
+    private static let resultsHeight: CGFloat = 320
+    private static let searchSpacing: CGFloat = 12
+    private static let searchTopPadding: CGFloat = 6
+    private static let iconSpacing: CGFloat = 12
+    private static let iconWidth: CGFloat = 20
+    private static let textSpacing: CGFloat = 5
+    private static let emptyTopPadding: CGFloat = 35
+    private static let searchFont = Font.system(size: 18)
     @Environment(AppStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @Environment(\.semaAccent) private var accent
@@ -17,47 +31,47 @@ struct SeriesSearchView: View {
     }
 
     var body: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: Self.sectionSpacing) {
             Picker("Où rechercher", selection: $catalogue) {
                 Text("Mes repères").tag(false)
                 Text("Catalogues").tag(true)
-            }.pickerStyle(.segmented).frame(width: 300)
+            }.pickerStyle(.segmented).frame(width: Self.modePickerWidth)
             if catalogue {
-                SourceExplorerView(compact: true, close: { dismiss() }).frame(height: 420)
+                SourceExplorerView(compact: true, close: { dismiss() }).frame(height: Self.catalogueHeight)
                 HStack { Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
             } else {
-            HStack(spacing: 12) {
+            HStack(spacing: Self.searchSpacing) {
                 Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
                 TextField("Rechercher un repère…", text: $query)
-                    .textFieldStyle(.plain).font(.system(size: 18)).focused($isSearchFocused)
+                    .textFieldStyle(.plain).font(Self.searchFont).focused($isSearchFocused)
                     .accessibilityLabel("Rechercher un repère")
                     .onSubmit(openSelected)
                     .onKeyPress(.downArrow) { moveSelection(by: 1); return .handled }
                     .onKeyPress(.upArrow) { moveSelection(by: -1); return .handled }
-                Text("⌘K").font(.system(size: 12)).foregroundStyle(.secondary)
+                Text("⌘K").font(.callout).foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 12).padding(.top, 6)
+            .padding(.horizontal, SemaTheme.rowPadding).padding(.top, Self.searchTopPadding)
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(spacing: 4) {
+                    LazyVStack(spacing: SemaTheme.rowSpacing) {
                         ForEach(results) { item in
                             Button { open(item) } label: {
-                                HStack(spacing: 12) {
+                                HStack(spacing: Self.iconSpacing) {
                                     Image(systemName: store.isFavorite(item.id) ? "star.fill" : "chart.xyaxis.line")
-                                        .foregroundStyle(accent).frame(width: 20)
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        Text(item.name).font(.system(size: 13, weight: .medium))
-                                        Text(item.subtitle).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
+                                        .foregroundStyle(accent).frame(width: Self.iconWidth)
+                                    VStack(alignment: .leading, spacing: Self.textSpacing) {
+                                        Text(item.name).font(.body.weight(.medium))
+                                        Text(item.subtitle).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
                                     }
-                                    Spacer(minLength: 8)
-                                    VStack(alignment: .trailing, spacing: 5) {
-                                        Text(MarketFormat.value(item)).font(.system(size: 13)).monospacedDigit()
+                                    Spacer(minLength: SemaTheme.minorSpacing)
+                                    VStack(alignment: .trailing, spacing: Self.textSpacing) {
+                                        Text(MarketFormat.value(item)).font(.body).monospacedDigit()
                                         Text(context(for: item))
-                                            .font(.system(size: 11)).foregroundStyle(.secondary)
+                                            .font(.subheadline).foregroundStyle(.secondary)
                                     }
                                 }
-                                .padding(12).foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading)
-                                .background(selectedID == item.id ? accent.opacity(0.10) : .clear, in: RoundedRectangle(cornerRadius: 12))
+                                .padding(SemaTheme.rowPadding).foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading)
+                                .background(selectedID == item.id ? accent.opacity(SemaTheme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
                                 .contentShape(Rectangle())
                             }
                             .buttonStyle(SemaPressStyle()).id(item.id)
@@ -65,24 +79,24 @@ struct SeriesSearchView: View {
                         if results.isEmpty {
                             ContentUnavailableView("Aucun repère trouvé", systemImage: "magnifyingglass",
                                 description: Text("Essayez « OAT », « BCE », « inflation » ou « immobilier »."))
-                                .padding(.top, 35)
+                                .padding(.top, Self.emptyTopPadding)
                         }
                     }
                 }
-                .frame(height: 320)
+                .frame(height: Self.resultsHeight)
                 .onChange(of: selectedID) { _, id in if let id { proxy.scrollTo(id) } }
             }
             HStack {
-                Text("↑ ↓ choisir · ↩ ouvrir").font(.system(size: 11)).foregroundStyle(.secondary)
+                Text("↑ ↓ choisir · ↩ ouvrir").font(.subheadline).foregroundStyle(.secondary)
                 Spacer()
                 Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction)
                 Button("Ouvrir", action: openSelected).keyboardShortcut(.defaultAction)
                     .disabled(selectedID == nil).buttonStyle(.borderedProminent)
             }
-            .padding(.horizontal, 12)
+            .padding(.horizontal, SemaTheme.rowPadding)
         }
             }
-        .padding(18).frame(width: 880, height: 560).background(SemaTheme.surface)
+        .padding(Self.sheetPadding).frame(width: Self.sheetWidth, height: Self.sheetHeight).background(SemaTheme.surface)
         .onAppear { selectedID = results.first?.id; isSearchFocused = true }
         .onChange(of: query) { _, _ in selectedID = results.first?.id }
         .onChange(of: catalogue) { _, selected in

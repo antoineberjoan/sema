@@ -1,8 +1,31 @@
 // Organise Focus et la sidebar persistante ou survolée, avec sélection ordonnée et accès au profil.
+import AppKit
+import Carbon
 import SwiftUI
 import MarketCore
 
 struct WorkspaceView: View {
+    private static let searchCorner: CGFloat = 9
+    private static let minimumWidth: CGFloat = 980
+    private static let minimumHeight: CGFloat = 680
+    private static let focusHorizontalMargin: CGFloat = 48
+    private static let focusTopMargin: CGFloat = 36
+    private static let statusPadding: CGFloat = 14
+    private static let statusSpacing: CGFloat = 12
+    private static let statusLines = 2
+    private static let previewInset: CGFloat = 10
+    private static let previewVerticalInset: CGFloat = 6
+    private static let switcherScrim = Color.black.opacity(0.035)
+    private static let sidebarSpacing: CGFloat = 18
+    private static let sidebarMargin: CGFloat = 22
+    private static let searchSpacing: CGFloat = 9
+    private static let searchPadding: CGFloat = 11
+    private static let searchInset: CGFloat = 14
+    private static let itemSpacing: CGFloat = 2
+    private static let itemsInset: CGFloat = 10
+    private static let rowInsets = EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10)
+    private static let profileSpacing: CGFloat = 10
+    private static let profileTextSpacing: CGFloat = 3
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -11,16 +34,39 @@ struct WorkspaceView: View {
     @State private var hoveredSidebarZone: SidebarHoverZone?
     @State private var sidebarCloseTask: Task<Void, Never>?
     @State private var removal: MarketSeries?
+    @State private var switcherSelection: String?
 
     var body: some View {
+        keyboardWorkspace
+        .onDisappear { sidebarCloseTask?.cancel() }
+        .task { await store.checkWebstatKey() }
+        .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
+        .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
+        .alert("sema", isPresented: errorBinding) {
+            Button("Compris", role: .cancel) { store.errorMessage = nil }
+        } message: { Text(store.errorMessage ?? "") }
+        .confirmationDialog("Retirer ce repère ?", isPresented: Binding(get: { removal != nil }, set: { if !$0 { removal = nil } }), titleVisibility: .visible) {
+            Button("Retirer de mes repères", role: .destructive) { if let removal { _ = store.unfollow(removal.id) }; removal = nil }
+            Button("Annuler", role: .cancel) { removal = nil }
+        } message: {
+            Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
+        }
+        .overlay(alignment: .topTrailing) {
+            if let event = store.simulatedEvent {
+                DemoNotificationView(event: event).environment(store).padding(SemaTheme.majorSpacing)
+            }
+        }
+    }
+
+    private var workspaceLayout: some View {
         NavigationSplitView(columnVisibility: sidebarVisibilityBinding) {
             sidebarContent
                 .toolbar(removing: .sidebarToggle)
-                .navigationSplitViewColumnWidth(min: 220, ideal: FocusMotion.sidebarWidth, max: 280)
+                .navigationSplitViewColumnWidth(min: FocusMotion.sidebarMinWidth, ideal: FocusMotion.sidebarWidth, max: FocusMotion.sidebarMaxWidth)
         } detail: {
             VStack(spacing: 0) {
                 if store.section == .explorer {
-                    ExplorerView().padding(26).frame(maxWidth: .infinity, maxHeight: .infinity)
+                    ExplorerView().padding(SemaTheme.contentPadding).frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ScrollView {
                         Group {
@@ -31,14 +77,14 @@ struct WorkspaceView: View {
                             case .explorer: EmptyView()
                             }
                         }
-                        .padding(.horizontal, store.section == .overview ? 48 : 26)
-                        .padding(.top, store.section == .overview ? 36 : 26)
-                        .padding(.bottom, 26)
+                        .padding(.horizontal, store.section == .overview ? Self.focusHorizontalMargin : SemaTheme.contentPadding)
+                        .padding(.top, store.section == .overview ? Self.focusTopMargin : SemaTheme.contentPadding)
+                        .padding(.bottom, SemaTheme.contentPadding)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }
                 if store.section != .overview {
-                    dataStatus.padding(.horizontal, 26).padding(.vertical, 14)
+                    dataStatus.padding(.horizontal, SemaTheme.contentPadding).padding(.vertical, Self.statusPadding)
                 }
             }
             .background(SemaTheme.background)
@@ -52,8 +98,6 @@ struct WorkspaceView: View {
                     if store.isLoading {
                         ProgressView().controlSize(.small).help("Actualisation des repères…")
                     }
-                    SettingsLink { Label("Réglages", systemImage: "gearshape") }
-                        .labelStyle(.iconOnly).help("Réglages de sema · ⌘,")
                 }
             }
         }
@@ -74,46 +118,93 @@ struct WorkspaceView: View {
                 sidebarContent
                     .frame(width: FocusMotion.sidebarWidth)
                     .frame(maxHeight: .infinity)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-                    .shadow(color: .black.opacity(0.12), radius: 14, x: 4, y: 6)
-                    .padding(.leading, 10).padding(.vertical, 6)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner, style: .continuous))
+                    .shadow(.sidebar)
+                    .padding(.leading, Self.previewInset).padding(.vertical, Self.previewVerticalInset)
                     .onHover { sidebarHover(.panel, inside: $0) }
                     .transition(.move(edge: .leading).combined(with: .opacity))
             }
         }
-        .frame(minWidth: 980, minHeight: 680)
+        .frame(minWidth: Self.minimumWidth, minHeight: Self.minimumHeight)
+    }
+
+    private var keyboardWorkspace: some View {
+        workspaceLayout
+        .background { FocusKeyboard(handle: handleFocusKey).frame(width: 0, height: 0) }
+        .overlay {
+            if let selection = switcherSelection {
+                ZStack {
+                    Self.switcherScrim.contentShape(Rectangle()).onTapGesture { closeSwitcher() }
+                    FocusSwitcherView(selection: selection) { item in store.show(item); closeSwitcher() }
+                        .transition(.opacity)
+                }
+            }
+        }
         .onExitCommand {
             guard store.section == .overview, !store.isSearchPresented, !store.isAlertSheetPresented,
                   !store.isOnboardingPresented, sidebarPresentation != .hidden else { return }
             setSidebarPresentation(.hidden)
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase != .active { dismissSidebarPreview() }
+            if phase != .active { dismissSidebarPreview(); closeSwitcher() }
         }
         .onChange(of: store.isSearchPresented) { _, presented in
-            if presented { dismissSidebarPreview() }
+            if presented { dismissSidebarPreview(); closeSwitcher() }
         }
         .onChange(of: store.isAlertSheetPresented) { _, presented in
-            if presented { dismissSidebarPreview() }
+            if presented { dismissSidebarPreview(); closeSwitcher() }
         }
-        .onDisappear { sidebarCloseTask?.cancel() }
-        .task { await store.checkWebstatKey() }
-        .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
-        .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
-        .alert("sema", isPresented: errorBinding) {
-            Button("Compris", role: .cancel) { store.errorMessage = nil }
-        } message: { Text(store.errorMessage ?? "") }
-        .confirmationDialog("Retirer ce repère ?", isPresented: Binding(get: { removal != nil }, set: { if !$0 { removal = nil } }), titleVisibility: .visible) {
-            Button("Retirer de mes repères", role: .destructive) { if let removal { _ = store.unfollow(removal.id) }; removal = nil }
-            Button("Annuler", role: .cancel) { removal = nil }
-        } message: {
-            Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
+        .onChange(of: store.isOnboardingPresented) { _, presented in
+            if presented { closeSwitcher() }
         }
-        .overlay(alignment: .topTrailing) {
-            if let event = store.simulatedEvent {
-                DemoNotificationView(event: event).environment(store).padding(24)
+        .onChange(of: store.errorMessage) { _, message in
+            if message != nil { closeSwitcher() }
+        }
+        .onChange(of: store.section) { _, _ in closeSwitcher() }
+        .onChange(of: store.followedSeries.map(\.id)) { _, _ in closeSwitcher() }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { _ in closeSwitcher() }
+    }
+
+    private func handleFocusKey(_ event: NSEvent) -> Bool {
+        guard store.section == .overview, !store.isSearchPresented, !store.isAlertSheetPresented,
+              !store.isOnboardingPresented, store.errorMessage == nil, removal == nil,
+              !store.followedSeries.isEmpty else { return false }
+        let modifiers = event.modifierFlags.intersection([.command, .control, .option, .shift])
+        if switcherSelection != nil {
+            if event.type == .flagsChanged {
+                if !modifiers.contains(.command) { commitSwitcher() }
+                return false
             }
+            if Int(event.keyCode) == kVK_Escape { closeSwitcher(); return true }
+            if [kVK_Return, kVK_ANSI_KeypadEnter].contains(Int(event.keyCode)) { commitSwitcher(); return true }
         }
+        guard event.type == .keyDown, [kVK_DownArrow, kVK_UpArrow].contains(Int(event.keyCode)),
+              modifiers.isEmpty || modifiers == .command else {
+            if event.type == .keyDown { closeSwitcher() }
+            return false
+        }
+        let items = store.followedSeries
+        let current = items.firstIndex { $0.id == (switcherSelection ?? store.selectedSeries?.id) } ?? 0
+        let step = Int(event.keyCode) == kVK_DownArrow ? 1 : -1
+        if modifiers == .command || switcherSelection != nil {
+            let next = (current + step + items.count) % items.count
+            dismissSidebarPreview()
+            withAnimation(reduceMotion ? nil : FocusSwitcherMotion.presentation) { switcherSelection = items[next].id }
+        } else {
+            let next = min(items.count - 1, max(0, current + step))
+            store.show(items[next])
+        }
+        return true
+    }
+
+    private func commitSwitcher() {
+        if let item = store.followedSeries.first(where: { $0.id == switcherSelection }) { store.show(item) }
+        closeSwitcher()
+    }
+
+    private func closeSwitcher() {
+        guard switcherSelection != nil else { return }
+        withAnimation(reduceMotion ? nil : FocusSwitcherMotion.presentation) { switcherSelection = nil }
     }
 
     private var columnVisibility: NavigationSplitViewVisibility {
@@ -156,37 +247,37 @@ struct WorkspaceView: View {
     }
 
     private var sidebarContent: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: Self.sidebarSpacing) {
             Button { store.isSearchPresented = true } label: {
-                HStack(spacing: 9) {
+                HStack(spacing: Self.searchSpacing) {
                     Image(systemName: "magnifyingglass")
                     Text("Rechercher")
                     Spacer()
-                    Text("⌘K").font(.system(size: 11)).foregroundStyle(SemaTheme.sidebarSecondaryText)
+                    Text("⌘K").font(.subheadline).foregroundStyle(SemaTheme.sidebarSecondaryText)
                 }
-                .font(.system(size: 12)).foregroundStyle(.primary)
-                .padding(11).background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 9))
+                .font(.callout).foregroundStyle(.primary)
+                .padding(Self.searchPadding).background(SemaTheme.quietFill, in: RoundedRectangle(cornerRadius: Self.searchCorner))
                 .contentShape(Rectangle())
             }
             .buttonStyle(SemaPressStyle()).help("Rechercher un repère · ⌘K")
-            .padding(.horizontal, 14).padding(.top, 20)
+            .padding(.horizontal, Self.searchInset).padding(.top, SemaTheme.minorSpacing)
 
-            VStack(spacing: 2) {
+            VStack(spacing: Self.itemSpacing) {
                 ForEach(WorkspaceSection.allCases.filter { $0 != .overview }) { SidebarItem(section: $0) }
             }
-            .padding(.horizontal, 10)
+            .padding(.horizontal, Self.itemsInset)
 
-            VStack(spacing: 8) {
+            VStack(spacing: SemaTheme.minorSpacing) {
                 HStack {
-                    Text("Mes repères").font(.system(size: 11, weight: .medium)).foregroundStyle(SemaTheme.sidebarSecondaryText)
+                    Text("Mes repères").font(.subheadline.weight(.medium)).foregroundStyle(SemaTheme.sidebarSecondaryText)
                     Spacer()
                     Button { store.section = .explorer } label: { Image(systemName: "plus") }
                         .buttonStyle(.borderless).help("Ajouter un repère")
-                }.padding(.horizontal, 22)
+                }.padding(.horizontal, Self.sidebarMargin)
                 List {
                     ForEach(store.followedSeries) { item in
                         SidebarSeriesRow(series: item)
-                            .listRowInsets(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10))
+                            .listRowInsets(Self.rowInsets)
                             .listRowSeparator(.hidden).listRowBackground(Color.clear)
                             .contextMenu {
                                 Button(store.isFavorite(item.id) ? "Retirer des favoris" : "Ajouter aux favoris") { store.toggleFavorite(item.id) }
@@ -203,7 +294,7 @@ struct WorkspaceView: View {
             }
             .frame(maxHeight: .infinity)
 
-            profileButton.padding(.horizontal, 22).padding(.bottom, 22)
+            profileButton.padding(.horizontal, Self.sidebarMargin).padding(.bottom, Self.sidebarMargin)
         }
     }
 
@@ -212,17 +303,17 @@ struct WorkspaceView: View {
             dismissSidebarPreview()
             store.settingsTab = .profile; openSettings()
         } label: {
-            HStack(spacing: 10) {
+            HStack(spacing: Self.profileSpacing) {
                 ProfileAvatar(profile: store.profile)
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: Self.profileTextSpacing) {
                     if !store.profile.displayName.isEmpty {
-                        Text(store.profile.displayName).font(.system(size: 12, weight: .medium))
+                        Text(store.profile.displayName).font(.callout.weight(.medium))
                             .foregroundStyle(.primary).lineLimit(1)
                     }
-                    Text("Mon espace").font(.system(size: store.profile.displayName.isEmpty ? 13 : 11))
+                    Text("Mon espace").font(store.profile.displayName.isEmpty ? .body : .subheadline)
                 }
                 Spacer(minLength: 0)
-                Image(systemName: "gearshape").font(.system(size: 12))
+                Image(systemName: "gearshape").font(.callout)
             }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
         }
         .buttonStyle(.plain).foregroundStyle(.primary)
@@ -241,20 +332,22 @@ struct WorkspaceView: View {
     }
 
     private var dataStatus: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: SemaTheme.minorSpacing) {
             Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
             Text(store.status ?? "Démonstration · valeurs fictives")
-                .lineLimit(2).help(store.status ?? "Les valeurs de démonstration ne sont pas des cours actuels.")
-            Spacer(minLength: 12)
+                .lineLimit(Self.statusLines).help(store.status ?? "Les valeurs de démonstration ne sont pas des cours actuels.")
+            Spacer(minLength: Self.statusSpacing)
             if !store.hasWebstatKey {
                 Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
             }
         }
-        .font(.system(size: 11)).foregroundStyle(.secondary)
+        .font(.subheadline).foregroundStyle(.secondary)
     }
 }
 
 private struct SidebarSeriesRow: View {
+    private static let textSpacing: CGFloat = 6
+    private static let nameLines = 2
     @Environment(AppStore.self) private var store
     let series: MarketSeries
     private var selected: Bool { store.section == .overview && store.selectedSeries?.id == series.id }
@@ -262,13 +355,13 @@ private struct SidebarSeriesRow: View {
     var body: some View {
         let displayed = store.displayedSeries(series)
         Button { store.show(series); store.section = .overview } label: {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(displayed.name).font(.system(size: 12, weight: selected ? .medium : .regular))
-                    .foregroundStyle(.primary).lineLimit(2).multilineTextAlignment(.leading)
-                Text(MarketFormat.value(displayed)).font(.system(size: 11)).monospacedDigit().foregroundStyle(SemaTheme.sidebarSecondaryText)
+            VStack(alignment: .leading, spacing: Self.textSpacing) {
+                Text(displayed.name).font(.callout.weight(selected ? .medium : .regular))
+                    .foregroundStyle(.primary).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
+                Text(MarketFormat.value(displayed)).font(.subheadline).monospacedDigit().foregroundStyle(SemaTheme.sidebarSecondaryText)
             }
-            .frame(maxWidth: .infinity, alignment: .leading).padding(12)
-            .background(selected ? SemaTheme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: 10))
+            .frame(maxWidth: .infinity, alignment: .leading).padding(SemaTheme.rowPadding)
+            .background(selected ? SemaTheme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
             .contentShape(Rectangle())
         }
         .buttonStyle(SemaPressStyle())
@@ -278,6 +371,10 @@ private struct SidebarSeriesRow: View {
 }
 
 private struct SidebarItem: View {
+    private static let iconSpacing: CGFloat = 10
+    private static let iconWidth: CGFloat = 17
+    private static let countSpacing: CGFloat = 4
+    private static let verticalPadding: CGFloat = 10
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
@@ -286,26 +383,26 @@ private struct SidebarItem: View {
 
     var body: some View {
         Button { store.section = section } label: {
-            HStack(spacing: 10) {
-                Image(systemName: section.symbol).frame(width: 17)
+            HStack(spacing: Self.iconSpacing) {
+                Image(systemName: section.symbol).frame(width: Self.iconWidth)
                 Text(section.title)
-                Spacer(minLength: 4)
+                Spacer(minLength: Self.countSpacing)
                 if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(SemaTheme.sidebarSecondaryText) }
                 if section == .alerts && !store.macroAlerts.isEmpty {
                     Text("\(store.macroAlerts.count)").foregroundStyle(SemaTheme.sidebarSecondaryText)
                 }
             }
-            .font(.system(size: 13, weight: selected ? .medium : .regular))
+            .font(.body.weight(selected ? .medium : .regular))
             .foregroundStyle(.primary)
-            .padding(.horizontal, 12).padding(.vertical, 10)
-            .background(selected ? SemaTheme.sidebarSelection : Color.primary.opacity(isHovered ? 0.035 : 0),
-                        in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .padding(.horizontal, SemaTheme.rowPadding).padding(.vertical, Self.verticalPadding)
+            .background(selected ? SemaTheme.sidebarSelection : (isHovered ? SemaTheme.hoverFill : .clear),
+                        in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner, style: .continuous))
             .contentShape(Rectangle())
         }
         .buttonStyle(SemaPressStyle())
         .accessibilityAddTraits(selected ? .isSelected : [])
         .onHover { isHovered = $0 }
-        .animation(reduceMotion ? nil : .easeOut(duration: 0.14), value: isHovered)
+        .animation(reduceMotion ? nil : .easeOut(duration: SemaTheme.hoverDuration), value: isHovered)
     }
 }
 
@@ -315,6 +412,8 @@ private enum SidebarHoverZone { case control, panel }
 // Survol de l’icône → aperçu superposé ; sortie de l’icône ET du panneau → fermeture.
 // Le délai couvre le passage du pointeur entre la barre d’outils et la sidebar.
 private enum FocusMotion {
+    static let sidebarMinWidth: CGFloat = 220
+    static let sidebarMaxWidth: CGFloat = 280
     static let sidebarWidth: CGFloat = 232
     static let sidebar = Animation.snappy(duration: 0.24, extraBounce: 0)
     static let hoverExitDelay: Duration = .milliseconds(220)

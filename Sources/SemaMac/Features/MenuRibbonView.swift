@@ -1,40 +1,21 @@
 // Présente les favoris et leurs historiques dans le bandeau partagé avec le hub.
 import AppKit
 import SwiftUI
-import Charts
 import MarketCore
 
-// BANDEAU
-//   0 ms  Les favoris en cache sont immédiatement disponibles.
-// 220 ms  Le panneau apparaît depuis le bord choisi, sur 8 pt (AppKit).
-// 160 ms  Un survol change seulement la profondeur de la carte.
-// Le défilement des cartes reste natif, au trackpad et au clavier.
-enum MenuRibbonLayout {
-    static let height = topPadding + cardHeight + bottomPadding
-    static let verticalWidth: CGFloat = 368
-    static let signatureWidth: CGFloat = 252
-    static let signatureHeight: CGFloat = 184
-    static let cardCornerRadius: CGFloat = 22
-    static let screenInset: CGFloat = 6
-    static let padding: CGFloat = 18
-    static let topPadding: CGFloat = 6
-    static let bottomPadding: CGFloat = 12
-    static let headerHeight: CGFloat = 32
-    static let headerSpacing: CGFloat = 6
-    static let spacing: CGFloat = 12
-    static let minimumCardWidth: CGFloat = 248
-    static let maximumCardWidth: CGFloat = 600
-    static let cardHeight: CGFloat = 184
-    static let controlColumnWidth: CGFloat = 76
-    static let periodRowHeight: CGFloat = 20
-    static let controlColumnPadding: CGFloat = 8
-    static let revealDuration = 0.22
-    static let dismissDuration = 0.13
-    static let hoverDuration = 0.16
-    static let revealOffset: CGFloat = 8
-}
-
 struct MenuRibbonView: View {
+    private static let cardsVerticalPadding: CGFloat = 2
+    private static let periodSpacing: CGFloat = 2
+    private static let periodLabelSpacing: CGFloat = 7
+    private static let indicatorWidth: CGFloat = 3
+    private static let indicatorHeight: CGFloat = 12
+    private static let periodPadding: CGFloat = 6
+    private static let verticalPickerWidth: CGFloat = 278
+    private static let pickerWidth: CGFloat = 350
+    private static let pickerHorizontalPadding: CGFloat = 10
+    private static let pickerVerticalPadding: CGFloat = 3
+    private static let emptySpacing: CGFloat = 10
+    private static let emptyButtonTopPadding: CGFloat = 4
     @Environment(AppStore.self) private var store
     let presentationID: UUID?
     let openWorkspace: () -> Void
@@ -55,7 +36,7 @@ struct MenuRibbonView: View {
                                 RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
                                     .frame(height: MenuRibbonLayout.cardHeight)
                             }
-                        }.padding(.vertical, 2)
+                        }.padding(.vertical, Self.cardsVerticalPadding)
                     }.scrollIndicators(.automatic).scrollClipDisabled()
                 }
                 RibbonSignatureView(presentationID: presentationID).frame(height: MenuRibbonLayout.signatureHeight)
@@ -64,11 +45,6 @@ struct MenuRibbonView: View {
                 HStack(alignment: .top, spacing: MenuRibbonLayout.spacing) {
                     controlColumn
                     horizontalFavorites
-                    ViewThatFits(in: .horizontal) {
-                        RibbonSignatureView(presentationID: presentationID)
-                            .frame(width: MenuRibbonLayout.signatureWidth, height: MenuRibbonLayout.signatureHeight)
-                        Color.clear.frame(width: 0, height: 0)
-                    }
                 }
                 .frame(height: MenuRibbonLayout.cardHeight)
             }
@@ -88,7 +64,7 @@ struct MenuRibbonView: View {
         GeometryReader { geometry in
             let capacity = max(1, Int((geometry.size.width + MenuRibbonLayout.spacing)
                                      / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)))
-            let visibleCount = max(1, min(items.count, capacity))
+            let visibleCount = max(1, min(items.count, capacity, MenuRibbonLayout.preferredVisibleCards))
             let cardWidth = min(MenuRibbonLayout.maximumCardWidth,
                 (geometry.size.width - CGFloat(visibleCount - 1) * MenuRibbonLayout.spacing) / CGFloat(visibleCount))
             if items.isEmpty {
@@ -100,6 +76,8 @@ struct MenuRibbonView: View {
                             RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
                                 .frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
                         }
+                        RibbonSignatureView(presentationID: presentationID)
+                            .frame(width: cardWidth, height: MenuRibbonLayout.signatureHeight)
                     }
                     .scrollTargetLayout()
                 }
@@ -112,98 +90,90 @@ struct MenuRibbonView: View {
     }
 
     private var controlColumn: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: Self.periodSpacing) {
             if !items.isEmpty {
-                ForEach(HistoryPeriod.allCases) { candidate in
+                ForEach(HistoryPeriod.visible) { candidate in
                     Button { period = candidate } label: {
-                        Text(candidate.title)
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(period == candidate ? Color.white : Color.primary)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: MenuRibbonLayout.periodRowHeight)
-                            .background(period == candidate ? store.palette.controlAccent : Color.clear,
-                                in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-                            .contentShape(RoundedRectangle(cornerRadius: 6))
+                        HStack(spacing: Self.periodLabelSpacing) {
+                            Capsule().fill(period == candidate ? store.palette.accent : .clear)
+                                .frame(width: Self.indicatorWidth, height: Self.indicatorHeight)
+                            Text(candidate.title).font(.subheadline.weight(period == candidate ? .semibold : .regular))
+                                .fixedSize(horizontal: true, vertical: false)
+                                .foregroundStyle(.primary)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, Self.periodPadding)
+                        .frame(maxWidth: .infinity).frame(height: MenuRibbonLayout.periodRowHeight)
+                        .background(.regularMaterial, in: Capsule())
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(SemaPressStyle())
                     .accessibilityAddTraits(period == candidate ? .isSelected : [])
                     .help(candidate.title + " · Historique disponible sur ce Mac")
                 }
             }
-            Spacer(minLength: 2)
+            Spacer(minLength: Self.periodSpacing)
             settingsButton
         }
         .padding(MenuRibbonLayout.controlColumnPadding)
         .frame(width: MenuRibbonLayout.controlColumnWidth, height: MenuRibbonLayout.cardHeight)
-        .modifier(RibbonSurface())
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Période de comparaison et réglages")
     }
 
     private var settingsButton: some View {
         Button(action: openSettings) {
-            Image(systemName: "gearshape").frame(width: 26, height: 26).contentShape(Circle())
+            Image(systemName: "gearshape").frame(width: SemaTheme.iconButtonSize, height: SemaTheme.iconButtonSize).contentShape(Circle())
         }
         .buttonStyle(.plain)
+        .background(.regularMaterial, in: Circle())
         .help("Réglages de sema").accessibilityLabel("Réglages de sema")
     }
 
     private var header: some View {
         HStack(spacing: 0) {
             Spacer()
-            HStack(spacing: 8) {
+            HStack(spacing: SemaTheme.minorSpacing) {
                 if !items.isEmpty {
-                    RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent,
-                        compact: isVertical)
-                        .frame(width: isVertical ? 278 : 350)
+                    RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent)
+                        .frame(width: isVertical ? Self.verticalPickerWidth : Self.pickerWidth)
                         .help("Historique disponible sur ce Mac · Tout utilise le cache chargé")
                 }
                 settingsButton
             }
-            .padding(.horizontal, 10).padding(.vertical, 3)
+            .padding(.horizontal, Self.pickerHorizontalPadding).padding(.vertical, Self.pickerVerticalPadding)
             .modifier(RibbonSurface())
         }
         .foregroundStyle(.primary).frame(height: MenuRibbonLayout.headerHeight)
     }
 
     private var emptyState: some View {
-        VStack(spacing: 10) {
-            Image(systemName: "star").font(.system(size: 24, weight: .light)).foregroundStyle(store.palette.accent)
-            Text("Vos repères, en un coup d’œil.").font(.system(size: 17, weight: .medium))
-            Text("Épinglez les repères à retrouver dans ce bandeau.").font(.system(size: 12)).foregroundStyle(.secondary)
+        VStack(spacing: Self.emptySpacing) {
+            Image(systemName: "star").font(MenuRibbonLayout.emptySymbolFont).foregroundStyle(store.palette.accent)
+            Text("Vos repères, en un coup d’œil.").font(.title2.weight(.medium))
+            Text("Épinglez les repères à retrouver dans ce bandeau.").font(.callout).foregroundStyle(.secondary)
             Button("Choisir mes favoris") { store.section = .overview; openWorkspace() }
-                .buttonStyle(.borderedProminent).controlSize(.small).padding(.top, 4)
+                .buttonStyle(.borderedProminent).controlSize(.small).padding(.top, Self.emptyButtonTopPadding)
         }
-        .padding(16).modifier(RibbonSurface())
+        .padding(MenuRibbonLayout.cardPadding).modifier(RibbonSurface())
     }
 
     private func open(_ item: MarketSeries) { store.show(item); store.section = .overview; openWorkspace() }
 }
 
-/// All periods remain directly available in one native segmented control.
+/// Les cinq horizons restent directement disponibles dans un contrôle natif.
 private struct RibbonPeriodPicker: NSViewRepresentable {
     @Binding var selection: HistoryPeriod
     let accent: Color
-    let compact: Bool
-    private let periods = HistoryPeriod.allCases
-
-    private func title(for period: HistoryPeriod) -> String {
-        guard compact else { return period.title }
-        switch period {
-        case .month: return "1 m"
-        case .quarter: return "3 m"
-        case .halfYear: return "6 m"
-        default: return period.title
-        }
-    }
+    private let periods = HistoryPeriod.visible
 
     func makeCoordinator() -> Coordinator { Coordinator(selection: $selection, periods: periods) }
 
     func makeNSView(context: Context) -> NSSegmentedControl {
-        let control = NSSegmentedControl(labels: periods.map { title(for: $0) }, trackingMode: .selectOne,
+        let control = NSSegmentedControl(labels: periods.map(\.title), trackingMode: .selectOne,
             target: context.coordinator, action: #selector(Coordinator.selectPeriod(_:)))
         control.controlSize = .small
-        control.font = .systemFont(ofSize: 11)
+        control.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
         control.segmentStyle = .rounded
         control.setAccessibilityLabel("Période de comparaison")
         return control
@@ -214,7 +184,7 @@ private struct RibbonPeriodPicker: NSViewRepresentable {
         context.coordinator.periods = periods
         control.segmentCount = periods.count
         for (index, period) in periods.enumerated() {
-            control.setLabel(title(for: period), forSegment: index)
+            control.setLabel(period.title, forSegment: index)
             control.setToolTip(period.title, forSegment: index)
         }
         control.selectedSegmentBezelColor = NSColor(accent)
@@ -232,84 +202,5 @@ private struct RibbonPeriodPicker: NSViewRepresentable {
             guard periods.indices.contains(sender.selectedSegment) else { return }
             selection.wrappedValue = periods[sender.selectedSegment]
         }
-    }
-}
-
-struct RibbonCard: View {
-    @Environment(\.semaAccent) private var accent
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var hovered = false
-    let series: MarketSeries
-    let period: HistoryPeriod
-    let action: () -> Void
-    private var points: [MarketObservation] { series.history(for: period) }
-    private var comparison: String {
-        series.supports(period) ? MarketFormat.change(series, period: period) : "Historique partiel"
-    }
-
-    var body: some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 9) {
-                heading
-                value
-                sparkline
-                publication
-            }
-            .foregroundStyle(.primary).padding(16)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .modifier(RibbonSurface(emphasized: hovered))
-            .contentShape(RoundedRectangle(cornerRadius: MenuRibbonLayout.cardCornerRadius))
-        }
-        .buttonStyle(SemaPressStyle())
-        .onHover { hovered = $0 }
-        .animation(reduceMotion ? nil : .easeOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
-        .help(series.name + " · Ouvrir le détail dans sema")
-        .accessibilityLabel(accessibilityDescription)
-    }
-
-    private var heading: some View {
-        HStack(spacing: 10) {
-            Text(series.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
-            Spacer(minLength: 0)
-            OriginBadge(series: series)
-            Image(systemName: "arrow.up.right").font(.system(size: 10)).foregroundStyle(.tertiary)
-        }
-    }
-    private var value: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
-                .font(.system(size: 32, weight: .medium)).tracking(-0.9).monospacedDigit()
-                .lineLimit(1).minimumScaleFactor(0.7)
-            Text(series.displayUnit).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
-            Spacer(minLength: 0)
-        }
-    }
-    @ViewBuilder private var sparkline: some View {
-        if points.count > 1 {
-            Chart(points) { point in
-                LineMark(x: .value("Date", point.date), y: .value(series.displayUnit, MarketFormat.double(point.value)))
-                    .foregroundStyle(accent)
-                    .lineStyle(StrokeStyle(lineWidth: 1.8, lineCap: .round, lineJoin: .round))
-            }
-            .chartXAxis(.hidden).chartYAxis(.hidden)
-            .chartYScale(domain: .automatic(includesZero: false))
-            .frame(height: 45).accessibilityHidden(true)
-        } else {
-            Text(points.isEmpty ? "Historique indisponible" : "Une observation disponible")
-                .font(.system(size: 11)).foregroundStyle(.tertiary).frame(height: 45)
-        }
-    }
-    private var publication: some View {
-        HStack(spacing: 8) {
-            Text(comparison).lineLimit(1)
-            Spacer(minLength: 0)
-            Text(series.latest.map { MarketFormat.date($0.date) } ?? "Aucune publication").lineLimit(1)
-        }
-        .font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
-    }
-    private var accessibilityDescription: String {
-        series.name + ", " + MarketFormat.value(series)
-            + (series.isDemo ? ", démonstration" : "") + ", " + comparison
-            + " sur " + period.title + ", publication du " + MarketFormat.date(series.latest?.date)
     }
 }

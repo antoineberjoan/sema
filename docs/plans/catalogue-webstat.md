@@ -90,7 +90,7 @@ L’ajout d’une série initialise le checkpoint sur la dernière observation c
 | Lot | Travail | Zones principales |
 | --- | --- | --- |
 | C1 | Prototype clavier de recherche, filtres et aperçu sur fixtures explicites | `Features/SeriesSearchView.swift`, futur écran Explorer, `WorkspaceView.swift` |
-| C2 | Description générique, recherche distante et interprétation des métadonnées | `MarketCore/WebstatClient.swift`, `MarketSeries.swift`, tests du client |
+| C2 | Description générique, recherche distante et interprétation des métadonnées | `MarketCore/Webstat/WebstatClient.swift`, `MarketSeries.swift`, tests du client |
 | C3 | Séries suivies, historique progressif, migration et erreurs par série | `AppStore.swift`, `PreferencesStore.swift`, `LocalStorage.swift`, `HistoryChart.swift` |
 | C4 | Alertes, accessibilité, revue visuelle et documentation | `AlertsView.swift`, formatage, tests des seuils, `PRODUCT.md`, landing après validation |
 

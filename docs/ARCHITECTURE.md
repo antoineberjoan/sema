@@ -48,7 +48,15 @@ Le champ optionnel `appearanceID` en v2 conserve le mode Système / Clair / Somb
 
 Les états de sélection sont partagés volontairement entre panneau et fenêtre. Une action sur un favori doit être visible immédiatement dans les deux.
 
+### Navigation clavier
+
+`GlobalShortcuts` réserve les deux combinaisons via `RegisterEventHotKey` et un gestionnaire Carbon natif. Aucun observateur global de frappe ni permission d’accessibilité n’est ajouté. Les remplacements sont réservés avant de libérer les anciens ; une erreur de réservation ou de sauvegarde conserve le réglage précédent. L’enregistrement suspend les réservations de sema, capture les touches dans son seul champ puis les rétablit à la sortie, y compris à la fermeture de la fenêtre.
+
+`FocusKeyboard` observe uniquement les événements locaux de la fenêtre principale, hors saisie, contrôle de valeur et feuille. `WorkspaceView` possède le choix provisoire du sélecteur ; `AppStore.show` n’est appelé qu’à la validation. Un changement de fenêtre, une feuille ou Échap annule ce choix. Les calculs et données ne sont pas dupliqués. `HistoryPeriod.visible` partage les cinq horizons visibles entre les deux surfaces ; les autres cas du modèle historique restent disponibles aux calculs existants.
+
 ## Persistance
+
+Le champ optionnel v2 `shortcuts` conserve les deux combinaisons ; son absence utilise les valeurs initiales, tandis qu’une action explicitement nulle reste désactivée. Les préférences existantes gardent leur sélection et leurs favoris. Les quatre favoris initiaux concernent uniquement un document de préférences absent.
 
 Le champ optionnel v2 `invertedCurrencyPairs` conserve les paires lues à l’inverse (par exemple `EUR/USD`), indépendamment du point d’accès Webstat/BCE et de la fréquence. Absent, il conserve le sens publié. `AppStore.displayedSeries` applique cette préférence aux seules vues ; le changement est sauvegardé atomiquement avant application. Un cache en mémoire conserve la projection par identifiant avec sa série source : tant que celle-ci est égale, le bouton réutilise les points inversés. Une modification de valeur, date ou métadonnée force le recalcul, sans second appel API ni deuxième cache sur disque. Le survol du graphique est réinitialisé lorsque l’unité change.
 
