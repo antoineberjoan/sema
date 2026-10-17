@@ -73,7 +73,7 @@
   }, { threshold: .18 });
   features.forEach(feature => {
     feature.dataset.stage = '0';
-    observer.observe(feature.querySelector('figure'));
+    observer.observe(feature.querySelector(feature.dataset.scene === 'history' ? '.history-plot' : 'figure'));
   });
   motion.addEventListener('change', () => { if (motion.matches) finish(); });
   document.addEventListener('visibilitychange', () => { if (document.hidden) finish(); });

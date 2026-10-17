@@ -1,6 +1,6 @@
 # Démonstrations de la landing
 
-Statut : refonte en cours, 17 octobre 2026. Antoine rejette dans le chat la répétition du même écran sur les trois sections ; il demande des compositions et animations différentes, dans l’esprit de Monocle et Resurf. Marque Notion relue : `3fbd18bb0dea818fa7f4fc7483c767b3`.
+Statut : refonte implémentée et vérifiée en aperçu, publication en attente, 17 octobre 2026. Antoine rejette dans le chat la répétition du même écran sur les trois sections ; il demande des compositions et animations différentes, dans l’esprit de Monocle et Resurf. Marque Notion relue : `3fbd18bb0dea818fa7f4fc7483c767b3`.
 
 ## Direction retenue pour la revue
 
@@ -20,7 +20,16 @@ Références observées : [Monocle](https://trymonocle.app/) pour le bureau en c
 
 Critères : compositions reconnaissables et distinctes ; navigation naturelle ; texte et chiffres lisibles à 390 px ; aucune interaction requise pour comprendre les fonctions ; progression des scènes une seule fois ; état réduit et interruption ; header de téléchargement, logo, aide, Ko-fi et liens légaux conservés.
 
-HTML, IDs, ARIA, références locales, syntaxe JavaScript et diff vérifiés. Revue navigateur de l’aperçu à effectuer avant présentation. Branche existante `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2) ; checkout canonique et modifications natives préservés.
+Branche existante `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2) ; checkout canonique et modifications natives préservés.
+
+- Aperçu `d0eccc3` : Vercel READY, `dpl_9WkbLJ1MRLJ27tymwVSnT4iJQ4hn`, https://sema-qiue82xjf-antoine-berjoan.vercel.app/. Lien temporaire créé dans le périmètre de revue précédemment autorisé ; aucun secret dans Git.
+- 1280 × 720 : bandeau à quatre cartes avec contexte de travail, recherche asymétrique avec touches, historique directement sur la page ; header de téléchargement visible après le CTA. Les scènes restent dans le flux et ne se rejouent pas au retour.
+- 390 × 844 : deux cartes lisibles, recherche empilée et historique cadré ; largeur de document 390 px, figures 350 px. Captures cohérentes obtenues avec `tab.screenshot`. 820 px : quatre cartes et leurs noms financiers contenus, sans débordement.
+- Parcours clavier : depuis Homebrew, Tab atteint directement la première question ; les faux contrôles des illustrations ne prennent pas le focus. Téléchargement et URLs de release inchangés, pas de nouveau téléchargement ou installation pendant cette revue.
+- Recherche observée en apparition, puis résultats complets ; styles finaux lisibles. Ajustement final : déclencher le tracé de l’historique à l’arrivée de la zone graphique, plutôt que dès l’arrivée de sa valeur.
+- Contrôle isolé du contrôleur : état réduit immédiat, observation retirée après l’entrée, animations annulées au masquage, à la réduction du mouvement et à la sortie de page. La préférence système de mouvement n’a pas été changée ; ce mode n’a pas été observé dans le navigateur.
+- HTML, IDs, ARIA, références locales, syntaxe JavaScript et diff vérifiés ; aucune dépendance ajoutée. CI verte sur `d0eccc3` : run `39036643226`. Aucun message d’erreur de la landing observé ; le journal conservait seulement une erreur de la page de connexion Vercel visitée avant l’accès à l’aperçu.
+- Captures locales de revue : `sema-landing-scenes-desktop.png` et `sema-landing-scenes-mobile.png` dans les artefacts du chat. La précision d’Antoine sur les compositions distinctes est reportée dans Notion Marque.
 
 ## Téléchargement — proposition en aperçu
 
