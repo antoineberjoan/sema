@@ -295,6 +295,7 @@ struct SeriesDetailView: View {
                 store.prepareAlert(for: series)
             } label: { Label("Créer une alerte", systemImage: "bell.badge") }
             .buttonStyle(.bordered).controlSize(.small)
+            .buttonBorderShape(.capsule)
             .font(.callout).tint(store.palette.accent)
             .disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
         }

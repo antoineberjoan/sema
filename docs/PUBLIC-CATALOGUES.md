@@ -2,9 +2,11 @@
 
 ## Contrat produit
 
-Le catalogue appartient au fournisseur. Sema ne maintient pas une liste autorisée d’indices : l’utilisateur choisit une source, recherche un jeu publié, choisit ses dimensions ou saisit sa clé exacte, puis prévisualise la série avant de la suivre. La liste initiale Webstat et les exemples de ce document ne limitent pas les possibilités.
+Le catalogue appartient au fournisseur. Sema ne maintient pas une liste autorisée d’indices : l’utilisateur choisit une source, recherche un jeu publié puis une série existante par son libellé, et prévisualise la série avant de la suivre. Antoine précise le 17 octobre que les dimensions et la clé exacte doivent rester facultatives dans Recherche avancée, sans formulaire obligatoire. La liste initiale Webstat et les exemples de ce document ne limitent pas les possibilités.
 
 Découvrir un catalogue ne télécharge pas toutes ses observations. Chaque combinaison désigne un repère ; une réponse contenant plusieurs séries doit être précisée, sans sélection silencieuse de la première. Une combinaison inexistante ou un format non interprété reste une erreur explicite, sans valeurs de remplacement.
+
+La liste des séries SDMX utilise `detail=nodata` : clés complètes et attributs officiels, sans observations. Un même décodage de descripteur sert au catalogue et à l’historique, afin de conserver les identifiants, unités et échelles. La liste reste en mémoire pendant la consultation du jeu ; les observations sont téléchargées pour la seule série ouverte. New York expose ses mesures publiées et Banque mondiale les pays et agrégats de l’indicateur choisi. Les métadonnées de catalogue SDMX sont limitées à 20 Mio pour borner le transfert et l’arbre XML : un dépassement ou un pied de réponse tronquée produit une erreur explicite, jamais une liste partielle présentée comme complète. Recherche avancée reste accessible dans ce cas.
 
 ## Connecteurs disponibles
 

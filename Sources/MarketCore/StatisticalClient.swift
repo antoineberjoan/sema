@@ -4,7 +4,7 @@ import Foundation
 /// Catalogue discovery is independent of observations: no bulk download of every time series.
 public struct StatisticalClient: Sendable {
     public enum ClientError: Error, LocalizedError {
-        case unavailable, quotaReached, invalidData, noData, metadataChanged, chooseOneSeries, invalidKey, unsupportedPeriod
+        case unavailable, quotaReached, invalidData, noData, metadataChanged, chooseOneSeries, invalidKey, unsupportedPeriod, catalogueTooLarge
         public var errorDescription: String? {
             switch self {
             case .unavailable: "La source est indisponible. Les observations précédentes restent conservées."
@@ -15,10 +15,14 @@ public struct StatisticalClient: Sendable {
             case .chooseOneSeries: "Cette combinaison renvoie plusieurs séries. Précisez chaque dimension pour choisir un repère unique."
             case .invalidKey: "Choisissez une valeur pour chaque dimension, ou renseignez une clé exacte valide."
             case .unsupportedPeriod: "La source utilise une période que Sema ne sait pas encore lire. L’historique n’est pas présenté comme complet."
+            case .catalogueTooLarge: "Ce catalogue est trop volumineux. Précisez le repère dans Recherche avancée."
             }
         }
     }
     public init() {}
+
+    // Bound the XML tree and the list held in memory; never present a truncated catalogue.
+    private static let seriesCatalogueByteLimit = 20 * 1024 * 1024
 
     public static func catalogueRequest(_ source: StatisticalSource) -> URLRequest {
         let path: String
@@ -87,6 +91,35 @@ public struct StatisticalClient: Sendable {
         let detail = source == .eurostat ? "&detail=referencepartial" : ""
         return request(source: source, path: "\(prefix)/dataflow/\(component(dataset.agency))/\(component(dataset.code))/\(component(dataset.version))?references=\(references)\(detail)", structure: true)
     }
+
+    public static func seriesCatalogueRequest(_ dataset: StatisticalDataset) -> URLRequest {
+        var value = request(source: dataset.source, path: dataPath(dataset, key: "") + "?detail=nodata")
+        value.setValue("application/vnd.sdmx.structurespecificdata+xml;version=2.1", forHTTPHeaderField: "Accept")
+        return value
+    }
+
+    public func seriesCatalogue(dataset: StatisticalDataset, structure: StatisticalStructure) async throws -> [StatisticalSeriesDescriptor] {
+        if !dataset.source.isSDMX {
+            guard let dimension = structure.dimensions.first else { throw ClientError.invalidData }
+            return dimension.codes.map { code in
+                .init(dataset: dataset, key: code.id, dimensionIDs: [dimension.id],
+                    fields: ["TITLE": dataset.title + " · " + code.title, dimension.id: code.id],
+                    labels: [dimension.id: code.title])
+            }
+        }
+        let session = URLSession(configuration: .ephemeral)
+        defer { session.invalidateAndCancel() }
+        let (bytes, response) = try await session.bytes(for: Self.seriesCatalogueRequest(dataset))
+        try Self.validate(response)
+        guard response.expectedContentLength <= Int64(Self.seriesCatalogueByteLimit) else { throw ClientError.catalogueTooLarge }
+        var data = Data()
+        for try await byte in bytes {
+            guard data.count < Self.seriesCatalogueByteLimit else { throw ClientError.catalogueTooLarge }
+            data.append(byte)
+        }
+        try Task.checkCancellation()
+        return try SDMXParser.catalogue(data, dataset: dataset, structure: structure)
+    }
     public static func observationsRequest(dataset: StatisticalDataset, key: String, fullHistory: Bool = false, now: Date = .now) throws -> URLRequest {
         guard !key.isEmpty, key != "all", key.count <= 1000,
               key.split(separator: ".", omittingEmptySubsequences: false).allSatisfy({ !$0.isEmpty }),
@@ -102,14 +135,15 @@ public struct StatisticalClient: Sendable {
             let period = fullHistory ? "" : "&date=\(calendar.component(.year, from: start)):\(calendar.component(.year, from: now))"
             return request(source: source, path: "/country/\(component(key))/indicator/\(component(dataset.code))?format=json&per_page=20000\(period)&source=\(component(dataset.agency))")
         }
-        let path: String
-        switch source {
-        case .insee: path = "/data/\(component(dataset.code))/\(component(key))"
-        case .bis: path = "/data/dataflow/\(component(dataset.agency))/\(component(dataset.code))/\(component(dataset.version))/\(component(key))"
-        case .oecd: path = "/data/\(component(dataset.agency)),\(component(dataset.code)),\(component(dataset.version))/\(component(key))"
-        default: path = "/data/\(component(dataset.code))/\(component(key))"
+        return request(source: source, path: dataPath(dataset, key: key) + "?dimensionAtObservation=TIME_PERIOD&endPeriod=\(day(now))" + (fullHistory ? "" : "&startPeriod=\(day(start))"))
+    }
+    private static func dataPath(_ dataset: StatisticalDataset, key: String) -> String {
+        let suffix = key.isEmpty ? "" : "/" + component(key)
+        switch dataset.source {
+        case .bis: return "/data/dataflow/\(component(dataset.agency))/\(component(dataset.code))/\(component(dataset.version))" + suffix
+        case .oecd: return "/data/\(component(dataset.agency)),\(component(dataset.code)),\(component(dataset.version))" + suffix
+        default: return "/data/\(component(dataset.code))" + suffix
         }
-        return request(source: source, path: path + "?dimensionAtObservation=TIME_PERIOD&endPeriod=\(day(now))" + (fullHistory ? "" : "&startPeriod=\(day(start))"))
     }
     public func fetch(dataset: StatisticalDataset, structure: StatisticalStructure, key: String,
                       fullHistory: Bool = false, now: Date = .now) async throws -> MarketSeries {
@@ -140,11 +174,14 @@ public struct StatisticalClient: Sendable {
         defer { session.finishTasksAndInvalidate() }
         let (data, response) = try await session.data(for: request)
         try Task.checkCancellation()
+        try Self.validate(response)
+        return data
+    }
+    private static func validate(_ response: URLResponse) throws {
         guard let http = response as? HTTPURLResponse else { throw ClientError.unavailable }
         if http.statusCode == 429 { throw ClientError.quotaReached }
         if http.statusCode == 204 || http.statusCode == 404 { throw ClientError.noData }
         guard http.statusCode == 200 else { throw ClientError.unavailable }
-        return data
     }
     private static func request(source: StatisticalSource, path: String, structure: Bool = false) -> URLRequest {
         var request = URLRequest(url: URL(string: source.baseURL + path)!)
