@@ -18,9 +18,12 @@
     "proposedURL": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.5.1/Sema-0.5.1-arm64.dmg"
   },
   "homebrew": {
-    "enabled": false,
-    "command": "brew install --cask antoineberjoan/sema/sema",
-    "proposedCommand": "brew install --cask sema-app"
+    "enabled": true,
+    "command": "brew install --cask sema-app",
+    "setupCommands": [
+      "brew tap antoineberjoan/sema",
+      "brew trust --cask antoineberjoan/sema/sema-app"
+    ]
   },
   "validation": {
     "bundleSignature": true,
@@ -29,7 +32,7 @@
     "firstLaunch": false,
     "homebrewInstall": true,
     "homebrewUpgrade": true,
-    "homebrewUpgradeScope": "public tap, exact 0.5.0 → 0.5.1 artifact",
+    "homebrewUpgradeScope": "public sema-app cask, exact 0.5.0 → 0.5.1 artifacts, temporary app directory",
     "publicTap": true,
     "gatekeeperInternetLaunch": false,
     "nativeUIReview": true,

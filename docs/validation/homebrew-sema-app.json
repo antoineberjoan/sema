@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-17",
+  "publicTapCommit": "588119d1d1ab7487e1b56c2527aa3661e701bf8b",
+  "cask": "antoineberjoan/sema/sema-app",
+  "command": "brew install --cask sema-app",
+  "requiresTapSetup": true,
+  "specificCaskTrustAuthorized": true,
+  "freshInstall": "0.5.1",
+  "upgrade": "0.5.0 → 0.5.1",
+  "temporaryAppDirectory": true,
+  "strictSignatureVerified": true,
+  "quarantinePreserved": true,
+  "downloadedAppLaunched": false,
+  "officialHomebrewCatalogue": false
+}

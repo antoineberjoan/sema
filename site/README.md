@@ -1,6 +1,6 @@
 # Landing sema
 
-Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` contient la landing et le guide de marque. Le CTA télécharge directement le DMG publié ; aucune page de téléchargement intermédiaire. `scripts/distribution/sync-download.py` synchronise ce lien, la commande Homebrew copiable et le manifeste JSON `download/release.json` à partir de `distribution/release.json`. Le dossier `download/` ne contient que cette métadonnée. Dans la maquette, `proposedCommand` est affichée et copiable à la demande d’Antoine. Cette copie de texte ne vaut pas activation de la distribution : `homebrew.enabled` reste faux jusqu’à disponibilité et validation du cask.
+Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` contient la landing et le guide de marque. Le CTA télécharge directement le DMG publié ; aucune page de téléchargement intermédiaire. `scripts/distribution/sync-download.py` synchronise ce lien, la commande Homebrew copiable et le manifeste JSON `download/release.json` à partir de `distribution/release.json`. Le dossier `download/` ne contient que cette métadonnée. Le cask `sema-app` est publié et testé dans notre tap. La commande courte est copiable ; « première installation » expose les deux commandes de préparation, issues du même manifeste. Elle nécessite ce tap sur un Mac neuf ; aucune présence dans le catalogue officiel n’est annoncée.
 
 ## Démonstration motion
 

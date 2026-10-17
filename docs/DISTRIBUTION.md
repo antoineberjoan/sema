@@ -21,7 +21,7 @@ Le script produit :
 - le fond Retina et standard dans `background-preview/` ;
 - `Sema-<version>-arm64.dmg.sha256` ;
 - `release.json`, source des métadonnées du site ;
-- `sema.rb.template`, modèle de cask pour le futur tap.
+- `sema-app.rb.template`, modèle de cask pour le futur tap.
 
 Un fichier DMG versionné existant n’est jamais écrasé. Pour un nouvel essai du même numéro, utiliser un autre dossier de sortie. Les volumes temporaires sont démontés sur succès, erreur ou interruption. Le script ne retire aucune quarantaine et ne change pas Gatekeeper.
 
@@ -52,9 +52,19 @@ La vidéo produit de la landing est indépendante du manifeste de distribution. 
 
 ## Activer Homebrew
 
-Le dépôt de distribution public est `antoineberjoan/homebrew-sema`. Le cask se place sous `Casks/sema.rb` dans ce dépôt de distribution ; le code source de sema n’a pas besoin de devenir public. L’adresse immuable de release proposée est inscrite dans le manifeste et dans le modèle de cask.
+Le dépôt de distribution public est `antoineberjoan/homebrew-sema`. Le cask actif est `Casks/sema-app.rb`, avec une copie identique sous `distribution/`. `cask_renames.json` migre le nom précédent `sema`.
 
-Avant activation : créer le dépôt de distribution avec l’audience décidée, publier exactement le DMG contrôlé et son empreinte, vérifier le téléchargement sans authentification, puis tester installation **et** mise à jour sur un environnement distinct. La commande attendue est `brew install --cask antoineberjoan/sema/sema`. Elle n’est pas opérationnelle tant que ces étapes ne sont pas terminées.
+La commande courte est `brew install --cask sema-app` après préparation du tap. Sur un Mac neuf :
+
+```sh
+brew tap antoineberjoan/sema
+brew trust --cask antoineberjoan/sema/sema-app
+brew install --cask sema-app
+```
+
+L’approbation porte uniquement sur ce cask tiers. Le site expose cette préparation dans « première installation ». Ce parcours a été testé le 17 octobre sur les artefacts publics 0.5.0 puis 0.5.1, dans un dossier temporaire : installation neuve et vraie mise à jour réussies, signature valide et quarantaine conservée. Aucun lancement Internet ni contournement Gatekeeper. [Preuves](validation/homebrew-sema-app.json).
+
+Antoine a choisi de ne pas prendre d’adhésion Apple Developer. La distribution reste signée ad hoc ; aucune intégration au catalogue officiel Homebrew ni notarisation n’est déclarée.
 
 Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade` et `validation.internetDownload`. Le générateur de page refuse d’exposer une commande Homebrew active si ces trois valeurs ne sont pas vraies. La désinstallation ne supprime pas les préférences de l’utilisateur ; aucun `zap` automatique n’est défini.
 

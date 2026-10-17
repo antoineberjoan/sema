@@ -6,7 +6,7 @@ Statut : nouvelle proposition motion vérifiée en aperçu, publication en atten
 
 Antoine rejette les trois présentations précédentes, demande la commande Homebrew visible et copiable comme chez Monocle, le retrait de la ligne de compatibilité sous le téléchargement, puis la suppression de la page de téléchargement. Il évoque une vidéo motion comme nouvelle piste. Ces retraits sont demandés ; la vidéo reste une proposition à approuver avant publication.
 
-Le CTA télécharge le DMG existant. Aucun changement de release, de cask, de données natives ou de configuration de sécurité. La cible retenue ensuite est `brew install --cask sema-app`, affichée comme commande prévue et copiable dans la maquette, sans la présenter comme installable sur une machine neuve. `/download/` ne sert plus de page ; seul son manifeste JSON existant est conservé.
+Le CTA télécharge le DMG existant. La release reste 0.5.1. À la demande suivante d’Antoine, le cask public est renommé `sema-app` et la commande `brew install --cask sema-app` est testée réellement. Sur un Mac neuf, elle nécessite de préparer notre tap et d’approuver ce cask précis ; « première installation » donne ces deux commandes sans alourdir le hero. `/download/` ne sert plus de page ; seul son manifeste JSON existant est conservé.
 
 ## Proposition motion
 
@@ -23,7 +23,7 @@ Lecture automatique une fois en vue, sans boucle. Pause hors écran et au masqua
 
 ## Critères et preuves
 
-- Commande prévue exacte issue du manifeste, typographie légère, copie au clic et au clavier avec retour « copié ». Le statut de disponibilité Homebrew reste distinct de la copie du texte.
+- Commande courte exacte issue du manifeste, typographie légère, copie au clic et au clavier avec retour « copié ». Le statut de disponibilité Homebrew reste distinct de la copie du texte.
 - Aucun lien interne vers la page supprimée ; le générateur ne recrée ni cette page ni la ligne sous le CTA.
 - Film lisible, sans audio ni boucle, poster correct et contrôles clavier ; interruption et état réduit.
 - Largeur mobile 390 px sans débordement, liens de téléchargement identiques dans le hero et le header, FAQ, Ko-fi et liens légaux conservés.
@@ -31,8 +31,9 @@ Lecture automatique une fois en vue, sans boucle. Pause hors écran et au masqua
 
 ## Résultats de revue
 
-Ajustement demandé ensuite par Antoine : commande Homebrew en graisse 300 et taille maximale 18 px. Il confirme vouloir afficher `brew install --cask sema-app`. Antoine demande ensuite explicitement le snippet copiable : la maquette affiche ce nom comme commande prévue et autorise sa copie exacte, avec le contrôleur existant. Cette demande remplace le choix précédent de copie inactive. L’API du catalogue officiel répond 404 le 17 octobre 2026, et le cask public actuel reste `sema` dans `antoineberjoan/sema`. La version 0.5.1 est signée ad hoc et non notarisée ; son intégration officielle reste à préparer après les contrôles Gatekeeper exigés par Homebrew. Ne pas présenter la commande courte comme opérationnelle ni soumettre une validation fictive. La commande complète précédemment testée reste dans le manifeste, avec Homebrew désactivé sur cette proposition de landing.
+Ajustement demandé ensuite par Antoine : commande Homebrew en graisse 300 et taille maximale 18 px. Il confirme vouloir afficher `brew install --cask sema-app`. Antoine demande ensuite explicitement le snippet copiable puis son fonctionnement réel. Le cask public est maintenant `sema-app` dans `antoineberjoan/sema`, commit `588119d`, avec un fichier de migration depuis l’ancien nom. Antoine refuse une adhésion Apple Developer : aucune intégration officielle ni notarisation n’est annoncée. Le nom court est opérationnel après préparation de notre tap, pas sur un Mac neuf sans cette préparation. Le manifeste active Homebrew après les essais d’installation 0.5.1 et de mise à jour réelle 0.5.0 → 0.5.1 dans un dossier temporaire. Signature vérifiée, quarantaine préservée ; aucun lancement Internet. [Preuves](../validation/homebrew-sema-app.json).
 
+La copie conserve exactement la commande affichée ; les commandes de préparation restent visibles dans un disclosure distinct, sans être copiées à l’insu de l’utilisateur. Le générateur a été vérifié pour l’idempotence, les commandes du manifeste, le refus d’activation sans preuve et la conservation de la page de téléchargement supprimée.
 - Film H.264 1440 × 900, 30 images/s, 18 s, 341 145 octets, aucune piste audio. Poster, recherche, sidebar et image finale relus après encodage.
 - Aperçu du commit `7f146cc` READY : déploiement `dpl_GVREFav48TUDvVuai6aD8gdPwNNm`. Copie exacte observée au clic et avec Entrée ; presse-papiers restauré après le test. CTA hero et header pointent vers le même DMG existant.
 - 1280 × 800 et 390 × 844 : hero simplifié, commande visible, film et contrôles natifs. Document mobile 390 px, vidéo 350 px, aucun débordement. Lecture clavier observée, film terminé à 18 s, sans boucle.
