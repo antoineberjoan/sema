@@ -30,6 +30,13 @@ Une entrée commune, des procédures chargées à la demande et les mêmes contr
 - Les pages Notion Produit, Stratégie et Équipe portent le cadre de décision et l’arbitrage de périmètre. Les références techniques de Produit pointent vers `main`.
 - Aucune modification de rendu ou de comportement UI : pas de nouvelle validation interactive native revendiquée.
 
+## Revue critique du 17 octobre
+
+- Corrigé trois défauts reproduits : suppression d’un manifeste non détectée, faux positifs et import masqué dans l’analyse Swift, exemples Markdown pris pour des liens. Les chemins à espaces, titres et liens depuis la racine sont également vérifiés.
+- 17 tests Python passent après correction. Le hook réel accepte un index valide et refuse une erreur indexée malgré une correction non indexée ; l’installation préserve une autre configuration de hooks et reste idempotente.
+- Les instructions du site suivent le circuit Vercel déjà documenté ; Sites reste réservé à une demande explicite. Les formats d’instructions et de skills annoncés pour Cursor et Antigravity sont reconfirmés dans leurs documentations officielles, sans prétendre avoir testé leurs clients.
+- La revue ne modifie aucun comportement applicatif. La suite Swift locale reste bloquée par l’absence de `Testing` ; les contrôles de la PR portent la validation CI du dernier commit.
+
 ## Livraison
 
 La PR reste volontairement en brouillon. Ses contrôles GitHub font foi pour le dernier commit ; la preuve ci-dessus porte sur le commit d’implémentation. Toute fusion vers `main`, qui déploie le site, nécessite une autorisation couvrant cette publication.

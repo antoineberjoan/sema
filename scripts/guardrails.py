@@ -13,12 +13,16 @@ import urllib.parse
 
 CODE_SUFFIXES = {".swift", ".sh", ".py", ".c", ".rb", ".js", ".css", ".html"}
 CORE_IMPORT = re.compile(
-    r"^[ \t]*(?:@\w+(?:\([^\n]*?\))?\s+)*(?:(?:public|internal|private|fileprivate|package)\s+)?"
+    r"(?:^|;)[ \t]*(?:@\w+(?:\([^\n]*?\))?\s+)*(?:(?:public|internal|private|fileprivate|package)\s+)?"
     r"import\s+(?:(?:struct|class|enum|func|var|let|protocol|typealias)\s+)?(SwiftUI|AppKit|UserNotifications)\b",
     re.MULTILINE,
 )
-LOCAL_LINK = re.compile(r"\[[^\]\n]*\]\(([^\s)]+)\)")
+LOCAL_LINK = re.compile(
+    r"\[[^\]\n]*\]\((?:<(?P<angle>[^>\n]+)>|(?P<plain>[^\s)]+))"
+    r'''(?:[ \t]+"[^"\n]*"|[ \t]+'[^'\n]*')?[ \t]*\)'''
+)
 CONFLICT = re.compile(r"^(?:<{7} |={7}$|>{7} )", re.MULTILINE)
+SWIFT_TEXT = re.compile(r'//[^\n]*|/\*|(?P<hashes>\#*)(?P<quote>"""|")')
 
 
 class Snapshot:
@@ -56,6 +60,54 @@ def has_header(source):
     return False
 
 
+def swift_code(source):
+    """Masque commentaires imbriqués et chaînes, en conservant les lignes des imports."""
+    parts = []
+    offset = 0
+    while match := SWIFT_TEXT.search(source, offset):
+        parts.append(source[offset:match.start()])
+        end = match.end()
+        if match[0] == "/*":
+            depth = 1
+            end = len(source)
+            for marker in re.finditer(r"/\*|\*/", source[match.end():]):
+                depth += 1 if marker[0] == "/*" else -1
+                if depth == 0:
+                    end = match.end() + marker.end()
+                    break
+        elif match["quote"]:
+            closing = match["quote"] + match["hashes"]
+            escape = "\\" + match["hashes"]
+            tokens = re.compile(re.escape(escape) + r"[\s\S]|" + re.escape(closing))
+            end = len(source)
+            for token in tokens.finditer(source, match.end()):
+                if token[0] == closing:
+                    end = token.end()
+                    break
+        parts.append(re.sub(r"[^\n]", " ", source[match.start():end]))
+        offset = end
+    parts.append(source[offset:])
+    return "".join(parts)
+
+
+def markdown_prose(source):
+    """Écarte les exemples en blocs délimités ou en code en ligne du contrôle des liens."""
+    lines = []
+    fence = None
+    for line in source.splitlines(keepends=True):
+        marker = re.match(r" {0,3}(`{3,}|~{3,})(.*)", line)
+        if fence:
+            if marker and marker[1][0] == fence[0] and len(marker[1]) >= len(fence) and not marker[2].strip():
+                fence = None
+        elif marker:
+            fence = marker[1]
+        else:
+            lines.append(line)
+        if marker or fence:
+            lines.append("\n")
+    return re.sub(r"(?<!`)(`+)(?!`)(.*?)\1(?!`)", "", "".join(lines), flags=re.DOTALL)
+
+
 def check(snapshot):
     errors = []
     try:
@@ -88,8 +140,7 @@ def check(snapshot):
             errors.append(f"{path} : ajouter une description de responsabilité en tête du code.")
         if path.startswith("Sources/MarketCore/") and suffix == ".swift":
             # Les imports sont contrôlés ; ce n’est pas une analyse sémantique Swift.
-            code = re.sub(r"/\*.*?\*/|//[^\n]*", "", source, flags=re.DOTALL)
-            if CORE_IMPORT.search(code):
+            if CORE_IMPORT.search(swift_code(source)):
                 errors.append(f"{path} : le cœur ne dépend pas de SwiftUI, AppKit ou UserNotifications.")
         if suffix == ".json":
             try:
@@ -97,11 +148,14 @@ def check(snapshot):
             except ValueError as error:
                 errors.append(f"{path} : JSON invalide ({error}).")
         if suffix == ".md":
-            for link in LOCAL_LINK.findall(source):
-                target = urllib.parse.urlsplit(link.strip("<>"))
+            for match in LOCAL_LINK.finditer(markdown_prose(source)):
+                link = match["angle"] or match["plain"]
+                target = urllib.parse.urlsplit(link)
                 if target.scheme or target.netloc or not target.path:
                     continue
-                resolved = posixpath.normpath(posixpath.join(posixpath.dirname(path), urllib.parse.unquote(target.path)))
+                target_path = urllib.parse.unquote(target.path)
+                resolved = posixpath.normpath(target_path.lstrip("/") if target_path.startswith("/") else
+                                              posixpath.join(posixpath.dirname(path), target_path))
                 if resolved not in snapshot.paths and not any(p.startswith(resolved.rstrip("/") + "/") for p in snapshot.paths):
                     errors.append(f"{path} : lien local introuvable : {link}.")
         if path.startswith(".agents/skills/") and name == "SKILL.md":
@@ -113,7 +167,9 @@ def check(snapshot):
         errors.append("CLAUDE.md : importer uniquement @AGENTS.md ; règles communes dans AGENTS.md.")
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
-    if canonical in snapshot.paths and mirror in snapshot.paths:
+    missing = {canonical, mirror} - snapshot.paths
+    errors.extend(f"{path} : manifeste de release manquant." for path in sorted(missing))
+    if not missing:
         try:
             if json.loads(snapshot.read(canonical)) != json.loads(snapshot.read(mirror)):
                 errors.append(f"{mirror} : différent du manifeste canonique {canonical}.")

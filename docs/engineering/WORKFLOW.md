@@ -59,9 +59,9 @@ Après un clone, exécuter `./scripts/setup.sh`. Il configure uniquement ce dép
 - `./scripts/build-app.sh` construit et signe le bundle local ad hoc.
 - La CI exécute `check.sh` et construit un bundle pour chaque PR, chaque push sur `main` et les lancements manuels. Aucune dépendance de production n’a été ajoutée.
 
-Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, duplication des instructions dans `CLAUDE.md`, divergence entre les manifestes de release local et web.
+Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, duplication des instructions dans `CLAUDE.md`, absence ou divergence des manifestes de release local et web.
 
-Ces vérifications sont volontairement bornées : le contrôle de liens ne parcourt ni les URL réseau ni les ancres, l’en-tête est détecté mais son utilité se relit, et le contrôle de secrets par nom ne remplace pas une revue des valeurs. Duplication sémantique, code mort, bonne abstraction, exactitude de la copy et qualité native demandent une revue. Aucun script ne prétend vérifier « zéro hardcode » en interdisant tous les littéraux.
+Ces vérifications sont volontairement bornées : le contrôle des liens Markdown en ligne ignore les exemples en code et ne résout ni les liens par référence, ni les URL réseau, ni les ancres. L’analyse des imports masque commentaires et chaînes Swift mais ne remplace pas le compilateur. L’en-tête est détecté mais son utilité se relit ; le contrôle de secrets par nom ne remplace pas une revue des valeurs. Duplication sémantique, code mort, bonne abstraction, exactitude de la copy et qualité native demandent une revue. Aucun script ne prétend vérifier « zéro hardcode » en interdisant tous les littéraux.
 
 ## GitHub et production
 

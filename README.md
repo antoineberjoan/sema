@@ -21,7 +21,7 @@ Les séries publiques partagent favoris, historiques et alertes avec Webstat. Le
 
 ## Démarrer
 
-Pour contribuer avec un agent, lire [AGENTS.md](AGENTS.md), puis activer les contrôles locaux avec `./scripts/setup.sh`. Le [fonctionnement du socle](docs/engineering/WORKFLOW.md) explique les sources Notion, les skills et les validations partagées.
+Pour contribuer avec un agent, lire [AGENTS.md](AGENTS.md), puis activer les contrôles locaux avec `./scripts/setup.sh`. Les contrôles demandent Python 3.9 ou plus récent, sans module externe. Le [fonctionnement du socle](docs/engineering/WORKFLOW.md) explique les sources Notion, les skills et les validations partagées.
 
 Pré-requis : un Mac sous macOS 14 ou plus récent et un compilateur Swift 6. Xcode complet est recommandé pour le développement visuel. L’app peut être compilée avec les seuls Command Line Tools.
 

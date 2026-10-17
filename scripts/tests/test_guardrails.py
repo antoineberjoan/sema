@@ -27,6 +27,8 @@ class GuardrailsTests(unittest.TestCase):
         self.write("AGENTS.md", "# Instructions\n")
         self.write("CLAUDE.md", "@AGENTS.md\n")
         self.write("Sources/MarketCore/Series.swift", "// Décrit les observations économiques indépendantes de l’interface.\nimport Foundation\n")
+        self.write("distribution/release.json", '{"version": "1"}')
+        self.write("site/dist/download/release.json", '{"version": "1"}')
         self.git("add", ".")
 
     def git(self, *args):
@@ -64,7 +66,8 @@ class GuardrailsTests(unittest.TestCase):
         self.assertTrue(any("lien local" in error for error in self.errors(staged=True)))
 
     def test_forbidden_import_variants(self):
-        for statement in ("import SwiftUI", "@preconcurrency import AppKit", "public import UserNotifications", "import struct SwiftUI.Color"):
+        for statement in ("import SwiftUI", "@preconcurrency import AppKit", "public import UserNotifications",
+                          "import struct SwiftUI.Color", "import Foundation; import SwiftUI"):
             with self.subTest(statement=statement):
                 self.write("Sources/MarketCore/Series.swift", "// Décrit une série indépendante des vues.\n" + statement + "\n")
                 self.assertTrue(any("le cœur" in error for error in self.errors()))
@@ -77,6 +80,52 @@ class GuardrailsTests(unittest.TestCase):
         self.write("Sources/MarketCore/Series.swift", '// Décrit une instruction sous forme de texte.\nlet example = "import AppKit"\n')
         self.assertEqual(self.errors(), [])
 
+    def test_multiline_literals_and_nested_comments_are_not_imports(self):
+        for example in (
+            'let example = """\nimport SwiftUI\n"""',
+            'let example = ##"""\nUne citation : "texte"\nimport AppKit\n"""##',
+            '/* Commentaire /* imbriqué */\nimport UserNotifications\n*/',
+            'let example = "citation \\\" et /*"',
+        ):
+            with self.subTest(example=example):
+                self.write("Sources/MarketCore/Series.swift", "// Décrit un exemple documentaire.\n" + example + "\nimport Foundation\n")
+                self.assertEqual(self.errors(), [])
+
+    def test_literal_comment_markers_cannot_hide_real_import(self):
+        self.write("Sources/MarketCore/Series.swift", '// Décrit des marqueurs de texte.\nlet start = "/*"\nimport SwiftUI\nlet end = "*/"\n')
+        self.assertTrue(any("le cœur" in error for error in self.errors()))
+
+    def test_markdown_examples_are_not_links(self):
+        examples = (
+            '`[exemple](missing.md)`',
+            '``un ` et [exemple](missing.md)``',
+            '```markdown\n[exemple](missing.md)\n```',
+            '~~~~markdown\n[exemple](missing.md)\n~~~~',
+        )
+        for example in examples:
+            with self.subTest(example=example):
+                self.write("docs/a.md", example + "\n[Contrat](../AGENTS.md)\n")
+                self.assertEqual(self.errors(), [])
+                self.write("docs/a.md", example + "\n[Contrat](absent.md)\n")
+                errors = self.errors()
+                self.assertEqual(len(errors), 1)
+                self.assertIn("absent.md", errors[0])
+
+    def test_markdown_link_paths_and_titles(self):
+        self.write("docs/contrat source.md", "# Contrat\n")
+        links = (
+            '[Contrat](/AGENTS.md)',
+            '[Contrat](../AGENTS.md "Instructions")',
+            '[Contrat](contrat%20source.md)',
+            '[Contrat](<contrat source.md> "Instructions")',
+        )
+        for link in links:
+            with self.subTest(link=link):
+                self.write("docs/a.md", link + "\n")
+                self.assertEqual(self.errors(), [])
+        self.write("docs/a.md", '[Contrat](<absent.md> "Instructions")\n')
+        self.assertTrue(any("absent.md" in error for error in self.errors()))
+
     def test_conflict_and_secret_file(self):
         self.write("docs/a.md", "<<<<<<< HEAD\nconflit\n=======\nautre\n>>>>>>> branche\n")
         self.write(".env", "EXAMPLE=fixture\n")
@@ -88,6 +137,25 @@ class GuardrailsTests(unittest.TestCase):
         self.write("distribution/release.json", '{"version": "1"}')
         self.write("site/dist/download/release.json", '{"version": "2"}')
         self.assertTrue(any("manifeste canonique" in error for error in self.errors()))
+
+    def test_deleted_release_manifest_is_rejected(self):
+        paths = ("distribution/release.json", "site/dist/download/release.json")
+        for path in paths:
+            with self.subTest(path=path):
+                (self.root / path).unlink()
+                try:
+                    self.assertTrue(any(path in error and "manquant" in error for error in self.errors()))
+                    self.assertEqual(self.errors(staged=True), [])
+                    self.git("add", "-u", path)
+                    self.assertTrue(any(path in error and "manquant" in error for error in self.errors(staged=True)))
+                finally:
+                    self.write(path, '{"version": "1"}')
+                    self.git("add", path)
+        for path in paths:
+            (self.root / path).unlink()
+        self.assertEqual(sum("manquant" in error for error in self.errors()), 2)
+        self.git("add", "-u")
+        self.assertEqual(sum("manquant" in error for error in self.errors(staged=True)), 2)
 
     def test_invalid_json_and_skill(self):
         self.write("docs/data.json", "{")
