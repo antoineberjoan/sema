@@ -170,23 +170,18 @@ struct SeriesDetailView: View {
                 Label("Source désactivée · historique conservé, actualisations et alertes en pause.", systemImage: "pause.circle")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
-            VStack(alignment: .leading, spacing: 7) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
+            if focus {
+                focusHeadline(displayed)
+            } else {
+                VStack(alignment: .leading, spacing: 7) {
                     Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
-                        .font(.system(size: focus ? 72 : 40, weight: focus ? .regular : .medium))
-                        .tracking(focus ? -2.5 : -1.2).monospacedDigit()
+                        .font(.system(size: 40, weight: .medium)).tracking(-1.2).monospacedDigit()
                         .lineLimit(1).minimumScaleFactor(0.55)
-                    if focus {
-                        Text(displayed.displayUnit).font(.system(size: 22)).foregroundStyle(.secondary)
-                        Spacer(minLength: 12)
-                        ExchangeDirectionButton(series: series)
-                        FavoriteButton(seriesID: series.id, seriesName: displayed.name)
+                    Text(displayed.displayUnit).font(.system(size: 12)).foregroundStyle(.secondary)
+                    if series.latest != nil {
+                        Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
+                            .font(.system(size: 11)).foregroundStyle(.secondary)
                     }
-                }
-                if !focus { Text(displayed.displayUnit).font(.system(size: 12)).foregroundStyle(.secondary) }
-                if series.latest != nil {
-                    Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
-                        .font(.system(size: focus ? 13 : 11)).foregroundStyle(.secondary)
                 }
             }
             if series.observations.isEmpty {
@@ -220,7 +215,7 @@ struct SeriesDetailView: View {
                             Text((series.isDemo ? "données fictives · " : "") + compactObservationPeriod)
                         }
                         .buttonStyle(.plain)
-                        .help("Source et définition")
+                        .help("Date de la donnée publiée · source et définition")
                         .accessibilityLabel((series.isDemo ? "Données fictives, " : "") + "source et définition, " + observationPeriod)
                         .popover(isPresented: $showsSource) {
                             ScrollView {
@@ -245,7 +240,9 @@ struct SeriesDetailView: View {
                     Button {
                         store.prepareAlert(for: series)
                     } label: { Label("Créer une alerte", systemImage: "bell.badge") }
-                    .buttonStyle(.borderless).font(.system(size: 12)).disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
+                    .buttonStyle(.borderedProminent).controlSize(.regular)
+                    .font(.callout.weight(.medium)).tint(store.palette.controlAccent)
+                    .disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
                 }
             }
             if !focus, store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
@@ -270,6 +267,47 @@ struct SeriesDetailView: View {
         .onChange(of: series.id, initial: true) { _, _ in
             period = series.supports(.year) ? .year : .all
             showsSource = false
+        }
+    }
+
+    private func focusHeadline(_ displayed: MarketSeries) -> some View {
+        HStack(spacing: SemaTheme.majorSpacing) {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: SemaTheme.majorSpacing) {
+                    focusValue(displayed)
+                    variationBadge(displayed)
+                }
+                VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+                    focusValue(displayed)
+                    variationBadge(displayed)
+                }
+            }
+            Spacer(minLength: SemaTheme.minorSpacing)
+            ExchangeDirectionButton(series: series)
+            FavoriteButton(seriesID: series.id, seriesName: displayed.name)
+        }
+    }
+
+    private func focusValue(_ displayed: MarketSeries) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: SemaTheme.minorSpacing) {
+            Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
+                .font(.system(size: 72, weight: .regular)).tracking(-2.5).monospacedDigit()
+                .lineLimit(1).minimumScaleFactor(0.55)
+            Text(displayed.displayUnit).font(.system(size: 22)).foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder private func variationBadge(_ displayed: MarketSeries) -> some View {
+        if displayed.change(for: period) != nil {
+            Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
+                .font(.callout.weight(.medium)).monospacedDigit().lineLimit(1)
+                .foregroundStyle(store.palette.accent)
+                .padding(.horizontal, SemaTheme.minorSpacing)
+                .padding(.vertical, SemaTheme.badgeVerticalInset)
+                .background(store.palette.accent.opacity(SemaTheme.badgeFillOpacity), in: Capsule())
+        } else if series.latest != nil {
+            Text(MarketFormat.change(displayed, period: period))
+                .font(.callout).foregroundStyle(.secondary)
         }
     }
 
@@ -301,7 +339,9 @@ struct SeriesDetailView: View {
                 } else { Text(series.frequency?.title ?? "Fréquence non renseignée") }
                 if let status = series.latest?.status { LabeledContent("Statut de l’observation", value: status) }
                 if let updated = series.latest?.updatedAt { LabeledContent("Mise à jour source", value: MarketFormat.date(updated)) }
-                if let sync = series.syncedAt { LabeledContent("Téléchargé le", value: MarketFormat.date(sync)) }
+                if let sync = series.syncedAt {
+                    LabeledContent("Actualisé dans sema", value: MarketFormat.date(sync) + " à " + sync.formatted(date: .omitted, time: .shortened))
+                }
                 let accessPoints = SeriesEquivalence.accessPoints(for: series)
                 if accessPoints.count > 1 {
                     Text("Accès à cette même série").fontWeight(.medium)
@@ -349,11 +389,11 @@ struct SeriesDetailView: View {
     }
 
     private var compactObservationPeriod: String {
-        guard let latest = series.latest else { return "source" }
+        guard let latest = series.latest else { return "Source et définition" }
         if let end = latest.periodEnd, end != latest.date {
-            return MarketFormat.date(latest.date) + " – " + MarketFormat.date(end)
+            return "Période du " + MarketFormat.date(latest.date) + " au " + MarketFormat.date(end)
         }
-        return MarketFormat.date(latest.date)
+        return "Donnée du " + MarketFormat.date(latest.date)
     }
 
     private var periodPicker: some View {

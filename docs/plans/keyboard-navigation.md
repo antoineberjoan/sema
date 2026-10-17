@@ -29,3 +29,11 @@ Position latérale, écran de moindre largeur et options d’accessibilité pris
 Cette correction est sauvegardée séparément pour revue. Aucune nouvelle version distribuée ni fusion vers main n’est déclarée dans ce lot. L’autorisation de la précédente publication concernait la version 0.6.0 ; le téléchargement public reste cette version.
 
 Historique utile : les deux raccourcis globaux, le rail Repère et la persistance ont été vérifiés dans la [CI initiale](https://github.com/antoineberjoan/sema/actions/runs/39019838396), puis intégrés à la version 0.6.0. Les contrôles physiques des raccourcis globaux restent distincts des touches synthétiques locales.
+
+## Ajustement de la lecture du hub — en revue
+
+Demande complémentaire d’Antoine dans le même chat du 17 octobre : rapprocher la variation de la valeur, sous forme de badge teinté par la palette, rendre la création d’alerte visible et expliquer la date. Le badge et son horizon partagent la ligne de la valeur ; `ViewThatFits` permet un repli si la largeur manque. Une variation non calculable reste un état textuel. Le bouton d’alerte est natif et rempli ; les conditions d’unité et de source restent inchangées.
+
+La date sous le graphique devient « Donnée du… », ou la période complète pour une observation couvrant plusieurs jours. Le popover distingue « Actualisé dans sema » avec date et heure de `syncedAt`. Aucun calcul ni cache n’est modifié. Critères : observer le badge à côté de la valeur, changer de période, ouvrir et annuler une alerte, lire les deux dates distinctes, vérifier le mode clair et le repli de la ligne.
+
+Bundle release compilé et signé. Revue native sur le cache BCE EUR/USD réel : badge −3,40 % sur 1 an, bouton rempli ouvrant la bonne série dans l’éditeur, annulation sans enregistrement, donnée du 16 octobre et actualisation du 17 octobre avec heure distincte dans le popover. Capture `sema-detail-badge-dark.png` dans les artefacts du chat. Contrôles supplémentaires en cours ; publication inchangée.
