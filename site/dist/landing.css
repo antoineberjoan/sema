@@ -8,7 +8,7 @@
 .landing .button:hover { transform: none; }
 .download-pending { color: #aaa; background: #292929; box-shadow: none; }
 .brew-line { position: relative; margin-top: 27px; width: fit-content; max-width: 100%; }
-.brew-copy { position: relative; display: block; max-width: 100%; padding: 4px 0; background: transparent; text-align: left; color: #999; font-size: clamp(13px, 1.55vw, 20px); line-height: 1.6; text-decoration: underline dotted #555; text-underline-offset: 6px; }
+.brew-copy { position: relative; display: block; max-width: 100%; padding: 4px 0; background: transparent; text-align: left; color: #999; font-size: clamp(13px, 1.4vw, 18px); font-weight: 300; line-height: 1.6; text-decoration: underline dotted #555; text-underline-offset: 6px; }
 .brew-copy code { font: inherit; overflow-wrap: anywhere; user-select: text; }
 .brew-copy:hover, .brew-copy[data-copied] { color: #eee; text-decoration-color: #999; }
 .brew-copy:disabled { cursor: text; }

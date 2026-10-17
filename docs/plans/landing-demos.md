@@ -31,6 +31,8 @@ Lecture automatique une fois en vue, sans boucle. Pause hors écran et au masqua
 
 ## Résultats de revue
 
+Ajustement demandé ensuite par Antoine : commande Homebrew en graisse 300 et taille maximale 18 px. La commande courte `brew install --cask sema-app` n’est pas activée : API du catalogue officiel en 404 le 17 octobre 2026, cask public actuel nommé `sema` dans le tap `antoineberjoan/sema`. Un simple renommage local ne permet pas une installation courte depuis une machine neuve.
+
 - Film H.264 1440 × 900, 30 images/s, 18 s, 341 145 octets, aucune piste audio. Poster, recherche, sidebar et image finale relus après encodage.
 - Aperçu du commit `7f146cc` READY : déploiement `dpl_GVREFav48TUDvVuai6aD8gdPwNNm`. Copie exacte observée au clic et avec Entrée ; presse-papiers restauré après le test. CTA hero et header pointent vers le même DMG existant.
 - 1280 × 800 et 390 × 844 : hero simplifié, commande visible, film et contrôles natifs. Document mobile 390 px, vidéo 350 px, aucun débordement. Lecture clavier observée, film terminé à 18 s, sans boucle.
