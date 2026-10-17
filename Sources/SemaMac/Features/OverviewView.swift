@@ -359,7 +359,7 @@ struct SeriesDetailView: View {
 
     private var periodPicker: some View {
         Picker("Période de l’historique", selection: $period) {
-            ForEach(HistoryPeriod.allCases.filter { $0 == .all || series.supports($0) }) { Text($0.title).tag($0) }
+            ForEach(HistoryPeriods.visible.filter { $0 == .all || series.supports($0) }) { Text($0.title).tag($0) }
         }
         .pickerStyle(.segmented).labelsHidden()
     }

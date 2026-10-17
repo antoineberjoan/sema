@@ -16,13 +16,14 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var alertBaselineIDs: Set<UUID>?
     public var invertedCurrencyPairs: Set<String>?
     public var ribbonGlass: RibbonGlassPreferences?
+    public var shortcuts: ShortcutPreferences?
 
-    public init(favoriteIDs: Set<String> = ["fr10", "eurusd", "livreta"],
+    public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
                 alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "graphite", appearanceID: String? = nil,
                 followedSeriesIDs: [String] = WebstatClient.starterIDs, onboardingCompleted: Bool? = nil,
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = nil,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
-                ribbonGlass: RibbonGlassPreferences? = nil) {
+                ribbonGlass: RibbonGlassPreferences? = nil, shortcuts: ShortcutPreferences? = nil) {
         self.favoriteIDs = Set(favoriteIDs.map(WebstatClient.canonicalID))
         self.followedSeriesIDs = followedSeriesIDs.map(WebstatClient.canonicalID)
         self.alerts = alerts
@@ -35,11 +36,12 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         self.profile = profile
         self.invertedCurrencyPairs = invertedCurrencyPairs
         self.ribbonGlass = ribbonGlass
+        self.shortcuts = shortcuts
     }
 
     enum CodingKeys: String, CodingKey {
         case schemaVersion, favoriteIDs, followedSeriesIDs, alerts, notificationsEnabled, themeID, appearanceID, onboardingCompleted, ribbonPositionID
-        case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass
+        case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass, shortcuts
     }
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -56,6 +58,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         alertBaselineIDs = try values.decodeIfPresent(Set<UUID>.self, forKey: .alertBaselineIDs)
         invertedCurrencyPairs = try values.decodeIfPresent(Set<String>.self, forKey: .invertedCurrencyPairs)
         ribbonGlass = try values.decodeIfPresent(RibbonGlassPreferences.self, forKey: .ribbonGlass)
+        shortcuts = try values.decodeIfPresent(ShortcutPreferences.self, forKey: .shortcuts)
         // Empty is a valid v2 selection; absence only means legacy v1.
         if schemaVersion == 2 { followedSeriesIDs = try values.decode([String].self, forKey: .followedSeriesIDs) }
         else { followedSeriesIDs = WebstatClient.starterIDs }

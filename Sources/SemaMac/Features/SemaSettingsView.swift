@@ -42,6 +42,8 @@ struct SemaSettingsView: View {
                 .tabItem { Label("Sources", systemImage: "globe.europe.africa") }.tag(SemaSettingsTab.sources)
             ProfileSettingsView()
                 .tabItem { Label("Profil", systemImage: "person.crop.circle") }.tag(SemaSettingsTab.profile)
+            ShortcutSettingsView()
+                .tabItem { Label("Raccourcis", systemImage: "keyboard") }.tag(SemaSettingsTab.shortcuts)
             Form {
                 Section("Mode d’affichage") {
                     Picker("Apparence", selection: Binding(get: { store.appearance }, set: { store.setAppearance($0) })) {

@@ -15,7 +15,7 @@ enum WorkspaceSection: String, CaseIterable, Identifiable {
     }
 }
 
-enum SemaSettingsTab: Hashable { case general, sources, profile, appearance, about }
+enum SemaSettingsTab: Hashable { case general, sources, profile, appearance, shortcuts, about }
 
 @Observable @MainActor
 final class AppStore {
@@ -25,7 +25,7 @@ final class AppStore {
     var settingsTab: SemaSettingsTab = .general
     var category: SeriesCategory = .markets
     var selectedSeriesID = WebstatClient.canonicalID("eurusd")
-    var period: HistoryPeriod = .month
+    var period: HistoryPeriod = .year
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -37,6 +37,8 @@ final class AppStore {
     var isAlertSheetPresented = false
     var isSearchPresented = false
     var isOnboardingPresented = false
+    var shortcutError: String?
+    let globalShortcuts = GlobalShortcuts()
     private var opensAlertAfterSearch = false
     var seriesErrors: [String: String] = [:]
     var historyLoadingID: String?
@@ -362,6 +364,30 @@ final class AppStore {
         if let historyLoadingID, historyLoadingID != item.id { cancelHistory() }
         selectedSeriesID = followedMatch(for: item)?.id ?? item.id; category = item.category
         if !item.supports(period) { period = .all }
+    }
+
+    var shortcuts: ShortcutPreferences { preferences.shortcuts ?? .standard }
+
+    func activateShortcuts() {
+        do { try globalShortcuts.apply(shortcuts); shortcutError = nil }
+        catch { shortcutError = error.localizedDescription }
+    }
+
+    func setShortcut(_ shortcut: AppShortcut?, for action: ShortcutAction) {
+        var next = preferences
+        var bindings = shortcuts; bindings[action] = shortcut; next.shortcuts = bindings
+        do { try globalShortcuts.apply(bindings) }
+        catch {
+            let message = error.localizedDescription
+            activateShortcuts()
+            shortcutError = message
+            return
+        }
+        if commit(next) { shortcutError = nil }
+        else {
+            activateShortcuts()
+            shortcutError = errorMessage
+        }
     }
     private func reconcileSelection() {
         if !followedSeries.contains(where: { $0.id == selectedSeriesID }) { selectedSeriesID = followedSeries.first?.id ?? "" }
