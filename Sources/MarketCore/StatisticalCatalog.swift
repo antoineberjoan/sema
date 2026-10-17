@@ -1,3 +1,4 @@
+// Décrit les fournisseurs, jeux, dimensions et métadonnées nécessaires à la découverte des séries.
 import Foundation
 
 public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifiable {

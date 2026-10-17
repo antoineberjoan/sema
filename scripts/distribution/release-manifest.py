@@ -65,7 +65,7 @@ def main():
             "filename": dmg.name, "byteSize": dmg.stat().st_size, "sha256": checksum,
             "proposedURL": f"https://github.com/antoineberjoan/homebrew-sema/releases/download/v{version}/{dmg.name}"},
         "homebrew": {"enabled": False, "command": None,
-            "proposedCommand": "brew install --cask antoineberjoan/sema/sema"},
+            "proposedCommand": "brew install --cask sema-app"},
         "validation": {"bundleSignature": True, "finderInstall": False,
             "internetDownload": False, "firstLaunch": False, "homebrewInstall": False,
             "homebrewUpgrade": False},
@@ -75,14 +75,14 @@ def main():
     dmg.with_suffix(".dmg.sha256").write_text(f"{checksum}  {dmg.name}\n")
     # This is a template until the versioned URL is published and brew is tested.
     cask = f'''# Modèle de release — URL proposée ; ne pas publier avant les tests indiqués dans release.json.
-cask "sema" do
+cask "sema-app" do
   version "{version}"
   sha256 "{checksum}"
 
   url "https://github.com/antoineberjoan/homebrew-sema/releases/download/v#{{version}}/Sema-#{{version}}-arm64.dmg"
   name "sema"
   desc "Vos repères économiques Webstat sur Mac"
-  homepage "https://sema.raregoat8192.chatgpt.site/"
+  homepage "https://getsema.app/"
 
   depends_on arch: :arm64
   depends_on macos: ">= :sonoma"
@@ -90,7 +90,7 @@ cask "sema" do
   app "Sema.app"
 end
 '''
-    dmg.with_name("sema.rb.template").write_text(cask)
+    dmg.with_name("sema-app.rb.template").write_text(cask)
     print(json.dumps({"manifest": str(output), "dmg": str(dmg), "byteSize": dmg.stat().st_size,
                       "sha256": checksum}, ensure_ascii=False))
 

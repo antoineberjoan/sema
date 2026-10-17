@@ -1,3 +1,4 @@
+// Guide la première connexion et le choix des repères sans remplacer la sélection personnelle.
 import SwiftUI
 import MarketCore
 
@@ -42,9 +43,7 @@ struct OnboardingView: View {
     @State private var selection: Set<String>
     @State private var step = 0
     @State private var drawProgress: CGFloat = 0
-    @State private var apiKey = ""
     @State private var selectionError: String?
-    @FocusState private var keyFocused: Bool
 
     init(initialSelection: [String], selectSeries: @escaping ([String]) -> Bool,
          finish: @escaping () -> Bool) {
@@ -117,7 +116,6 @@ struct OnboardingView: View {
             await store.checkWebstatKey()
             withAnimation(reduceMotion ? nil : .easeOut(duration: WelcomeMotion.drawDuration)) { drawProgress = 1 }
         }
-        .onDisappear { apiKey = "" }
     }
 
     private var selectionStep: some View {
@@ -198,38 +196,7 @@ struct OnboardingView: View {
     }
 
     private var connectionStep: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            if store.hasWebstatKey {
-                Label("Votre clé est déjà enregistrée dans le Trousseau.", systemImage: "checkmark.circle")
-                    .font(.system(size: 13)).foregroundStyle(accent)
-            } else {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Clé API Webstat").font(.system(size: 12, weight: .medium))
-                    SecureField("Votre clé personnelle", text: $apiKey)
-                        .textFieldStyle(.roundedBorder).textContentType(.password)
-                        .privacySensitive().focused($keyFocused)
-                        .accessibilityLabel("Clé API Webstat")
-                        .onSubmit { connect() }
-                    Link("Obtenir une clé sur Webstat ↗", destination: URL(string: "https://webstat.banque-france.fr/login/")!)
-                        .font(.system(size: 11))
-                }
-                Text("Elle reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Vous pourrez la retirer dans les réglages.")
-                    .font(.system(size: 12)).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                if let error = store.webstatError {
-                    Text(error).font(.system(size: 12)).foregroundStyle(.red)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            Spacer(minLength: 0)
-            VStack(alignment: .leading, spacing: 6) {
-                Label("À votre rythme", systemImage: "leaf")
-                    .font(.system(size: 12, weight: .medium))
-                Text("Vous pouvez découvrir sema en démonstration et connecter vos données plus tard.")
-                    .font(.system(size: 12)).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
+        WebstatConnectionView(didConnect: complete)
     }
 
     private var footer: some View {
@@ -248,12 +215,10 @@ struct OnboardingView: View {
                     }
                     selectionError = nil
                     withAnimation(reduceMotion ? nil : .easeInOut(duration: WelcomeMotion.stepDuration)) { step = 1 }
-                    keyFocused = true
                 }
                 .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
             } else {
                 Button("Retour") {
-                    apiKey = ""
                     withAnimation(reduceMotion ? nil : .easeInOut(duration: WelcomeMotion.stepDuration)) { step = 0 }
                 }
                 .buttonStyle(.borderless).disabled(store.isLoading)
@@ -262,11 +227,8 @@ struct OnboardingView: View {
                     Button("Ouvrir sema", action: complete)
                         .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
                 } else {
-                    Button("Découvrir la démo", action: complete)
+                    Button("Plus tard", action: complete)
                         .buttonStyle(.borderless).disabled(store.isLoading)
-                    Button(store.isLoading ? "Connexion…" : "Connecter") { connect() }
-                        .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
-                        .disabled(store.isLoading || apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
         }
@@ -277,16 +239,6 @@ struct OnboardingView: View {
         guard finish() else {
             selectionError = store.errorMessage ?? "L’accueil n’a pas pu être enregistré."
             return
-        }
-    }
-
-    private func connect() {
-        guard !store.isLoading, !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        Task {
-            if await store.connectWebstat(apiKey: apiKey) {
-                apiKey = ""
-                complete()
-            }
         }
     }
 }

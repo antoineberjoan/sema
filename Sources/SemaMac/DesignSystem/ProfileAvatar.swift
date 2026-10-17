@@ -1,3 +1,4 @@
+// Affiche la photo locale ou les initiales du profil dans les surfaces de l’app.
 import AppKit
 import SwiftUI
 import MarketCore

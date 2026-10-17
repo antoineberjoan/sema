@@ -1,3 +1,4 @@
+// Place et ferme le panneau macOS des favoris en coordonnant écrans, événements et transitions.
 import AppKit
 import SwiftUI
 import QuartzCore
@@ -141,7 +142,7 @@ final class MenuRibbonController: NSObject {
         }
     }
 
-    @objc private func showWorkspace() { dismiss(); openWorkspace() }
+    @objc func showWorkspace() { dismiss(); openWorkspace() }
     @objc private func showSettings() { dismiss(); openSettings() }
     @objc private func showReleases() {
         NSWorkspace.shared.open(URL(string: "https://github.com/antoineberjoan/homebrew-sema/releases")!)

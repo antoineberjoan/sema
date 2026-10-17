@@ -48,7 +48,15 @@ Le champ optionnel `appearanceID` en v2 conserve le mode Système / Clair / Somb
 
 Les états de sélection sont partagés volontairement entre panneau et fenêtre. Une action sur un favori doit être visible immédiatement dans les deux.
 
+### Navigation clavier
+
+`GlobalShortcuts` réserve les deux combinaisons via `RegisterEventHotKey` et un gestionnaire Carbon natif. Aucun observateur global de frappe ni permission d’accessibilité n’est ajouté. Les remplacements sont réservés avant de libérer les anciens ; une erreur de réservation ou de sauvegarde conserve le réglage précédent. L’enregistrement suspend les réservations de sema, capture les touches dans son seul champ puis les rétablit à la sortie, y compris à la fermeture de la fenêtre.
+
+`FocusKeyboard` observe uniquement les événements locaux de la fenêtre principale, hors saisie, contrôle de valeur et feuille. `WorkspaceView` possède le choix provisoire du sélecteur ; `AppStore.show` n’est appelé qu’à la validation. Un changement de fenêtre, une feuille ou Échap annule ce choix. Les calculs et données ne sont pas dupliqués. `HistoryPeriods` partage les cinq horizons visibles entre les deux surfaces ; les autres cas du modèle historique restent disponibles aux calculs existants.
+
 ## Persistance
+
+Le champ optionnel v2 `shortcuts` conserve les deux combinaisons ; son absence utilise les valeurs initiales, tandis qu’une action explicitement nulle reste désactivée. Les préférences existantes gardent leur sélection et leurs favoris. Les quatre favoris initiaux concernent uniquement un document de préférences absent.
 
 Le champ optionnel v2 `invertedCurrencyPairs` conserve les paires lues à l’inverse (par exemple `EUR/USD`), indépendamment du point d’accès Webstat/BCE et de la fréquence. Absent, il conserve le sens publié. `AppStore.displayedSeries` applique cette préférence aux seules vues ; le changement est sauvegardé atomiquement avant application. Un cache en mémoire conserve la projection par identifiant avec sa série source : tant que celle-ci est égale, le bouton réutilise les points inversés. Une modification de valeur, date ou métadonnée force le recalcul, sans second appel API ni deuxième cache sur disque. Le survol du graphique est réinitialisé lorsque l’unité change.
 
@@ -58,15 +66,15 @@ Les champs optionnels v2 `profile`, `disabledSourceIDs` et `alertBaselineIDs` po
 
 Les historiques restent immuables. Une actualisation réussie fusionne les observations reçues pour chaque série ; l’échec d’une série conserve son historique et n’efface pas les autres. L’interface n’expose plus les fonds de démonstration ; leurs préférences historiques sont conservées. Le cache `webstat-cache.json` est écrit atomiquement et conserve son nom pour compatibilité ; il contient aussi les observations publiques et leur descripteur optionnel. Les catalogues publics sont écrits séparément dans `statistical-catalogues.json`. L’ancien cache BCE peut encore être lu si aucun cache Webstat n’existe. L’accès direct BCE SDMX passe désormais par Explorer.
 
-La connexion valide les données avant d’enregistrer la clé. Une erreur HTTP, un quota atteint ou une erreur de décodage conserve le cache et les données affichées ; aucun nouvel essai automatique ne tourne. Le bouton d’actualisation utilise ensuite la clé du Trousseau. Retirer la clé conserve volontairement les données publiques déjà téléchargées. Le cache est relu au lancement, l’actualisation reste manuelle.
+La connexion valide les données avant d’enregistrer la clé. Une erreur HTTP, un quota atteint ou une erreur de décodage conserve le cache et les données affichées ; le prochain contrôle automatique conserve ces erreurs tant que les séries concernées ne sont pas actualisées avec succès. Le bouton d’actualisation utilise ensuite la clé du Trousseau. Retirer la clé conserve volontairement les données publiques déjà téléchargées. Le cache est relu au lancement. `RefreshPolicy` fixe une fraîcheur de 24 h sur `syncedAt`, distincte de la date de publication. Le contrôleur natif conservé par le délégué d’app vérifie au lancement et au réveil, puis programme la plus ancienne échéance avec un minuteur commun, même sans fenêtre. Il ne récupère que les séries suivies, activées et connectées devenues anciennes. Une actualisation déjà en cours est laissée terminer ; le contrôle reprend après un court délai. Un échec conserve le cache et reporte son prochain essai automatique au lendemain, sans bloquer les échéances des autres séries. ⌘R force toujours une mise à jour.
 
 Les observations Webstat conservent la fin de période, le statut et la date de mise à jour source. Une période mensuelle peut se terminer dans le futur si le taux est déjà applicable dans le mois courant. Les fenêtres des séries mensuelles et les fenêtres annuelles utilisent le calendrier civil. Le sélecteur propose 1 mois, 3 mois, 6 mois, 1 an, 3 ans et 5 ans uniquement si la série couvre la période et contient plusieurs points, ainsi que Tout. Les périodes anciennes se chargent en tranches de six années, avec progression et annulation. Une réduction min/max borne les points dessinés pour les longues courbes ; le survol consulte les observations originales. Les caches antérieurs, sans ces métadonnées optionnelles, restent lisibles.
 
 ## Alertes
 
-Le moteur est testable et indépendant du transport de notification. Il vérifie les nouvelles observations réelles lors de chaque actualisation réussie d’un repère suivi, quelle que soit sa source. Aucun minuteur, service en arrière-plan ou serveur ne tourne. Une simulation explicite reste disponible et ne modifie pas le checkpoint réel.
+Le moteur est testable et indépendant du transport de notification. Il vérifie les nouvelles observations réelles lors de chaque actualisation réussie d’un repère suivi, quelle que soit sa source. Le minuteur quotidien tourne avec l’app, y compris hub fermé ; il est suspendu en veille et arrêté à la sortie. Aucun serveur ni réveil forcé du Mac. Une simulation explicite reste disponible et ne modifie pas le checkpoint réel.
 
-Une surveillance future s’ajoutera à l’orchestration. Si elle doit continuer indépendamment du Mac, elle exigera un service côté serveur. Une notification APNs n’assure pas une réception instantanée sur un appareil éteint ou hors ligne.
+Une surveillance indépendante du Mac exigerait un service côté serveur. Une notification APNs n’assure pas une réception instantanée sur un appareil éteint ou hors ligne.
 
 ## Évolutions conditionnelles
 

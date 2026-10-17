@@ -1,43 +1,48 @@
-# Instructions du projet sema
+# Travailler sur sema
 
-Lire `docs/PRODUCT.md`, `docs/ARCHITECTURE.md` et les fichiers concernés avant de modifier le code. Respecter le socle comportemental donné par Antoine ; ces règles le précisent.
+Entrée commune à tous les agents. Lire les sections utiles de `docs/PRODUCT.md`, `docs/ARCHITECTURE.md` et les fichiers concernés avant de coder. Ne charger que les références nécessaires à la tâche.
 
-## Périmètre et structure
+## Autorité et arbitrage
 
-- Nom de l’app : **sema**, toujours en minuscules dans les textes visibles. Dépôt : **antoineberjoan/sema**.
-- Cible : macOS 14+, Swift 6. Interface native SwiftUI ; AppKit seulement pour un comportement macOS précis.
-- Le cœur `MarketCore` reste indépendant de SwiftUI, AppKit et UserNotifications.
-- L’interface est rangée par fonctionnalité dans `SemaMac/Features`. Le panneau et la fenêtre partagent `AppStore`.
-- Ne pas ajouter de framework d’architecture, de cible, de service serveur ou de dépendance de production sans nécessité explicite et accord préalable pour une dépendance.
-- Préférer les composants natifs Apple. Centraliser les choix visuels réutilisés dans `DesignSystem`.
-- Respecter Interface Craft dans l’app et ses supports : hiérarchie nette, couleur intentionnelle, profondeur par ombres discrètes, cohérence des espacements et conventions natives. Consulter la skill et `docs/IDENTITY.md` avant une modification de design ou de mouvement.
-- Les animations ont des constantes nommées, restent interruptibles et respectent Réduire les animations. Valider le flux au clavier et le rendu natif ; distinguer ce qui est observé de ce qui reste à vérifier.
+- Antoine fixe l’intention. **Notion** fait foi sur la vision, le business, le périmètre souhaité, la marque, le ton et la copy. **GitHub** fait foi sur le code, les tâches techniques, les décisions d’architecture et les preuves de livraison. Liens : `docs/engineering/SOURCES.md`.
+- Le code prouve ce qui fonctionne ; il ne valide pas une nouvelle intention produit. Une page plus récente n’a pas automatiquement raison.
+- Si deux versions se contredisent sur la direction à retenir, présenter l’écart et **demander à Antoine laquelle conserver**. Préserver les deux jusqu’à sa réponse ; avancer sur le travail indépendant. Ne pas choisir silencieusement ni dupliquer une décision pour résoudre le conflit.
+- Une intention formulée dans le chat vaut instruction pour la tâche. Reporter sa décision durable dans sa source d’autorité, avec date et référence, sans transformer une hypothèse en décision.
 
-## Données et calculs
+## Code et structure
 
-- Toute série porte son origine, sa source, son unité et la date de ses observations.
-- Ne jamais présenter une fixture ou un fonds fictif comme une donnée de marché.
-- Les devises BCE sont des taux de référence publiés, pas des cours de trading en direct.
-- Utiliser `Decimal` pour les valeurs et variations financières. Convertir en `Double` seulement pour la représentation graphique.
-- Variation d’un taux : points de pourcentage. Variation d’une VL ou d’une parité : pourcentage relatif.
-- Une alerte identifie une part et une devise par `seriesID`. Ne pas agréger différentes parts d’un fonds.
-- Une alerte « supérieure à » exige un franchissement strict. La même observation ne doit pas déclencher deux fois.
-- Les calculs et le décodage se testent dans `MarketCoreTests`.
-- Ne pas intégrer de clé fournisseur partagée dans l’app ou le dépôt.
+- Une seule implémentation active par responsabilité. Pas d’alias de compatibilité, de code mort, de branche de secours spéculative ni de copie « v2 », « new » ou « final ». Les migrations de données sont traitées dans `docs/engineering/CONVENTIONS.md`.
+- Noms courts et explicites, même terme pour le même concept : `docs/engineering/GLOSSARY.md`. Respecter les API natives et les schémas externes.
+- Chaque fichier de code commence par une courte description de sa responsabilité, avant les imports et après les directives obligatoires. Expliquer son utilité, sans paraphraser son nom.
+- Chaque emplacement a un rôle dans `.agents/structure.json`. Réutiliser la zone existante ; justifier un nouvel emplacement. Pas de dossier fourre-tout.
+- Centraliser les choix métier, visuels et d’environnement chez leur propriétaire. Pas de valeur magique ni de secret dans le code ; pas de configuration spéculative. Détails dans `docs/engineering/CONVENTIONS.md`.
+- Changements ciblés, patterns existants, aucune abstraction sans usage concret. Ne supprimer que ce qui devient inutile pour la tâche.
+- Ne pas ajouter de dépendance de production sans accord. Pas de nouvelle cible, framework d’architecture ou service serveur sans besoin explicite.
+- App **sema**, en minuscules dans les textes visibles. Français pour l’interface et la documentation ; anglais pour les identifiants.
 
-## État et persistance
+## Charger au bon moment
 
-- Les mises à jour de l’état UI se font sur le `MainActor`.
-- Les favoris et alertes sont locaux, versionnés et écrits atomiquement.
-- Ne pas effacer ou réinitialiser silencieusement un fichier de préférences illisible.
-- Les notifications système restent désactivées tant que l’utilisateur ne les active pas.
-- La démonstration des alertes n’est pas un service de surveillance. Ne pas promettre de surveillance quand l’app est quittée ou le Mac en veille.
+| Travail | Instructions à lire |
+| --- | --- |
+| Modèles, données, calculs, préférences et leurs tests | `Sources/MarketCore/AGENTS.md` |
+| App native, état, design et mouvement | `Sources/SemaMac/AGENTS.md` |
+| Site | `site/AGENTS.md` |
+| Changement fonctionnel ou chantier à plusieurs étapes | `.agents/skills/sema-change/SKILL.md` |
+| Design, texte visible ou mouvement | `.agents/skills/sema-design/SKILL.md` |
+| Relais, fin de chantier ou session avec travail restant | `.agents/skills/sema-handoff/SKILL.md` |
+| Fonctionnement du dispositif et nouveaux outils d’agent | `docs/engineering/WORKFLOW.md` |
 
-## Validation
+Ces chemins fonctionnent aussi quand l’agent ne découvre pas les skills automatiquement. Ne pas charger toutes les skills au démarrage.
 
-- Exécuter `./scripts/check.sh` après une modification fonctionnelle.
-- Exécuter `./scripts/build-app.sh` pour valider un bundle `.app`.
-- Après une modification UI, vérifier le flux concerné dans l’app native : sélection, favoris, historique ou alerte.
-- Ne pas installer de dépendance uniquement pour un test de présentation.
-- Mettre à jour la documentation lorsqu’un contrat, une source ou le périmètre réellement disponible change.
-- Langue de l’interface et des documents : français. Identifiants Swift : anglais.
+## Validation et autonomie
+
+- Définir une condition de réussite observable avant un gros changement. Lire le diff et exécuter le plus petit contrôle pertinent.
+- `python3 scripts/guardrails.py` : structure, descriptifs, frontières, liens et cohérence mécanique. `./scripts/check.sh` : contrôles et tests après modification fonctionnelle. `./scripts/build-app.sh` : validation du bundle.
+- Après modification UI, vérifier le parcours dans l’app native ou le navigateur : clavier, états utiles, accessibilité et interruption des animations. Séparer ce qui est observé de ce qui reste à vérifier.
+- Les réparations et validations locales dans le périmètre demandé sont autonomes. Ne pas élargir la mission ni modifier les règles pour faire passer un contrôle.
+- Publication, fusion vers `main` (qui déploie le site), dépense, suppression irréversible et changement de vision nécessitent une autorisation couvrant l’action. Ne pas redemander un accord déjà donné pour cette action.
+- Garder une trace utile : plan actif si nécessaire, décision durable si nécessaire, PR et preuves. Aucune transcription brute ni journal quotidien automatique. Procédure : `sema-handoff`.
+
+## Code Review Rules
+
+Signaler une perte de données, une promesse non tenue, une deuxième implémentation, un contournement de contrôle ou un calcul financier hors du cœur. Vérifier le sens des noms et la valeur de chaque ajout. Les scripts ne prouvent ni l’absence de code mort ni la qualité du design.

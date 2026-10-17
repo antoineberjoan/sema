@@ -1,4 +1,6 @@
+<!-- Présente sema et sa démonstration vidéo, avec téléchargement direct et commande Homebrew copiable. -->
 <!doctype html>
+<!-- Présente la promesse de sema, le produit et l’accès au téléchargement. -->
 <html lang="fr">
   <head>
     <meta charset="utf-8">
@@ -16,6 +18,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/sema.svg">
     <link rel="stylesheet" href="style.css">
     <script src="/chrome.js" defer></script>
+    <script src="/landing.js" defer></script>
     <link rel="stylesheet" href="landing.css">
     <link rel="stylesheet" href="/chrome.css">
   </head>
@@ -25,31 +28,33 @@
       <div class="header-inner wrap">
         <a class="brand" href="#top" aria-label="sema, accueil"><svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path pathLength="1" d="M43 166.683C92.9018 166.683 111.233 118.818 118.362 76.0449C122.436 49.5664 94.9387 55.6768 90.865 86.229C84.7546 136.131 140.767 111.689 159.098 96.413C180.485 79.1001 196.779 95.3946 209 94.3762" transform="translate(-10.84 -6.41998) scale(.34)" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <nav aria-label="navigation principale">
-          <a class="header-download" href="/download/" data-header-download aria-hidden="true" inert>télécharger</a>
+          <a class="header-download" href="#top" data-header-download aria-hidden="true" inert>télécharger</a>
         </nav>
       </div>
     </header>
     <main id="main">
       <section class="hero wrap" id="top" aria-labelledby="hero-title">
-        <h1 id="hero-title">vos repères économiques. en un regard.<br><span>l’historique pour comprendre. les alertes pour agir.</span></h1>
-        <a class="button" href="/download/">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.5 7.59 9.04 7.31c1.35.07 2.29.76 3.08.82 1.18-.24 2.31-.94 3.57-.85 1.51.12 2.65.72 3.4 1.8-3.11 1.87-2.37 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg>
-          télécharger
-        </a>
-        <p class="brew-line"><a class="brew-link" href="/download/#homebrew">installer avec homebrew</a></p>
+        <h1 id="hero-title">l’économie bouge.<br><span>gardez vos repères.</span></h1>
+        <!-- release:primary:start -->
+<a class="button" href="https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.6.0/Sema-0.6.0-arm64.dmg" download="Sema-0.6.0-arm64.dmg" data-download><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.5 7.59 9.04 7.31c1.35.07 2.29.76 3.08.82 1.18-.24 2.31-.94 3.57-.85 1.51.12 2.65.72 3.4 1.8-3.11 1.87-2.37 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg>télécharger</a>
+          <!-- release:primary:end -->
+        <!-- release:homebrew:start -->
+<div class="brew-line"><button class="brew-copy" type="button" data-copy-homebrew aria-label="Copier la commande Homebrew" disabled><code id="homebrew-command">brew install --cask sema-app</code></button><span class="sr-only" role="status" id="homebrew-copy-status"></span></div>
+          <!-- release:homebrew:end -->
       </section>
-      <section class="product wrap" id="app" aria-label="Aperçu de sema">
-        <figure>
-          <img class="app-screenshot" src="assets/sema-focus-macos.png" width="2240" height="1520" alt="sema sur Mac : le hub Focus, sa sidebar et l’historique Euro / Dollar." fetchpriority="high" decoding="async">
-          <figcaption>données de démonstration.</figcaption>
-        </figure>
-      </section>
+      <figure class="motion-demo wrap" id="app" aria-label="démonstration de sema" aria-describedby="demo-description">
+        <video controls playsinline muted preload="metadata" poster="/assets/sema-demo-poster.jpg" width="1440" height="900" data-demo-video aria-label="lire la démonstration de sema">
+          <source src="/assets/sema-demo.mp4" type="video/mp4">
+          <p><a href="/assets/sema-demo.mp4">voir la démonstration de sema</a></p>
+        </video>
+        <figcaption class="sr-only" id="demo-description">Démonstration silencieuse de 18 secondes. Un clic sur le signe sema ouvre quatre favoris dans le bandeau. Commande K ouvre la recherche : le mot euro est saisi puis euro / dollar est sélectionné. Le hub affiche sa valeur et son historique ; la sidebar se révèle puis se referme. Les valeurs et courbes sont fictives.</figcaption>
+      </figure>
       <section class="questions wrap" id="questions" aria-labelledby="questions-title">
         <h2 id="questions-title">quelques réponses.</h2>
         <div class="faq-list">
           <details><summary>quels repères peut-on suivre ?<span class="plus" aria-hidden="true"></span></summary><p>taux, inflation, crédit, épargne, devises : composez votre sélection à partir des catalogues publics disponibles dans sema, dont <a href="https://webstat.banque-france.fr/">webstat, le portail de la banque de france</a>. chaque série conserve sa source, son unité et sa fréquence de publication. votre clé personnelle webstat reste dans le trousseau de votre mac.</p></details>
-          <details><summary>comment fonctionnent les alertes ?<span class="plus" aria-hidden="true"></span></summary><p>choisissez un repère et un seuil. sema vérifie le franchissement lorsque vous actualisez les données et peut vous envoyer une notification macos. la surveillance automatique en arrière-plan n’est pas encore disponible.</p></details>
-          <details><summary>sur quels mac fonctionne sema ?<span class="plus" aria-hidden="true"></span></summary><p>sur les mac avec puce apple, à partir de macos 14. la préversion est disponible en téléchargement ou avec homebrew. les étapes d’installation et de première ouverture sont expliquées sur la <a href="/download/">page de téléchargement</a>.</p></details>
+          <details><summary>comment fonctionnent les alertes ?<span class="plus" aria-hidden="true"></span></summary><p>choisissez un repère et un seuil. sema actualise vos données chaque jour tant qu’elle tourne, même avec le hub fermé, et peut vous envoyer une notification macos au franchissement du seuil. les vérifications reprennent après la veille ou la réouverture de l’app.</p></details>
+          <details><summary>sur quels mac fonctionne sema ?<span class="plus" aria-hidden="true"></span></summary><p>sur les mac avec puce apple, à partir de macos 14. la préversion est disponible en téléchargement ou avec homebrew. ouvrez le fichier .dmg, puis glissez sema dans applications.</p></details>
         </div>
       </section>
       <p class="support-note wrap">sema est gratuite. <a href="https://ko-fi.com/antoineberjoan" target="_blank" rel="noopener noreferrer">vous pouvez soutenir son développement sur ko-fi.</a></p>

@@ -1,4 +1,5 @@
 // swift-tools-version: 6.0
+// Déclare les cibles du cœur, de l’app macOS et des tests, sans dépendance externe.
 import PackageDescription
 
 let package = Package(
@@ -9,8 +10,8 @@ let package = Package(
         .library(name: "MarketCore", targets: ["MarketCore"])
     ],
     targets: [
-        .target(name: "MarketCore"),
-        .executableTarget(name: "SemaMac", dependencies: ["MarketCore"]),
+        .target(name: "MarketCore", exclude: ["AGENTS.md"]),
+        .executableTarget(name: "SemaMac", dependencies: ["MarketCore"], exclude: ["AGENTS.md"]),
         .testTarget(name: "MarketCoreTests", dependencies: ["MarketCore"])
     ]
 )

@@ -1,3 +1,4 @@
+// Présente les favoris et leurs historiques dans le bandeau partagé avec le hub.
 import AppKit
 import SwiftUI
 import Charts
@@ -11,7 +12,6 @@ import MarketCore
 enum MenuRibbonLayout {
     static let height = topPadding + cardHeight + bottomPadding
     static let verticalWidth: CGFloat = 368
-    static let signatureWidth: CGFloat = 252
     static let signatureHeight: CGFloat = 184
     static let cardCornerRadius: CGFloat = 22
     static let screenInset: CGFloat = 6
@@ -23,9 +23,10 @@ enum MenuRibbonLayout {
     static let spacing: CGFloat = 12
     static let minimumCardWidth: CGFloat = 248
     static let maximumCardWidth: CGFloat = 600
+    static let preferredVisibleCards = 4
     static let cardHeight: CGFloat = 184
-    static let controlColumnWidth: CGFloat = 76
-    static let periodRowHeight: CGFloat = 20
+    static let controlColumnWidth: CGFloat = 84
+    static let periodRowHeight: CGFloat = 24
     static let controlColumnPadding: CGFloat = 8
     static let revealDuration = 0.22
     static let dismissDuration = 0.13
@@ -63,11 +64,6 @@ struct MenuRibbonView: View {
                 HStack(alignment: .top, spacing: MenuRibbonLayout.spacing) {
                     controlColumn
                     horizontalFavorites
-                    ViewThatFits(in: .horizontal) {
-                        RibbonSignatureView(presentationID: presentationID)
-                            .frame(width: MenuRibbonLayout.signatureWidth, height: MenuRibbonLayout.signatureHeight)
-                        Color.clear.frame(width: 0, height: 0)
-                    }
                 }
                 .frame(height: MenuRibbonLayout.cardHeight)
             }
@@ -87,7 +83,7 @@ struct MenuRibbonView: View {
         GeometryReader { geometry in
             let capacity = max(1, Int((geometry.size.width + MenuRibbonLayout.spacing)
                                      / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)))
-            let visibleCount = max(1, min(items.count, capacity))
+            let visibleCount = max(1, min(items.count, capacity, MenuRibbonLayout.preferredVisibleCards))
             let cardWidth = min(MenuRibbonLayout.maximumCardWidth,
                 (geometry.size.width - CGFloat(visibleCount - 1) * MenuRibbonLayout.spacing) / CGFloat(visibleCount))
             if items.isEmpty {
@@ -99,6 +95,8 @@ struct MenuRibbonView: View {
                             RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
                                 .frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
                         }
+                        RibbonSignatureView(presentationID: presentationID)
+                            .frame(width: cardWidth, height: MenuRibbonLayout.signatureHeight)
                     }
                     .scrollTargetLayout()
                 }
@@ -111,18 +109,22 @@ struct MenuRibbonView: View {
     }
 
     private var controlColumn: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 2) {
             if !items.isEmpty {
-                ForEach(HistoryPeriod.allCases) { candidate in
+                ForEach(HistoryPeriods.visible) { candidate in
                     Button { period = candidate } label: {
-                        Text(candidate.title)
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(period == candidate ? Color.white : Color.primary)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: MenuRibbonLayout.periodRowHeight)
-                            .background(period == candidate ? store.palette.controlAccent : Color.clear,
-                                in: RoundedRectangle(cornerRadius: 6, style: .continuous))
-                            .contentShape(RoundedRectangle(cornerRadius: 6))
+                        HStack(spacing: 7) {
+                            Capsule().fill(period == candidate ? store.palette.accent : .clear)
+                                .frame(width: 3, height: 12)
+                            Text(candidate.title).font(.system(size: 11, weight: period == candidate ? .semibold : .regular))
+                                .fixedSize(horizontal: true, vertical: false)
+                                .foregroundStyle(.primary)
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, 6)
+                        .frame(maxWidth: .infinity).frame(height: MenuRibbonLayout.periodRowHeight)
+                        .background(.regularMaterial, in: Capsule())
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(SemaPressStyle())
                     .accessibilityAddTraits(period == candidate ? .isSelected : [])
@@ -134,7 +136,6 @@ struct MenuRibbonView: View {
         }
         .padding(MenuRibbonLayout.controlColumnPadding)
         .frame(width: MenuRibbonLayout.controlColumnWidth, height: MenuRibbonLayout.cardHeight)
-        .modifier(RibbonSurface())
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Période de comparaison et réglages")
     }
@@ -144,6 +145,7 @@ struct MenuRibbonView: View {
             Image(systemName: "gearshape").frame(width: 26, height: 26).contentShape(Circle())
         }
         .buttonStyle(.plain)
+        .background(.regularMaterial, in: Circle())
         .help("Réglages de sema").accessibilityLabel("Réglages de sema")
     }
 
@@ -152,8 +154,7 @@ struct MenuRibbonView: View {
             Spacer()
             HStack(spacing: 8) {
                 if !items.isEmpty {
-                    RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent,
-                        compact: isVertical)
+                    RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent)
                         .frame(width: isVertical ? 278 : 350)
                         .help("Historique disponible sur ce Mac · Tout utilise le cache chargé")
                 }
@@ -179,27 +180,16 @@ struct MenuRibbonView: View {
     private func open(_ item: MarketSeries) { store.show(item); store.section = .overview; openWorkspace() }
 }
 
-/// All periods remain directly available in one native segmented control.
+/// Les cinq horizons restent directement disponibles dans un contrôle natif.
 private struct RibbonPeriodPicker: NSViewRepresentable {
     @Binding var selection: HistoryPeriod
     let accent: Color
-    let compact: Bool
-    private let periods = HistoryPeriod.allCases
-
-    private func title(for period: HistoryPeriod) -> String {
-        guard compact else { return period.title }
-        switch period {
-        case .month: return "1 m"
-        case .quarter: return "3 m"
-        case .halfYear: return "6 m"
-        default: return period.title
-        }
-    }
+    private let periods = HistoryPeriods.visible
 
     func makeCoordinator() -> Coordinator { Coordinator(selection: $selection, periods: periods) }
 
     func makeNSView(context: Context) -> NSSegmentedControl {
-        let control = NSSegmentedControl(labels: periods.map { title(for: $0) }, trackingMode: .selectOne,
+        let control = NSSegmentedControl(labels: periods.map(\.title), trackingMode: .selectOne,
             target: context.coordinator, action: #selector(Coordinator.selectPeriod(_:)))
         control.controlSize = .small
         control.font = .systemFont(ofSize: 11)
@@ -213,7 +203,7 @@ private struct RibbonPeriodPicker: NSViewRepresentable {
         context.coordinator.periods = periods
         control.segmentCount = periods.count
         for (index, period) in periods.enumerated() {
-            control.setLabel(title(for: period), forSegment: index)
+            control.setLabel(period.title, forSegment: index)
             control.setToolTip(period.title, forSegment: index)
         }
         control.selectedSegmentBezelColor = NSColor(accent)

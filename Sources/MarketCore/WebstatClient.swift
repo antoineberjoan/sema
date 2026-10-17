@@ -1,3 +1,4 @@
+// Interroge Webstat avec une clé personnelle en en-tête et conserve la précision des observations.
 import Foundation
 
 /// Authenticated Banque de France observations. The user's key travels only in an HTTP header.

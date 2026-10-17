@@ -21,6 +21,8 @@ Les séries publiques partagent favoris, historiques et alertes avec Webstat. Le
 
 ## Démarrer
 
+Pour contribuer avec un agent, lire [AGENTS.md](AGENTS.md), puis activer les contrôles locaux avec `./scripts/setup.sh`. Les contrôles demandent Python 3.9 ou plus récent, sans module externe. Le [fonctionnement du socle](docs/engineering/WORKFLOW.md) explique les sources Notion, les skills et les validations partagées.
+
 Pré-requis : un Mac sous macOS 14 ou plus récent et un compilateur Swift 6. Xcode complet est recommandé pour le développement visuel. L’app peut être compilée avec les seuls Command Line Tools.
 
 ```sh
@@ -98,5 +100,7 @@ Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, l
 Le bouton « Une idée ou un bug ? » du bandeau ouvre le [formulaire public](https://antoineberjoan.notion.site/5e95023c58754a8990fd16f5fd1ad5f2). Les réponses sont privées ; [configuration et vérification](docs/FEEDBACK.md).
 
 ## Source de référence
+
+Notion porte la vision, le business, la marque et la copy ; [la carte des sources](docs/engineering/SOURCES.md) donne les pages de référence. GitHub porte l’exécution et les preuves. En cas de divergence de direction, demander à Antoine quelle version garder avant d’aligner les documents.
 
 `origin/main` réunit les sources de l’app, le site et son guide de marque. L’historique du dépôt Sites a été importé dans `site/` sans modifier son identité ni son audience. Le site public reste sur [getsema.app](https://getsema.app/) ; voir [site/README.md](site/README.md) pour le déploiement du site. Les essais et livrables historiques sont inventoriés dans [docs/ARCHIVES.md](docs/ARCHIVES.md). Les clés, préférences personnelles, caches et liens locaux Vercel restent hors de Git.

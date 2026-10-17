@@ -1,3 +1,4 @@
+// Isole la lecture, l’écriture et la suppression de la clé personnelle dans le Trousseau macOS.
 import Foundation
 import Security
 

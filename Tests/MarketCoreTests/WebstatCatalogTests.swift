@@ -1,3 +1,4 @@
+// Vérifie métadonnées, unités, pagination et requêtes du catalogue Webstat.
 import Foundation
 import Testing
 @testable import MarketCore

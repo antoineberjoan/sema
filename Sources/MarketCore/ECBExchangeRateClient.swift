@@ -1,3 +1,4 @@
+// Télécharge et décode les taux de référence BCE publiés, sans les présenter comme des cours en direct.
 import Foundation
 
 /// Public ECB reference rates. These are daily publications, not live trading quotes.

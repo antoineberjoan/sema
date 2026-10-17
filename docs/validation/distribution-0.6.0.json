@@ -1,0 +1,41 @@
+{
+  "version": "0.6.0",
+  "build": "17",
+  "sha256": "a7e6abc3112a8fd40c7df2e043a3650c02e0ffd25d825bc33aee184d84da150b",
+  "byteSize": 3008614,
+  "sourceCodeValidatedAt": "368836fd7feb5716bbd02e419ba15a263ab3156d",
+  "ci": "https://github.com/antoineberjoan/sema/actions/runs/39047572086",
+  "swiftTests": 81,
+  "pythonTests": 17,
+  "publicDownload": {
+    "url": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.6.0/Sema-0.6.0-arm64.dmg",
+    "unauthenticatedDownloadVerified": true,
+    "version": "0.6.0",
+    "upgradeFrom": "0.5.1",
+    "homebrewInstall": true,
+    "homebrewUpgrade": true,
+    "strictSignatureVerified": true,
+    "quarantinePreserved": true,
+    "installedExecutableMatchesProduction": true,
+    "downloadedAppLaunched": false,
+    "temporaryAppDirectory": true,
+    "publicTapCommit": "908bc9735b15b6f01051361f97b98b889b5354fe"
+  },
+  "nativeAutomaticRefresh": {
+    "transportDoubleProbe": true,
+    "noWindowCreatedInProbe": true,
+    "wakeNotificationSimulated": true,
+    "duplicateTriggersCoalesced": true,
+    "freshCacheSkipped": true,
+    "busyRefreshRespected": true,
+    "offlineCachePreservedInProbe": true,
+    "realPublicECBStartupRefresh": true,
+    "oldCacheHours": 25,
+    "publicObservationCount": 1537,
+    "processAliveAfterHubClosed": true,
+    "physicalSleepWakeTested": false,
+    "waitedTwentyFourHours": false,
+    "notificationsEnabledForTest": false,
+    "webstatKeyUsedForTest": false
+  }
+}

@@ -1,3 +1,4 @@
+// Vérifie les observations Webstat, les erreurs réseau et la précision du décodage.
 import Foundation
 import Testing
 @testable import MarketCore

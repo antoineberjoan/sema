@@ -1,3 +1,4 @@
+// Recherche dans les séries locales avec normalisation et synonymes des repères connus.
 import Foundation
 
 public enum SeriesSearch {

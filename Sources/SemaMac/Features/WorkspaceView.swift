@@ -1,3 +1,5 @@
+// Organise Focus et la sidebar persistante ou survolée, avec sélection ordonnée et accès au profil.
+import AppKit
 import SwiftUI
 import MarketCore
 
@@ -10,8 +12,31 @@ struct WorkspaceView: View {
     @State private var hoveredSidebarZone: SidebarHoverZone?
     @State private var sidebarCloseTask: Task<Void, Never>?
     @State private var removal: MarketSeries?
+    @State private var switcherSelection: String?
 
     var body: some View {
+        keyboardWorkspace
+        .onDisappear { sidebarCloseTask?.cancel() }
+        .task { await store.checkWebstatKey() }
+        .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
+        .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
+        .alert("sema", isPresented: errorBinding) {
+            Button("Compris", role: .cancel) { store.errorMessage = nil }
+        } message: { Text(store.errorMessage ?? "") }
+        .confirmationDialog("Retirer ce repère ?", isPresented: Binding(get: { removal != nil }, set: { if !$0 { removal = nil } }), titleVisibility: .visible) {
+            Button("Retirer de mes repères", role: .destructive) { if let removal { _ = store.unfollow(removal.id) }; removal = nil }
+            Button("Annuler", role: .cancel) { removal = nil }
+        } message: {
+            Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
+        }
+        .overlay(alignment: .topTrailing) {
+            if let event = store.simulatedEvent {
+                DemoNotificationView(event: event).environment(store).padding(24)
+            }
+        }
+    }
+
+    private var workspaceLayout: some View {
         NavigationSplitView(columnVisibility: sidebarVisibilityBinding) {
             sidebarContent
                 .toolbar(removing: .sidebarToggle)
@@ -20,11 +45,16 @@ struct WorkspaceView: View {
             VStack(spacing: 0) {
                 if store.section == .explorer {
                     ExplorerView().padding(26).frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if store.section == .overview {
+                    ViewThatFits(in: .vertical) {
+                        overviewContent
+                        ScrollView { overviewContent }
+                    }
                 } else {
                     ScrollView {
                         Group {
                             switch store.section {
-                            case .overview: OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
+                            case .overview: EmptyView()
                             case .favorites: FavoritesView()
                             case .alerts: AlertsView()
                             case .explorer: EmptyView()
@@ -51,12 +81,11 @@ struct WorkspaceView: View {
                     if store.isLoading {
                         ProgressView().controlSize(.small).help("Actualisation des repères…")
                     }
-                    SettingsLink { Label("Réglages", systemImage: "gearshape") }
-                        .labelStyle(.iconOnly).help("Réglages de sema · ⌘,")
                 }
             }
         }
         .navigationSplitViewStyle(.balanced)
+        .toolbarBackground(.hidden, for: .windowToolbar)
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 Button {
@@ -81,38 +110,90 @@ struct WorkspaceView: View {
             }
         }
         .frame(minWidth: 980, minHeight: 680)
+    }
+
+    private var overviewContent: some View {
+        OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
+            .padding(.horizontal, 48).padding(.top, 24).padding(.bottom, 26)
+    }
+
+    private var keyboardWorkspace: some View {
+        workspaceLayout
+        .background { FocusKeyboard(handle: handleFocusKey).frame(width: 0, height: 0) }
+        .overlay {
+            if let selection = switcherSelection {
+                ZStack {
+                    Color.black.opacity(0.035).contentShape(Rectangle()).onTapGesture { closeSwitcher() }
+                    FocusSwitcherView(selection: selection) { item in store.show(item); closeSwitcher() }
+                        .transition(.opacity)
+                }
+            }
+        }
         .onExitCommand {
             guard store.section == .overview, !store.isSearchPresented, !store.isAlertSheetPresented,
                   !store.isOnboardingPresented, sidebarPresentation != .hidden else { return }
             setSidebarPresentation(.hidden)
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase != .active { dismissSidebarPreview() }
+            if phase != .active { dismissSidebarPreview(); closeSwitcher() }
         }
         .onChange(of: store.isSearchPresented) { _, presented in
-            if presented { dismissSidebarPreview() }
+            if presented { dismissSidebarPreview(); closeSwitcher() }
         }
         .onChange(of: store.isAlertSheetPresented) { _, presented in
-            if presented { dismissSidebarPreview() }
+            if presented { dismissSidebarPreview(); closeSwitcher() }
         }
-        .onDisappear { sidebarCloseTask?.cancel() }
-        .task { await store.checkWebstatKey() }
-        .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
-        .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
-        .alert("sema", isPresented: errorBinding) {
-            Button("Compris", role: .cancel) { store.errorMessage = nil }
-        } message: { Text(store.errorMessage ?? "") }
-        .confirmationDialog("Retirer ce repère ?", isPresented: Binding(get: { removal != nil }, set: { if !$0 { removal = nil } }), titleVisibility: .visible) {
-            Button("Retirer de mes repères", role: .destructive) { if let removal { _ = store.unfollow(removal.id) }; removal = nil }
-            Button("Annuler", role: .cancel) { removal = nil }
-        } message: {
-            Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
+        .onChange(of: store.isOnboardingPresented) { _, presented in
+            if presented { closeSwitcher() }
         }
-        .overlay(alignment: .topTrailing) {
-            if let event = store.simulatedEvent {
-                DemoNotificationView(event: event).environment(store).padding(24)
+        .onChange(of: store.errorMessage) { _, message in
+            if message != nil { closeSwitcher() }
+        }
+        .onChange(of: store.section) { _, _ in closeSwitcher() }
+        .onChange(of: store.followedSeries.map(\.id)) { _, _ in closeSwitcher() }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { _ in closeSwitcher() }
+    }
+
+    private func handleFocusKey(_ event: NSEvent) -> Bool {
+        guard store.section == .overview, !store.isSearchPresented, !store.isAlertSheetPresented,
+              !store.isOnboardingPresented, store.errorMessage == nil, removal == nil,
+              !store.followedSeries.isEmpty else { return false }
+        let modifiers = event.modifierFlags.intersection([.command, .control, .option, .shift])
+        if switcherSelection != nil {
+            if event.type == .flagsChanged {
+                if !modifiers.contains(.command) { commitSwitcher() }
+                return false
             }
+            if event.keyCode == 53 { closeSwitcher(); return true }
+            if [36, 76].contains(event.keyCode) { commitSwitcher(); return true }
         }
+        guard event.type == .keyDown, [125, 126].contains(event.keyCode),
+              modifiers.isEmpty || modifiers == .command else {
+            if event.type == .keyDown { closeSwitcher() }
+            return false
+        }
+        let items = store.followedSeries
+        let current = items.firstIndex { $0.id == (switcherSelection ?? store.selectedSeries?.id) } ?? 0
+        let step = event.keyCode == 125 ? 1 : -1
+        if modifiers == .command || switcherSelection != nil {
+            let next = (current + step + items.count) % items.count
+            dismissSidebarPreview()
+            withAnimation(reduceMotion ? nil : FocusSwitcherMotion.presentation) { switcherSelection = items[next].id }
+        } else {
+            let next = min(items.count - 1, max(0, current + step))
+            store.show(items[next])
+        }
+        return true
+    }
+
+    private func commitSwitcher() {
+        if let item = store.followedSeries.first(where: { $0.id == switcherSelection }) { store.show(item) }
+        closeSwitcher()
+    }
+
+    private func closeSwitcher() {
+        guard switcherSelection != nil else { return }
+        withAnimation(reduceMotion ? nil : FocusSwitcherMotion.presentation) { switcherSelection = nil }
     }
 
     private var columnVisibility: NavigationSplitViewVisibility {
@@ -168,7 +249,7 @@ struct WorkspaceView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(SemaPressStyle()).help("Rechercher un repère · ⌘K")
-            .padding(.horizontal, 14).padding(.top, 20)
+            .padding(.horizontal, 14).padding(.top, 8)
 
             VStack(spacing: 2) {
                 ForEach(WorkspaceSection.allCases.filter { $0 != .overview }) { SidebarItem(section: $0) }

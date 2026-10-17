@@ -1,3 +1,4 @@
+// Découvre les catalogues publics et charge une série choisie avec son contrat de source.
 import Foundation
 
 /// Catalogue discovery is independent of observations: no bulk download of every time series.

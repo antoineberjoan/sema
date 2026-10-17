@@ -1,3 +1,4 @@
+// Compose les cartes en matière macOS et leur repli opaque pour les réglages d’accessibilité.
 import AppKit
 import SwiftUI
 

@@ -1,3 +1,4 @@
+// Résout et valide l’adresse du formulaire de retours depuis la configuration du bundle.
 import Foundation
 
 enum SemaFeedback {

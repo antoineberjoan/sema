@@ -1,5 +1,9 @@
 # Plan sema pour le catalogue et la distribution
 
+En cours : [actualisation quotidienne et publication](plans/automatic-refresh.md) ; [navigation clavier et bandeau Repère](plans/keyboard-navigation.md).
+
+Historique : [réglages avec sidebar vérifiés après simplification](plans/settings-sidebar.md) ; [socle agentique validé et livré en PR brouillon](plans/agent-foundation.md). Les plans ci-dessous sont conservés dans leur état documenté ; certains lots ont depuis été implémentés. Leur statut doit être réconcilié avec les preuves et l’arbitrage d’Antoine avant de les reprendre comme tâches. Le périmètre courant est décrit dans [PRODUCT.md](PRODUCT.md).
+
 16 octobre 2026. Direction validée avec Antoine ; fonctionnalités ci-dessous à réaliser. Le logo de barre de menus à 2 pt est déjà intégré et compilé.
 
 sema doit permettre à chaque utilisateur de composer ses repères dans le catalogue Webstat. La première installation doit prolonger la même identité, du site au DMG puis à l’accueil natif. L’ouverture du catalogue et la distribution sont deux chantiers distincts, avec une exigence commune : une interface calme, précise et attentive.
@@ -36,3 +40,7 @@ Les séquences sont décrites avant codage, avec des constantes nommées pour le
 Les leçons membres suivantes d’Interface Craft guident la méthode : [Separation of Concerns](https://www.interfacecraft.dev/library/separation-of-concerns), [Conceptual Depth](https://www.interfacecraft.dev/library/conceptual-depth), [Live Tuning](https://www.interfacecraft.dev/library/live-tuning), [Animations as Proof of Care](https://www.interfacecraft.dev/library/animations-as-proof-of-care), [Less, but Better](https://www.interfacecraft.dev/library/less-but-better) et [Facets of Quality](https://www.interfacecraft.dev/library/facets-of-quality). Les critères de sema privilégient la précision, la rapidité, la retenue et la continuité.
 
 Les contrats de la version actuelle restent décrits dans [PRODUCT.md](PRODUCT.md). Ce plan décrit la prochaine évolution ; il ne vaut pas annonce de fonctionnalités déjà disponibles.
+
+## Présentation du produit
+
+- [Démonstrations de la landing](plans/landing-demos.md) : téléchargement direct, commande copiable et proposition vidéo motion en revue ; publication en attente.

@@ -1,26 +1,25 @@
 {
   "schemaVersion": 1,
   "product": "sema",
-  "version": "0.5.1",
-  "build": "15",
+  "version": "0.6.0",
+  "build": "17",
   "architecture": "arm64",
   "minimumMacOS": "14.0",
   "signature": "ad-hoc",
   "notarized": false,
-  "createdAt": "2026-10-17T07:25:29+00:00",
+  "createdAt": "2026-10-17T16:05:08+00:00",
   "channel": "public-alpha",
   "download": {
     "enabled": true,
-    "url": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.5.1/Sema-0.5.1-arm64.dmg",
-    "filename": "Sema-0.5.1-arm64.dmg",
-    "byteSize": 2863197,
-    "sha256": "762e891f57f26db57c222f78c899e1d58bf432ef6b72a2623eda196bbf4c526d",
-    "proposedURL": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.5.1/Sema-0.5.1-arm64.dmg"
+    "url": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.6.0/Sema-0.6.0-arm64.dmg",
+    "filename": "Sema-0.6.0-arm64.dmg",
+    "byteSize": 3008614,
+    "sha256": "a7e6abc3112a8fd40c7df2e043a3650c02e0ffd25d825bc33aee184d84da150b",
+    "proposedURL": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.6.0/Sema-0.6.0-arm64.dmg"
   },
   "homebrew": {
     "enabled": true,
-    "command": "brew install --cask antoineberjoan/sema/sema",
-    "proposedCommand": "brew install --cask antoineberjoan/sema/sema"
+    "command": "brew install --cask sema-app"
   },
   "validation": {
     "bundleSignature": true,
@@ -29,10 +28,9 @@
     "firstLaunch": false,
     "homebrewInstall": true,
     "homebrewUpgrade": true,
-    "homebrewUpgradeScope": "public tap, exact 0.5.0 → 0.5.1 artifact",
+    "homebrewUpgradeScope": "public sema-app cask, exact 0.5.1 → 0.6.0 artifacts, temporary app directory",
     "publicTap": true,
     "gatekeeperInternetLaunch": false,
-    "nativeUIReview": true,
-    "hoverUserConfirmed": true
+    "nativeUIReview": true
   }
 }

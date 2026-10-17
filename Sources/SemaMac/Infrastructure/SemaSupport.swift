@@ -1,3 +1,4 @@
+// Résout l’adresse de soutien du projet depuis la configuration du bundle.
 import Foundation
 
 enum SemaSupport {

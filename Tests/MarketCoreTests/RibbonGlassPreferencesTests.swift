@@ -1,3 +1,4 @@
+// Vérifie les valeurs par défaut, la normalisation et la persistance des réglages du verre.
 import Foundation
 import Testing
 @testable import MarketCore

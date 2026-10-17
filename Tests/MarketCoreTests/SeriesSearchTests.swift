@@ -1,3 +1,4 @@
+// Vérifie la recherche locale, les accents et les synonymes sans confondre les repères.
 import Foundation
 import Testing
 @testable import MarketCore

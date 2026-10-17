@@ -1,3 +1,4 @@
+// Règle le verre du bandeau avec l’aperçu d’un favori et une remise à zéro limitée.
 import SwiftUI
 import MarketCore
 

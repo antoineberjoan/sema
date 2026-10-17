@@ -1,3 +1,4 @@
+// Présente le repère sélectionné, les favoris et les actions de lecture des séries.
 import SwiftUI
 import MarketCore
 
@@ -59,7 +60,6 @@ struct IndicatorTile: View {
                 VStack(alignment: .leading, spacing: compact ? 14 : 10) {
                     HStack(spacing: 6) {
                         Text(displayed.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
-                        if series.isDemo { Text("Démo").font(.system(size: 11)).foregroundStyle(.secondary) }
                         if !store.isSourceEnabled(for: series.id) { Image(systemName: "pause.circle").foregroundStyle(.secondary).help("Source désactivée · historique conservé") }
                     }
                     .padding(.trailing, series.exchangeRatePair == nil ? 22 : 48)
@@ -195,7 +195,7 @@ struct SeriesDetailView: View {
                     .frame(height: 190)
             } else {
                 if !focus { periodPicker }
-                HistoryChart(series: displayed, period: period, height: focus ? 250 : preview ? 170 : 235, showsReading: !focus)
+                HistoryChart(series: displayed, period: period, height: focus ? nil : preview ? 170 : 235, showsReading: !focus)
             }
             if period == .all, !series.isDemo, series.hasCompleteHistory != true {
                 HStack(spacing: 12) {
@@ -358,7 +358,7 @@ struct SeriesDetailView: View {
 
     private var periodPicker: some View {
         Picker("Période de l’historique", selection: $period) {
-            ForEach(HistoryPeriod.allCases.filter { $0 == .all || series.supports($0) }) { Text($0.title).tag($0) }
+            ForEach(HistoryPeriods.visible.filter { $0 == .all || series.supports($0) }) { Text($0.title).tag($0) }
         }
         .pickerStyle(.segmented).labelsHidden()
     }

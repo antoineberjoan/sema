@@ -1,3 +1,4 @@
+// Relie uniquement les séries dont la correspondance entre fournisseurs a été vérifiée.
 import Foundation
 
 /// Explicit, verified correspondence only. Titles and matching observation values

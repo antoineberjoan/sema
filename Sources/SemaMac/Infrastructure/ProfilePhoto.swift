@@ -1,3 +1,4 @@
+// Prépare une photo locale compacte en supprimant les métadonnées du fichier d’origine.
 import Foundation
 import ImageIO
 import UniformTypeIdentifiers

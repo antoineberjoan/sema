@@ -1,0 +1,4 @@
+#!/bin/sh
+# Vérifie les contenus réellement indexés, sans corriger ni ajouter de fichier au commit.
+set -eu
+exec python3 scripts/guardrails.py --staged

@@ -1,3 +1,4 @@
+// Expose la navigation, la recherche et l’actualisation dans les menus et raccourcis natifs.
 import SwiftUI
 
 struct SemaCommands: Commands {

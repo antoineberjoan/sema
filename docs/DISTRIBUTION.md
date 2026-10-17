@@ -21,7 +21,7 @@ Le script produit :
 - le fond Retina et standard dans `background-preview/` ;
 - `Sema-<version>-arm64.dmg.sha256` ;
 - `release.json`, source des métadonnées du site ;
-- `sema.rb.template`, modèle de cask pour le futur tap.
+- `sema-app.rb.template`, modèle de cask pour le futur tap.
 
 Un fichier DMG versionné existant n’est jamais écrasé. Pour un nouvel essai du même numéro, utiliser un autre dossier de sortie. Les volumes temporaires sont démontés sur succès, erreur ou interruption. Le script ne retire aucune quarantaine et ne change pas Gatekeeper.
 
@@ -33,7 +33,7 @@ Le petit outil C `finder-alias.c` utilise l’Alias Manager de macOS pour lier l
 
 `bless --openfolder` n’est pas utilisé : cette option ne fonctionne pas sur Apple Silicon. Le montage utilisateur du DMG et la lecture de sa disposition doivent être contrôlés dans le Finder réel.
 
-## Alimenter la page de téléchargement
+## Alimenter le téléchargement direct
 
 Le site est versionné sous `site/` dans ce même dépôt ; son hébergement reste distinct. Les métadonnées sont générées à partir du manifeste du **même DMG** :
 
@@ -46,13 +46,25 @@ python3 scripts/distribution/sync-download.py \
 
 Sans cette option, l’outil utilise uniquement l’URL déjà activée dans `release.json`. L’URL publique proposée et la commande Homebrew restent désactivées par défaut. Ne pas activer le site tant qu’un téléchargement Internet sans session développeur et son SHA-256 n’ont pas été vérifiés.
 
-La page contient une démonstration, pas une mesure du téléchargement ou de la copie réelle. Une seule lecture est lancée lorsque la figure entre dans l’écran ; Rejouer reste disponible, y compris au clavier. Réduire les animations conserve la composition et les trois étapes sans déplacement. L’animation se termine proprement si la fenêtre est masquée ou redimensionnée. Sur localhost uniquement, Alt + clic sur Rejouer ouvre les réglages de développement : vitesse, amortissement, hauteur et ombre.
+La landing expose le lien direct au DMG et la commande Homebrew copiable, sans page intermédiaire ni ligne de compatibilité sous le CTA. Le générateur conserve le manifeste JSON sous `download/release.json` ; ce chemin est une métadonnée et ne sert aucune page HTML. Il ne doit pas recréer la page supprimée.
+
+La vidéo produit de la landing est indépendante du manifeste de distribution. Son storyboard et sa génération sont décrits dans `site/README.md` ; elle n’illustre pas une installation et ne mesure aucun téléchargement.
 
 ## Activer Homebrew
 
-Le dépôt de distribution public est `antoineberjoan/homebrew-sema`. Le cask se place sous `Casks/sema.rb` dans ce dépôt de distribution ; le code source de sema n’a pas besoin de devenir public. L’adresse immuable de release proposée est inscrite dans le manifeste et dans le modèle de cask.
+Le dépôt de distribution public est `antoineberjoan/homebrew-sema`. Le cask actif est `Casks/sema-app.rb`, avec une copie identique sous `distribution/`. `cask_renames.json` migre le nom précédent `sema`.
 
-Avant activation : créer le dépôt de distribution avec l’audience décidée, publier exactement le DMG contrôlé et son empreinte, vérifier le téléchargement sans authentification, puis tester installation **et** mise à jour sur un environnement distinct. La commande attendue est `brew install --cask antoineberjoan/sema/sema`. Elle n’est pas opérationnelle tant que ces étapes ne sont pas terminées.
+La commande courte est `brew install --cask sema-app` après préparation du tap. Sur un Mac neuf :
+
+```sh
+brew tap antoineberjoan/sema
+brew trust --cask antoineberjoan/sema/sema-app
+brew install --cask sema-app
+```
+
+L’approbation porte uniquement sur ce cask tiers. Antoine demande de garder uniquement la commande courte sur la landing ; la préparation reste dans cette documentation technique. Ce parcours a été testé le 17 octobre sur les artefacts publics 0.5.0 puis 0.5.1, dans un dossier temporaire : installation neuve et vraie mise à jour réussies, signature valide et quarantaine conservée. Aucun lancement Internet ni contournement Gatekeeper. [Preuves](validation/homebrew-sema-app.json).
+
+Antoine a choisi de ne pas prendre d’adhésion Apple Developer. La distribution reste signée ad hoc ; aucune intégration au catalogue officiel Homebrew ni notarisation n’est déclarée.
 
 Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade` et `validation.internetDownload`. Le générateur de page refuse d’exposer une commande Homebrew active si ces trois valeurs ne sont pas vraies. La désinstallation ne supprime pas les préférences de l’utilisateur ; aucun `zap` automatique n’est défini.
 
@@ -61,7 +73,7 @@ Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade
 1. Monter le DMG par le Finder, contrôler le fond Retina, les deux icônes, leur nom, les ombres et l’absence d’éléments superflus.
 2. Glisser réellement sema dans Applications sur un compte de test, éjecter le disque et ouvrir la copie. Vérifier l’accueil, le parcours passé, la reprise et l’ouverture suivante.
 3. Télécharger le fichier via le navigateur sur un autre compte ou Mac pour observer les contrôles de quarantaine et confirmer l’aide Gatekeeper.
-4. Vérifier la page desktop et mobile, le clavier, la copie Homebrew, Réduire les animations, JavaScript absent et les relectures rapides.
+4. Vérifier la landing desktop et mobile, le lien direct au DMG, le clavier, la copie Homebrew, Réduire les animations et JavaScript absent.
 5. Ne cocher les contrôles de `release.json` qu’après les essais correspondants. Le succès de `hdiutil verify` et de la signature locale ne vaut pas validation de l’installation Internet.
 
 ## Alpha 0.2.0 vérifiée le 16 octobre 2026
@@ -92,3 +104,9 @@ La revue native utilise des préférences séparées : sélection, périodes, in
 Focus ne présente plus de ligne de source ni d’accordéons techniques permanents. La date discrète ouvre un popover natif contenant la provenance, la définition et les métadonnées ; les données fictives restent identifiées. Échap ferme uniquement ce popover. La sélection, les périodes et le contexte d’une cotation inversée ont été vérifiés dans le bundle natif ; les 74 tests et le bundle ont passé la CI macOS sur le commit source exact.
 
 Le DMG 0.5.1, build 15, contient 2 863 197 octets, SHA-256 `762e891f57f26db57c222f78c899e1d58bf432ef6b72a2623eda196bbf4c526d`. Le téléchargement public sans authentification, la mise à jour Homebrew 0.5.0 → 0.5.1 et l’installation neuve ont été vérifiés dans un dossier Applications temporaire, sans lancer le binaire téléchargé. Signature stricte valide, quarantaine conservée, binaire identique à la production. [Preuves UI](validation/focus-0.5.1.json) · [preuves de distribution](validation/distribution-0.5.1.json).
+
+## Version 0.6.0 — actualisation quotidienne
+
+Build 17, DMG de 3 008 614 octets, SHA-256 `a7e6abc3112a8fd40c7df2e043a3650c02e0ffd25d825bc33aee184d84da150b`. Le même artefact public sert le site et le cask `sema-app`. Téléchargement sans authentification, mise à jour Homebrew 0.5.1 → 0.6.0 et installation neuve vérifiés dans un dossier temporaire, puis retirés. Signature stricte valide, quarantaine conservée, binaire identique à la production. Aucun lancement du binaire téléchargé ni contournement Gatekeeper. [Preuves](validation/distribution-0.6.0.json).
+
+Le lancement, le réveil et l’échéance quotidienne partagent le contrôleur natif. Les données synchronisées depuis moins de 24 h sont conservées sans nouvelle requête ; ⌘R reste une actualisation forcée. Les alertes sont évaluées sur les nouvelles observations. L’app doit rester active, même sans hub ; aucun contrôle pendant la veille ou après sortie. Le contrôleur a été exercé sans fenêtre et le bundle a réellement actualisé une série BCE au lancement. La veille matérielle et une attente réelle de 24 h ne sont pas revendiquées.

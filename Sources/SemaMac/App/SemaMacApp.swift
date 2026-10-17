@@ -1,3 +1,4 @@
+// Assemble les scènes SwiftUI et le cycle de vie de l’app accessible depuis la barre de menus.
 import AppKit
 import SwiftUI
 import UserNotifications
@@ -43,10 +44,27 @@ struct SemaMacApp: App {
 @MainActor
 final class SemaAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     private var menuRibbon: MenuRibbonController?
+    private var refreshController: RefreshController?
 
     func installRibbon(store: AppStore, openWorkspace: @escaping () -> Void, openSettings: @escaping () -> Void) {
         guard menuRibbon == nil else { return }
         menuRibbon = MenuRibbonController(store: store, openWorkspace: openWorkspace, openSettings: openSettings)
+        store.globalShortcuts.perform = { [weak self, weak store] action in
+            guard let self, let store else { return }
+            switch action {
+            case .ribbon: self.menuRibbon?.toggle()
+            case .workspace:
+                if !store.isSearchPresented && !store.isAlertSheetPresented && !store.isOnboardingPresented {
+                    store.section = .overview
+                }
+                self.menuRibbon?.showWorkspace()
+            }
+        }
+        store.activateShortcuts()
+        shortcuts = store.globalShortcuts
+        let refresh = RefreshController(store: store)
+        refreshController = refresh
+        refresh.start()
     }
 
     func toggleRibbon() { menuRibbon?.toggle() }
@@ -58,7 +76,12 @@ final class SemaAppDelegate: NSObject, NSApplicationDelegate, UNUserNotification
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
-    func applicationWillTerminate(_ notification: Notification) { menuRibbon?.tearDown() }
+    private var shortcuts: GlobalShortcuts?
+
+    func applicationWillTerminate(_ notification: Notification) {
+        refreshController?.stop()
+        shortcuts?.tearDown(); menuRibbon?.tearDown()
+    }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
         willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
