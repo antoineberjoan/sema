@@ -43,3 +43,5 @@ La copie conserve exactement la commande affichée ; les commandes de préparati
 - Captures : `sema-landing-motion-desktop.png`, `sema-landing-motion-mobile.png` dans les artefacts du chat. Décisions de retrait et statut de proposition vidéo reportés dans Notion Marque.
 
 Prochaine action : présenter le nouvel aperçu à Antoine ; attendre sa décision sur la vidéo et la publication. La production n’est pas modifiée par cette branche.
+
+Contrôle du cask actif : aperçu du commit `7ebfcaa`, READY (`dpl_4XNeHnuBEDHYHHMw1mhHdv8xRWHP`). La copie au clic donne exactement `brew install --cask sema-app`, presse-papiers restauré ; « première installation » montre le tap et l’approbation du seul cask. La CI de ce commit passe (runs `39043607398` et `39043603762`).
