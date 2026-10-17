@@ -295,6 +295,7 @@ struct SeriesDetailView: View {
                 .lineLimit(1).minimumScaleFactor(0.55)
             Text(displayed.displayUnit).font(.system(size: 22)).foregroundStyle(.secondary)
         }
+        .accessibilityElement(children: .combine)
     }
 
     @ViewBuilder private func variationBadge(_ displayed: MarketSeries) -> some View {
