@@ -39,4 +39,4 @@ Les contrats de la version actuelle restent décrits dans [PRODUCT.md](PRODUCT.m
 
 ## Présentation du produit
 
-- [Démonstrations de la landing](plans/landing-demos.md) : trois scènes interactives vérifiées en aperçu, publication en attente.
+- [Démonstrations de la landing](plans/landing-demos.md) : trois compositions distinctes en cours de refonte, publication en attente.

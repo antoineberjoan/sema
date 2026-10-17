@@ -1,27 +1,26 @@
 # Démonstrations de la landing
 
-Statut : sections successives implémentées et vérifiées en aperçu ; publication en attente. Demande d’Antoine du 17 octobre 2026 : mieux montrer sema, avec la retenue de Monocle, Hoy et Resurf. Marque Notion relue : `3fbd18bb0dea818fa7f4fc7483c767b3`.
+Statut : refonte en cours, 17 octobre 2026. Antoine rejette dans le chat la répétition du même écran sur les trois sections ; il demande des compositions et animations différentes, dans l’esprit de Monocle et Resurf. Marque Notion relue : `3fbd18bb0dea818fa7f4fc7483c767b3`.
 
-## Résultat
+## Direction retenue pour la revue
 
-Antoine précise le 17 octobre dans le chat que les fonctionnalités doivent être affichées **les unes sous les autres**. Cette demande remplace la scène unique épinglée : trois sections indépendantes présentent successivement le bandeau, la recherche et le hub Focus, chacune avec son titre et son visuel. Aucun onglet, défilement intercepté, grand espace de scroll artificiel ou mention technique visible.
+Conserver les fonctionnalités les unes sous les autres, sans onglets. Chaque section change d’échelle et de composition :
 
-Storyboard par section : le visuel apparaît en 650 ms à l’approche de l’écran ; à partir de 240 ms, les courbes se tracent en 1 300 ms ou les résultats apparaissent avec un décalage de 90 ms. Une seule entrée par visite, pas de répétition au retour. Réduire les animations, un onglet masqué ou l’absence de JavaScript donnent les trois visuels complets dans le même flux. Les valeurs fictives restent identifiées dans chaque description accessible.
+| Usage | Composition | Mouvement à la première arrivée |
+| --- | --- | --- |
+| Bandeau | Quatre cartes de verre au-dessus d’un bureau illustré ; la base se fond dans la page, le texte suit le visuel. | Cartes entrantes en 650 ms, décalées de 95 ms ; tracé des mini-courbes après 320 ms. |
+| Recherche | Composition asymétrique : grandes touches ⌘ K à gauche, commande flottante à droite. Aucun second bureau. | Pression des touches, mot révélé à partir de 430 ms, puis résultats à partir de 850 ms. |
+| Focus | Valeur et courbe agrandies directement sur le fond de page, sans fenêtre ni carte. | Tracé sur 1 800 ms ; point final et variation à partir de 1 580 ms. |
 
-Critères : trois sections distinctes dans l’ordre du document et à l’écran ; aucun épinglage ; lecture et navigation clavier naturelles ; pas de débordement sur mobile ; aucun contrôle simulé actif. Téléchargement, Homebrew, logo tracé, Ko-fi et liens légaux sont conservés.
+Une orchestration dans `product-demo.js`, valeurs nommées, aucune boucle permanente ni défilement intercepté. Les valeurs restent fixes ; aucun faux flux de marché. Réduire les animations, masquer l’onglet ou quitter la page annule les animations et expose l’état final. Sans JavaScript, les visuels sont complets. Les illustrations conservent leurs descriptions accessibles indiquant les valeurs fictives ; les contrôles dessinés restent inertes.
 
-## Preuves
+Références observées : [Monocle](https://trymonocle.app/) pour le bureau en contexte puis les fragments de réglages ; [Resurf](https://resurf.so/) pour les démonstrations isolées à des échelles différentes. Aucun asset, code ou texte de ces sites n’est copié.
 
-- Code vérifié : `7b66a05`, branche `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2).
-- Aperçu Vercel READY : `dpl_5Sj8sGG4oDrz8mUrZGr55b9kss5D`, https://sema-r7r6ax9c3-antoine-berjoan.vercel.app/.
-- Accès temporaire de dix heures dans le périmètre de la revue autorisée par Antoine, sans extension au-delà de son autorisation initiale. Le lien d’accès n’est pas conservé dans le dépôt.
-- Navigateur 1280 × 720 : trois sections successives en position statique, chacune avec son titre et son visuel ; quatre cartes dans le bandeau ; recherche avec apparition ordonnée des trois résultats ; hub complet et courbe finale. Retour en arrière sans rejouer l’animation. Aucun épinglage ni onglet.
-- Mobile 390 × 844 : trois sections observées, deux cartes lisibles dans le bandeau, recherche et hub cadrés ; document de 390 px sans débordement.
-- Syntaxe JS, attributs HTML uniques, IDs, références ARIA, assets locaux, absence de faux contrôles et diff vérifiés. Aucune dépendance ajoutée.
-- Contrôle d’exécution isolé : révélations indépendantes, observation interrompue après la première entrée, arrêt des animations à la réduction du mouvement et au masquage de l’onglet. La préférence système du Mac n’a pas été changée ; le mode réduit n’a pas été observé dans le navigateur.
-- CI GitHub verte sur `7b66a05` : run `39030004436`.
-- Captures locales : `sema-features-desktop-20261017.png` et `sema-features-mobile-20261017.png`, dans le dossier d’artefacts du chat.
-- Précision d’Antoine reportée dans la page Notion Marque : la présentation verticale remplace la scène unique au texte fixe.
+## Vérification
+
+Critères : compositions reconnaissables et distinctes ; navigation naturelle ; texte et chiffres lisibles à 390 px ; aucune interaction requise pour comprendre les fonctions ; progression des scènes une seule fois ; état réduit et interruption ; header de téléchargement, logo, aide, Ko-fi et liens légaux conservés.
+
+HTML, IDs, ARIA, références locales, syntaxe JavaScript et diff vérifiés. Revue navigateur de l’aperçu à effectuer avant présentation. Branche existante `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2) ; checkout canonique et modifications natives préservés.
 
 ## Téléchargement — proposition en aperçu
 

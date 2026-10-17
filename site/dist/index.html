@@ -42,56 +42,47 @@
           <!-- release:requirements:end -->
         <p class="brew-line"><a class="brew-link" href="/download/#homebrew">installer avec homebrew</a></p>
       </section>
-      <div class="product wrap" id="app">
+      <div class="product" id="app">
         <svg class="demo-defs" aria-hidden="true"><defs><g id="demo-mark"><path d="M43 166.683C92.9018 166.683 111.233 118.818 118.362 76.0449C122.436 49.5664 94.9387 55.6768 90.865 86.229C84.7546 136.131 140.767 111.689 159.098 96.413C180.485 79.1001 196.779 95.3946 209 94.3762" transform="translate(-10.84 -6.41998) scale(.34)" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g></defs></svg>
-        <section class="feature feature--glance" aria-labelledby="glance-title">
-          <div class="feature-heading">
-            <h2 id="glance-title">vos favoris.<br><span>en un regard.</span></h2>
-            <p>réunis dans un bandeau de verre.</p>
-          </div>
-          <figure class="product-demo" role="img" aria-label="bandeau des favoris de sema" aria-describedby="glance-context">
-            <figcaption class="sr-only" id="glance-context">Illustration de l’application. Les valeurs et courbes sont fictives.</figcaption>
-            <div class="demo-desktop" aria-hidden="true" inert>
-              <div class="demo-menubar" aria-hidden="true"><span></span><span>finder</span><span>fichier</span><span>édition</span><span class="menubar-status"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><use href="#demo-mark"/></svg><span>09:41</span></span></div>
-<div class="demo-ribbon"><div class="ribbon-periods"><span>3 mois</span><span class="selected">1 an</span><span>3 ans</span><span>5 ans</span><span>tout</span><span class="ribbon-settings">⚙</span></div>
+        <section class="feature feature--glance" data-scene="glance" aria-labelledby="glance-title">
+          <figure class="ribbon-scene wrap" role="img" aria-label="quatre repères réunis dans le bandeau de verre, au-dessus de votre travail" aria-describedby="glance-context">
+            <figcaption class="sr-only" id="glance-context">Illustration de sema. Les valeurs et courbes sont fictives.</figcaption>
+            <div class="desk-context" aria-hidden="true" inert>
+              <div class="desk-menubar"><span></span><span>finder</span><span>fichier</span><span>édition</span><span class="desk-status"><svg viewBox="0 0 64 64" fill="none"><use href="#demo-mark"/></svg><span>09:41</span></span></div>
+              <div class="desk-paper"><span class="paper-dots">● ● ●</span><p>un peu de place<br>pour vos idées.</p><div class="paper-lines"><i></i><i></i><i></i><i></i></div></div>
+              <div class="desk-calendar"><span>octobre</span><b>17</b><span>samedi</span></div>
+            </div>
+            <div class="ribbon-composition" aria-hidden="true" inert>
+              <div class="ribbon-periods"><span>3 mois</span><span class="selected">1 an</span><span>3 ans</span><span>5 ans</span><span>tout</span></div>
               <div class="glance-card"><span class="glance-name">euro / dollar</span><span class="glance-value">1,1642 <small>USD</small></span><span class="mini-chart"><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><path pathLength="1" d="M0 152 17 149 30 154 45 137 58 141 72 134 86 139 100 121 113 125 128 117 142 122 158 103 170 107 186 99 200 106 215 83 230 91 247 73 263 82 279 67 293 72 310 49 326 58 343 44 359 57 375 35 391 45 407 31 423 42 439 25 455 32 471 18 488 27 505 15 522 24 539 11 554 20 572 8 586 14 600 5"/></svg></span><span class="glance-foot"><span>+4,00 %</span><span>sur 1 an</span></span></div>
               <div class="glance-card"><span class="glance-name">taux de dépôt BCE</span><span class="glance-value">2,00 <small>%</small></span><span class="mini-chart"><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><path pathLength="1" d="M0 20H100V42H180V64H260V86H340V108H420V130H500V150H600"/></svg></span><span class="glance-foot"><span>−1,00 pt</span><span>sur 1 an</span></span></div>
               <div class="glance-card"><span class="glance-name">livret A</span><span class="glance-value">1,70 <small>%</small></span><span class="mini-chart"><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><path pathLength="1" d="M0 55H320V105H600"/></svg></span><span class="glance-foot"><span>−1,30 pt</span><span>sur 1 an</span></span></div>
               <div class="glance-card"><span class="glance-name">emprunt phare FR · 10 ans</span><span class="glance-value">3,42 <small>%</small></span><span class="mini-chart"><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><path pathLength="1" d="M0 28 40 36 80 30 120 53 160 47 200 68 240 61 280 90 320 85 360 105 400 97 440 125 480 118 520 141 560 136 600 155"/></svg></span><span class="glance-foot"><span>−0,14 pt</span><span>sur 1 an</span></span></div>
             </div>
+          </figure>
+          <div class="glance-copy wrap"><h2 id="glance-title">un regard suffit.</h2><p>vos repères sont là.<br>votre travail continue.</p></div>
+        </section>
+        <section class="feature feature--search wrap" data-scene="search" aria-labelledby="search-title">
+          <div class="search-copy"><h2 id="search-title">le bon repère.<br><span>au bout des doigts.</span></h2><p>un raccourci, quelques lettres.<br>vous y êtes.</p><div class="shortcut-sculpture" aria-hidden="true"><kbd class="keycap keycap--command">⌘</kbd><kbd class="keycap keycap--letter">K</kbd></div></div>
+          <figure class="search-scene" role="img" aria-label="le raccourci commande K ouvre la recherche des repères" aria-describedby="search-context">
+            <figcaption class="sr-only" id="search-context">Illustration de sema. Recherche du mot euro, puis sélection d’euro / dollar. Valeurs fictives.</figcaption>
+            <div class="command-halo" aria-hidden="true"></div>
+            <div class="command-surface" aria-hidden="true" inert>
+              <div class="command-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="command-query">euro</span><kbd>esc</kbd></div>
+              <div class="command-results"><div class="command-result is-selected"><span><b>euro / dollar</b><small>devises</small></span><span class="result-value">1,1642 <small>USD</small></span><span class="result-enter">↵</span></div><div class="command-result"><span><b>euro / yen</b><small>devises</small></span><span class="result-value">171,46 <small>JPY</small></span></div><div class="command-result"><span><b>euro / franc suisse</b><small>devises</small></span><span class="result-value">0,9341 <small>CHF</small></span></div></div>
+              <div class="command-bottom"><span>↑ ↓ pour parcourir</span><span>↵ pour ouvrir</span></div>
             </div>
           </figure>
         </section>
-        <section class="feature feature--search" aria-labelledby="search-title">
-          <div class="feature-heading">
-            <h2 id="search-title">un raccourci.<br><span>le bon repère.</span></h2>
-            <p>retrouvez une donnée avec ⌘K.</p>
-          </div>
-          <figure class="product-demo" role="img" aria-label="recherche de repères dans sema" aria-describedby="search-context">
-            <figcaption class="sr-only" id="search-context">Illustration de l’application. Les valeurs et courbes sont fictives.</figcaption>
-            <div class="demo-desktop" aria-hidden="true" inert>
-              <div class="demo-command">
-              <div class="command-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="command-query">euro</span><span class="command-caret"></span><kbd>⌘K</kbd></div>
-              <div class="command-results"><div class="command-result is-selected" style="--result-index: 0"><span>euro / dollar</span><small>1,1642 USD</small></div><div class="command-result" style="--result-index: 1"><span>euro / yen</span><small>171,46 JPY</small></div><div class="command-result" style="--result-index: 2"><span>euro / franc suisse</span><small>0,9341 CHF</small></div></div>
-            </div>
-            </div>
+        <section class="feature feature--history" data-scene="history" aria-labelledby="history-title">
+          <div class="history-heading wrap"><h2 id="history-title">voyez ce qui change.</h2><p>de quelques mois à plusieurs années.<br>l’espace pour prendre du recul.</p></div>
+          <figure class="history-scene wrap" role="img" aria-label="historique euro / dollar dans Focus, avec une progression de 4 pour cent sur un an" aria-describedby="history-context">
+            <figcaption class="sr-only" id="history-context">Illustration de sema. 1,1642 USD pour 1 EUR. Historique et variation fictifs, d’octobre 2025 à octobre 2026.</figcaption>
+            <div class="history-overview" aria-hidden="true" inert><div><p class="history-name">euro / dollar</p><p class="history-number">1,1642 <small>USD</small></p></div><div class="history-periods"><span>3 mois</span><span class="selected">1 an</span><span>3 ans</span><span>5 ans</span><span>tout</span></div></div>
+            <div class="history-plot" aria-hidden="true"><div class="plot-guides"><i></i><i></i><i></i></div><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><defs><linearGradient id="history-fill" x2="0" y2="1"><stop stop-color="#eeeeee" stop-opacity=".12"/><stop offset="1" stop-color="#eeeeee" stop-opacity="0"/></linearGradient></defs><path class="history-area" d="M0 152 17 149 30 154 45 137 58 141 72 134 86 139 100 121 113 125 128 117 142 122 158 103 170 107 186 99 200 106 215 83 230 91 247 73 263 82 279 67 293 72 310 49 326 58 343 44 359 57 375 35 391 45 407 31 423 42 439 25 455 32 471 18 488 27 505 15 522 24 539 11 554 20 572 8 586 14 600 5V180H0Z" fill="url(#history-fill)"/><path class="history-stroke" pathLength="1" d="M0 152 17 149 30 154 45 137 58 141 72 134 86 139 100 121 113 125 128 117 142 122 158 103 170 107 186 99 200 106 215 83 230 91 247 73 263 82 279 67 293 72 310 49 326 58 343 44 359 57 375 35 391 45 407 31 423 42 439 25 455 32 471 18 488 27 505 15 522 24 539 11 554 20 572 8 586 14 600 5"/></svg><span class="history-point"></span><span class="history-change">+4,00 %<small>sur 1 an</small></span></div>
+            <div class="history-dates" aria-hidden="true"><span>oct. 2025</span><span>janv.</span><span>avr.</span><span>juil.</span><span>oct. 2026</span></div>
           </figure>
-        </section>
-        <section class="feature feature--history" aria-labelledby="history-title">
-          <div class="feature-heading">
-            <h2 id="history-title">prenez<br><span>du recul.</span></h2>
-            <p>un historique pour suivre ce qui change.</p>
-          </div>
-          <figure class="product-demo" role="img" aria-label="hub Focus de sema et historique euro / dollar" aria-describedby="history-context">
-            <figcaption class="sr-only" id="history-context">Illustration de l’application. Les valeurs et courbes sont fictives.</figcaption>
-            <div class="demo-desktop" aria-hidden="true" inert>
-              <div class="demo-window">
-              <div class="demo-toolbar"><span class="window-dots" aria-hidden="true">● ● ●</span><span>sema</span><span class="window-periods"><span>3 mois</span><span class="is-selected">1 an</span><span>3 ans</span><span>5 ans</span><span>tout</span></span></div>
-              <aside class="demo-sidebar"><span class="demo-search-trigger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>rechercher</span><kbd>⌘K</kbd></span><span class="sidebar-label">mes repères</span><span class="demo-series is-selected"><span>euro / dollar</span><small>1,1642 USD</small></span><span class="demo-series"><span>taux de dépôt BCE</span><small>2,00 %</small></span><span class="demo-series"><span>livret A</span><small>1,70 %</small></span><span class="demo-profile"><span class="profile-dot">a</span>mon espace</span></aside>
-              <div class="demo-focus"><p class="focus-name">euro / dollar</p><p class="focus-number"><span>1,1642</span><small>USD</small></p><div class="focus-chart"><span class="chart-guide"></span><span class="chart-guide"></span><span class="chart-guide"></span><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none" aria-hidden="true"><path pathLength="1" d="M0 152 17 149 30 154 45 137 58 141 72 134 86 139 100 121 113 125 128 117 142 122 158 103 170 107 186 99 200 106 215 83 230 91 247 73 263 82 279 67 293 72 310 49 326 58 343 44 359 57 375 35 391 45 407 31 423 42 439 25 455 32 471 18 488 27 505 15 522 24 539 11 554 20 572 8 586 14 600 5"/></svg></div><div class="chart-dates"><span>oct. 2025</span><span>oct. 2026</span></div><div class="focus-switcher"><span class="is-selected">euro / dollar</span><span>BCE</span><span>livret A</span></div></div>
-            </div>
-            </div>
-          </figure>
+          <p class="history-footnote wrap">un repère à la fois. toute votre attention.</p>
         </section>
       </div>
       <section class="questions wrap" id="questions" aria-labelledby="questions-title">
