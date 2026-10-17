@@ -1,7 +1,7 @@
 # Installe le DMG immuable de sema en conservant les contrôles de macOS.
 cask "sema-app" do
-  version "0.5.1"
-  sha256 "762e891f57f26db57c222f78c899e1d58bf432ef6b72a2623eda196bbf4c526d"
+  version "0.6.0"
+  sha256 "a7e6abc3112a8fd40c7df2e043a3650c02e0ffd25d825bc33aee184d84da150b"
 
   url "https://github.com/antoineberjoan/homebrew-sema/releases/download/v#{version}/Sema-#{version}-arm64.dmg"
   name "sema"

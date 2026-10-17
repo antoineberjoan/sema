@@ -1,6 +1,6 @@
 # Actualisation quotidienne et publication
 
-Statut : en cours, 17 octobre 2026. Source : Antoine dans le chat demande lancement, réveil et exécution même avec hub fermé, puis publication sur origin/main et en production. Il retient une fois par jour après comparaison avec 30 minutes. Notion Produit est à mettre à jour avec ce remplacement de la règle manuelle.
+Statut : code et distribution vérifiés, fusion et contrôle de production en cours, 17 octobre 2026. Source : Antoine dans le chat demande lancement, réveil et exécution même avec hub fermé, puis publication sur origin/main et en production. Il retient une fois par jour après comparaison avec 30 minutes. Notion Produit est à mettre à jour avec ce remplacement de la règle manuelle.
 
 ## Résultat observable
 
@@ -19,3 +19,5 @@ Première preuve locale : le contrôleur de production a été compilé avec un 
 Le profil natif de revue a été préparé avec 1 537 observations réelles de la série BCE EUR/USD, puis sa seule date de synchronisation a été vieillie de 25 h. Après lancement du bundle local, le cache est redevenu récent sans action d’actualisation manuelle. La source, les observations et l’identification réelle restent conservées. L’accès de contrôle à la fenêtre a expiré : cette lecture du cache prouve la requête au lancement, pas une mise en veille matérielle ni une attente réelle de 24 h.
 
 CI de la branche intégrée `fc903dc` réussie (runs `39046860862` et `39046861387`) : tests et bundle. La landing minimale et le cask sema-app sont intégrés, avec les suppressions demandées conservées ; la refactorisation agentique ultérieure reste dans sa branche distincte.
+
+Le DMG 0.6.0 est publié. Le téléchargement public sans authentification correspond au SHA-256 et à la taille de la construction. Le cask public `908bc97` a passé la vraie mise à jour 0.5.1 → 0.6.0 puis une installation neuve : signature stricte, quarantaine et identité du binaire vérifiées, app de test désinstallée. Les préférences habituelles n’ont pas été utilisées. [Preuves de livraison](../validation/distribution-0.6.0.json).
