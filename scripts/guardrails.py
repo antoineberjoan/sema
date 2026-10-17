@@ -172,6 +172,8 @@ def check(snapshot):
             if not match or match[1] != pathlib.PurePosixPath(path).parent.name:
                 errors.append(f"{path} : nom et description de skill invalides.")
 
+    if "AGENTS.md" not in snapshot.paths:
+        errors.append("AGENTS.md : entrée commune obligatoire manquante.")
     if "CLAUDE.md" not in snapshot.paths or snapshot.read("CLAUDE.md").strip() != "@AGENTS.md":
         errors.append("CLAUDE.md : importer uniquement @AGENTS.md ; règles communes dans AGENTS.md.")
     skills = {posixpath.dirname(path) for path in snapshot.paths

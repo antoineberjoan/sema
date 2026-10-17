@@ -1,6 +1,6 @@
 # Socle agentique
 
-Statut : socle implémenté et contrôles validés, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Scénarios Cursor et Claude validés en lecture seule. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
+Statut : socle implémenté et contrôles validés, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Chargement validé dans Cursor et Claude ; connexions et correction réelle validées dans Claude. Complément Cursor en attente d’autorisation Notion et de quota Agent. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
 
 ## Résultat
 
@@ -42,9 +42,13 @@ Une entrée commune, des procédures chargées à la demande et les mêmes contr
 - Cursor 3.25.6 : instructions communes présentes, trois skills découvertes et utilisées, instructions Mac lues, autorité et validation correctement restituées. Les trois entrées du menu restent uniques après la correction Claude.
 - Claude Code 2.1.236 : import des instructions reconnu ; absence des skills natives reproduite puis corrigée par trois liens vers les sources communes. Après reconnexion CLI, quatre lectures réussies couvrent les trois skills et les instructions Mac ; autorité, arbitrage et commande documentaire sont correctement restitués. Une invocation distincte de `/sema-change` charge aussi la procédure native. Résultats sans erreur ni refus de permission.
 - 22 tests Python passent. Le garde-fou refuse la suppression, la copie, la mauvaise cible et les liens orphelins, dans le travail local et l’index Git.
-- Les deux scénarios demandés sont terminés. Ils ne valident ni une implémentation fonctionnelle complète dans chaque client ni leurs connecteurs externes. La fusion reste interdite sans autorisation.
+- Les deux premiers scénarios de chargement sont terminés. Ils ne valident ni une implémentation fonctionnelle complète dans chaque client ni leurs connecteurs externes ; l’essai complémentaire est détaillé ci-dessous. La fusion reste interdite sans autorisation.
 
 ## Livraison
+
+Essai complémentaire de bout en bout : chaque client doit lire réellement la page Notion Équipe et la PR privée nº 3, réaliser une correction ciblée, lancer les contrôles et transmettre un diff relu. Claude a corrigé l’absence de `AGENTS.md` : test rouge observé, 23 tests Python verts, diff limité aux deux fichiers Python et relais effectué. Lecture Notion et GitHub réussie. La validation Swift, indisponible localement, repose sur la CI du commit intégré.
+
+Cursor a lu la PR privée en direct mais atteint sa limite d’usage avant d’éditer. Son connecteur Notion exige une autorisation d’espace, demandée à Antoine. Reprise dans « Notion connection test report » pour la lecture Notion, puis « Sema change and testing » pour le contenu vide d’`AGENTS.md`, test avant/après et relais. Le [protocole et les preuves](../validation/agent-clients.md) distinguent ces étapes de celles terminées. Aucun achat ni changement de droits n’est effectué sans accord ; les travaux applicatifs parallèles restent exclus.
 
 La PR reste volontairement en brouillon. Ses contrôles GitHub font foi pour le dernier commit ; la preuve ci-dessus porte sur le commit d’implémentation. Toute fusion vers `main`, qui déploie le site, nécessite une autorisation couvrant cette publication.
 

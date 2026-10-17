@@ -160,6 +160,13 @@ class GuardrailsTests(unittest.TestCase):
         self.git("add", "-u")
         self.assertEqual(sum("manquant" in error for error in self.errors(staged=True)), 2)
 
+    def test_deleted_agents_md_is_rejected(self):
+        (self.root / "AGENTS.md").unlink()
+        self.assertTrue(any("AGENTS.md" in error for error in self.errors()))
+        self.assertEqual(self.errors(staged=True), [])
+        self.git("add", "-u", "AGENTS.md")
+        self.assertTrue(any("AGENTS.md" in error for error in self.errors(staged=True)))
+
     def test_invalid_json_and_skill(self):
         self.write("docs/data.json", "{")
         self.write(".agents/skills/example/SKILL.md", "---\nname: wrong\ndescription: Exemple\n---\n")

@@ -1,6 +1,6 @@
 # Chargement des instructions et skills
 
-Vérification du 17 octobre 2026, sur `codex/agent-foundation`, avant fusion de la PR nº 3. Scénario en lecture seule : préparer hypothétiquement un changement de copy Mac suivi d’un relais. Aucun changement produit n’a été confié aux clients ; les travaux parallèles restent hors du test.
+Vérification du 17 octobre 2026, sur `codex/agent-foundation`, avant fusion de la PR nº 3. Premier scénario en lecture seule : préparer hypothétiquement un changement de copy Mac suivi d’un relais. Un second scénario vérifie les connexions et une correction réelle des garde-fous. Aucun comportement produit n’est modifié ; les travaux applicatifs parallèles restent hors du test.
 
 ## Critères et résultats
 
@@ -32,4 +32,21 @@ Une reconnexion de l’installation CLI a résolu le blocage OAuth initial. Le s
 
 Pour reproduire : lancer dans le dépôt un test limité aux outils `Read`, `Glob`, `Grep` et `Skill`, sans serveur MCP et sans persistance de session. Demander : instructions déjà présentes ; skills sema proposées ; lecture des trois procédures et des instructions Mac ; autorité produit, arbitrage et commande de validation documentaire. Vérifier les événements `Skill`/`Read` et un résultat sans erreur. Une connexion réussie dans une autre application ne prouve pas que cette installation CLI est connectée.
 
-Antigravity, les connexions Notion/GitHub dans ces clients et une modification fonctionnelle complète ne sont pas éprouvés par ce test. Les observations portent sur ces versions et ce scénario.
+Ce premier scénario ne prouve ni les connexions externes ni une réalisation fonctionnelle. Antigravity reste non testé. Les observations portent sur ces versions et ces scénarios.
+
+## Connexions et changement réel
+
+Demande complémentaire d’Antoine : tester chaque client depuis la source d’intention jusqu’au changement vérifié, en gardant la PR nº 3 en brouillon. Critère concret : protéger le fichier racine `AGENTS.md`, dont la suppression était acceptée avant correction. Claude traite l’absence ; Cursor doit ensuite traiter le contenu vide, séquentiellement dans les mêmes deux fichiers Python.
+
+| Étape observée | Claude Code 2.1.236 | Cursor 3.25.6 |
+| --- | --- | --- |
+| Notion | `mcp__claude_ai_Notion__notion-fetch` lit en direct la page [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df) ; titre et règle d’arbitrage restitués | Connecteur `plugin-notion-workspace-notion` présent mais `needsAuth` ; aucune lecture de page réussie |
+| GitHub | `gh api repos/antoineberjoan/sema/pulls/3` renvoie la PR privée ouverte, `draft: true`, tête `41410a9`, `merged_at: null` | Même réponse distante après autorisation réseau du terminal ; aucune connexion MCP GitHub revendiquée |
+| Changement | Deux éditions ciblées : refus d’`AGENTS.md` absent et test de régression | Lectures préparatoires effectuées ; arrêt « You've hit your usage limit » avant toute édition |
+| Validation | Test rouge observé, puis 23 tests Python verts, garde-fous locaux et diff valides ; skills `sema-change` et `sema-handoff` invoquées | Pas de changement ni de test avant/après attribué à Cursor |
+
+La correction Claude couvre la suppression locale, l’index intact malgré cette suppression, puis la suppression indexée. Le diff ne touche que `scripts/guardrails.py` et `scripts/tests/test_guardrails.py`. `./scripts/check.sh` a été exécuté une fois : Swift échoue sur le module `Testing` absent de ce Mac. La CI de la PR vérifie la suite Swift et le bundle du commit intégré ; aucun contrôle n’est désactivé. Codex relit, intègre et pousse le changement ; les agents testés n’ont reçu aucune autorisation de fusion.
+
+La reconnexion Notion de Cursor arrive sur un écran d’autorisation de l’espace « Antoine Berjoan », au-delà de la seule page sema : lecture, actions selon les droits de l’utilisateur, utilisateurs et applications connectées. L’accord d’Antoine est demandé avant validation ; aucun jeton n’est copié entre clients. La limite d’usage Cursor nécessite aussi un accès Agent disponible. Aucun achat ni changement d’abonnement n’est effectué.
+
+Reprise : après autorisation Notion et rétablissement du quota, terminer la lecture de la page Équipe dans le chat Cursor « Notion connection test report », puis reprendre « Sema change and testing » pour le cas `AGENTS.md` vide. Vérifier test rouge, correction, tests verts, diff et relais ; intégrer seulement les fichiers concernés et attendre la CI. Les connexions sont testées en lecture ; aucun essai d’écriture Notion n’est revendiqué.
