@@ -167,14 +167,14 @@ struct WorkspaceView: View {
             if event.keyCode == 53 { closeSwitcher(); return true }
             if [36, 76].contains(event.keyCode) { commitSwitcher(); return true }
         }
-        guard event.type == .keyDown, [125, 126].contains(event.keyCode),
+        guard event.type == .keyDown, [123, 124, 125, 126].contains(event.keyCode),
               modifiers.isEmpty || modifiers == .command else {
             if event.type == .keyDown { closeSwitcher() }
             return false
         }
         let items = store.followedSeries
         let current = items.firstIndex { $0.id == (switcherSelection ?? store.selectedSeries?.id) } ?? 0
-        let step = event.keyCode == 125 ? 1 : -1
+        let step = [124, 125].contains(event.keyCode) ? 1 : -1
         if modifiers == .command || switcherSelection != nil {
             let next = (current + step + items.count) % items.count
             dismissSidebarPreview()

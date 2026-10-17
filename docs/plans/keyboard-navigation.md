@@ -1,6 +1,10 @@
 # Navigation clavier et bandeau Repère
 
-Statut : implémenté et installé localement ; validation physique des raccourcis globaux restante, 17 octobre 2026.
+Statut : ajustement du bandeau et des quatre flèches en cours, 17 octobre 2026.
+
+Demande complémentaire d’Antoine dans le chat du 17 octobre : ←/→ identiques à ↑/↓, avec ou sans ⌘ ; quatre favoris en plus de la signature, cartouche toujours visible et teinté par Apparence, cartes plus carrées et retrait du badge « Démo » du bandeau. Les préférences et l’ordre personnel restent conservés.
+
+Critères de cette correction : observer les quatre directions dans le hub, la validation du sélecteur avec ⌘←/→, quatre favoris et la signature simultanément, le maintien de cette signature pendant le défilement et sans favoris, puis sa couleur dans Graphite et un thème coloré. Vérifier également une position latérale et une largeur d’écran réduite.
 
 Source : demande d’Antoine dans le chat du 17 octobre, après les quatre maquettes du sélecteur. Direction retenue : Repère. Recommandation appliquée : flèches immédiates dans Focus ; ⌘ + flèches ouvre un aperçu visuel, relâcher ⌘ valide, Entrée valide aussi, Échap annule. Cinq périodes proposées : 3 mois, 1 an, 3 ans, 5 ans, Tout. Jusqu’à quatre favoris visibles selon la largeur, sans modifier la sélection existante.
 

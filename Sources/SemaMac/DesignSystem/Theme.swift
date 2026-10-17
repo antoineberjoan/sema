@@ -53,8 +53,8 @@ enum SemaPalette: String, CaseIterable, Identifiable, Sendable {
     }
     // Native selected controls use white labels, so pastel swatches need a deeper tint.
     var controlAccent: Color { Color(nsColor: Self.nsColor(lightAccent)) }
-    // The signature is the one coloured editorial surface in the Graphite ribbon.
-    var signatureAccent: Color { self == .graphite ? Self.swatch(0x355A80) : controlAccent }
+    // The signature follows the selected palette, including neutral Graphite.
+    var signatureAccent: Color { controlAccent }
     var glassTint: Color {
         switch self {
         case .graphite: .clear
