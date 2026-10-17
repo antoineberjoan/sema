@@ -85,6 +85,7 @@ struct WorkspaceView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
+        .toolbarBackground(.hidden, for: .windowToolbar)
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 Button {
