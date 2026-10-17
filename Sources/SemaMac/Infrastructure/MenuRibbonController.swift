@@ -7,6 +7,7 @@ import QuartzCore
 /// A native status item owns the panel independently of the hub's window lifetime.
 @MainActor
 final class MenuRibbonController: NSObject {
+    private static let releasesURL = URL(string: "https://github.com/antoineberjoan/homebrew-sema/releases")!
     private let store: AppStore
     private let openWorkspace: () -> Void
     private let openSettings: () -> Void
@@ -146,7 +147,7 @@ final class MenuRibbonController: NSObject {
     @objc func showWorkspace() { dismiss(); openWorkspace() }
     @objc private func showSettings() { dismiss(); openSettings() }
     @objc private func showReleases() {
-        NSWorkspace.shared.open(URL(string: "https://github.com/antoineberjoan/homebrew-sema/releases")!)
+        NSWorkspace.shared.open(Self.releasesURL)
     }
 
     private func installMonitors() {

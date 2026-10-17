@@ -232,7 +232,7 @@ class GuardrailsTests(unittest.TestCase):
     def test_hardcoded_values_are_rejected(self):
         for line in (
             ".background(.clear, in: RoundedRectangle(cornerRadius: 12))",
-            ".font(.system(size: 11, weight: .medium))",
+            ".font(.system(size: 14, weight: .medium))",
             ".font(.system(size: focus ? 14 : 18))",
             ".font(.system(size: side * 0.4))",
             "withAnimation(.easeOut(duration: 0.2)) { open = true }",
@@ -261,7 +261,7 @@ class GuardrailsTests(unittest.TestCase):
     def test_named_and_structural_values_are_accepted(self):
         for line in (
             "static let corner: CGFloat = 12",
-            "private static let selection = Animation.snappy(duration: 0.18, extraBounce: 0)",
+            "static let selection = Animation.snappy(duration: 0.18, extraBounce: 0)",
             ".background(.clear, in: RoundedRectangle(cornerRadius: Layout.corner))",
             ".stroke(style: StrokeStyle(lineWidth: 1))",
             "if Int(event.keyCode) == kVK_Escape { close() }",
@@ -297,9 +297,46 @@ class GuardrailsTests(unittest.TestCase):
 
     def test_private_helpers_and_extension_files_are_accepted(self):
         self.write("Sources/MarketCore/Series.swift",
-                   "// Décrit une série.\n@MainActor\npublic struct Series<Value> {\n    struct Point {}\n}\nprivate enum Parser {}\nextension Series {}\n")
+                   "// Décrit une série.\n@MainActor\npublic struct Series<Value> {\n    struct Point {}\n}\nprivate enum Parser {}\nextension Series { static let parser = Parser.self }\n")
         self.write("Sources/MarketCore/Series+Format.swift", "// Formate une série.\nextension Series {}\n")
         self.assertEqual(self.errors(), [])
+
+    def test_configuration_literals_are_named_once(self):
+        for line in ('let url = URL(string: "https://example.org")!', 'formatter.locale = Locale(identifier: "fr_FR")',
+                     "let yesterday = now.addingTimeInterval(-86_400)"):
+            with self.subTest(line=line):
+                self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\n" + line + "\n")
+                self.assertEqual(len(self.errors()), 1)
+        self.write("Sources/MarketCore/Series.swift", '// Décrit une série.\nstatic let url = URL(string: "https://example.org")!\n'
+                   "// Locale(identifier: \"fr_FR\") reste un commentaire\n")
+        self.assertEqual(self.errors(), [])
+
+    def test_native_text_size_is_a_style(self):
+        self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nstatic let title = Font.system(size: 13, weight: .medium)\n")
+        self.assertTrue(any("style" in error for error in self.errors()))
+        self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nstatic let title = Font.system(size: 14, weight: .medium)\n")
+        self.assertEqual(self.errors(), [])
+
+    def test_new_type_does_not_repeat_project_name(self):
+        self.write("Sources/MarketCore/SemaClock.swift", "// Décrit une horloge.\npublic struct SemaClock {}\nlet clock = SemaClock()\n")
+        self.assertTrue(any("préfixe" in error for error in self.errors()))
+
+    def test_unused_private_declaration_and_type(self):
+        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nstruct Series {\n    private let unused = 2\n}\n")
+        errors = self.errors()
+        self.assertTrue(any("`unused` est privé" in error for error in errors))
+        self.assertTrue(any("`Series` n’est utilisé nulle part" in error for error in errors))
+        self.write("Sources/MarketCore/Series.swift", '// Décrit une série.\nstruct Series {\n    private let unit = "%"\n'
+                   '    var label: String { "\\(unit)" }\n}\n')
+        self.write("Tests/SeriesTests.swift", "// Vérifie une série.\nlet sample = Series()\n")
+        self.assertEqual([error for error in self.errors() if "Tests/" not in error], [])
+
+    def test_glossary_spelling_is_enforced(self):
+        self.write("docs/engineering/GLOSSARY.md", "| Concept | Nom dans le code | Sens |\n| --- | --- | --- |\n| Identifiant | `seriesID` | Série |\n")
+        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nimport Observation\nlet seriesId = 1\n")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`seriesId` s’écrit `seriesID`", errors[0])
 
     def test_shadow_belongs_to_design_system(self):
         source = "// Décrit une surface flottante.\n.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius)\n"

@@ -41,7 +41,7 @@ Pré-requis : un Mac sous macOS 14 ou plus récent et un compilateur Swift 6. Xc
 git clone https://github.com/antoineberjoan/sema.git
 cd sema
 ./scripts/build-app.sh
-open dist/Sema.app
+open build/Sema.app
 ```
 
 Le script crée une app avec une signature ad hoc. L’alpha distribuée conserve cette signature et reste non notarisée : macOS peut demander une autorisation manuelle à la première ouverture. Une signature Developer ID et une notarisation Apple permettront de fluidifier une distribution ultérieure.

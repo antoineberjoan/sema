@@ -27,7 +27,7 @@ public enum DemoCatalog {
         _ unit: ValueUnit, _ value: String, _ digits: Int,
         seed: Double, trend: Double, flat: Bool = false
     ) -> MarketSeries {
-        let final = Decimal(string: value, locale: Locale(identifier: "en_US_POSIX"))!
+        let final = Decimal(string: value, locale: .posix)!
         let finalDouble = NSDecimalNumber(decimal: final).doubleValue
         let calendar = Calendar(identifier: .gregorian)
         let candidates = (0...365).map { day in

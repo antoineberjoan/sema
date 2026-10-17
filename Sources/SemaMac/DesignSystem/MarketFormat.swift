@@ -7,7 +7,7 @@ enum MarketFormat {
     static let changeDigits = 2
     static func number(_ value: Decimal, digits: Int = MarketSeries.defaultFractionDigits, signed: Bool = false) -> String {
         let formatter = NumberFormatter()
-        formatter.locale = Locale(identifier: "fr_FR")
+        formatter.locale = .french
         formatter.numberStyle = .decimal
         formatter.minimumFractionDigits = digits
         formatter.maximumFractionDigits = digits
@@ -28,7 +28,7 @@ enum MarketFormat {
 
     static func date(_ date: Date?) -> String {
         guard let date else { return "Date inconnue" }
-        return date.formatted(.dateTime.day().month(.abbreviated).year().locale(Locale(identifier: "fr_FR")))
+        return date.formatted(.dateTime.day().month(.abbreviated).year().locale(.french))
     }
 
     static func double(_ value: Decimal) -> Double { NSDecimalNumber(decimal: value).doubleValue }

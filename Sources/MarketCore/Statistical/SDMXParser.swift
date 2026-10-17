@@ -174,7 +174,7 @@ public enum SDMXParser {
     }
     static func decimal(_ text: String) -> Decimal? {
         guard text.range(of: "^-?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$", options: .regularExpression) != nil,
-              let value = Decimal(string: text, locale: Locale(identifier: "en_US_POSIX")), !value.isNaN else { return nil }
+              let value = Decimal(string: text, locale: .posix), !value.isNaN else { return nil }
         return value
     }
     static func period(_ text: String) -> (start: Date, end: Date)? {

@@ -13,7 +13,7 @@ struct SemaMacApp: App {
         Window("sema", id: "workspace") {
             WorkspaceView().environment(store).tint(store.palette.controlAccent)
                 .environment(\.semaAccent, store.palette.accent)
-                .environment(\.locale, Locale(identifier: "fr_FR"))
+                .environment(\.locale, .french)
                 .preferredColorScheme(store.appearance.colorScheme)
                 .background {
                     MenuRibbonAttachment(store: store, appDelegate: appDelegate).frame(width: 0, height: 0)
@@ -23,7 +23,7 @@ struct SemaMacApp: App {
                         selectSeries: store.followStarterSeries, finish: store.finishOnboarding)
                         .environment(store).tint(store.palette.controlAccent)
                         .environment(\.semaAccent, store.palette.accent)
-                        .environment(\.locale, Locale(identifier: "fr_FR"))
+                        .environment(\.locale, .french)
                 }
         }
         .defaultSize(width: Self.defaultWidth, height: Self.defaultHeight)

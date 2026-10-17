@@ -29,7 +29,7 @@ public enum SeriesSearch {
     ]
 
     private static func normalize(_ text: String) -> String {
-        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "fr_FR"))
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .french)
             .components(separatedBy: CharacterSet.alphanumerics.inverted).filter { !$0.isEmpty }.joined(separator: " ")
     }
 }

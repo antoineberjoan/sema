@@ -12,7 +12,7 @@ public enum AlertThreshold {
         guard normalized.range(of: "^-?[0-9]+([,.][0-9]{1,18})?$", options: .regularExpression) != nil,
               normalized.filter(\.isNumber).count <= Self.maximumDigits,
               let value = Decimal(string: normalized.replacingOccurrences(of: ",", with: "."),
-                                  locale: Locale(identifier: "en_US_POSIX")), !value.isNaN else { return nil }
+                                  locale: .posix), !value.isNaN else { return nil }
         return value
     }
 
@@ -21,7 +21,7 @@ public enum AlertThreshold {
         let normalized = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard normalized.range(of: "^[0-9]+([,.][0-9]{1,4})?$", options: .regularExpression) != nil,
               let value = Decimal(string: normalized.replacingOccurrences(of: ",", with: "."),
-                                  locale: Locale(identifier: "en_US_POSIX")),
+                                  locale: .posix),
               value > 0, value <= Self.maximumRelativeChange else { return nil }
         return value
     }

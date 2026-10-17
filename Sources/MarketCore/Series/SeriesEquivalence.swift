@@ -20,8 +20,8 @@ public enum SeriesEquivalence {
         guard !value.isDemo, let identity = referenceExchangeRateKey(value) else { return [] }
         let key = String(identity.dropFirst(referencePrefix.count))
         return [
-            ("webstat", URL(string: "https://webstat.banque-france.fr/fr/catalogue/exr/\(webstatPrefix)\(key)")!),
-            ("ecb", URL(string: "https://data.ecb.europa.eu/data/datasets/EXR/\(key)")!)
+            ("webstat", URL(string: WebstatClient.catalogueURL + "exr/\(webstatPrefix)\(key)")!),
+            ("ecb", URL(string: ecbDatasetURL + key)!)
         ]
     }
 
@@ -51,6 +51,7 @@ public enum SeriesEquivalence {
     /// Webstat repeats the dataset in front of the ECB key; a verified reference carries its source.
     static let webstatPrefix = "EXR."
     static let referencePrefix = "ECB:EXR:"
+    static let ecbDatasetURL = "https://data.ecb.europa.eu/data/datasets/EXR/"
 
     /// Parts of an ECB spot reference rate against the euro, average observation: frequency, currency, EUR, SP00, A.
     static func spotRateParts(_ key: String) -> [String]? {

@@ -56,7 +56,7 @@ struct MenuRibbonView: View {
         .environment(\.semaGlassTint, store.palette.glassTint)
         .environment(\.semaGlassSettings, store.ribbonGlass)
         .preferredColorScheme(store.appearance.colorScheme)
-        .environment(\.locale, Locale(identifier: "fr_FR"))
+        .environment(\.locale, .french)
         .task { await store.checkWebstatKey() }
     }
 

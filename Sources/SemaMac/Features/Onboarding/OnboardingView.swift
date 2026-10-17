@@ -252,7 +252,7 @@ struct OnboardingView: View {
                         .privacySensitive().focused($keyFocused)
                         .accessibilityLabel("Clé API Webstat")
                         .onSubmit { connect() }
-                    Link("Obtenir une clé sur Webstat ↗", destination: URL(string: "https://webstat.banque-france.fr/login/")!)
+                    Link("Obtenir une clé sur Webstat ↗", destination: WebstatClient.loginURL)
                         .font(.subheadline)
                 }
                 Text("Elle reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Vous pourrez la retirer dans les réglages.")

@@ -1,7 +1,7 @@
 .build/
 .swiftpm/
 __pycache__/
-/dist/
+/build/
 run-data/
 .DS_Store
 *.xcuserstate

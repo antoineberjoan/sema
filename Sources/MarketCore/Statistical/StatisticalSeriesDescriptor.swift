@@ -2,6 +2,7 @@
 import Foundation
 
 public struct StatisticalSeriesDescriptor: Codable, Equatable, Sendable {
+    static let inseeSeriesURL = "https://www.insee.fr/fr/statistiques/serie/"
     public let dataset: StatisticalDataset
     public let key: String
     public let dimensionIDs: [String]
@@ -62,7 +63,7 @@ public struct StatisticalSeriesDescriptor: Codable, Equatable, Sendable {
     }
     public var sourceURL: URL {
         if dataset.source == .insee, let idbank = fields["IDBANK"], idbank.allSatisfy(\.isNumber) {
-            return URL(string: "https://www.insee.fr/fr/statistiques/serie/\(idbank)")!
+            return URL(string: Self.inseeSeriesURL + idbank)!
         }
         return dataset.source.website
     }

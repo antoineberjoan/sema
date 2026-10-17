@@ -61,7 +61,7 @@ private final class RatesXMLDelegate: NSObject, XMLParserDelegate {
     private var currentDate: Date?
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.locale = .posix
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd"
         formatter.isLenient = false
@@ -79,7 +79,7 @@ private final class RatesXMLDelegate: NSObject, XMLParserDelegate {
               let currency = attributeDict["currency"],
               let rawRate = attributeDict["rate"],
               rawRate.range(of: "^[0-9]+(?:\\.[0-9]+)?$", options: .regularExpression) != nil,
-              let rate = Decimal(string: rawRate, locale: Locale(identifier: "en_US_POSIX")), rate > 0 else { return }
+              let rate = Decimal(string: rawRate, locale: .posix), rate > 0 else { return }
         observations[currency, default: []].append(MarketObservation(date: date, value: rate))
     }
 }

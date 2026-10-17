@@ -4,6 +4,9 @@ import Foundation
 /// Authenticated Banque de France observations. The user's key travels only in an HTTP header.
 public struct WebstatClient: Sendable {
     static let timeout: TimeInterval = 30
+    static let apiURL = "https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/"
+    public static let catalogueURL = "https://webstat.banque-france.fr/fr/catalogue/"
+    public static let loginURL = URL(string: "https://webstat.banque-france.fr/login/")!
     /// Search results per page; the API refuses an offset beyond 10 000, so the last full page starts at 9 950.
     public static let pageSize = 50
     public static let maximumSearchOffset = 9_950
@@ -100,7 +103,7 @@ public struct WebstatClient: Sendable {
         guard ["series", "webstat-datasets", "codelists", "observations"].contains(table) else { throw ClientError.invalidData }
         let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty, key.rangeOfCharacter(from: .controlCharacters) == nil else { throw ClientError.missingKey }
-        var url = URLComponents(string: "https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/\(table)/records")!
+        var url = URLComponents(string: Self.apiURL + "\(table)/records")!
         url.queryItems = parameters
         var request = URLRequest(url: url.url!)
         request.setValue("Apikey \(key)", forHTTPHeaderField: "Authorization")
@@ -280,7 +283,7 @@ public struct WebstatClient: Sendable {
         let start = calendar.date(byAdding: .year, value: -HistoryPeriod.recentYears, to: now)!
         let date = ISO8601DateFormatter()
         date.formatOptions = [.withFullDate]
-        var url = URLComponents(string: "https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/observations/exports/json")!
+        var url = URLComponents(string: Self.apiURL + "observations/exports/json")!
         let keys = definitions.map { "'\($0.key)'" }.joined(separator: ",")
         url.queryItems = [
             URLQueryItem(name: "select", value: "series_key,time_period_start,time_period_end,obs_value,obs_status,updated_at"),
@@ -342,7 +345,7 @@ public struct WebstatClient: Sendable {
             return MarketSeries(id: definition.id, name: definition.name, subtitle: definition.subtitle,
                 category: definition.category, unit: definition.unit, fractionDigits: definition.digits,
                 source: definition.producer,
-                sourceURL: URL(string: "https://webstat.banque-france.fr/fr/catalogue/\(definition.key.split(separator: ".")[0].lowercased())/\(definition.key)"),
+                sourceURL: URL(string: Self.catalogueURL + "\(definition.key.split(separator: ".")[0].lowercased())/\(definition.key)"),
                 isDemo: false, frequency: definition.frequency, observations: observations)
         }
     }

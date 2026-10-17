@@ -2,29 +2,29 @@
 import SwiftUI
 import MarketCore
 
-private struct SemaAccentKey: EnvironmentKey {
+private struct AccentKey: EnvironmentKey {
     static let defaultValue: Color = SemaPalette.graphite.accent
 }
 
-private struct SemaGlassTintKey: EnvironmentKey {
+private struct GlassTintKey: EnvironmentKey {
     static let defaultValue: Color = .clear
 }
 
-private struct SemaGlassSettingsKey: EnvironmentKey {
+private struct GlassSettingsKey: EnvironmentKey {
     static let defaultValue = RibbonGlassPreferences.standard
 }
 
 extension EnvironmentValues {
     var semaGlassSettings: RibbonGlassPreferences {
-        get { self[SemaGlassSettingsKey.self] }
-        set { self[SemaGlassSettingsKey.self] = newValue }
+        get { self[GlassSettingsKey.self] }
+        set { self[GlassSettingsKey.self] = newValue }
     }
     var semaGlassTint: Color {
-        get { self[SemaGlassTintKey.self] }
-        set { self[SemaGlassTintKey.self] = newValue }
+        get { self[GlassTintKey.self] }
+        set { self[GlassTintKey.self] = newValue }
     }
     var semaAccent: Color {
-        get { self[SemaAccentKey.self] }
-        set { self[SemaAccentKey.self] = newValue }
+        get { self[AccentKey.self] }
+        set { self[AccentKey.self] = newValue }
     }
 }

@@ -29,7 +29,7 @@ struct SourceSettingsView: View {
                         Button("Retirer la clé", role: .destructive) { Task { await store.removeWebstatKey() } }.disabled(store.isLoading)
                     }
                 }
-                Link("Obtenir une clé sur Webstat", destination: URL(string: "https://webstat.banque-france.fr/login/")!)
+                Link("Obtenir une clé sur Webstat", destination: WebstatClient.loginURL)
                 Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Les autres sources sont accessibles sans clé.")
                     .font(.subheadline).foregroundStyle(.secondary)
                 if let error = store.webstatError { Text(error).font(.subheadline).foregroundStyle(.red) }
