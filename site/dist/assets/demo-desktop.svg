@@ -1,0 +1,11 @@
+<!-- Fond original et neutre pour situer les aperçus de sema sur Mac. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="800" viewBox="0 0 1440 800" fill="none">
+  <defs>
+    <linearGradient id="base" x2="1440" y2="800" gradientUnits="userSpaceOnUse"><stop stop-color="#434343"/><stop offset=".5" stop-color="#252525"/><stop offset="1" stop-color="#171717"/></linearGradient>
+    <linearGradient id="fold" x1="600" y1="50" x2="950" y2="800" gradientUnits="userSpaceOnUse"><stop stop-color="#737373"/><stop offset=".5" stop-color="#3c3c3c"/><stop offset="1" stop-color="#202020"/></linearGradient>
+    <linearGradient id="edge" x1="900" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse"><stop stop-color="#8c8c8c"/><stop offset=".45" stop-color="#383838"/><stop offset="1" stop-color="#1d1d1d"/></linearGradient>
+  </defs>
+  <path fill="url(#base)" d="M0 0h1440v800H0z"/>
+  <path fill="url(#fold)" d="M350 0h730C850 180 1120 415 690 800H0C520 480 710 200 350 0Z"/>
+  <path fill="url(#edge)" d="M1080 0h360v800H690C1120 415 850 180 1080 0Z"/>
+</svg>

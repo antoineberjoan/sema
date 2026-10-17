@@ -36,3 +36,7 @@ Les séquences sont décrites avant codage, avec des constantes nommées pour le
 Les leçons membres suivantes d’Interface Craft guident la méthode : [Separation of Concerns](https://www.interfacecraft.dev/library/separation-of-concerns), [Conceptual Depth](https://www.interfacecraft.dev/library/conceptual-depth), [Live Tuning](https://www.interfacecraft.dev/library/live-tuning), [Animations as Proof of Care](https://www.interfacecraft.dev/library/animations-as-proof-of-care), [Less, but Better](https://www.interfacecraft.dev/library/less-but-better) et [Facets of Quality](https://www.interfacecraft.dev/library/facets-of-quality). Les critères de sema privilégient la précision, la rapidité, la retenue et la continuité.
 
 Les contrats de la version actuelle restent décrits dans [PRODUCT.md](PRODUCT.md). Ce plan décrit la prochaine évolution ; il ne vaut pas annonce de fonctionnalités déjà disponibles.
+
+## Présentation du produit
+
+- [Démonstrations de la landing](plans/landing-demos.md) : trois scènes interactives, en validation navigateur.
