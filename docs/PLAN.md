@@ -39,4 +39,4 @@ Les contrats de la version actuelle restent décrits dans [PRODUCT.md](PRODUCT.m
 
 ## Présentation du produit
 
-- [Démonstrations de la landing](plans/landing-demos.md) : trois compositions distinctes vérifiées en aperçu, publication en attente.
+- [Démonstrations de la landing](plans/landing-demos.md) : téléchargement direct, commande copiable et proposition vidéo motion en revue ; publication en attente.

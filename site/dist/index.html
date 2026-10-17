@@ -1,4 +1,4 @@
-<!-- Présente les fonctionnalités de sema dans des sections successives, sans accès aux données personnelles. -->
+<!-- Présente sema et sa démonstration vidéo, avec téléchargement direct et commande Homebrew copiable. -->
 <!doctype html>
 <html lang="fr">
   <head>
@@ -17,7 +17,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/sema.svg">
     <link rel="stylesheet" href="style.css">
     <script src="/chrome.js" defer></script>
-    <script src="/product-demo.js" defer></script>
+    <script src="/landing.js" defer></script>
     <link rel="stylesheet" href="landing.css">
     <link rel="stylesheet" href="/chrome.css">
   </head>
@@ -27,7 +27,7 @@
       <div class="header-inner wrap">
         <a class="brand" href="#top" aria-label="sema, accueil"><svg class="brand-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path pathLength="1" d="M43 166.683C92.9018 166.683 111.233 118.818 118.362 76.0449C122.436 49.5664 94.9387 55.6768 90.865 86.229C84.7546 136.131 140.767 111.689 159.098 96.413C180.485 79.1001 196.779 95.3946 209 94.3762" transform="translate(-10.84 -6.41998) scale(.34)" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         <nav aria-label="navigation principale">
-          <a class="header-download" href="/download/" data-header-download aria-hidden="true" inert>télécharger</a>
+          <a class="header-download" href="#top" data-header-download aria-hidden="true" inert>télécharger</a>
         </nav>
       </div>
     </header>
@@ -37,60 +37,23 @@
         <!-- release:primary:start -->
 <a class="button" href="https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.5.1/Sema-0.5.1-arm64.dmg" download="Sema-0.5.1-arm64.dmg" data-download><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.5 7.59 9.04 7.31c1.35.07 2.29.76 3.08.82 1.18-.24 2.31-.94 3.57-.85 1.51.12 2.65.72 3.4 1.8-3.11 1.87-2.37 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg>télécharger</a>
           <!-- release:primary:end -->
-        <!-- release:requirements:start -->
-<p class="download-requirements">macos 14.0+ · puce apple · <a href="/download/#premiere-ouverture">préversion non notarisée</a></p>
-          <!-- release:requirements:end -->
-        <p class="brew-line"><a class="brew-link" href="/download/#homebrew">installer avec homebrew</a></p>
+        <!-- release:homebrew:start -->
+<div class="brew-line"><button class="brew-copy" type="button" data-copy-homebrew aria-label="Copier la commande Homebrew" disabled><code id="homebrew-command">brew install --cask antoineberjoan/sema/sema</code></button><span class="sr-only" role="status" id="homebrew-copy-status"></span></div>
+          <!-- release:homebrew:end -->
       </section>
-      <div class="product" id="app">
-        <svg class="demo-defs" aria-hidden="true"><defs><g id="demo-mark"><path d="M43 166.683C92.9018 166.683 111.233 118.818 118.362 76.0449C122.436 49.5664 94.9387 55.6768 90.865 86.229C84.7546 136.131 140.767 111.689 159.098 96.413C180.485 79.1001 196.779 95.3946 209 94.3762" transform="translate(-10.84 -6.41998) scale(.34)" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g></defs></svg>
-        <section class="feature feature--glance" data-scene="glance" aria-labelledby="glance-title">
-          <figure class="ribbon-scene wrap" role="img" aria-label="quatre repères réunis dans le bandeau de verre, au-dessus de votre travail" aria-describedby="glance-context">
-            <figcaption class="sr-only" id="glance-context">Illustration de sema. Les valeurs et courbes sont fictives.</figcaption>
-            <div class="desk-context" aria-hidden="true" inert>
-              <div class="desk-menubar"><span></span><span>finder</span><span>fichier</span><span>édition</span><span class="desk-status"><svg viewBox="0 0 64 64" fill="none"><use href="#demo-mark"/></svg><span>09:41</span></span></div>
-              <div class="desk-paper"><span class="paper-dots">● ● ●</span><p>un peu de place<br>pour vos idées.</p><div class="paper-lines"><i></i><i></i><i></i><i></i></div></div>
-              <div class="desk-calendar"><span>octobre</span><b>17</b><span>samedi</span></div>
-            </div>
-            <div class="ribbon-composition" aria-hidden="true" inert>
-              <div class="ribbon-periods"><span>3 mois</span><span class="selected">1 an</span><span>3 ans</span><span>5 ans</span><span>tout</span></div>
-              <div class="glance-card"><span class="glance-name">euro / dollar</span><span class="glance-value">1,1642 <small>USD</small></span><span class="mini-chart"><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><path pathLength="1" d="M0 152 17 149 30 154 45 137 58 141 72 134 86 139 100 121 113 125 128 117 142 122 158 103 170 107 186 99 200 106 215 83 230 91 247 73 263 82 279 67 293 72 310 49 326 58 343 44 359 57 375 35 391 45 407 31 423 42 439 25 455 32 471 18 488 27 505 15 522 24 539 11 554 20 572 8 586 14 600 5"/></svg></span><span class="glance-foot"><span>+4,00 %</span><span>sur 1 an</span></span></div>
-              <div class="glance-card"><span class="glance-name">taux de dépôt BCE</span><span class="glance-value">2,00 <small>%</small></span><span class="mini-chart"><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><path pathLength="1" d="M0 20H100V42H180V64H260V86H340V108H420V130H500V150H600"/></svg></span><span class="glance-foot"><span>−1,00 pt</span><span>sur 1 an</span></span></div>
-              <div class="glance-card"><span class="glance-name">livret A</span><span class="glance-value">1,70 <small>%</small></span><span class="mini-chart"><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><path pathLength="1" d="M0 55H320V105H600"/></svg></span><span class="glance-foot"><span>−1,30 pt</span><span>sur 1 an</span></span></div>
-              <div class="glance-card"><span class="glance-name">emprunt phare FR · 10 ans</span><span class="glance-value">3,42 <small>%</small></span><span class="mini-chart"><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><path pathLength="1" d="M0 28 40 36 80 30 120 53 160 47 200 68 240 61 280 90 320 85 360 105 400 97 440 125 480 118 520 141 560 136 600 155"/></svg></span><span class="glance-foot"><span>−0,14 pt</span><span>sur 1 an</span></span></div>
-            </div>
-          </figure>
-          <div class="glance-copy wrap"><h2 id="glance-title">un regard suffit.</h2><p>vos repères sont là.<br>votre travail continue.</p></div>
-        </section>
-        <section class="feature feature--search wrap" data-scene="search" aria-labelledby="search-title">
-          <div class="search-copy"><h2 id="search-title">le bon repère.<br><span>au bout des doigts.</span></h2><p>un raccourci, quelques lettres.<br>vous y êtes.</p><div class="shortcut-sculpture" aria-hidden="true"><kbd class="keycap keycap--command">⌘</kbd><kbd class="keycap keycap--letter">K</kbd></div></div>
-          <figure class="search-scene" role="img" aria-label="le raccourci commande K ouvre la recherche des repères" aria-describedby="search-context">
-            <figcaption class="sr-only" id="search-context">Illustration de sema. Recherche du mot euro, puis sélection d’euro / dollar. Valeurs fictives.</figcaption>
-            <div class="command-halo" aria-hidden="true"></div>
-            <div class="command-surface" aria-hidden="true" inert>
-              <div class="command-field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span class="command-query">euro</span><kbd>esc</kbd></div>
-              <div class="command-results"><div class="command-result is-selected"><span><b>euro / dollar</b><small>devises</small></span><span class="result-value">1,1642 <small>USD</small></span><span class="result-enter">↵</span></div><div class="command-result"><span><b>euro / yen</b><small>devises</small></span><span class="result-value">171,46 <small>JPY</small></span></div><div class="command-result"><span><b>euro / franc suisse</b><small>devises</small></span><span class="result-value">0,9341 <small>CHF</small></span></div></div>
-              <div class="command-bottom"><span>↑ ↓ pour parcourir</span><span>↵ pour ouvrir</span></div>
-            </div>
-          </figure>
-        </section>
-        <section class="feature feature--history" data-scene="history" aria-labelledby="history-title">
-          <div class="history-heading wrap"><h2 id="history-title">voyez ce qui change.</h2><p>de quelques mois à plusieurs années.<br>l’espace pour prendre du recul.</p></div>
-          <figure class="history-scene wrap" role="img" aria-label="historique euro / dollar dans Focus, avec une progression de 4 pour cent sur un an" aria-describedby="history-context">
-            <figcaption class="sr-only" id="history-context">Illustration de sema. 1,1642 USD pour 1 EUR. Historique et variation fictifs, d’octobre 2025 à octobre 2026.</figcaption>
-            <div class="history-overview" aria-hidden="true" inert><div><p class="history-name">euro / dollar</p><p class="history-number">1,1642 <small>USD</small></p></div><div class="history-periods"><span>3 mois</span><span class="selected">1 an</span><span>3 ans</span><span>5 ans</span><span>tout</span></div></div>
-            <div class="history-plot" aria-hidden="true"><div class="plot-guides"><i></i><i></i><i></i></div><svg viewBox="0 0 600 180" preserveAspectRatio="none" fill="none"><defs><linearGradient id="history-fill" x2="0" y2="1"><stop stop-color="#eeeeee" stop-opacity=".12"/><stop offset="1" stop-color="#eeeeee" stop-opacity="0"/></linearGradient></defs><path class="history-area" d="M0 152 17 149 30 154 45 137 58 141 72 134 86 139 100 121 113 125 128 117 142 122 158 103 170 107 186 99 200 106 215 83 230 91 247 73 263 82 279 67 293 72 310 49 326 58 343 44 359 57 375 35 391 45 407 31 423 42 439 25 455 32 471 18 488 27 505 15 522 24 539 11 554 20 572 8 586 14 600 5V180H0Z" fill="url(#history-fill)"/><path class="history-stroke" pathLength="1" d="M0 152 17 149 30 154 45 137 58 141 72 134 86 139 100 121 113 125 128 117 142 122 158 103 170 107 186 99 200 106 215 83 230 91 247 73 263 82 279 67 293 72 310 49 326 58 343 44 359 57 375 35 391 45 407 31 423 42 439 25 455 32 471 18 488 27 505 15 522 24 539 11 554 20 572 8 586 14 600 5"/></svg><span class="history-point"></span><span class="history-change">+4,00 %<small>sur 1 an</small></span></div>
-            <div class="history-dates" aria-hidden="true"><span>oct. 2025</span><span>janv.</span><span>avr.</span><span>juil.</span><span>oct. 2026</span></div>
-          </figure>
-          <p class="history-footnote wrap">un repère à la fois. toute votre attention.</p>
-        </section>
-      </div>
+      <figure class="motion-demo wrap" id="app" aria-label="démonstration de sema" aria-describedby="demo-description">
+        <video controls playsinline muted preload="metadata" poster="/assets/sema-demo-poster.jpg" width="1440" height="900" data-demo-video aria-label="lire la démonstration de sema">
+          <source src="/assets/sema-demo.mp4" type="video/mp4">
+          <p><a href="/assets/sema-demo.mp4">voir la démonstration de sema</a></p>
+        </video>
+        <figcaption class="sr-only" id="demo-description">Démonstration silencieuse de 18 secondes. Un clic sur le signe sema ouvre quatre favoris dans le bandeau. Commande K ouvre la recherche : le mot euro est saisi puis euro / dollar est sélectionné. Focus affiche sa valeur et son historique ; la sidebar se révèle puis se referme. Les valeurs et courbes sont fictives.</figcaption>
+      </figure>
       <section class="questions wrap" id="questions" aria-labelledby="questions-title">
         <h2 id="questions-title">quelques réponses.</h2>
         <div class="faq-list">
           <details><summary>quels repères peut-on suivre ?<span class="plus" aria-hidden="true"></span></summary><p>taux, inflation, crédit, épargne, devises : composez votre sélection à partir des catalogues publics disponibles dans sema, dont <a href="https://webstat.banque-france.fr/">webstat, le portail de la banque de france</a>. chaque série conserve sa source, son unité et sa fréquence de publication. votre clé personnelle webstat reste dans le trousseau de votre mac.</p></details>
           <details><summary>comment fonctionnent les alertes ?<span class="plus" aria-hidden="true"></span></summary><p>choisissez un repère et un seuil. sema vérifie le franchissement lorsque vous actualisez les données et peut vous envoyer une notification macos. la surveillance automatique en arrière-plan n’est pas encore disponible.</p></details>
-          <details><summary>sur quels mac fonctionne sema ?<span class="plus" aria-hidden="true"></span></summary><p>sur les mac avec puce apple, à partir de macos 14. la préversion est disponible en téléchargement ou avec homebrew. les étapes d’installation et de première ouverture sont expliquées sur la <a href="/download/">aide d’installation</a>.</p></details>
+          <details><summary>sur quels mac fonctionne sema ?<span class="plus" aria-hidden="true"></span></summary><p>sur les mac avec puce apple, à partir de macos 14. la préversion est disponible en téléchargement ou avec homebrew. ouvrez le fichier .dmg, puis glissez sema dans applications.</p></details>
         </div>
       </section>
       <p class="support-note wrap">sema est gratuite. <a href="https://ko-fi.com/antoineberjoan" target="_blank" rel="noopener noreferrer">vous pouvez soutenir son développement sur ko-fi.</a></p>

@@ -1,6 +1,20 @@
 # Landing sema
 
-Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` contient le site, l’aide d’installation et le guide de marque. Le CTA de la landing pointe directement vers le DMG publié ; `/download/` reste une aide facultative. `scripts/distribution/sync-download.py` synchronise les deux CTA et leurs métadonnées à partir de `distribution/release.json`. Les liens Homebrew et de première ouverture ciblent les réponses correspondantes de l’aide.
+Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` contient la landing et le guide de marque. Le CTA télécharge directement le DMG publié ; aucune page de téléchargement intermédiaire. `scripts/distribution/sync-download.py` synchronise ce lien, la commande Homebrew copiable et le manifeste JSON `download/release.json` à partir de `distribution/release.json`. Le dossier `download/` ne contient que cette métadonnée.
+
+## Démonstration motion
+
+Une proposition vidéo silencieuse de 18 secondes montre le bandeau, la recherche et Focus, avec des valeurs d’illustration fixes. Les images sont dessinées par `scripts/render-demo.swift` ; ce ne sont pas des captures de l’app. Le MP4 et son poster sont versionnés dans `dist/assets/`. Leur génération utilise AppKit et ffmpeg en outils de développement, sans dépendance pour le site :
+
+```sh
+swiftc -O scripts/render-demo.swift -o /tmp/sema-render-demo
+/tmp/sema-render-demo --poster /tmp/sema-demo-poster.png
+ffmpeg -y -i /tmp/sema-demo-poster.png -q:v 2 site/dist/assets/sema-demo-poster.jpg
+set -o pipefail
+/tmp/sema-render-demo | ffmpeg -y -framerate 30 -f image2pipe -vcodec png -i - -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -movflags +faststart site/dist/assets/sema-demo.mp4
+```
+
+Commandes depuis la racine du dépôt. Lecture automatique une seule fois à l’entrée dans l’écran, sans boucle ; pause à la sortie ou au masquage de la page. Réduire les animations conserve le poster et les contrôles natifs de lecture. La description textuelle accessible raconte la séquence et identifie les valeurs fictives.
 
 ## Hébergement Vercel
 

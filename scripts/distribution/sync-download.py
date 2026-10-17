@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synchronise les liens de téléchargement et l’aide depuis le manifeste, sans publication."""
+"""Synchronise le téléchargement direct et la commande Homebrew depuis le manifeste publié."""
 import argparse
 import hashlib
 import html
@@ -44,8 +44,6 @@ def main():
         raise ValueError("Téléchargement actif sans URL")
     if download.get("url") and not (download["url"].startswith("/") or urllib.parse.urlparse(download["url"]).scheme == "https"):
         raise ValueError("URL de téléchargement non prise en charge")
-    page = args.site_dist / "download/index.html"
-    source = page.read_text()
     landing_page = args.site_dist / "index.html"
     landing = landing_page.read_text()
     escape = lambda value: html.escape(str(value), quote=True)
@@ -54,32 +52,18 @@ def main():
         primary = f'<a class="button" href="{escape(download["url"])}" download="{escape(download["filename"])}" data-download>{icon}télécharger</a>'
     else:
         primary = '<span class="button download-pending">préversion en préparation</span>'
-    source = replace_block(source, "primary", primary)
     landing = replace_block(landing, "primary", primary)
-    megabytes = f'{download["byteSize"] / 1000000:.1f}'.replace(".", ",")
-    fields = [f'version {escape(manifest["version"])}', f'{megabytes} Mo', 'puce apple', f'macos {escape(manifest["minimumMacOS"])}+']
-    metadata = '<p class="release-metadata">' + '<span class="separator" aria-hidden="true">·</span>'.join(f'<span>{field}</span>' for field in fields) + '</p>'
-    source = replace_block(source, "metadata", metadata)
-    label = "préversion privée" if manifest["channel"] == "private-preview" else "préversion"
-    trust_label = label if manifest["notarized"] else label + " non notarisée"
-    trust = f'<p class="release-trust">{trust_label} · <a href="#premiere-ouverture">aide à la première ouverture</a></p>'
-    source = replace_block(source, "trust", trust)
-    requirements = f'<p class="download-requirements">macos {escape(manifest["minimumMacOS"])}+ · puce apple · <a href="/download/#premiere-ouverture">{trust_label}</a></p>'
-    landing = replace_block(landing, "requirements", requirements)
     brew = manifest["homebrew"]
     if brew["enabled"]:
         if not brew.get("command") or not all(manifest["validation"].get(key) for key in ("homebrewInstall", "homebrewUpgrade", "internetDownload")):
             raise ValueError("La commande Homebrew ne peut être activée avant les tests d’installation et de mise à jour")
-        markup = f'<div class="brew-command"><code id="homebrew-command">{escape(brew["command"])}</code><button type="button" id="copy-homebrew" hidden>copier</button></div><p class="sr-only" id="homebrew-copy-status" role="status"></p><p>si une approbation est demandée, consultez <a href="https://github.com/antoineberjoan/homebrew-sema/blob/main/Casks/sema.rb" target="_blank" rel="noopener noreferrer">le cask sema</a> avant d’accepter. les contrôles de sécurité de macos s’appliquent aussi à cette installation.</p>'
+        markup = f'<div class="brew-line"><button class="brew-copy" type="button" data-copy-homebrew aria-label="Copier la commande Homebrew" disabled><code id="homebrew-command">{escape(brew["command"])}</code></button><span class="sr-only" role="status" id="homebrew-copy-status"></span></div>'
     else:
-        markup = '<p>homebrew sera proposé après les tests d’installation et de mise à jour.</p>'
-    source = replace_block(source, "homebrew", markup)
-    update_method = "en téléchargeant une nouvelle version, ou avec Homebrew" if brew["enabled"] else "en téléchargeant une nouvelle version"
-    source = replace_block(source, "updates", f'<p class="alpha-note">les mises à jour se font {update_method}. vos préférences restent sur votre mac.</p>')
-    page.write_text(source)
+        markup = ''
+    landing = replace_block(landing, "homebrew", markup)
     landing_page.write_text(landing)
     (args.site_dist / "download/release.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
-    print(f'Page synchronisée : sema {manifest["version"]} · {megabytes} Mo · {manifest["architecture"]} · {manifest["channel"]}')
+    print(f'Page synchronisée : sema {manifest["version"]} · {download['byteSize']} octets · {manifest["architecture"]} · {manifest["channel"]}')
 
 
 if __name__ == "__main__":

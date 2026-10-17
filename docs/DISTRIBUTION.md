@@ -33,7 +33,7 @@ Le petit outil C `finder-alias.c` utilise l’Alias Manager de macOS pour lier l
 
 `bless --openfolder` n’est pas utilisé : cette option ne fonctionne pas sur Apple Silicon. Le montage utilisateur du DMG et la lecture de sa disposition doivent être contrôlés dans le Finder réel.
 
-## Alimenter la page de téléchargement
+## Alimenter le téléchargement direct
 
 Le site est versionné sous `site/` dans ce même dépôt ; son hébergement reste distinct. Les métadonnées sont générées à partir du manifeste du **même DMG** :
 
@@ -46,7 +46,9 @@ python3 scripts/distribution/sync-download.py \
 
 Sans cette option, l’outil utilise uniquement l’URL déjà activée dans `release.json`. L’URL publique proposée et la commande Homebrew restent désactivées par défaut. Ne pas activer le site tant qu’un téléchargement Internet sans session développeur et son SHA-256 n’ont pas été vérifiés.
 
-La page contient une démonstration, pas une mesure du téléchargement ou de la copie réelle. Une seule lecture est lancée lorsque la figure entre dans l’écran ; Rejouer reste disponible, y compris au clavier. Réduire les animations conserve la composition et les trois étapes sans déplacement. L’animation se termine proprement si la fenêtre est masquée ou redimensionnée. Sur localhost uniquement, Alt + clic sur Rejouer ouvre les réglages de développement : vitesse, amortissement, hauteur et ombre.
+La landing expose le lien direct au DMG et la commande Homebrew copiable, sans page intermédiaire ni ligne de compatibilité sous le CTA. Le générateur conserve le manifeste JSON sous `download/release.json` ; ce chemin est une métadonnée et ne sert aucune page HTML. Il ne doit pas recréer la page supprimée.
+
+La vidéo produit de la landing est indépendante du manifeste de distribution. Son storyboard et sa génération sont décrits dans `site/README.md` ; elle n’illustre pas une installation et ne mesure aucun téléchargement.
 
 ## Activer Homebrew
 
@@ -61,7 +63,7 @@ Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade
 1. Monter le DMG par le Finder, contrôler le fond Retina, les deux icônes, leur nom, les ombres et l’absence d’éléments superflus.
 2. Glisser réellement sema dans Applications sur un compte de test, éjecter le disque et ouvrir la copie. Vérifier l’accueil, le parcours passé, la reprise et l’ouverture suivante.
 3. Télécharger le fichier via le navigateur sur un autre compte ou Mac pour observer les contrôles de quarantaine et confirmer l’aide Gatekeeper.
-4. Vérifier la page desktop et mobile, le clavier, la copie Homebrew, Réduire les animations, JavaScript absent et les relectures rapides.
+4. Vérifier la landing desktop et mobile, le lien direct au DMG, le clavier, la copie Homebrew, Réduire les animations et JavaScript absent.
 5. Ne cocher les contrôles de `release.json` qu’après les essais correspondants. Le succès de `hdiutil verify` et de la signature locale ne vaut pas validation de l’installation Internet.
 
 ## Alpha 0.2.0 vérifiée le 16 octobre 2026
