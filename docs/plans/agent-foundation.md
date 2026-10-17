@@ -1,6 +1,6 @@
 # Socle agentique
 
-Statut : socle implémenté et contrôles validés, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Chargement validé dans Cursor et Claude ; connexions et correction réelle validées dans Claude. Complément Cursor en attente d’autorisation Notion et de quota Agent. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
+Statut : socle implémenté et contrôles validés, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Chargement validé dans Cursor et Claude ; connexions et correction réelle validées dans Claude. Notion connecté dans Cursor après autorisation ; son scénario attend encore un accès Agent utilisable. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
 
 ## Résultat
 
@@ -48,7 +48,7 @@ Une entrée commune, des procédures chargées à la demande et les mêmes contr
 
 Essai complémentaire de bout en bout : chaque client doit lire réellement la page Notion Équipe et la PR privée nº 3, réaliser une correction ciblée, lancer les contrôles et transmettre un diff relu. Claude a corrigé l’absence de `AGENTS.md` : test rouge observé, 23 tests Python verts, diff limité aux deux fichiers Python et relais effectué. Lecture Notion et GitHub réussie. La validation Swift, indisponible localement, repose sur la CI du commit intégré.
 
-Cursor a lu la PR privée en direct mais atteint sa limite d’usage avant d’éditer. Son connecteur Notion exige une autorisation d’espace, demandée à Antoine. Reprise dans « Notion connection test report » pour la lecture Notion, puis « Sema change and testing » pour le contenu vide d’`AGENTS.md`, test avant/après et relais. Le [protocole et les preuves](../validation/agent-clients.md) distinguent ces étapes de celles terminées. Aucun achat ni changement de droits n’est effectué sans accord ; les travaux applicatifs parallèles restent exclus.
+Cursor a lu la PR privée en direct mais atteint sa limite d’usage avant d’éditer. Antoine a autorisé la connexion Notion, désormais affichée connectée. Le quota bloque encore Grok 4.6 Medium après rechargement et chat neuf ; identifier avec Antoine le modèle ou compte disponible. Reprise dans « Notion connection test report » pour la lecture Notion, puis « Sema change and testing » pour le contenu vide d’`AGENTS.md`, test avant/après et relais. Le [protocole de validation](../validation/agent-clients.md) distingue ces étapes de celles terminées. Aucun achat ni changement de droits non autorisé ; les travaux applicatifs parallèles restent exclus.
 
 La PR reste volontairement en brouillon. Ses contrôles GitHub font foi pour le dernier commit ; la preuve ci-dessus porte sur le commit d’implémentation. Toute fusion vers `main`, qui déploie le site, nécessite une autorisation couvrant cette publication.
 
