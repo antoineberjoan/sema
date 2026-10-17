@@ -1,6 +1,6 @@
 # Navigation clavier et bandeau Repère
 
-Statut : correction implémentée et vérifiée dans un bundle natif isolé, CI en attente, 17 octobre 2026. Branche : `codex/ribbon-signature`.
+Statut : correction terminée pour revue, vérifiée dans un bundle natif isolé et en CI, 17 octobre 2026. [PR nº 5](https://github.com/antoineberjoan/sema/pull/5), branche `codex/ribbon-signature`.
 
 Source : demandes d’Antoine dans le chat du 17 octobre et pages Notion [Produit](https://app.notion.com/p/3fbd18bb0dea81c7add6f4a31d033296) et [Marque](https://app.notion.com/p/3fbd18bb0dea818fa7f4fc7483c767b3), consultées et mises à jour le même jour. Le dernier arbitrage précise quatre favoris **en plus** du cartouche signature, toujours visible et teinté par Apparence, des cartes plus carrées, aucun badge « Démo » dans le bandeau et des flèches horizontales identiques aux verticales.
 
@@ -15,7 +15,7 @@ Source : demandes d’Antoine dans le chat du 17 octobre et pages Notion [Produi
 
 ## Preuves de cette correction
 
-- Garde-fous et `git diff --check` réussis ; 17 tests Python réussis. La suite Swift locale s’arrête faute du module `Testing` dans les Command Line Tools : la CI doit vérifier ces tests.
+- Garde-fous et `git diff --check` réussis ; 17 tests Python réussis. La suite Swift locale s’arrête faute du module `Testing` dans les Command Line Tools ; la [CI macOS du commit fonctionnel `7ecff3e`](https://github.com/antoineberjoan/sema/actions/runs/39050587878) a ensuite réussi les tests et la construction du bundle.
 - `scripts/build-app.sh` construit le bundle release et sa signature stricte est valide. Le premier appel sandboxé bloquait `iconutil` ; le même script hors sandbox réussit sans changer les contrôles ni les ressources.
 - Revue native avec un identifiant de bundle et un dossier de données temporaires distincts : navigation ← / →, ↑ / ↓ et validation de ⌘← / ⌘→ observées. Les événements synthétiques relâchent la combinaison avant la capture : le sélecteur maintenu avec ⌘ reste une limite de cette vérification.
 - Quatre favoris plus le cartouche observés simultanément en Graphite puis Lavande, avec le changement effectué dans Apparence. Après défilement, les quatre derniers favoris et la même signature restent visibles. L’outil active parfois le hub après une action sur le panneau non activant ; sa réouverture conserve la position défilée, vérifiée par la capture.
@@ -24,7 +24,7 @@ Source : demandes d’Antoine dans le chat du 17 octobre et pages Notion [Produi
 
 ## Vérifications restantes et livraison
 
-Attendre la CI de cette branche. Position latérale, écran de moindre largeur et options d’accessibilité pris en charge par les chemins existants et la réservation de place, mais non observés dans cette revue. Le contrôle natif s’est interrompu pendant le dernier contrôle d’état ; aucune validation de ces cas n’est déclarée.
+Position latérale, écran de moindre largeur et options d’accessibilité pris en charge par les chemins existants et la réservation de place, mais non observés dans cette revue. Le contrôle natif s’est interrompu pendant le dernier contrôle d’état ; aucune validation de ces cas n’est déclarée.
 
 Cette correction est sauvegardée séparément pour revue. Aucune nouvelle version distribuée ni fusion vers main n’est déclarée dans ce lot. L’autorisation de la précédente publication concernait la version 0.6.0 ; le téléchargement public reste cette version.
 
