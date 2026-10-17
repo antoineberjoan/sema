@@ -82,7 +82,7 @@
 .command-result.is-selected { background: #ffffff13; }
 /* Chaque visuel a sa propre place ; aucun épinglage ni espace de scroll artificiel. */
 .feature--search .product-demo { height: clamp(320px, 36vw, 480px); }
-.feature--history .product-demo { height: clamp(410px, 43vw, 600px); background: transparent; }
+.feature--history .product-demo { height: clamp(410px, 38vw, 540px); background: transparent; }
 .feature--history .demo-desktop { background: none; }
 .feature[data-stage="0"] .product-demo { opacity: 0; transform: translateY(var(--feature-distance)); }
 .feature[data-stage="1"] .product-demo { animation: feature-enter var(--feature-enter) var(--feature-ease) both; }
