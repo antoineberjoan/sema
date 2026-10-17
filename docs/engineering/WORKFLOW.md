@@ -38,14 +38,14 @@ Les documentations officielles ont été consultées le 17 octobre 2026 ; la pri
 | Agent | Entrée | Procédures |
 | --- | --- | --- |
 | Codex | `AGENTS.md` | `.agents/skills` découvert par le client |
-| Claude Code | `CLAUDE.md` importe `AGENTS.md` | Lire la skill référencée par la table de routage ; aucun répertoire de skills dupliqué |
+| Claude Code | `CLAUDE.md` importe `AGENTS.md` | `.claude/skills` expose les skills communes par liens symboliques, sans copie |
 | Cursor | `AGENTS.md` | `.agents/skills` découvert par le client |
 | Antigravity | `AGENTS.md` | `.agents/skills` découvert par le client |
 | Autre agent | Lui demander de lire `AGENTS.md` | Même lecture ciblée et mêmes scripts |
 
-Une skill peut être demandée explicitement : « Applique sema-design à ce changement ». On ne suppose pas qu’une commande slash existe dans tous les clients. Claude peut lire les procédures via le routeur sans installation ni liens symboliques. Ses skills natives utilisent un autre répertoire ; on évite d’en maintenir une seconde copie.
+Une skill peut être demandée explicitement : « Applique sema-design à ce changement ». Cursor et Claude proposent aussi `/sema-design` dans leur catalogue natif ; l’invocation explicite dépend du client. Les trois liens de `.claude/skills` conservent les mêmes noms et pointent vers `.agents/skills`, seule source à éditer. Le contrôle refuse un lien absent, détourné, remplacé par une copie ou un simple fichier texte. Le clone Git doit conserver les liens symboliques ; aucune copie de secours n’est maintenue. La table de routage reste utilisable par les autres agents.
 
-Sur un nouvel outil, demander d’identifier les sources d’instructions chargées et la commande de validation, puis faire une petite tâche réversible. La découverte automatique et l’obéissance effective ne sont pas validées par la simple présence des fichiers. Les sessions Claude, Cursor et Antigravity n’ont pas été exécutées dans ce chantier.
+Sur un nouvel outil, demander d’identifier les sources d’instructions chargées et la commande de validation, puis faire une petite tâche réversible. La découverte automatique et l’obéissance effective ne sont pas validées par la simple présence des fichiers. Le [test des clients](../validation/agent-clients.md) distingue catalogue, lecture et exécution : Cursor est éprouvé en lecture seule ; Claude découvre les instructions et les skills, mais l’exécution du scénario est bloquée par une session OAuth expirée. Antigravity reste non testé. Les connexions et permissions propres à chaque client ne sont pas transportées par ces fichiers.
 
 Références : [OpenAI, AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [OpenAI, skills](https://learn.chatgpt.com/docs/build-skills), [Claude, mémoire et imports](https://code.claude.com/docs/en/memory), [Claude, skills](https://code.claude.com/docs/en/skills), [Cursor, règles](https://cursor.com/help/customization/rules), [Cursor, skills](https://cursor.com/help/customization/skills), [Antigravity, règles](https://antigravity.google/docs/rules), [Antigravity, skills](https://antigravity.google/docs/skills).
 
@@ -59,7 +59,7 @@ Après un clone, exécuter `./scripts/setup.sh`. Il configure uniquement ce dép
 - `./scripts/build-app.sh` construit et signe le bundle local ad hoc.
 - La CI exécute `check.sh` et construit un bundle pour chaque PR, chaque push sur `main` et les lancements manuels. Aucune dépendance de production n’a été ajoutée.
 
-Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, duplication des instructions dans `CLAUDE.md`, absence ou divergence des manifestes de release local et web.
+Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, duplication des instructions dans `CLAUDE.md`, adaptateur de skill Claude absent ou divergent, absence ou divergence des manifestes de release local et web.
 
 Ces vérifications sont volontairement bornées : le contrôle des liens Markdown en ligne ignore les exemples en code et ne résout ni les liens par référence, ni les URL réseau, ni les ancres. L’analyse des imports masque commentaires et chaînes Swift mais ne remplace pas le compilateur. L’en-tête est détecté mais son utilité se relit ; le contrôle de secrets par nom ne remplace pas une revue des valeurs. Duplication sémantique, code mort, bonne abstraction, exactitude de la copy et qualité native demandent une revue. Aucun script ne prétend vérifier « zéro hardcode » en interdisant tous les littéraux.
 

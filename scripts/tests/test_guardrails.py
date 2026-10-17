@@ -20,12 +20,15 @@ class GuardrailsTests(unittest.TestCase):
         self.root = pathlib.Path(self.temp.name)
         self.git("init", "--quiet")
         self.write(".agents/structure.json", json.dumps({
-            ".agents/": "Procédures", "AGENTS.md": "Instructions", "CLAUDE.md": "Import",
+            ".agents/": "Procédures", ".claude/skills/": "Liens des skills", "AGENTS.md": "Instructions", "CLAUDE.md": "Import",
             "Sources/MarketCore/": "Cœur", "docs/": "Documentation",
             "distribution/": "Release", "site/": "Site", ".env": "Configuration"
         }))
         self.write("AGENTS.md", "# Instructions\n")
         self.write("CLAUDE.md", "@AGENTS.md\n")
+        self.write(".agents/skills/example/SKILL.md", "---\nname: example\ndescription: Procédure de test.\n---\n")
+        (self.root / ".claude/skills").mkdir(parents=True)
+        (self.root / ".claude/skills/example").symlink_to("../../.agents/skills/example")
         self.write("Sources/MarketCore/Series.swift", "// Décrit les observations économiques indépendantes de l’interface.\nimport Foundation\n")
         self.write("distribution/release.json", '{"version": "1"}')
         self.write("site/dist/download/release.json", '{"version": "1"}')
@@ -167,6 +170,46 @@ class GuardrailsTests(unittest.TestCase):
     def test_claude_adapter_cannot_duplicate_rules(self):
         self.write("CLAUDE.md", "@AGENTS.md\nRègle divergente\n")
         self.assertTrue(any("importer uniquement" in error for error in self.errors()))
+
+    def test_missing_skill_link_is_rejected(self):
+        path = ".claude/skills/example"
+        (self.root / path).unlink()
+        self.assertTrue(any("lien symbolique requis" in error for error in self.errors()))
+        self.assertEqual(self.errors(staged=True), [])
+        self.git("add", "-u", path)
+        self.assertTrue(any("lien symbolique requis" in error for error in self.errors(staged=True)))
+
+    def test_wrong_skill_link_in_index_is_not_hidden_by_worktree_fix(self):
+        path = self.root / ".claude/skills/example"
+        path.unlink()
+        path.symlink_to("../../.agents/skills/absent")
+        self.assertTrue(any("lien symbolique requis" in error for error in self.errors()))
+        self.git("add", ".claude/skills/example")
+        path.unlink()
+        path.symlink_to("../../.agents/skills/example")
+        self.assertEqual(self.errors(), [])
+        self.assertTrue(any("lien symbolique requis" in error for error in self.errors(staged=True)))
+
+    def test_skill_copy_cannot_replace_link(self):
+        (self.root / ".claude/skills/example").unlink()
+        self.write(".claude/skills/example/SKILL.md", (self.root / ".agents/skills/example/SKILL.md").read_text())
+        self.assertTrue(any("seuls les liens" in error for error in self.errors()))
+        self.git("add", ".")
+        self.assertTrue(any("seuls les liens" in error for error in self.errors(staged=True)))
+
+    def test_plain_text_cannot_replace_skill_link(self):
+        path = ".claude/skills/example"
+        (self.root / path).unlink()
+        self.write(path, "../../.agents/skills/example")
+        self.assertTrue(any("lien symbolique requis" in error for error in self.errors()))
+        self.git("add", path)
+        self.assertTrue(any("lien symbolique requis" in error for error in self.errors(staged=True)))
+
+    def test_orphan_skill_link_is_rejected(self):
+        (self.root / ".claude/skills/obsolete").symlink_to("../../.agents/skills/example")
+        self.assertTrue(any("obsolete" in error for error in self.errors()))
+        self.git("add", ".")
+        self.assertTrue(any("obsolete" in error for error in self.errors(staged=True)))
 
     def test_required_directives_can_precede_header(self):
         for source in (

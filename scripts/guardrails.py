@@ -37,7 +37,9 @@ class Snapshot:
         if not staged:
             args.extend(["--others", "--exclude-standard"])
         paths = self.git(*args).decode().split("\0")
-        self.paths = {path for path in paths if path and (staged or (self.root / path).is_file())}
+        self.paths = {path for path in paths if path and (
+            staged or (self.root / path).is_file() or (self.root / path).is_symlink()
+        )}
 
     def git(self, *args):
         return subprocess.check_output(["git", "-C", str(self.root), *args])
@@ -47,6 +49,13 @@ class Snapshot:
         if self.staged:
             return self.git("show", ":" + path).decode("utf-8")
         return (self.root / path).read_text(encoding="utf-8")
+
+    def link(self, path):
+        if self.staged:
+            entry = self.git("ls-files", "--stage", "-z", "--", path)
+            return self.read(path) if entry.startswith(b"120000 ") else None
+        target = self.root / path
+        return target.readlink().as_posix() if target.is_symlink() else None
 
 
 def has_header(source):
@@ -165,6 +174,15 @@ def check(snapshot):
 
     if "CLAUDE.md" not in snapshot.paths or snapshot.read("CLAUDE.md").strip() != "@AGENTS.md":
         errors.append("CLAUDE.md : importer uniquement @AGENTS.md ; règles communes dans AGENTS.md.")
+    skills = {posixpath.dirname(path) for path in snapshot.paths
+              if re.fullmatch(r"\.agents/skills/[^/]+/SKILL\.md", path)}
+    adapters = {".claude/skills/" + posixpath.basename(skill): "../../" + skill for skill in skills}
+    for path, target in sorted(adapters.items()):
+        if path not in snapshot.paths or snapshot.link(path) != target:
+            errors.append(f"{path} : lien symbolique requis vers {target}, source unique de la skill.")
+    for path in sorted(snapshot.paths):
+        if path.startswith(".claude/skills/") and path not in adapters:
+            errors.append(f"{path} : seuls les liens vers les skills communes sont autorisés ici.")
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths

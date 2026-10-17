@@ -1,10 +1,10 @@
 # Socle agentique
 
-Statut : socle implémenté et validé, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
+Statut : socle implémenté et contrôles validés, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Vérification des clients partielle : scénario Claude en attente de reconnexion. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
 
 ## Résultat
 
-Une entrée commune, des procédures chargées à la demande et les mêmes contrôles exécutables pour Codex, Claude Code, Cursor et Antigravity. Aucun changement de comportement produit ni nouvelle dépendance de production. Les sessions des autres clients restent à éprouver ; leur prise en charge n’est pas validée par la présence des fichiers seuls.
+Une entrée commune, des procédures chargées à la demande et les mêmes contrôles exécutables pour Codex, Claude Code, Cursor et Antigravity. Aucun changement de comportement produit ni nouvelle dépendance de production. Le [test des clients](../validation/agent-clients.md) prouve l’usage des règles et des trois skills dans Cursor ; Claude découvre maintenant les fichiers et skills, mais son scénario reste bloqué par une connexion expirée. Antigravity reste à éprouver.
 
 - Autorité Notion/GitHub explicite et arbitrage humain en cas de divergence.
 - Carte des responsabilités, vocabulaire commun et descriptifs des fichiers de code.
@@ -36,6 +36,13 @@ Une entrée commune, des procédures chargées à la demande et les mêmes contr
 - 17 tests Python passent après correction. Le hook réel accepte un index valide et refuse une erreur indexée malgré une correction non indexée ; l’installation préserve une autre configuration de hooks et reste idempotente.
 - Les instructions du site suivent le circuit Vercel déjà documenté ; Sites reste réservé à une demande explicite. Les formats d’instructions et de skills annoncés pour Cursor et Antigravity sont reconfirmés dans leurs documentations officielles, sans prétendre avoir testé leurs clients.
 - La revue ne modifie aucun comportement applicatif. La suite Swift locale reste bloquée par l’absence de `Testing` ; les contrôles de la PR portent la validation CI du dernier commit.
+
+## Vérification des clients du 17 octobre
+
+- Cursor 3.25.6 : instructions communes présentes, trois skills découvertes et utilisées, instructions Mac lues, autorité et validation correctement restituées. Les trois entrées du menu restent uniques après la correction Claude.
+- Claude Code 2.1.236 : import des instructions reconnu ; absence des skills natives reproduite puis corrigée par trois liens vers les sources communes. Catalogue natif confirmé après correction. L’application par le modèle attend une reconnexion OAuth ; aucun succès de scénario n’est revendiqué.
+- 22 tests Python passent. Le garde-fou refuse la suppression, la copie, la mauvaise cible et les liens orphelins, dans le travail local et l’index Git.
+- Prochaine action : après `claude auth login`, reprendre le scénario en lecture seule décrit dans la preuve. La fusion reste interdite sans autorisation.
 
 ## Livraison
 

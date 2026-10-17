@@ -5,6 +5,7 @@
   "Package.swift": "Cibles, produits et plateforme du package Swift.",
   ".gitignore": "Exclusion des secrets, caches et sorties locales.",
   ".agents/": "Structure contrôlée et procédures portables chargées à la demande.",
+  ".claude/skills/": "Liens de découverte native Claude vers les skills communes, sans copie de contenu.",
   ".githooks/": "Contrôles Git locaux sans publication ni modification des fichiers.",
   ".github/": "CI et contrats des issues et pull requests.",
   "Sources/MarketCore/": "Modèles, calculs, contrats de données et persistance indépendants de l’interface.",
