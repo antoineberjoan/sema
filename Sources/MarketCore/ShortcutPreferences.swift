@@ -40,7 +40,16 @@ public struct ShortcutPreferences: Codable, Equatable, Sendable {
 
     public static let standard = Self(
         ribbon: AppShortcut(keyCode: 11, modifiers: [.control, .option], key: "B"),
-        workspace: AppShortcut(keyCode: 4, modifiers: [.control, .option], key: "H"))
+        workspace: AppShortcut(keyCode: 4, modifiers: [.control, .shift], key: "H"))
+
+    // Only the retired default changes; custom bindings and disabled actions remain intact.
+    public func migrated() -> Self {
+        let previousWorkspace = AppShortcut(keyCode: 4, modifiers: [.control, .option], key: "H")
+        guard workspace?.matches(previousWorkspace) == true else { return self }
+        var result = self
+        result.workspace = Self.standard.workspace
+        return result
+    }
 
     public subscript(action: ShortcutAction) -> AppShortcut? {
         get { switch action { case .ribbon: ribbon; case .workspace: workspace } }

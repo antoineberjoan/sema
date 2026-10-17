@@ -1,4 +1,4 @@
-// Présente les deux accès globaux modifiables et rappelle la navigation clavier de Focus.
+// Présente les deux accès globaux modifiables et rappelle la navigation clavier du hub.
 import AppKit
 import SwiftUI
 import MarketCore
@@ -9,18 +9,16 @@ struct ShortcutSettingsView: View {
     var body: some View {
         Form {
             Section("Accès globaux") {
-                shortcutRow(.ribbon, title: "Bandeau", subtitle: "Afficher ou masquer vos favoris.")
-                shortcutRow(.workspace, title: "Hub", subtitle: "Ouvrir votre repère dans Focus.")
+                shortcutRow(.ribbon, title: "Bandeau")
+                shortcutRow(.workspace, title: "Hub")
                 if let error = store.shortcutError {
                     Text(error).font(.system(size: 12)).foregroundStyle(.red)
                         .accessibilityLabel("Raccourci indisponible : " + error)
                 }
             }
-            Section("Dans Focus") {
+            Section("Navigation") {
                 LabeledContent("Repère précédent / suivant", value: "↑  ↓")
                 LabeledContent("Choisir à vue", value: "⌘ ↑  ⌘ ↓")
-                Text("Maintenez ⌘ pour choisir, relâchez pour ouvrir. Échap annule.")
-                    .font(.system(size: 11)).foregroundStyle(.secondary)
                 LabeledContent("Rechercher", value: "⌘ K")
                 LabeledContent("Réglages", value: "⌘ ,")
             }
@@ -28,12 +26,9 @@ struct ShortcutSettingsView: View {
         .formStyle(.grouped)
     }
 
-    private func shortcutRow(_ action: ShortcutAction, title: String, subtitle: String) -> some View {
+    private func shortcutRow(_ action: ShortcutAction, title: String) -> some View {
         HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                Text(subtitle).font(.system(size: 11)).foregroundStyle(.secondary)
-            }
+            Text(title)
             Spacer()
             Button { store.setShortcut(ShortcutPreferences.standard[action], for: action) } label: {
                 Image(systemName: "arrow.counterclockwise").font(.system(size: 11))

@@ -25,9 +25,9 @@ private extension SemaSettingsTab {
     }
     var searchTerms: String {
         switch self {
-        case .general: "notifications seuils actualisation accueil démonstration"
+        case .general: "notifications seuils"
         case .appearance: "thème palette couleurs système clair sombre position bandeau verre transparence teinte grain"
-        case .shortcuts: "clavier touches hub focus navigation"
+        case .shortcuts: "clavier touches hub navigation"
         case .sources: "connexion clé api webstat banque france insee bce eurostat bis ocde fed banque mondiale"
         case .about: "version soutien ko-fi aide"
         case .profile: "profil prénom nom photo identité"
@@ -37,7 +37,6 @@ private extension SemaSettingsTab {
 
 struct SemaSettingsView: View {
     @Environment(AppStore.self) private var store
-    @Environment(\.openWindow) private var openWindow
     @State private var search = ""
     @FocusState private var searchFocused: Bool
 
@@ -130,29 +129,13 @@ struct SemaSettingsView: View {
 
     private var generalSettings: some View {
         Form {
-            Section("Repères") {
-                LabeledContent("Données", value: store.originSummary)
-                HStack {
-                    Text("Actualisation")
-                    Spacer()
-                    Button("Actualiser") { Task { await store.refreshSeries() } }
-                        .disabled(store.isLoading || !store.canRefresh)
-                }
-                HStack {
-                    Text("Sélection de départ")
-                    Spacer()
-                    Button("Revoir l’accueil") { store.beginOnboarding(); openWindow(id: "workspace") }
-                    Button("Démonstration") { store.restoreDemo() }.disabled(store.isLoading)
-                }
-            }
             Section {
                 Toggle("Notifications de seuil", isOn: Binding(
                     get: { store.preferences.notificationsEnabled },
                     set: { value in Task { await store.setNotificationsEnabled(value) } }
                 )).toggleStyle(.switch)
-            } header: { Text("Notifications") } footer: {
-                Text("Seuils vérifiés à l’actualisation. Aucun suivi quand sema est quittée ou le Mac en veille.")
-            }
+            } header: { Text("Notifications") }
+            .help("Seuils vérifiés à l’actualisation. Aucun suivi quand sema est quittée ou le Mac en veille.")
         }.formStyle(.grouped)
     }
 

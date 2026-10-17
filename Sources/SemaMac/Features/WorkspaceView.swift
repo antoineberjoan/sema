@@ -45,11 +45,16 @@ struct WorkspaceView: View {
             VStack(spacing: 0) {
                 if store.section == .explorer {
                     ExplorerView().padding(26).frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if store.section == .overview {
+                    ViewThatFits(in: .vertical) {
+                        overviewContent
+                        ScrollView { overviewContent }
+                    }
                 } else {
                     ScrollView {
                         Group {
                             switch store.section {
-                            case .overview: OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
+                            case .overview: EmptyView()
                             case .favorites: FavoritesView()
                             case .alerts: AlertsView()
                             case .explorer: EmptyView()
@@ -104,6 +109,11 @@ struct WorkspaceView: View {
             }
         }
         .frame(minWidth: 980, minHeight: 680)
+    }
+
+    private var overviewContent: some View {
+        OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
+            .padding(.horizontal, 48).padding(.top, 24).padding(.bottom, 26)
     }
 
     private var keyboardWorkspace: some View {

@@ -105,13 +105,6 @@ final class AppStore {
         isOnboardingPresented = canSavePreferences && preferences.onboardingCompleted != true
     }
 
-    func beginOnboarding() {
-        guard canSavePreferences else { return }
-        isSearchPresented = false
-        isAlertSheetPresented = false
-        isOnboardingPresented = true
-    }
-
     @discardableResult func finishOnboarding() -> Bool {
         var next = preferences
         next.onboardingCompleted = true
@@ -128,10 +121,6 @@ final class AppStore {
     var alertableSeries: [MarketSeries] { followedSeries.filter { $0.canAlert && isSourceEnabled(for: $0.id) } }
     var favorites: [MarketSeries] { followedSeries.filter { isFavorite($0.id) } }
     var selectedSeries: MarketSeries? { followedSeries.first { $0.id == selectedSeriesID } ?? followedSeries.first }
-    var originSummary: String {
-        let sources = Set(followedSeries.filter { !$0.isDemo }.map(\.originBadge)).sorted()
-        return sources.isEmpty ? "Démonstration · sources à explorer" : sources.joined(separator: " · ")
-    }
     var canRefresh: Bool {
         preferences.followedSeriesIDs.contains { isSourceEnabled(for: $0) && (hasWebstatKey || statisticalDescriptors[$0] != nil) }
     }
@@ -732,12 +721,6 @@ final class AppStore {
             } catch is CancellationError { }
             catch { seriesErrors[item.id] = error.localizedDescription; if previewSeries?.id == item.id { previewError = error.localizedDescription } }
         }
-    }
-
-    func restoreDemo() {
-        series = WebstatClient.starterSeries
-        hasLoadedWebstat = false; reconcileSelection()
-        status = "Données de démonstration · aucune valeur actuelle. Les séries en cache sont conservées sur disque."
     }
 
     func addAlert(seriesID: String, direction: AlertDirection, threshold: Decimal) -> Bool {

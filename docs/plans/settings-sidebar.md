@@ -1,6 +1,6 @@
 # Réglages — sidebar et groupes sobres
 
-Statut : terminé en version de revue, 17 octobre 2026. Antoine demande dans le chat de reprendre l’organisation des réglages de Resurf, à partir de cinq captures. Référence de marque : Notion `3fbd18bb0dea818fa7f4fc7483c767b3`, direction reportée le même jour.
+Statut : simplification vérifiée en natif, validation CI en attente, 17 octobre 2026. Antoine demande dans le chat de reprendre l’organisation des réglages de Resurf, à partir de cinq captures. Référence de marque : Notion `3fbd18bb0dea818fa7f4fc7483c767b3`, direction reportée le même jour.
 
 ## Résultat attendu
 
@@ -33,3 +33,19 @@ Conditions : Mac compatible Apple Intelligence, activation par l’utilisateur, 
 Sonde autonome le 17 octobre 2026, hors du code de l’app : Mac M2, 8 Go, macOS 26.6.2 ; disponibilité `available`. Une reformulation en français d’une définition générique de taux de change a abouti en 9,43 s via `SystemLanguageModel.default`. La première tentative dans le bac à sable a échoué avec ModelManagerServices ; la seconde, hors de ce bac à sable, a réussi. Ce seul essai ne prouve ni la qualité générale ni la réactivité en usage réel. Aucun contenu personnel ni clé API fourni au modèle.
 
 Avant une intégration : valider ce premier usage avec Antoine, mesurer latence et qualité sur plusieurs définitions, limiter le contexte aux métadonnées utiles, gérer annulation/erreur et tester sur macOS 14 ainsi que sur un Mac sans modèle disponible. [Guide Apple de génération](https://developer.apple.com/documentation/foundationmodels/generating-content-and-performing-tasks-with-foundation-models).
+
+## Épure demandée le 17 octobre
+
+Source : nouvelles captures d’Antoine dans le chat. Retirer de Général les lignes Données, Actualisation et Sélection de départ, les accès Démonstration, le nom visible Focus et les aides clavier répétées. Le premier accueil et l’identification des données fictives restent utiles et conservés. Mon espace garde photo, prénom et nom dans une présentation plus compacte. Sources garde les interrupteurs utiles ; la clé et son action sont réunies, avec le même composant sécurisé lors de la première connexion. Aucune clé de test n’est envoyée pour une validation visuelle.
+
+Le raccourci du hub devient ⌃⇧H ; la réservation exclusive réussit sur ce Mac (OSStatus 0), puis est libérée. Seul l’ancien défaut ⌃⌥H est migré ; les choix personnalisés ou désactivés restent inchangés. Le graphique doit grandir avec la fenêtre, avec un défilement de secours si les messages ou une petite hauteur l’exigent.
+
+Critères : aucune mention Focus, Sélection de départ ou tutoriel de maintien de ⌘ dans les parcours touchés ; navigation native, photo annulable, champs du profil et enregistrement conservés ; connexion vide désactivée, clé protégée et effacée à la sortie, erreurs conservées ; petit et grand hub sans grand vide sous le graphique ; compilation et parcours natifs. Le checkout canonique reste intact.
+
+## Vérification de l’épure
+
+Le 17 octobre, bundle natif de revue compilé et signé dans un profil isolé. Le hub utilise la hauteur disponible : valeur, graphique extensible et actions au pied de la fenêtre, sans grande zone vide sous le graphique. Général ne présente plus que les notifications. Raccourcis affiche ⌃⇧H, sans conflit de réservation ni nom Focus ou consigne de maintien. La migration de l’ancien défaut est observée au chargement du profil de revue ; un test vérifie aussi les raccourcis personnalisés et désactivés.
+
+Mon espace : saisie d’un prénom de test, changement de rubrique puis retour avec conservation de la valeur, effacement ; ouverture et annulation du sélecteur de photo sans import. Sources : champ sécurisé vide et bouton désactivé ; saisie d’une chaîne factice sans soumission, bouton actif ; sortie puis retour avec champ vide et bouton désactivé. Aucune connexion réseau ni clé enregistrée pendant cette revue. Captures du hub, du profil et des sources dans les pièces locales du chat.
+
+`guardrails.py` et le diff passent ; les 17 tests Python passent. Swift Testing reste absent du SDK Command Line Tools local : preuve attendue de la CI macOS pour le nouveau test. La réservation native exclusive de ⌃⇧H réussit, mais le déclenchement global physique n’est pas déclaré observé ; les événements synthétiques du contrôle natif ne constituent pas cette preuve. Le mode sombre, l’accessibilité et le recorder avaient été vérifiés avant cette épure ; aucun changement de matière ou de mouvement dans celle-ci.

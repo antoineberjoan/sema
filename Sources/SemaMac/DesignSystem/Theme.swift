@@ -101,6 +101,8 @@ extension EnvironmentValues {
 
 @MainActor
 enum SemaTheme {
+    static let minorSpacing: CGFloat = 8
+    static let majorSpacing: CGFloat = 16
     static let surface = Color(nsColor: NSColor(name: "SemaElevatedSurface") { appearance in
         appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
             ? NSColor(srgbRed: 0.16, green: 0.16, blue: 0.16, alpha: 1)

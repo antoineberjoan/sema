@@ -35,8 +35,6 @@ struct FocusSwitcherView: View {
                     withAnimation(reduceMotion ? nil : FocusSwitcherMotion.selection) { proxy.scrollTo(id, anchor: .center) }
                 }
             }
-            Text("↑ ↓  ·  relâchez ⌘ pour ouvrir")
-                .font(.system(size: 11)).foregroundStyle(.secondary).padding(.bottom, 14)
         }
         .frame(maxWidth: 700)
         .background {
