@@ -19,8 +19,7 @@
   },
   "homebrew": {
     "enabled": true,
-    "command": "brew install --cask antoineberjoan/sema/sema",
-    "proposedCommand": "brew install --cask antoineberjoan/sema/sema"
+    "command": "brew install --cask sema-app"
   },
   "validation": {
     "bundleSignature": true,
@@ -29,7 +28,7 @@
     "firstLaunch": false,
     "homebrewInstall": true,
     "homebrewUpgrade": true,
-    "homebrewUpgradeScope": "public tap, exact 0.5.0 → 0.5.1 artifact",
+    "homebrewUpgradeScope": "public sema-app cask, exact 0.5.0 → 0.5.1 artifacts, temporary app directory",
     "publicTap": true,
     "gatekeeperInternetLaunch": false,
     "nativeUIReview": true,
