@@ -135,7 +135,7 @@ struct SemaSettingsView: View {
                     set: { value in Task { await store.setNotificationsEnabled(value) } }
                 )).toggleStyle(.switch)
             } header: { Text("Notifications") }
-            .help("Seuils vérifiés à l’actualisation. Aucun suivi quand sema est quittée ou le Mac en veille.")
+            .help("Actualisation quotidienne tant que sema tourne, même avec le hub fermé. Aucun suivi quand sema est quittée ou le Mac en veille.")
         }.formStyle(.grouped)
     }
 

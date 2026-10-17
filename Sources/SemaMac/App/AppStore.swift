@@ -121,9 +121,7 @@ final class AppStore {
     var alertableSeries: [MarketSeries] { followedSeries.filter { $0.canAlert && isSourceEnabled(for: $0.id) } }
     var favorites: [MarketSeries] { followedSeries.filter { isFavorite($0.id) } }
     var selectedSeries: MarketSeries? { followedSeries.first { $0.id == selectedSeriesID } ?? followedSeries.first }
-    var canRefresh: Bool {
-        preferences.followedSeriesIDs.contains { isSourceEnabled(for: $0) && (hasWebstatKey || statisticalDescriptors[$0] != nil) }
-    }
+    var canRefresh: Bool { !automaticRefreshSeries.isEmpty }
     func canLoadFullHistory(_ item: MarketSeries) -> Bool {
         !item.isDemo && isSourceEnabled(for: item.id) && (item.statisticalDescriptor != nil || (hasWebstatKey && item.descriptor?.firstPeriod != nil))
     }
@@ -412,20 +410,20 @@ final class AppStore {
             return false
         }
     }
-    func refreshSeries() async {
+    func refreshSeries(only ids: Set<String>? = nil) async {
         guard !isLoading else { return }
         isLoading = true; webstatError = nil
         defer { isLoading = false }
         let key: String?
         do { key = try await webstatKeychain.read() }
-        catch { webstatError = error.localizedDescription; await refresh(using: nil); return }
-        await refresh(using: key)
+        catch { webstatError = error.localizedDescription; await refresh(using: nil, only: ids); return }
+        await refresh(using: key, only: ids)
     }
-    private func refresh(using key: String?) async {
+    private func refresh(using key: String?, only ids: Set<String>? = nil) async {
         var updated: [MarketSeries] = []; var failures: [String: String] = [:]
         var changedMeasurements: Set<String> = []
         let generations = sourceGenerations
-        for id in preferences.followedSeriesIDs {
+        for id in preferences.followedSeriesIDs where ids?.contains(id) ?? true {
             let source = sourceID(for: id)
             guard isSourceEnabled(source), generations[source] == sourceGenerations[source] else { continue }
             do {
@@ -470,7 +468,9 @@ final class AppStore {
                 for id in changedMeasurements { failures[id] = "La source a changé d’unité, d’échelle ou de base. La sauvegarde des alertes en pause a échoué ; les anciennes données restent affichées." }
             }
         }
-        seriesErrors = failures
+        if let ids {
+            seriesErrors = seriesErrors.filter { !ids.contains($0.key) }.merging(failures) { _, next in next }
+        } else { seriesErrors = failures }
         if !updated.isEmpty {
             merge(updated)
             hasLoadedWebstat = series.contains { !$0.isDemo && $0.sourceURL?.host == "webstat.banque-france.fr" }
@@ -485,7 +485,7 @@ final class AppStore {
             evaluateAlerts(in: updated.filter { !changedMeasurements.contains($0.id) })
         }
         status = "\(updated.count) repères actualisés" + (failures.isEmpty ? " · alertes vérifiées." : " · \(failures.count) à vérifier.")
-        webstatError = failures.keys.contains { id in series.first(where: { $0.id == id })?.statisticalDescriptor == nil }
+        webstatError = seriesErrors.keys.contains { id in series.first(where: { $0.id == id })?.statisticalDescriptor == nil }
             ? "Certaines séries Webstat demandent une vérification. Consultez leur détail." : nil
     }
     private func fetchRecent(descriptor: WebstatSeriesDescriptor, apiKey: String) async throws -> MarketSeries {

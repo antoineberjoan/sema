@@ -44,6 +44,7 @@ struct SemaMacApp: App {
 @MainActor
 final class SemaAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     private var menuRibbon: MenuRibbonController?
+    private var refreshController: RefreshController?
 
     func installRibbon(store: AppStore, openWorkspace: @escaping () -> Void, openSettings: @escaping () -> Void) {
         guard menuRibbon == nil else { return }
@@ -61,6 +62,9 @@ final class SemaAppDelegate: NSObject, NSApplicationDelegate, UNUserNotification
         }
         store.activateShortcuts()
         shortcuts = store.globalShortcuts
+        let refresh = RefreshController(store: store)
+        refreshController = refresh
+        refresh.start()
     }
 
     func toggleRibbon() { menuRibbon?.toggle() }
@@ -75,6 +79,7 @@ final class SemaAppDelegate: NSObject, NSApplicationDelegate, UNUserNotification
     private var shortcuts: GlobalShortcuts?
 
     func applicationWillTerminate(_ notification: Notification) {
+        refreshController?.stop()
         shortcuts?.tearDown(); menuRibbon?.tearDown()
     }
 
