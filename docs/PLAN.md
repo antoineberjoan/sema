@@ -1,12 +1,10 @@
 # Plan sema pour le catalogue et la distribution
 
-Évaluation terminée : [recherche naturelle Apple Intelligence non activée](plans/natural-search.md), précision insuffisante sur le Mac de développement ; recherche classique conservée.
-
 À revoir avant publication : [Explorer simple et lisible](plans/explorer.md), accès direct aux séries publié dans la branche de revue ; essai réel Insee réussi, nouvelle revue native bloquée.
 
 À revoir avant publication : [navigation clavier et bandeau Repère, correction terminée et validée en CI dans la PR nº 5](plans/keyboard-navigation.md).
 
-Historique : [actualisation quotidienne publiée en 0.6.0](plans/automatic-refresh.md) ; [réglages avec sidebar vérifiés après simplification](plans/settings-sidebar.md) ; [socle agentique validé et livré en PR brouillon](plans/agent-foundation.md). Les plans ci-dessous sont conservés dans leur état documenté ; certains lots ont depuis été implémentés. Leur statut doit être réconcilié avec les preuves et l’arbitrage d’Antoine avant de les reprendre comme tâches. Le périmètre courant est décrit dans [PRODUCT.md](PRODUCT.md).
+Historique : [évaluation comparative Apple Intelligence](plans/natural-search.md), modèle disponible sur le Mac mais précision insuffisante pour activer la recherche naturelle ; [actualisation quotidienne publiée en 0.6.0](plans/automatic-refresh.md) ; [réglages avec sidebar vérifiés après simplification](plans/settings-sidebar.md) ; [socle agentique validé et livré en PR brouillon](plans/agent-foundation.md). Les plans ci-dessous sont conservés dans leur état documenté ; certains lots ont depuis été implémentés. Leur statut doit être réconcilié avec les preuves et l’arbitrage d’Antoine avant de les reprendre comme tâches. Le périmètre courant est décrit dans [PRODUCT.md](PRODUCT.md).
 
 16 octobre 2026. Direction validée avec Antoine ; fonctionnalités ci-dessous à réaliser. Le logo de barre de menus à 2 pt est déjà intégré et compilé.
 
