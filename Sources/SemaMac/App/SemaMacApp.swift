@@ -71,7 +71,14 @@ final class SemaAppDelegate: NSObject, NSApplicationDelegate, UNUserNotification
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         UNUserNotificationCenter.current().delegate = self
-        NSApplication.shared.activate(ignoringOtherApps: true)
+        let event = NSAppleEventManager.shared().currentAppleEvent
+        let isLoginLaunch = event?.eventID == kAEOpenApplication
+            && event?.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue == keyAELaunchedAsLogInItem
+        if isLoginLaunch {
+            for window in NSApplication.shared.windows { window.orderOut(nil) }
+        } else {
+            NSApplication.shared.activate(ignoringOtherApps: true)
+        }
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }

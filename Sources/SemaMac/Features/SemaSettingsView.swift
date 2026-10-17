@@ -25,7 +25,7 @@ private extension SemaSettingsTab {
     }
     var searchTerms: String {
         switch self {
-        case .general: "notifications seuils"
+        case .general: "notifications seuils démarrage session lancement automatique arrière-plan"
         case .appearance: "thème palette couleurs système clair sombre position bandeau verre transparence teinte grain"
         case .shortcuts: "clavier touches hub navigation"
         case .sources: "connexion clé api webstat banque france insee bce eurostat bis ocde fed banque mondiale"
@@ -114,6 +114,9 @@ struct SemaSettingsView: View {
         .navigationTitle("Réglages")
         .frame(minWidth: 880, idealWidth: 980, minHeight: 660, idealHeight: 740)
         .task { await store.checkWebstatKey() }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            store.loginItem.refresh()
+        }
     }
 
     @ViewBuilder private var settingsContent: some View {
@@ -129,6 +132,18 @@ struct SemaSettingsView: View {
 
     private var generalSettings: some View {
         Form {
+            Section("Démarrage") {
+                Toggle("Lancer à l’ouverture de session", isOn: Binding(
+                    get: { store.loginItem.isEnabled }, set: { store.loginItem.setEnabled($0) }
+                )).toggleStyle(.switch)
+                if store.loginItem.needsApproval {
+                    Button("Autoriser dans les réglages macOS…") { store.loginItem.openSettings() }
+                        .buttonStyle(.borderless)
+                }
+                if let error = store.loginItem.error {
+                    Text(error).font(.callout).foregroundStyle(.secondary)
+                }
+            }
             Section {
                 Toggle("Notifications de seuil", isOn: Binding(
                     get: { store.preferences.notificationsEnabled },
@@ -136,7 +151,7 @@ struct SemaSettingsView: View {
                 )).toggleStyle(.switch)
             } header: { Text("Notifications") }
             .help("Actualisation quotidienne tant que sema tourne, même avec le hub fermé. Aucun suivi quand sema est quittée ou le Mac en veille.")
-        }.formStyle(.grouped)
+        }.formStyle(.grouped).onAppear { store.loginItem.refresh() }
     }
 
     private var appearanceSettings: some View {

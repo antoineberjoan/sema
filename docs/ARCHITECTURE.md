@@ -34,6 +34,8 @@ flowchart TB
 
 Le bundle déclare `LSUIElement = true` : sema est une app accessoire macOS, absente du Dock, qui conserve ses fenêtres SwiftUI. Le clic droit sur le `NSStatusItem` affiche trois actions dans un `NSMenu` AppKit avec SF Symbols et séparateurs : Réglages…, Rechercher des mises à jour… et Quitter sema. L’action de mise à jour ouvre uniquement `https://github.com/antoineberjoan/homebrew-sema/releases` avec `NSWorkspace.open` ; aucun jeton, vérificateur périodique, téléchargement ou installateur n’est ajouté. Aucun changement dynamique de politique d’activation n’est nécessaire.
 
+`LoginItem` adapte `SMAppService.mainApp` pour le seul interrupteur d’ouverture de session de Général. Le système possède l’état, relu à l’ouverture des réglages et à la réactivation. L’app ne s’inscrit jamais seule et ne copie pas cet état dans le JSON. L’événement natif d’ouverture de session masque les fenêtres initiales, tandis que le délégué conserve le bandeau, les raccourcis et l’actualisation. Fermer la dernière fenêtre ne termine pas le processus ; Quitter libère les contrôleurs et raccourcis. Aucun helper ou agent de relance n’est ajouté.
+
 - `AppStore` est l’état partagé et le point de coordination. Il ne dessine pas l’interface.
 - `SemaCommands` expose les actions de navigation et de recherche dans les menus natifs et ouvre la fenêtre si nécessaire. Les feuilles de recherche et d’alerte partagent l’état local, avec exclusion des commandes de navigation pendant une feuille.
 - `Features` présente les données et émet les actions utilisateur.

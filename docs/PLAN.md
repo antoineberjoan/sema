@@ -1,5 +1,7 @@
 # Plan sema pour le catalogue et la distribution
 
+En revue : [accès en fond et ouverture de session](plans/login-item.md), activation et désactivation natives vérifiées ; essai au clavier réel avec le hub fermé demandé dans le chat.
+
 À revoir avant publication : [Explorer simple et lisible](plans/explorer.md), accès direct aux séries publié dans la branche de revue ; essai réel Insee réussi, nouvelle revue native bloquée.
 
 À revoir avant publication : [navigation clavier et bandeau Repère, correction terminée et validée en CI dans la PR nº 5](plans/keyboard-navigation.md).

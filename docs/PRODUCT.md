@@ -17,6 +17,8 @@ Deux surfaces partagent la même information :
 1. Bandeau de favoris : vue d’ensemble sur le bord choisi de l’écran courant. Cartes et mini-courbes défilent horizontalement en haut et en bas, verticalement à gauche et à droite.
 2. Fenêtre principale : sélection des séries, historiques et gestion des alertes macroéconomiques.
 
+Général propose « Lancer à l’ouverture de session », volontaire et désactivé avant activation. macOS porte son état : aucun choix parallèle n’est stocké dans le profil. Le démarrage de session prévoit un hub masqué ; fermer le hub garde l’icône et les raccourcis globaux. Quitter sema arrête réellement l’app et ses raccourcis, sans relance forcée. Preuves et limites de vérification : [ouverture de session](plans/login-item.md).
+
 ## Contrats de la version 0.3 locale
 
 | Fonction | Comportement attendu |
