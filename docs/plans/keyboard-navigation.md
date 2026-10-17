@@ -18,9 +18,11 @@ Sources consultées : [Produit](https://app.notion.com/p/3fbd18bb0dea81c7add6f4a
 
 - Bundle local `dist/Sema.app` compilé en release et signature ad hoc vérifiée. L’app est rouverte depuis ce chemin canonique, avec la sélection personnelle conservée. Les quatre favoris initiaux concernent seulement une nouvelle installation.
 - Contrôles de structure et `git diff --check` réussis. Les 17 tests Python des outils passent. `./scripts/check.sh` s’arrête ensuite : le module Swift `Testing` manque dans les Command Line Tools de ce Mac ; aucune modification des contrôles pour contourner cette limite.
+- [CI macOS réussie sur `c9ab623`](https://github.com/antoineberjoan/sema/actions/runs/39019838396) : 17 tests des outils, 77 tests Swift et construction du bundle. La première CI avait signalé une expression SwiftUI trop longue ; la composition de `WorkspaceView` est répartie en trois propriétés, sans changement de parcours. Le dernier bundle est compilé localement puis réinstallé après cette correction.
 - Sonde compilée contre le cœur réel : document v2 ancien inchangé, sélection vide conservée, raccourci personnalisé et action désactivée relus après sauvegarde. Les tests de persistance correspondants vivent dans `ShortcutPreferencesTests.swift`.
 - Sonde contre le contrôleur Carbon réel, hors sandbox : réservation exclusive concurrente refusée, ancien raccourci conservé après erreur, suspension et réenregistrement réussis. Le premier essai sandboxé renvoyait l’erreur système `eventInternalErr` ; le test hors sandbox réussit.
 - Observé dans le bundle natif : ↑ / ↓ depuis la liste et Focus, validation de ⌘↓ au relâchement, recherche saisie sans sélection intempestive du graphique, enregistrement d’une combinaison, refus de ⌘K et d’un doublon, effacement, remise à zéro, ouverture et fermeture du bandeau, changement de période. Quatre cartes ont été observées avec les favoris de test ; les trois favoris personnels restent inchangés.
+- Sortie du champ par Tabulation et clic extérieur observée dans le dernier bundle ; la combinaison enregistrée reste intacte. La fenêtre locale est laissée sur Raccourcis.
 - Rail final contrôlé en clair et en sombre, libellé « 3 mois » intégral. Le mode Système d’origine est rétabli. Captures conservées dans les artefacts de la conversation : `sema-raccourcis-20261017.png`, `sema-repere-final-20261017.png`, `sema-repere-clair-20261017.png`.
 - Les demandes produit et le choix Repère sont reportés dans les pages Notion sources. Les cinq périodes et la validation au relâchement y restent identifiées comme recommandations en essai local.
 
@@ -30,6 +32,6 @@ L’outil envoie les raccourcis locaux mais le déclenchement des réservations 
 
 Le maintien de ⌘ pendant plusieurs choix, Échap avant relâchement et le rendu du sélecteur maintenu restent à observer avec un clavier physique. Les événements de l’outil relâchent la combinaison avant la lecture de l’écran. Réduire les animations, Réduire la transparence et Augmenter le contraste sont pris en charge dans le code ; ces réglages système n’ont pas été modifiés pendant la revue.
 
-Prochaine action : recueillir le test physique, corriger tout écart puis lancer les tests Swift avec une installation disposant de `Testing`. Les bundles et données de revue temporaires peuvent être supprimés après l’installation canonique ; conserver les sources et les captures utiles.
+Prochaine action : recueillir le test physique et corriger tout écart. Code sauvegardé sur `origin/codex/keyboard-navigation` ; le dossier de travail partagé reste sur sa branche initiale. Les bundles et données de revue temporaires sont supprimés après l’installation canonique ; les sources et captures utiles restent conservées.
 
 Publication : aucune nouvelle release publique ni fusion dans main dans ce lot. Les branches de sidebar et de démos du site restent séparées de ce travail local.
