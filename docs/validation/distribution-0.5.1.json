@@ -1,0 +1,22 @@
+{
+  "version": "0.5.1",
+  "build": "15",
+  "sha256": "762e891f57f26db57c222f78c899e1d58bf432ef6b72a2623eda196bbf4c526d",
+  "byteSize": 2863197,
+  "sourceCodeValidatedAt": "dd6b690a72c0afaed12ef124703bd71ef9b35307",
+  "ciMain": "https://github.com/antoineberjoan/sema/actions/runs/39013034942",
+  "publicDownload": {
+    "url": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.5.1/Sema-0.5.1-arm64.dmg",
+    "unauthenticatedDownloadVerified": true,
+    "publicTapCommit": "bbef26b88ce6b313f24eef80a090d29e9760bc3b",
+    "publicHomebrewInstallVerified": true,
+    "publicHomebrewUpgradeVerified": true,
+    "upgradeFrom": "0.5.0",
+    "installedSignatureValid": true,
+    "installedExecutableMatchesProduction": true,
+    "quarantinePresent": true,
+    "gatekeeperInternetLaunchVerified": false,
+    "downloadedAppLaunched": false
+  },
+  "nativeUI": "focus-0.5.1.json"
+}

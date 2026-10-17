@@ -1,0 +1,19 @@
+{
+  "version": "0.5.1",
+  "build": "15",
+  "sourceCommit": "dd6b690a72c0afaed12ef124703bd71ef9b35307",
+  "ci": "https://github.com/antoineberjoan/sema/actions/runs/39013034942",
+  "localSwiftTesting": "unavailable in installed Command Line Tools; suite passed on macOS CI",
+  "nativeReview": {
+    "isolatedPreferences": true,
+    "compactDate": true,
+    "noPersistentSourceOrMetadataDisclosures": true,
+    "sourcePopover": "date opens source, observation date, unit and fixture explanation",
+    "escape": "closes source popover while keeping the pinned sidebar open",
+    "selection": "Euro / Dollar → Taux de dépôt BCE → Euro / Dollar",
+    "currencyDirection": "inverse explanation and published alert unit remain in source popover",
+    "periodChange": "1 year → 3 months → 1 year",
+    "notificationsEnabled": false
+  },
+  "screenshot": "site/dist/assets/sema-focus-macos.png"
+}
