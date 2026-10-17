@@ -69,21 +69,7 @@ La suite utilise Swift Testing. Xcode complet est nécessaire si les seuls Comma
 
 ## Structure
 
-```text
-Sources/
-  MarketCore/             Modèles, calculs, clients Webstat/BCE, préférences
-  SemaMac/
-    App/                  Cycle de vie et état partagé
-    DesignSystem/         Couleurs, typographie, composants et graphiques
-    Features/             Catalogue, aperçu, panorama, favoris, alertes, menu et réglages
-    Infrastructure/       Fichiers, Trousseau et notifications macOS
-Tests/MarketCoreTests/    Règles métier et contrats des données
-Resources/               Métadonnées du bundle et logos SVG
-scripts/                 Vérification et création de l’app
-docs/                    Produit, architecture, sources et décisions
-site/                    Landing, téléchargement et guide de marque statiques
-distribution/            Copie du cask public et métadonnées de release
-```
+La carte des emplacements et de leur rôle est [.agents/structure.json](.agents/structure.json), vérifiée par les garde-fous : un fichier hors d’un emplacement décrit est refusé.
 
 Commencer par [le périmètre produit](docs/PRODUCT.md), puis [l’architecture](docs/ARCHITECTURE.md) et [les sources de données](docs/DATA-SOURCES.md). Les instructions de contribution sont dans [AGENTS.md](AGENTS.md).
 
