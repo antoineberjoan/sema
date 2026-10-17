@@ -1,6 +1,6 @@
 # Réglages — sidebar et groupes sobres
 
-Statut : simplification vérifiée en natif, validation CI en attente, 17 octobre 2026. Antoine demande dans le chat de reprendre l’organisation des réglages de Resurf, à partir de cinq captures. Référence de marque : Notion `3fbd18bb0dea818fa7f4fc7483c767b3`, direction reportée le même jour.
+Statut : simplification terminée et vérifiée en natif et en CI, 17 octobre 2026. Antoine demande dans le chat de reprendre l’organisation des réglages de Resurf, à partir de cinq captures. Référence de marque : Notion `3fbd18bb0dea818fa7f4fc7483c767b3`, direction reportée le même jour.
 
 ## Résultat attendu
 
@@ -48,4 +48,4 @@ Le 17 octobre, bundle natif de revue compilé et signé dans un profil isolé. L
 
 Mon espace : saisie d’un prénom de test, changement de rubrique puis retour avec conservation de la valeur, effacement ; ouverture et annulation du sélecteur de photo sans import. Sources : champ sécurisé vide et bouton désactivé ; saisie d’une chaîne factice sans soumission, bouton actif ; sortie puis retour avec champ vide et bouton désactivé. Aucune connexion réseau ni clé enregistrée pendant cette revue. Captures du hub, du profil et des sources dans les pièces locales du chat.
 
-`guardrails.py` et le diff passent ; les 17 tests Python passent. Swift Testing reste absent du SDK Command Line Tools local : preuve attendue de la CI macOS pour le nouveau test. La réservation native exclusive de ⌃⇧H réussit, mais le déclenchement global physique n’est pas déclaré observé ; les événements synthétiques du contrôle natif ne constituent pas cette preuve. Le mode sombre, l’accessibilité et le recorder avaient été vérifiés avant cette épure ; aucun changement de matière ou de mouvement dans celle-ci.
+`guardrails.py` et le diff passent ; les 17 tests Python passent. Swift Testing reste absent du SDK Command Line Tools local ; la [CI du commit de7d0e9](https://github.com/antoineberjoan/sema/actions/runs/39043648277) passe les tests, dont la migration du raccourci, et le bundle. Le bundle de production a aussi été compilé et signé localement sans chemin de développement. La réservation native exclusive de ⌃⇧H réussit, mais le déclenchement global physique n’est pas déclaré observé ; les événements synthétiques du contrôle natif ne constituent pas cette preuve. Le mode sombre, l’accessibilité et le recorder avaient été vérifiés avant cette épure ; aucun changement de matière ou de mouvement dans celle-ci.
