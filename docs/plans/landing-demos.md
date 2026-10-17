@@ -6,7 +6,7 @@ Statut : nouvelle proposition motion vérifiée en aperçu, publication en atten
 
 Antoine rejette les trois présentations précédentes, demande la commande Homebrew visible et copiable comme chez Monocle, le retrait de la ligne de compatibilité sous le téléchargement, puis la suppression de la page de téléchargement. Il évoque une vidéo motion comme nouvelle piste. Ces retraits sont demandés ; la vidéo reste une proposition à approuver avant publication.
 
-Le CTA télécharge le DMG existant. Aucun changement de release, de cask, de données natives ou de configuration de sécurité. La commande reste celle du manifeste, qualifiée avec le tap pour fonctionner sur une machine neuve. `/download/` ne sert plus de page ; seul son manifeste JSON existant est conservé.
+Le CTA télécharge le DMG existant. Aucun changement de release, de cask, de données natives ou de configuration de sécurité. La cible retenue ensuite est `brew install --cask sema-app`, affichée comme commande prévue et sans copie tant qu’elle n’est pas disponible pour une machine neuve. `/download/` ne sert plus de page ; seul son manifeste JSON existant est conservé.
 
 ## Proposition motion
 
@@ -23,7 +23,7 @@ Lecture automatique une fois en vue, sans boucle. Pause hors écran et au masqua
 
 ## Critères et preuves
 
-- Commande exacte issue du manifeste, copie au clic et au clavier, retour discret.
+- Commande prévue exacte issue du manifeste, typographie légère ; aucun bouton de copie actif pour une commande non disponible. Le chemin actif conserve sa copie pour une distribution validée.
 - Aucun lien interne vers la page supprimée ; le générateur ne recrée ni cette page ni la ligne sous le CTA.
 - Film lisible, sans audio ni boucle, poster correct et contrôles clavier ; interruption et état réduit.
 - Largeur mobile 390 px sans débordement, liens de téléchargement identiques dans le hero et le header, FAQ, Ko-fi et liens légaux conservés.
@@ -31,7 +31,7 @@ Lecture automatique une fois en vue, sans boucle. Pause hors écran et au masqua
 
 ## Résultats de revue
 
-Ajustement demandé ensuite par Antoine : commande Homebrew en graisse 300 et taille maximale 18 px. La commande courte `brew install --cask sema-app` n’est pas activée : API du catalogue officiel en 404 le 17 octobre 2026, cask public actuel nommé `sema` dans le tap `antoineberjoan/sema`. Un simple renommage local ne permet pas une installation courte depuis une machine neuve.
+Ajustement demandé ensuite par Antoine : commande Homebrew en graisse 300 et taille maximale 18 px. Il confirme vouloir afficher `brew install --cask sema-app`. La maquette affiche ce nom comme commande prévue ; sa copie est inactive. L’API du catalogue officiel répond 404 le 17 octobre 2026, et le cask public actuel reste `sema` dans `antoineberjoan/sema`. La version 0.5.1 est signée ad hoc et non notarisée ; son intégration officielle reste à préparer après les contrôles Gatekeeper exigés par Homebrew. Ne pas présenter la commande courte comme opérationnelle ni soumettre une validation fictive. La commande complète précédemment testée reste dans le manifeste, avec Homebrew désactivé sur cette proposition de landing.
 
 - Film H.264 1440 × 900, 30 images/s, 18 s, 341 145 octets, aucune piste audio. Poster, recherche, sidebar et image finale relus après encodage.
 - Aperçu du commit `7f146cc` READY : déploiement `dpl_GVREFav48TUDvVuai6aD8gdPwNNm`. Copie exacte observée au clic et avec Entrée ; presse-papiers restauré après le test. CTA hero et header pointent vers le même DMG existant.

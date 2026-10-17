@@ -58,6 +58,8 @@ def main():
         if not brew.get("command") or not all(manifest["validation"].get(key) for key in ("homebrewInstall", "homebrewUpgrade", "internetDownload")):
             raise ValueError("La commande Homebrew ne peut être activée avant les tests d’installation et de mise à jour")
         markup = f'<div class="brew-line"><button class="brew-copy" type="button" data-copy-homebrew aria-label="Copier la commande Homebrew" disabled><code id="homebrew-command">{escape(brew["command"])}</code></button><span class="sr-only" role="status" id="homebrew-copy-status"></span></div>'
+    elif brew.get("proposedCommand"):
+        markup = f'<div class="brew-line"><button class="brew-copy" type="button" aria-label="Commande Homebrew prévue, pas encore disponible" disabled><code>{escape(brew["proposedCommand"])}</code></button></div>'
     else:
         markup = ''
     landing = replace_block(landing, "homebrew", markup)

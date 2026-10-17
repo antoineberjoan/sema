@@ -1,6 +1,6 @@
 # Landing sema
 
-Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` contient la landing et le guide de marque. Le CTA télécharge directement le DMG publié ; aucune page de téléchargement intermédiaire. `scripts/distribution/sync-download.py` synchronise ce lien, la commande Homebrew copiable et le manifeste JSON `download/release.json` à partir de `distribution/release.json`. Le dossier `download/` ne contient que cette métadonnée.
+Site statique HTML, CSS et JavaScript, sans dépendance ni compilation. `dist/` contient la landing et le guide de marque. Le CTA télécharge directement le DMG publié ; aucune page de téléchargement intermédiaire. `scripts/distribution/sync-download.py` synchronise ce lien, la commande Homebrew copiable et le manifeste JSON `download/release.json` à partir de `distribution/release.json`. Le dossier `download/` ne contient que cette métadonnée. Une commande `proposedCommand` non activée est affichée sans copie ; l’activation exige le cask opérationnel et ses validations.
 
 ## Démonstration motion
 
