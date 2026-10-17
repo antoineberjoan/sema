@@ -161,9 +161,9 @@ struct WorkspaceView: View {
                     Image(systemName: "magnifyingglass")
                     Text("Rechercher")
                     Spacer()
-                    Text("⌘K").font(.system(size: 11))
+                    Text("⌘K").font(.system(size: 11)).foregroundStyle(SemaTheme.sidebarSecondaryText)
                 }
-                .font(.system(size: 12)).foregroundStyle(.secondary)
+                .font(.system(size: 12)).foregroundStyle(.primary)
                 .padding(11).background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 9))
                 .contentShape(Rectangle())
             }
@@ -177,7 +177,7 @@ struct WorkspaceView: View {
 
             VStack(spacing: 8) {
                 HStack {
-                    Text("Mes repères").font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
+                    Text("Mes repères").font(.system(size: 11, weight: .medium)).foregroundStyle(SemaTheme.sidebarSecondaryText)
                     Spacer()
                     Button { store.section = .explorer } label: { Image(systemName: "plus") }
                         .buttonStyle(.borderless).help("Ajouter un repère")
@@ -224,7 +224,7 @@ struct WorkspaceView: View {
                 Image(systemName: "gearshape").font(.system(size: 12))
             }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
         }
-        .buttonStyle(.plain).foregroundStyle(.secondary)
+        .buttonStyle(.plain).foregroundStyle(.primary)
         .help("Personnaliser mon profil local")
         .accessibilityLabel(store.profile.displayName.isEmpty ? "Mon espace" : "Mon espace, \(store.profile.displayName)")
     }
@@ -263,11 +263,11 @@ private struct SidebarSeriesRow: View {
         Button { store.show(series); store.section = .overview } label: {
             VStack(alignment: .leading, spacing: 6) {
                 Text(displayed.name).font(.system(size: 12, weight: selected ? .medium : .regular))
-                    .lineLimit(2).multilineTextAlignment(.leading)
-                Text(MarketFormat.value(displayed)).font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
+                    .foregroundStyle(.primary).lineLimit(2).multilineTextAlignment(.leading)
+                Text(MarketFormat.value(displayed)).font(.system(size: 11)).monospacedDigit().foregroundStyle(SemaTheme.sidebarSecondaryText)
             }
             .frame(maxWidth: .infinity, alignment: .leading).padding(12)
-            .background(Color.primary.opacity(selected ? 0.07 : 0), in: RoundedRectangle(cornerRadius: 10))
+            .background(selected ? SemaTheme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: 10))
             .contentShape(Rectangle())
         }
         .buttonStyle(SemaPressStyle())
@@ -289,15 +289,15 @@ private struct SidebarItem: View {
                 Image(systemName: section.symbol).frame(width: 17)
                 Text(section.title)
                 Spacer(minLength: 4)
-                if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(.secondary) }
+                if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(SemaTheme.sidebarSecondaryText) }
                 if section == .alerts && !store.macroAlerts.isEmpty {
-                    Text("\(store.macroAlerts.count)").foregroundStyle(.secondary)
+                    Text("\(store.macroAlerts.count)").foregroundStyle(SemaTheme.sidebarSecondaryText)
                 }
             }
             .font(.system(size: 13, weight: selected ? .medium : .regular))
-            .foregroundStyle(selected ? Color.primary : .secondary)
+            .foregroundStyle(.primary)
             .padding(.horizontal, 12).padding(.vertical, 10)
-            .background(Color.primary.opacity(selected ? 0.07 : isHovered ? 0.035 : 0),
+            .background(selected ? SemaTheme.sidebarSelection : Color.primary.opacity(isHovered ? 0.035 : 0),
                         in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             .contentShape(Rectangle())
         }

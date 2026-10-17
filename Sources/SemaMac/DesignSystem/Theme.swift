@@ -105,6 +105,11 @@ enum SemaTheme {
             ? NSColor(srgbRed: 0.16, green: 0.16, blue: 0.16, alpha: 1)
             : .controlBackgroundColor
     })
+    static let sidebarSecondaryText = Color(nsColor: NSColor(name: "SemaSidebarSecondaryText") { appearance in
+        let dark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        return NSColor(white: dark ? 0.76 : 0.36, alpha: 1)
+    })
+    static let sidebarSelection = Color.primary.opacity(0.12)
     static let background = Color(nsColor: .windowBackgroundColor)
     static let separator = Color(nsColor: .separatorColor).opacity(0.5)
     static let corner: CGFloat = 22
