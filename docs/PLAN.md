@@ -1,6 +1,6 @@
 # Plan sema pour le catalogue et la distribution
 
-En cours : [navigation clavier et bandeau Repère](plans/keyboard-navigation.md).
+En cours : [réglages avec sidebar](plans/settings-sidebar.md) ; [navigation clavier et bandeau Repère](plans/keyboard-navigation.md).
 
 Historique : [socle agentique validé et livré en PR brouillon](plans/agent-foundation.md). Les plans ci-dessous sont conservés dans leur état documenté ; certains lots ont depuis été implémentés. Leur statut doit être réconcilié avec les preuves et l’arbitrage d’Antoine avant de les reprendre comme tâches. Le périmètre courant est décrit dans [PRODUCT.md](PRODUCT.md).
 

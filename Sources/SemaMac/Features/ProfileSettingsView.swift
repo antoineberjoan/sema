@@ -40,7 +40,7 @@ struct ProfileSettingsView: View {
                 .textContentType(.familyName)
             }
             Section {
-                Text("Ces informations sont facultatives et restent sur ce Mac. La photo est recadrée au centre et enregistrée en petit format, sans les métadonnées du fichier d’origine.")
+                Text("Profil facultatif, conservé sur ce Mac. La photo est enregistrée sans ses métadonnées.")
                     .font(.system(size: 12)).foregroundStyle(.secondary)
             }
         }

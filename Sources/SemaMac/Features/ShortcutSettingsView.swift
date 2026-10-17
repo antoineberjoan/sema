@@ -8,7 +8,7 @@ struct ShortcutSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Depuis n’importe quelle app") {
+            Section("Accès globaux") {
                 shortcutRow(.ribbon, title: "Bandeau", subtitle: "Afficher ou masquer vos favoris.")
                 shortcutRow(.workspace, title: "Hub", subtitle: "Ouvrir votre repère dans Focus.")
                 if let error = store.shortcutError {
@@ -17,9 +17,9 @@ struct ShortcutSettingsView: View {
                 }
             }
             Section("Dans Focus") {
-                LabeledContent("Repère précédent ou suivant", value: "↑  ↓")
+                LabeledContent("Repère précédent / suivant", value: "↑  ↓")
                 LabeledContent("Choisir à vue", value: "⌘ ↑  ⌘ ↓")
-                Text("Maintenez ⌘ pour parcourir, relâchez pour ouvrir. Entrée valide aussi ; Échap annule.")
+                Text("Maintenez ⌘ pour choisir, relâchez pour ouvrir. Échap annule.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                 LabeledContent("Rechercher", value: "⌘ K")
                 LabeledContent("Réglages", value: "⌘ ,")

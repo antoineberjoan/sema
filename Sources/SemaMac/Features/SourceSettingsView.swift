@@ -14,7 +14,7 @@ struct SourceSettingsView: View {
                     sourceRow(id: source.rawValue, title: source.title, summary: summary(source))
                 }
             } header: { Text("Catalogues disponibles") } footer: {
-                Text("Activez les sources à explorer, puis choisissez vos séries dans Explorer. Seuls les repères suivis sont actualisés. Désactiver une source suspend ses actualisations et ses alertes ; les historiques restent consultables.")
+                Text("Seuls vos repères sont actualisés. Une source désactivée met ses alertes en pause et conserve ses historiques.")
             }
             Section("Connexion Webstat") {
                 LabeledContent("Clé personnelle") { Text(store.hasWebstatKey ? "Enregistrée dans le Trousseau" : "À renseigner") }
@@ -30,7 +30,7 @@ struct SourceSettingsView: View {
                     }
                 }
                 Link("Obtenir une clé sur Webstat", destination: URL(string: "https://webstat.banque-france.fr/login/")!)
-                Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Les autres sources sont accessibles sans clé.")
+                Text("Clé conservée dans le Trousseau et transmise uniquement à Webstat. Les autres sources sont sans clé.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                 if let error = store.webstatError { Text(error).font(.system(size: 11)).foregroundStyle(.red) }
             }
