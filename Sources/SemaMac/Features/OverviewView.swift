@@ -143,6 +143,7 @@ struct SeriesDetailView: View {
     var preview = false
     var focus = false
     @State private var period: HistoryPeriod = .year
+    @State private var showsSource = false
 
     var body: some View {
         let displayed = store.displayedSeries(series)
@@ -214,8 +215,27 @@ struct SeriesDetailView: View {
             }
             HStack(alignment: .firstTextBaseline) {
                 Group {
-                    if focus { Text((series.isDemo ? "Données fictives · " : "") + series.source + " · " + observationPeriod) }
-                    else { Label(observationPeriod, systemImage: "calendar") }
+                    if focus {
+                        Button { showsSource = true } label: {
+                            Text((series.isDemo ? "données fictives · " : "") + compactObservationPeriod)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Source et définition")
+                        .accessibilityLabel("Source et définition, " + observationPeriod)
+                        .popover(isPresented: $showsSource) {
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    Text(series.source).font(.system(size: 13, weight: .medium))
+                                    Text(observationPeriod).font(.system(size: 11)).foregroundStyle(.secondary)
+                                    sourceDetails
+                                    metadata
+                                }.padding(22)
+                            }
+                            .frame(width: 380)
+                            .frame(maxHeight: 440)
+                            .fixedSize(horizontal: false, vertical: true)
+                        }
+                    } else { Label(observationPeriod, systemImage: "calendar") }
                 }
                 .font(.system(size: 11)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -227,88 +247,112 @@ struct SeriesDetailView: View {
                     .buttonStyle(.borderless).font(.system(size: 12)).disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
                 }
             }
-            if store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
+            if !focus, store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
                 Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             if !series.canAlert {
-                Text("Alertes suspendues : l’unité ou son échelle n’est pas interprétée. Les codes de la source restent disponibles ci-dessous.")
+                Text("Alertes suspendues : l’unité ou son échelle n’est pas interprétée. Les codes restent disponibles dans les informations de source.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             if let error = store.seriesErrors[series.id] {
                 Label(error + " Les observations conservées restent visibles.", systemImage: "exclamationmark.triangle")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
-            DisclosureGroup("Source et définition") {
-                VStack(alignment: .leading, spacing: 10) {
-                    if focus { Text(displayed.subtitle).textSelection(.enabled) }
-                    if series.isDemo { Text("Valeurs fictives pour explorer l’application.") }
-                    else {
-                        if let descriptor = series.descriptor {
-                            Text(descriptor.definition).textSelection(.enabled)
-                            LabeledContent("Producteur", value: descriptor.producer)
-                            LabeledContent("Fréquence", value: descriptor.frequencyTitle)
-                            LabeledContent("Unité et échelle", value: descriptor.displayUnit)
-                            LabeledContent("Début publié", value: MarketFormat.date(descriptor.firstPeriod))
-                            LabeledContent("Dernière période", value: MarketFormat.date(descriptor.lastPeriod))
-                            if let base = descriptor.attributes["UNIT_INDEX_BASE"] { LabeledContent("Base de l’indice", value: base) }
-                        } else if let descriptor = series.statisticalDescriptor {
-                            Text(descriptor.definition).textSelection(.enabled)
-                            LabeledContent("Producteur", value: descriptor.fields["PRODUCER"] ?? series.source)
-                            LabeledContent("Fréquence", value: descriptor.frequency.title)
-                            LabeledContent("Unité et échelle", value: descriptor.displayUnit)
-                            Text(descriptor.dataset.source.attribution).textSelection(.enabled)
-                            Link("Conditions de réutilisation ↗", destination: descriptor.dataset.source.termsURL)
-                        } else { Text(series.frequency?.title ?? "Fréquence non renseignée") }
-                        if let status = series.latest?.status { LabeledContent("Statut de l’observation", value: status) }
-                        if let updated = series.latest?.updatedAt { LabeledContent("Mise à jour source", value: MarketFormat.date(updated)) }
-                        if let sync = series.syncedAt { LabeledContent("Téléchargé le", value: MarketFormat.date(sync)) }
-                        let accessPoints = SeriesEquivalence.accessPoints(for: series)
-                        if accessPoints.count > 1 {
-                            Text("Accès à cette même série").fontWeight(.medium)
-                            ForEach(accessPoints, id: \.sourceID) { point in
-                                Link("\(store.sourceName(point.sourceID)) ↗", destination: point.url)
-                            }
-                        } else if let url = series.sourceURL { Link("Consulter la source ↗", destination: url) }
-                        Button("Recharger l’historique complet") { store.loadAllHistory(series, reload: true) }
-                            .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series) || store.historyLoadingID != nil)
-                    }
-                }
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading).padding(.top, 8)
-            }
-            .font(.system(size: 11)).foregroundStyle(.secondary)
-            if let descriptor = series.descriptor {
-                DisclosureGroup("Métadonnées de Webstat") {
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
-                        ForEach(descriptor.raw.keys.sorted(), id: \.self) { key in
-                            if let text = descriptor.raw[key]?.text {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(key).fontWeight(.medium)
-                                    Text(text).textSelection(.enabled)
-                                }.frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                        }
-                    }.font(.system(size: 10)).padding(.top, 8)
-                }.font(.system(size: 11)).foregroundStyle(.secondary)
-            }
-            if let descriptor = series.statisticalDescriptor {
-                DisclosureGroup("Métadonnées de la source") {
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
-                        ForEach(descriptor.fields.keys.sorted(), id: \.self) { key in
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(key).fontWeight(.medium)
-                                Text(descriptor.fields[key] ?? "").textSelection(.enabled)
-                            }.frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }.font(.system(size: 10)).padding(.top, 8)
-                }.font(.system(size: 11)).foregroundStyle(.secondary)
+            if !focus {
+                DisclosureGroup("Source et définition") { sourceDetails }
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+                metadata
             }
         }
         .modifier(SeriesDetailSurface(focus: focus))
-        .onChange(of: series.id, initial: true) { _, _ in period = series.supports(.year) ? .year : .all }
+        .onChange(of: series.id, initial: true) { _, _ in
+            period = series.supports(.year) ? .year : .all
+            showsSource = false
+        }
+    }
+
+    private var sourceDetails: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if focus {
+                Text(store.displayedSeries(series).subtitle).textSelection(.enabled)
+                if store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
+                    Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
+                }
+            }
+            if series.isDemo { Text("Valeurs fictives pour explorer l’application.") }
+            else {
+                if let descriptor = series.descriptor {
+                    Text(descriptor.definition).textSelection(.enabled)
+                    LabeledContent("Producteur", value: descriptor.producer)
+                    LabeledContent("Fréquence", value: descriptor.frequencyTitle)
+                    LabeledContent("Unité et échelle", value: descriptor.displayUnit)
+                    LabeledContent("Début publié", value: MarketFormat.date(descriptor.firstPeriod))
+                    LabeledContent("Dernière période", value: MarketFormat.date(descriptor.lastPeriod))
+                    if let base = descriptor.attributes["UNIT_INDEX_BASE"] { LabeledContent("Base de l’indice", value: base) }
+                } else if let descriptor = series.statisticalDescriptor {
+                    Text(descriptor.definition).textSelection(.enabled)
+                    LabeledContent("Producteur", value: descriptor.fields["PRODUCER"] ?? series.source)
+                    LabeledContent("Fréquence", value: descriptor.frequency.title)
+                    LabeledContent("Unité et échelle", value: descriptor.displayUnit)
+                    Text(descriptor.dataset.source.attribution).textSelection(.enabled)
+                    Link("Conditions de réutilisation ↗", destination: descriptor.dataset.source.termsURL)
+                } else { Text(series.frequency?.title ?? "Fréquence non renseignée") }
+                if let status = series.latest?.status { LabeledContent("Statut de l’observation", value: status) }
+                if let updated = series.latest?.updatedAt { LabeledContent("Mise à jour source", value: MarketFormat.date(updated)) }
+                if let sync = series.syncedAt { LabeledContent("Téléchargé le", value: MarketFormat.date(sync)) }
+                let accessPoints = SeriesEquivalence.accessPoints(for: series)
+                if accessPoints.count > 1 {
+                    Text("Accès à cette même série").fontWeight(.medium)
+                    ForEach(accessPoints, id: \.sourceID) { point in
+                        Link("\(store.sourceName(point.sourceID)) ↗", destination: point.url)
+                    }
+                } else if let url = series.sourceURL { Link("Consulter la source ↗", destination: url) }
+                Button("Recharger l’historique complet") { store.loadAllHistory(series, reload: true) }
+                    .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series) || store.historyLoadingID != nil)
+            }
+        }
+        .font(.system(size: 11)).foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, alignment: .leading).padding(.top, 8)
+    }
+
+    @ViewBuilder private var metadata: some View {
+        if let descriptor = series.descriptor {
+            DisclosureGroup("Métadonnées de Webstat") {
+                VStack(alignment: .leading, spacing: 7) {
+                    Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
+                    ForEach(descriptor.raw.keys.sorted(), id: \.self) { key in
+                        if let text = descriptor.raw[key]?.text {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(key).fontWeight(.medium)
+                                Text(text).textSelection(.enabled)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                }.font(.system(size: 10)).padding(.top, 8)
+            }.font(.system(size: 11)).foregroundStyle(.secondary)
+        }
+        if let descriptor = series.statisticalDescriptor {
+            DisclosureGroup("Métadonnées de la source") {
+                VStack(alignment: .leading, spacing: 7) {
+                    Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
+                    ForEach(descriptor.fields.keys.sorted(), id: \.self) { key in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(key).fontWeight(.medium)
+                            Text(descriptor.fields[key] ?? "").textSelection(.enabled)
+                        }.frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }.font(.system(size: 10)).padding(.top, 8)
+            }.font(.system(size: 11)).foregroundStyle(.secondary)
+        }
+    }
+
+    private var compactObservationPeriod: String {
+        guard let latest = series.latest else { return "source" }
+        if let end = latest.periodEnd, end != latest.date {
+            return MarketFormat.date(latest.date) + " – " + MarketFormat.date(end)
+        }
+        return MarketFormat.date(latest.date)
     }
 
     private var periodPicker: some View {
