@@ -61,9 +61,6 @@ def main():
     if command:
         label = "Copier la commande Homebrew" if brew["enabled"] else "Copier la commande Homebrew prévue"
         markup = f'<div class="brew-line"><button class="brew-copy" type="button" data-copy-homebrew aria-label="{label}" disabled><code id="homebrew-command">{escape(command)}</code></button><span class="sr-only" role="status" id="homebrew-copy-status"></span></div>'
-        if brew["enabled"] and brew.get("setupCommands"):
-            setup = escape("\n".join(brew["setupCommands"]))
-            markup += f'<details class="brew-setup"><summary>première installation</summary><p>préparez le tap une fois, puis lancez la commande ci-dessus.</p><pre><code>{setup}</code></pre></details>'
     else:
         markup = ''
     landing = replace_block(landing, "homebrew", markup)

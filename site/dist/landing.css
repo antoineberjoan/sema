@@ -13,11 +13,6 @@
 .brew-copy:hover, .brew-copy[data-copied] { color: #eee; text-decoration-color: #999; }
 .brew-copy:disabled { cursor: text; }
 .brew-copy[data-copied]::after { content: 'copié'; position: absolute; left: 0; top: 100%; padding-top: 4px; color: #aaa; font-size: 11px; text-decoration: none; }
-.brew-setup { margin-top: 18px; max-width: 100%; color: #999; font-size: 12px; line-height: 1.6; }
-.brew-setup summary { cursor: pointer; width: fit-content; }
-.brew-setup p { margin: 12px 0 8px; }
-.brew-setup pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-.brew-setup code { font: inherit; user-select: text; }
 .motion-demo { margin-inline: auto; }
 .motion-demo video { display: block; width: 100%; height: auto; border-radius: 18px; background: #0e0e0e; aspect-ratio: 1440 / 900; }
 .landing .questions { padding-block: 120px 90px; grid-template-columns: 1fr 1fr; gap: 60px; }

@@ -62,7 +62,7 @@ brew trust --cask antoineberjoan/sema/sema-app
 brew install --cask sema-app
 ```
 
-L’approbation porte uniquement sur ce cask tiers. Le site expose cette préparation dans « première installation ». Ce parcours a été testé le 17 octobre sur les artefacts publics 0.5.0 puis 0.5.1, dans un dossier temporaire : installation neuve et vraie mise à jour réussies, signature valide et quarantaine conservée. Aucun lancement Internet ni contournement Gatekeeper. [Preuves](validation/homebrew-sema-app.json).
+L’approbation porte uniquement sur ce cask tiers. Antoine demande de garder uniquement la commande courte sur la landing ; la préparation reste dans cette documentation technique. Ce parcours a été testé le 17 octobre sur les artefacts publics 0.5.0 puis 0.5.1, dans un dossier temporaire : installation neuve et vraie mise à jour réussies, signature valide et quarantaine conservée. Aucun lancement Internet ni contournement Gatekeeper. [Preuves](validation/homebrew-sema-app.json).
 
 Antoine a choisi de ne pas prendre d’adhésion Apple Developer. La distribution reste signée ad hoc ; aucune intégration au catalogue officiel Homebrew ni notarisation n’est déclarée.
 

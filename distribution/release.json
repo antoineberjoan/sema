@@ -19,11 +19,7 @@
   },
   "homebrew": {
     "enabled": true,
-    "command": "brew install --cask sema-app",
-    "setupCommands": [
-      "brew tap antoineberjoan/sema",
-      "brew trust --cask antoineberjoan/sema/sema-app"
-    ]
+    "command": "brew install --cask sema-app"
   },
   "validation": {
     "bundleSignature": true,
