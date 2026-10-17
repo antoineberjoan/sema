@@ -1,8 +1,8 @@
 # Plan sema pour le catalogue et la distribution
 
-En cours : [actualisation quotidienne et publication](plans/automatic-refresh.md) ; [navigation clavier et bandeau Repère](plans/keyboard-navigation.md).
+En cours : [navigation clavier et bandeau Repère](plans/keyboard-navigation.md).
 
-Historique : [réglages avec sidebar vérifiés après simplification](plans/settings-sidebar.md) ; [socle agentique validé et livré en PR brouillon](plans/agent-foundation.md). Les plans ci-dessous sont conservés dans leur état documenté ; certains lots ont depuis été implémentés. Leur statut doit être réconcilié avec les preuves et l’arbitrage d’Antoine avant de les reprendre comme tâches. Le périmètre courant est décrit dans [PRODUCT.md](PRODUCT.md).
+Historique : [actualisation quotidienne publiée en 0.6.0](plans/automatic-refresh.md) ; [réglages avec sidebar vérifiés après simplification](plans/settings-sidebar.md) ; [socle agentique validé et livré en PR brouillon](plans/agent-foundation.md). Les plans ci-dessous sont conservés dans leur état documenté ; certains lots ont depuis été implémentés. Leur statut doit être réconcilié avec les preuves et l’arbitrage d’Antoine avant de les reprendre comme tâches. Le périmètre courant est décrit dans [PRODUCT.md](PRODUCT.md).
 
 16 octobre 2026. Direction validée avec Antoine ; fonctionnalités ci-dessous à réaliser. Le logo de barre de menus à 2 pt est déjà intégré et compilé.
 

@@ -1,6 +1,6 @@
 # Actualisation quotidienne et publication
 
-Statut : code et distribution vérifiés, fusion et contrôle de production en cours, 17 octobre 2026. Source : Antoine dans le chat demande lancement, réveil et exécution même avec hub fermé, puis publication sur origin/main et en production. Il retient une fois par jour après comparaison avec 30 minutes. Notion Produit est à mettre à jour avec ce remplacement de la règle manuelle.
+Statut : terminé, publié sur origin/main et en production, 17 octobre 2026. Source : Antoine dans le chat demande lancement, réveil et exécution même avec hub fermé, puis publication sur origin/main et en production. Il retient une fois par jour après comparaison avec 30 minutes. Notion Produit est à mettre à jour avec ce remplacement de la règle manuelle.
 
 ## Résultat observable
 
@@ -21,3 +21,5 @@ Le profil natif de revue a été préparé avec 1 537 observations réelles de l
 CI de la branche intégrée `fc903dc` réussie (runs `39046860862` et `39046861387`) : tests et bundle. La landing minimale et le cask sema-app sont intégrés, avec les suppressions demandées conservées ; la refactorisation agentique ultérieure reste dans sa branche distincte.
 
 Le DMG 0.6.0 est publié. Le téléchargement public sans authentification correspond au SHA-256 et à la taille de la construction. Le cask public `908bc97` a passé la vraie mise à jour 0.5.1 → 0.6.0 puis une installation neuve : signature stricte, quarantaine et identité du binaire vérifiées, app de test désinstallée. Les préférences habituelles n’ont pas été utilisées. [Preuves de livraison](../validation/distribution-0.6.0.json).
+
+Livraison terminée : PR #4 fusionnée sur main (`e4cf8c4`) ; la PR #2 est intégrée par cette fusion. [CI main réussie](https://github.com/antoineberjoan/sema/actions/runs/39048395666). Déploiement Vercel de production READY `dpl_85pMs8RJCWejauwDg4k44rG2ki3i`. Le manifeste public de getsema.app indique 0.6.0 et le DMG attendu. Le code source, le site et le cask du chantier sont livrés ; la refactorisation agentique distincte n’est pas fusionnée. [Preuves de production](../validation/production-0.6.0.json).
