@@ -14,7 +14,7 @@
 .landing figcaption { margin-top: 16px; font-size: 10px; color: #858585; }
 .landing .questions { padding-block: 126px 100px; grid-template-columns: 1fr 1fr; gap: 60px; }
 .landing .questions h2 { font-size: 26px; font-weight: 500; }
-.landing .support-note { margin-block: 0 64px; font-size: 13px; color: var(--muted); }
+.landing .support-note { margin-inline: auto; margin-block: 0 64px; font-size: 13px; color: var(--muted); }
 .landing .support-note a { color: #b5b5b5; text-decoration: underline; text-decoration-color: #555; text-underline-offset: 4px; }
 .landing .support-note a:hover { color: var(--text); }
 @media(max-width:650px) {
