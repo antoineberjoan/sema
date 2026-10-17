@@ -15,6 +15,28 @@ struct WorkspaceView: View {
     @State private var switcherSelection: String?
 
     var body: some View {
+        keyboardWorkspace
+        .onDisappear { sidebarCloseTask?.cancel() }
+        .task { await store.checkWebstatKey() }
+        .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
+        .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
+        .alert("sema", isPresented: errorBinding) {
+            Button("Compris", role: .cancel) { store.errorMessage = nil }
+        } message: { Text(store.errorMessage ?? "") }
+        .confirmationDialog("Retirer ce repère ?", isPresented: Binding(get: { removal != nil }, set: { if !$0 { removal = nil } }), titleVisibility: .visible) {
+            Button("Retirer de mes repères", role: .destructive) { if let removal { _ = store.unfollow(removal.id) }; removal = nil }
+            Button("Annuler", role: .cancel) { removal = nil }
+        } message: {
+            Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
+        }
+        .overlay(alignment: .topTrailing) {
+            if let event = store.simulatedEvent {
+                DemoNotificationView(event: event).environment(store).padding(24)
+            }
+        }
+    }
+
+    private var workspaceLayout: some View {
         NavigationSplitView(columnVisibility: sidebarVisibilityBinding) {
             sidebarContent
                 .toolbar(removing: .sidebarToggle)
@@ -82,6 +104,10 @@ struct WorkspaceView: View {
             }
         }
         .frame(minWidth: 980, minHeight: 680)
+    }
+
+    private var keyboardWorkspace: some View {
+        workspaceLayout
         .background { FocusKeyboard(handle: handleFocusKey).frame(width: 0, height: 0) }
         .overlay {
             if let selection = switcherSelection {
@@ -115,24 +141,6 @@ struct WorkspaceView: View {
         .onChange(of: store.section) { _, _ in closeSwitcher() }
         .onChange(of: store.followedSeries.map(\.id)) { _, _ in closeSwitcher() }
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { _ in closeSwitcher() }
-        .onDisappear { sidebarCloseTask?.cancel() }
-        .task { await store.checkWebstatKey() }
-        .sheet(isPresented: alertSheetBinding) { AlertEditorView().environment(store) }
-        .sheet(isPresented: searchSheetBinding, onDismiss: { store.finishSearch() }) { SeriesSearchView().environment(store) }
-        .alert("sema", isPresented: errorBinding) {
-            Button("Compris", role: .cancel) { store.errorMessage = nil }
-        } message: { Text(store.errorMessage ?? "") }
-        .confirmationDialog("Retirer ce repère ?", isPresented: Binding(get: { removal != nil }, set: { if !$0 { removal = nil } }), titleVisibility: .visible) {
-            Button("Retirer de mes repères", role: .destructive) { if let removal { _ = store.unfollow(removal.id) }; removal = nil }
-            Button("Annuler", role: .cancel) { removal = nil }
-        } message: {
-            Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
-        }
-        .overlay(alignment: .topTrailing) {
-            if let event = store.simulatedEvent {
-                DemoNotificationView(event: event).environment(store).padding(24)
-            }
-        }
     }
 
     private func handleFocusKey(_ event: NSEvent) -> Bool {

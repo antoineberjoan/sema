@@ -92,7 +92,10 @@ private struct ShortcutRecorder: NSViewRepresentable {
             }
             if event.keyCode == 53 { stopRecording(); return }
             if event.keyCode == 48, event.modifierFlags.intersection([.command, .control, .option]).isEmpty {
-                stopRecording(); super.keyDown(with: event); return
+                stopRecording()
+                if event.modifierFlags.contains(.shift) { window?.selectPreviousKeyView(self) }
+                else { window?.selectNextKeyView(self) }
+                return
             }
             if [51, 117].contains(event.keyCode), event.modifierFlags.intersection([.command, .control, .option, .shift]).isEmpty {
                 complete(nil); return
@@ -134,10 +137,14 @@ private struct ShortcutRecorder: NSViewRepresentable {
             window?.makeFirstResponder(self)
             isRecording = true; begin(); refreshTitle()
             // Capture before menu key equivalents, only while this field records in its own window.
-            keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            keyMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .leftMouseDown]) { [weak self] event in
                 let consumed = MainActor.assumeIsolated {
                     guard let self, self.isRecording, event.window === self.window,
                           self.window?.isKeyWindow == true else { return false }
+                    if event.type == .leftMouseDown {
+                        if !self.bounds.contains(self.convert(event.locationInWindow, from: nil)) { self.stopRecording() }
+                        return false
+                    }
                     self.keyDown(with: event)
                     return true
                 }
