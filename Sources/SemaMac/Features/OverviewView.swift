@@ -143,7 +143,6 @@ struct SeriesDetailView: View {
     var preview = false
     var focus = false
     @State private var period: HistoryPeriod = .year
-    @State private var showsSource = false
 
     var body: some View {
         let displayed = store.displayedSeries(series)
@@ -211,26 +210,7 @@ struct SeriesDetailView: View {
             HStack(alignment: .firstTextBaseline) {
                 Group {
                     if focus {
-                        Button { showsSource = true } label: {
-                            Text((series.isDemo ? "données fictives · " : "") + compactObservationPeriod)
-                        }
-                        .buttonStyle(.plain)
-                        .help("Date de la donnée publiée · source et définition")
-                        .accessibilityLabel((series.isDemo ? "Données fictives, " : "") + "source et définition, " + observationPeriod)
-                        .popover(isPresented: $showsSource) {
-                            ScrollView {
-                                VStack(alignment: .leading, spacing: 16) {
-                                    Text(series.source).font(.system(size: 13, weight: .medium))
-                                    Text(observationPeriod).font(.system(size: 11)).foregroundStyle(.secondary)
-                                    sourceDetails
-                                    metadata
-                                }.padding(22)
-                            }
-                            .frame(width: 380)
-                            .frame(maxHeight: 440)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .onExitCommand { showsSource = false }
-                        }
+                        Text((series.isDemo ? "données fictives · " : "") + compactObservationPeriod)
                     } else { Label(observationPeriod, systemImage: "calendar") }
                 }
                 .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -243,7 +223,7 @@ struct SeriesDetailView: View {
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             if !series.canAlert {
-                Text("Alertes suspendues : l’unité ou son échelle n’est pas interprétée. Les codes restent disponibles dans les informations de source.")
+                Text("Alertes indisponibles pour cette unité.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
             }
             if let error = store.seriesErrors[series.id] {
@@ -259,7 +239,6 @@ struct SeriesDetailView: View {
         .modifier(SeriesDetailSurface(focus: focus))
         .onChange(of: series.id, initial: true) { _, _ in
             period = series.supports(.year) ? .year : .all
-            showsSource = false
         }
     }
 
@@ -329,12 +308,6 @@ struct SeriesDetailView: View {
         VStack(alignment: .leading, spacing: 10) {
             if MarketFormat.name(series) != series.name {
                 LabeledContent("Libellé officiel", value: series.name).textSelection(.enabled)
-            }
-            if focus {
-                Text(store.displayedSeries(series).subtitle).textSelection(.enabled)
-                if store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
-                    Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
-                }
             }
             if series.isDemo { Text("Valeurs fictives pour explorer l’application.") }
             else {
