@@ -1,0 +1,13 @@
+.legal-page { --page: #0e0e0e; }
+.legal-content.wrap { width: min(720px, calc(100% - 80px)); padding-block: 76px 100px; }
+.legal-content h1 { font-size: clamp(30px, 4vw, 44px); font-weight: 500; letter-spacing: -.035em; }
+.legal-content .updated { margin: 18px 0 60px; color: var(--quiet); font-size: 12px; }
+.legal-content section + section { margin-top: 40px; }
+.legal-content h2 { font-size: 19px; letter-spacing: -.4px; font-weight: 500; margin: 0 0 14px; }
+.legal-content p { color: #a6a6a6; font-size: 14px; line-height: 1.8; margin: 12px 0; }
+.legal-content a { color: #ccc; text-decoration: underline; text-decoration-color: #555; text-underline-offset: 4px; }
+.legal-content a:hover { color: #fff; }
+@media(max-width:650px) {
+  .legal-content.wrap { width: calc(100% - 40px); padding-block: 48px 70px; }
+  .legal-content .updated { margin-bottom: 40px; }
+}

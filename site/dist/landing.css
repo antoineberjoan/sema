@@ -9,17 +9,20 @@
 .brew-line { margin: 28px 0 0; font-size: 13px; line-height: 1.6; }
 .brew-link { color: #858585; text-decoration: underline dotted #555; text-underline-offset: 5px; overflow-wrap: anywhere; }
 .brew-link:hover { color: #ccc; }
-.landing .app-screenshot { border-radius: 12px; box-shadow: none; }
+/* Le JPEG contient les coins blancs de la capture native. Le masque suit ses proportions. */
+.landing .app-screenshot { border-radius: 0; clip-path: inset(1px round 2.6% / 3.83%); box-shadow: none; }
 .landing figcaption { margin-top: 16px; font-size: 10px; color: #858585; }
 .landing .questions { padding-block: 126px 100px; grid-template-columns: 1fr 1fr; gap: 60px; }
 .landing .questions h2 { font-size: 26px; font-weight: 500; }
+.landing .support-note { margin-block: 0 64px; font-size: 13px; color: var(--muted); }
+.landing .support-note a { color: #b5b5b5; text-decoration: underline; text-decoration-color: #555; text-underline-offset: 4px; }
+.landing .support-note a:hover { color: var(--text); }
 @media(max-width:650px) {
   .landing .wrap { width: calc(100% - 40px); }
   .landing .hero { padding-top: 60px; padding-bottom: 64px; }
   .landing h1 { font-size: clamp(29px, 7vw, 42px); line-height: 1.13; }
   .landing .button { margin-top: 30px; }
   .brew-line { margin-top: 24px; font-size: 11px; }
-  .landing .app-screenshot { border-radius: 6px; }
   .landing .questions { grid-template-columns: 1fr; gap: 18px; padding-block: 76px 60px; }
   .landing .questions h2 { font-size: 24px; }
 }

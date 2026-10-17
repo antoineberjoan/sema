@@ -187,3 +187,11 @@ if (localPreview) {
 } else {
   document.querySelector("#motion-tuning").remove();
 }
+
+// Le lien Homebrew de l’accueil ouvre directement les instructions complètes.
+const homebrewDetails = document.querySelector('#homebrew');
+function revealHomebrew() {
+  if (location.hash === '#homebrew' && homebrewDetails) homebrewDetails.open = true;
+}
+revealHomebrew();
+addEventListener('hashchange', revealHomebrew);
