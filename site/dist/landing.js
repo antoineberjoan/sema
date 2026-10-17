@@ -36,7 +36,7 @@
   video.addEventListener('play', () => { played = true; });
   if (!reduced.matches && 'IntersectionObserver' in window) {
     observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) { video.pause(); return; }
+      if (!entry.isIntersecting || entry.intersectionRatio < .35) { video.pause(); return; }
       if (played || document.hidden || reduced.matches) return;
       played = true;
       video.play().catch(() => { /* Les contrôles natifs restent disponibles si la lecture automatique est refusée. */ });

@@ -1,6 +1,6 @@
 # Démonstration de la landing
 
-Statut : nouvelle proposition motion en cours de vérification, publication en attente, 17 octobre 2026. Source : chat d’Antoine ; page Notion Marque `3fbd18bb0dea818fa7f4fc7483c767b3` relue. Branche `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2). Checkout canonique et travaux natifs préservés.
+Statut : nouvelle proposition motion vérifiée en aperçu, publication en attente, 17 octobre 2026. Source : chat d’Antoine ; page Notion Marque `3fbd18bb0dea818fa7f4fc7483c767b3` relue. Branche `codex/landing-demos`, [PR #2](https://github.com/antoineberjoan/sema/pull/2). Checkout canonique et travaux natifs préservés.
 
 ## Intention et périmètre
 
@@ -29,4 +29,14 @@ Lecture automatique une fois en vue, sans boucle. Pause hors écran et au masqua
 - Largeur mobile 390 px sans débordement, liens de téléchargement identiques dans le hero et le header, FAQ, Ko-fi et liens légaux conservés.
 - Diff ciblé, syntaxe, génération reproductible et vérification du manifeste sans altérer l’artefact publié.
 
-Prochaine action : encoder et relire les images du film, vérifier les parcours dans un nouvel aperçu Vercel privé, puis présenter la proposition. La production n’est pas modifiée par cette branche.
+## Résultats de revue
+
+- Film H.264 1440 × 900, 30 images/s, 18 s, 341 145 octets, aucune piste audio. Poster, recherche, sidebar et image finale relus après encodage.
+- Aperçu du commit `7f146cc` READY : déploiement `dpl_GVREFav48TUDvVuai6aD8gdPwNNm`. Copie exacte observée au clic et avec Entrée ; presse-papiers restauré après le test. CTA hero et header pointent vers le même DMG existant.
+- 1280 × 800 et 390 × 844 : hero simplifié, commande visible, film et contrôles natifs. Document mobile 390 px, vidéo 350 px, aucun débordement. Lecture clavier observée, film terminé à 18 s, sans boucle.
+- Contrôles isolés : copie et son repli manuel, état réduit sans lecture automatique, lecture unique, pause au masquage et à la réduction du mouvement. Seuil de visibilité affiné à 35 % pour arrêter le film lorsqu’il devient marginal à l’écran. Le mode Réduire les animations n’a pas été activé dans macOS pendant cette revue.
+- Générateur : états actif et inactif, idempotence, refus de marqueurs manquants et de Homebrew non validé sans écriture partielle. Aucune page ou ligne de compatibilité recréée. IDs, ARIA, fichiers locaux, syntaxe et diff contrôlés.
+- `./scripts/check.sh` local bloqué par l’absence du module Swift Testing dans les Command Line Tools ; aucun réglage modifié. CI du commit `7f146cc` verte, runs `39038508038` et `39038513859` (tests et bundle).
+- Captures : `sema-landing-motion-desktop.png`, `sema-landing-motion-mobile.png` dans les artefacts du chat. Décisions de retrait et statut de proposition vidéo reportés dans Notion Marque.
+
+Prochaine action : présenter le nouvel aperçu à Antoine ; attendre sa décision sur la vidéo et la publication. La production n’est pas modifiée par cette branche.
