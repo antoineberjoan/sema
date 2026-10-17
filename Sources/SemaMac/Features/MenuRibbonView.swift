@@ -256,13 +256,13 @@ struct RibbonCard: View {
         .buttonStyle(SemaPressStyle())
         .onHover { hovered = $0 }
         .animation(reduceMotion ? nil : .easeOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
-        .help(series.name + " · Ouvrir le détail dans sema")
+        .help(MarketFormat.name(series) + " · Ouvrir le détail dans sema")
         .accessibilityLabel(accessibilityDescription)
     }
 
     private var heading: some View {
         HStack(spacing: 10) {
-            Text(series.name).font(.system(size: 13, weight: .medium)).lineLimit(2)
+            Text(MarketFormat.name(series)).font(.system(size: 13, weight: .medium)).lineLimit(2)
             Spacer(minLength: 0)
         }
     }
@@ -271,7 +271,7 @@ struct RibbonCard: View {
             Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
                 .font(.system(size: 32, weight: .medium)).tracking(-0.9).monospacedDigit()
                 .lineLimit(1).minimumScaleFactor(0.7)
-            Text(series.displayUnit).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
+            Text(MarketFormat.unit(series)).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
             Spacer(minLength: 0)
         }
     }
@@ -299,7 +299,7 @@ struct RibbonCard: View {
         .font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary)
     }
     private var accessibilityDescription: String {
-        series.name + ", " + MarketFormat.value(series)
+        MarketFormat.name(series) + ", " + MarketFormat.value(series)
             + (series.isDemo ? ", démonstration" : "") + ", " + comparison
             + " sur " + period.title + ", publication du " + MarketFormat.date(series.latest?.date)
     }

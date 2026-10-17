@@ -46,7 +46,7 @@ struct SeriesSearchView: View {
                                     Image(systemName: store.isFavorite(item.id) ? "star.fill" : "chart.xyaxis.line")
                                         .foregroundStyle(accent).frame(width: 20)
                                     VStack(alignment: .leading, spacing: 5) {
-                                        Text(item.name).font(.system(size: 13, weight: .medium))
+                                        Text(MarketFormat.name(item)).font(.system(size: 13, weight: .medium))
                                         Text(item.subtitle).font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(1)
                                     }
                                     Spacer(minLength: 8)

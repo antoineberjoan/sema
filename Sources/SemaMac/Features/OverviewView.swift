@@ -16,7 +16,7 @@ struct OverviewView: View {
                             ForEach(store.followedSeries) { item in
                                 let current = item.id == selected.id
                                 Button { store.show(item) } label: {
-                                    Text(store.displayedSeries(item).name)
+                                    Text(MarketFormat.name(store.displayedSeries(item)))
                                         .font(.system(size: 12)).foregroundStyle(current ? .primary : .secondary)
                                         .padding(.bottom, 10)
                                         .overlay(alignment: .bottom) {
@@ -59,7 +59,7 @@ struct IndicatorTile: View {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: compact ? 14 : 10) {
                     HStack(spacing: 6) {
-                        Text(displayed.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
+                        Text(MarketFormat.name(displayed)).font(.system(size: 13, weight: .medium)).lineLimit(1)
                         if !store.isSourceEnabled(for: series.id) { Image(systemName: "pause.circle").foregroundStyle(.secondary).help("Source désactivée · historique conservé") }
                     }
                     .padding(.trailing, series.exchangeRatePair == nil ? 22 : 48)
@@ -80,11 +80,11 @@ struct IndicatorTile: View {
                 .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
             .buttonStyle(SemaPressStyle())
-            .accessibilityLabel("\(displayed.name), \(MarketFormat.value(displayed))\(series.isDemo ? ", démonstration" : "")")
+            .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(series.isDemo ? ", démonstration" : "")")
             .accessibilityValue(selected ? "Sélectionné" : "")
             HStack(spacing: 0) {
                 ExchangeDirectionButton(series: series)
-                FavoriteButton(seriesID: series.id, seriesName: displayed.name)
+                FavoriteButton(seriesID: series.id, seriesName: MarketFormat.name(displayed))
             }.padding(8)
         }
         .onHover { isHovered = $0 }
@@ -150,7 +150,7 @@ struct SeriesDetailView: View {
         VStack(alignment: .leading, spacing: focus ? 28 : 22) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(displayed.name)
+                    Text(MarketFormat.name(displayed))
                         .font(.system(size: focus ? 14 : 18, weight: focus ? .regular : .semibold))
                         .foregroundStyle(focus ? .secondary : .primary).textSelection(.enabled)
                     if !focus {
@@ -177,7 +177,7 @@ struct SeriesDetailView: View {
                     Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
                         .font(.system(size: 40, weight: .medium)).tracking(-1.2).monospacedDigit()
                         .lineLimit(1).minimumScaleFactor(0.55)
-                    Text(displayed.displayUnit).font(.system(size: 12)).foregroundStyle(.secondary)
+                    Text(MarketFormat.unit(displayed)).font(.system(size: 12)).foregroundStyle(.secondary)
                     if series.latest != nil {
                         Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
                             .font(.system(size: 11)).foregroundStyle(.secondary)
@@ -277,7 +277,7 @@ struct SeriesDetailView: View {
             }
             Spacer(minLength: SemaTheme.minorSpacing)
             ExchangeDirectionButton(series: series)
-            FavoriteButton(seriesID: series.id, seriesName: displayed.name)
+            FavoriteButton(seriesID: series.id, seriesName: MarketFormat.name(displayed))
         }
     }
 
@@ -294,8 +294,8 @@ struct SeriesDetailView: View {
             Button {
                 store.prepareAlert(for: series)
             } label: { Label("Créer une alerte", systemImage: "bell.badge") }
-            .buttonStyle(.borderedProminent).controlSize(.regular)
-            .font(.callout.weight(.medium)).tint(store.palette.controlAccent)
+            .buttonStyle(.bordered).controlSize(.small)
+            .font(.callout).tint(store.palette.accent)
             .disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
         }
     }
@@ -305,7 +305,7 @@ struct SeriesDetailView: View {
             Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
                 .font(.system(size: 72, weight: .regular)).tracking(-2.5).monospacedDigit()
                 .lineLimit(1).minimumScaleFactor(0.55)
-            Text(displayed.displayUnit).font(.system(size: 22)).foregroundStyle(.secondary)
+            Text(MarketFormat.unit(displayed)).font(.system(size: 22)).foregroundStyle(.secondary)
         }
         .accessibilityElement(children: .combine)
     }
@@ -326,6 +326,9 @@ struct SeriesDetailView: View {
 
     private var sourceDetails: some View {
         VStack(alignment: .leading, spacing: 10) {
+            if MarketFormat.name(series) != series.name {
+                LabeledContent("Libellé officiel", value: series.name).textSelection(.enabled)
+            }
             if focus {
                 Text(store.displayedSeries(series).subtitle).textSelection(.enabled)
                 if store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {

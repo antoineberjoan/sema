@@ -343,7 +343,7 @@ private struct SidebarSeriesRow: View {
         let displayed = store.displayedSeries(series)
         Button { store.show(series); store.section = .overview } label: {
             VStack(alignment: .leading, spacing: 6) {
-                Text(displayed.name).font(.system(size: 12, weight: selected ? .medium : .regular))
+                Text(MarketFormat.name(displayed)).font(.system(size: 12, weight: selected ? .medium : .regular))
                     .foregroundStyle(.primary).lineLimit(2).multilineTextAlignment(.leading)
                 Text(MarketFormat.value(displayed)).font(.system(size: 11)).monospacedDigit().foregroundStyle(SemaTheme.sidebarSecondaryText)
             }
@@ -352,7 +352,7 @@ private struct SidebarSeriesRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SemaPressStyle())
-        .accessibilityLabel("\(displayed.name), \(MarketFormat.value(displayed))\(series.isDemo ? ", données fictives" : "")")
+        .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(series.isDemo ? ", données fictives" : "")")
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

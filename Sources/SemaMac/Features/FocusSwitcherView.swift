@@ -57,7 +57,7 @@ struct FocusSwitcherView: View {
         let selected = item.id == selection
         return Button { choose(item) } label: {
             VStack(alignment: .leading, spacing: 14) {
-                Text(displayed.name).font(.system(size: 12, weight: .medium))
+                Text(MarketFormat.name(displayed)).font(.system(size: 12, weight: .medium))
                     .lineLimit(2).multilineTextAlignment(.leading).frame(height: 32, alignment: .topLeading)
                 Text(MarketFormat.value(displayed)).font(.system(size: 24, weight: .regular))
                     .tracking(-0.6).monospacedDigit().lineLimit(1).minimumScaleFactor(0.75)
@@ -76,7 +76,7 @@ struct FocusSwitcherView: View {
             .contentShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(displayed.name), \(MarketFormat.value(displayed))\(item.isDemo ? ", données fictives" : "")")
+        .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(item.isDemo ? ", données fictives" : "")")
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

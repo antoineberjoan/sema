@@ -129,6 +129,14 @@ enum SemaTheme {
 }
 
 enum MarketFormat {
+    static func name(_ series: MarketSeries) -> String {
+        series.exchangeRatePair?.publishedName ?? series.name
+    }
+
+    static func unit(_ series: MarketSeries) -> String {
+        series.exchangeRatePair?.currency ?? series.displayUnit
+    }
+
     static func number(_ value: Decimal, digits: Int = 2, signed: Bool = false) -> String {
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: "fr_FR")
@@ -142,7 +150,8 @@ enum MarketFormat {
     static func value(_ series: MarketSeries) -> String {
         guard let value = series.latest?.value else { return "—" }
         let n = number(value, digits: series.fractionDigits)
-        return n + (series.displayUnit.isEmpty ? "" : " " + series.displayUnit)
+        let label = unit(series)
+        return n + (label.isEmpty ? "" : " " + label)
     }
 
     static func change(_ series: MarketSeries, period: HistoryPeriod) -> String {

@@ -45,11 +45,11 @@ private struct AlertRow: View {
             Image(systemName: rule.isEnabled ? "bell" : "bell.slash").foregroundStyle(accent)
                 .frame(width: 30, height: 30)
             VStack(alignment: .leading, spacing: 9) {
-                Text(item?.name ?? "Repère indisponible").font(.system(size: 14, weight: .medium))
-                Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "").")
+                Text(item.map(MarketFormat.name) ?? "Repère indisponible").font(.system(size: 14, weight: .medium))
+                Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "").")
                     .font(.system(size: 12)).foregroundStyle(.secondary)
                 if let event = lastEvent, let value = event.observedValue {
-                    Text("Dernier signal : \(MarketFormat.number(value, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "") · \(MarketFormat.date(event.observedAt))")
+                    Text("Dernier signal : \(MarketFormat.number(value, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "") · \(MarketFormat.date(event.observedAt))")
                         .font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 HStack(spacing: 16) {
@@ -57,7 +57,7 @@ private struct AlertRow: View {
                     Button(rule.isEnabled ? "Mettre en pause" : "Réactiver") { store.toggleAlert(rule.id) }
                         .disabled(!store.isSourceEnabled(for: rule.seriesID) || (!rule.isEnabled && (!store.isFollowing(rule.seriesID) || item?.canAlert != true)))
                     Button(role: .destructive) { store.deleteAlert(rule.id) } label: { Image(systemName: "trash") }
-                        .help("Supprimer cette alerte").accessibilityLabel("Supprimer l’alerte sur \(item?.name ?? "ce repère")")
+                        .help("Supprimer cette alerte").accessibilityLabel("Supprimer l’alerte sur \(item.map(MarketFormat.name) ?? "ce repère")")
                 }
                 .buttonStyle(.borderless).font(.system(size: 11))
             }
@@ -89,7 +89,7 @@ struct AlertEditorView: View {
                 GridRow {
                     Text("Repère").gridColumnAlignment(.trailing)
                     Picker("Repère", selection: $seriesID) {
-                        ForEach(store.alertableSeries) { Text($0.name).tag($0.id) }
+                        ForEach(store.alertableSeries) { Text(MarketFormat.name($0)).tag($0.id) }
                     }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading)
                 }
                 GridRow {
@@ -104,7 +104,7 @@ struct AlertEditorView: View {
                     HStack(spacing: SemaTheme.minorSpacing) {
                         TextField("Seuil", text: $thresholdText)
                             .textFieldStyle(.roundedBorder).accessibilityLabel("Seuil")
-                        Text(item?.displayUnit ?? "").foregroundStyle(.secondary)
+                        Text(item.map(MarketFormat.unit) ?? "").foregroundStyle(.secondary)
                     }
                 }
             }
@@ -158,8 +158,8 @@ struct DemoNotificationView: View {
             SemaMark(size: 30)
             VStack(alignment: .leading, spacing: 6) {
                 Text("sema · TEST DE NOTIFICATION").font(.system(size: 9, weight: .medium)).tracking(0.5).foregroundStyle(.secondary)
-                Text(item?.name ?? "Repère de démonstration").font(.system(size: 13, weight: .medium))
-                Text("Valeur simulée : \(MarketFormat.number(event.observedValue ?? 0, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "").")
+                Text(item.map(MarketFormat.name) ?? "Repère de démonstration").font(.system(size: 13, weight: .medium))
+                Text("Valeur simulée : \(MarketFormat.number(event.observedValue ?? 0, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "").")
                     .font(.system(size: 12)).foregroundStyle(.secondary)
             }
             Spacer(minLength: 0)
