@@ -29,7 +29,15 @@ Antoine questionne le 17 octobre l’utilité de la page de téléchargement et 
 
 La landing conserve la compatibilité et la mention de préversion non notarisée près du téléchargement. `sync-download.py` génère les deux CTA et les informations de version à partir du seul manifeste publié 0.5.1 ; la version native et son artefact ne changent pas. Le header reprend le lien principal et reste inerte si aucun téléchargement n’est actif.
 
-Critères : téléchargement direct fonctionnel ; aide lisible sur ordinateur et mobile ; liens d’ancre ouvrant la bonne réponse ; parcours clavier ; copie Homebrew ; manifeste et SHA-256 de la release inchangés. Synchronisation idempotente et désactivation des CTA déjà vérifiées localement. Revue navigateur et CI en cours.
+Critères : téléchargement direct fonctionnel ; aide lisible sur ordinateur et mobile ; liens d’ancre ouvrant la bonne réponse ; parcours clavier ; copie Homebrew ; manifeste et SHA-256 de la release inchangés. Preuves de l’aperçu `e7f81b8` :
+
+- Vercel READY : `dpl_G1bZC3YFLBxcEK64sYMKspyzHA3B`, https://sema-nxmb718d3-antoine-berjoan.vercel.app/ ; accès temporaire de six heures dans l’autorisation initiale, secret non conservé ici.
+- Clic réel depuis la landing : `Sema-0.5.1-arm64.dmg` reçu dans Téléchargements. SHA-256 mesuré : `762e891f57f26db57c222f78c899e1d58bf432ef6b72a2623eda196bbf4c526d`, identique au manifeste. Aucune ouverture ou installation du DMG pendant cette revue. Le contrôle de téléchargement du navigateur a rendu son résultat avec un délai anormalement long.
+- Aide à la première ouverture et Homebrew : navigation depuis la landing, ouverture automatique de la bonne réponse ; copie de la commande exacte vérifiée, presse-papiers restauré ; repli au clavier avec Entrée.
+- Ordinateur 1280 × 720 : page compacte observée. Mobile 390 × 844 : largeur du document de 390 px et commande Homebrew contenue dans 350 px, contrôlées dans le DOM ; la capture du navigateur après redimensionnement est incohérente et ne constitue pas une validation visuelle mobile.
+- HTML/ARIA/assets, syntaxe JS et Python, manifeste inchangé et diff vérifiés. Contrôle du générateur : idempotence, changement de release sur les deux CTA, désactivation des CTA et refus sans mise à jour partielle si le bloc de landing est absent.
+- CI GitHub verte : run `39030638120` sur `e7f81b8`.
+- Captures locales : `sema-installation-minimale-20261017.png` et `sema-installation-mobile-20261017.png` (limite mobile ci-dessus).
 
 ## Suite
 
