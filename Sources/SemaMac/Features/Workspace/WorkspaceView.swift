@@ -83,7 +83,7 @@ struct WorkspaceView: View {
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }
-                if store.section != .overview {
+                if store.section != .overview, store.status != nil || store.connectedMarkets.isEmpty {
                     dataStatus.padding(.horizontal, SemaTheme.contentPadding).padding(.vertical, Self.statusPadding)
                 }
             }
@@ -337,7 +337,7 @@ struct WorkspaceView: View {
             Text(store.status ?? "Démonstration · valeurs fictives")
                 .lineLimit(Self.statusLines).help(store.status ?? "Les valeurs de démonstration ne sont pas des cours actuels.")
             Spacer(minLength: Self.statusSpacing)
-            if !store.hasWebstatKey {
+            if !store.hasWebstatKey, store.connectedMarkets.isEmpty {
                 Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
             }
         }

@@ -11,7 +11,7 @@ struct SourceExplorerView: View {
     @State private var sourceID = "webstat"
     var compact = false
     var close: (() -> Void)?
-    private var enabledIDs: [String] { (["webstat"] + StatisticalSource.allCases.map(\.rawValue)).filter { store.isSourceEnabled($0) } }
+    private var enabledIDs: [String] { (["webstat"] + MarketProvider.allCases.map(\.rawValue) + StatisticalSource.allCases.map(\.rawValue)).filter { store.isSourceEnabled($0) } }
     var body: some View {
         VStack(alignment: .leading, spacing: Self.sectionSpacing) {
             HStack {
@@ -19,7 +19,7 @@ struct SourceExplorerView: View {
                     ForEach(enabledIDs, id: \.self) { id in Text(store.sourceName(id)).tag(id) }
                 }.pickerStyle(.menu).frame(maxWidth: Self.pickerWidth) }
                 Spacer()
-                if !enabledIDs.isEmpty, sourceID != "webstat" {
+                if !enabledIDs.isEmpty, sourceID != "webstat", MarketProvider(rawValue: sourceID) == nil {
                     Label("Accès public · sans clé", systemImage: "network")
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
@@ -31,6 +31,8 @@ struct SourceExplorerView: View {
                 ContentUnavailableView("Choisissez vos sources", systemImage: "globe.europe.africa",
                     description: Text("Activez un catalogue dans les réglages pour explorer ses repères. Les historiques enregistrés restent disponibles."))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let provider = MarketProvider(rawValue: sourceID), store.isSourceEnabled(sourceID) {
+                MarketExplorerView(provider: provider, close: close).id(sourceID)
             } else if let source = StatisticalSource(rawValue: sourceID), store.isSourceEnabled(sourceID) {
                 StatisticalExplorerView(source: source, compact: compact, close: close).id(sourceID)
             } else if sourceID == "webstat", store.isSourceEnabled("webstat") { CatalogueBrowserView(compact: compact, close: close) }

@@ -55,7 +55,7 @@ struct SeriesDetailView: View {
                     OriginBadge(series: series)
                 }
             }
-            if !store.isSourceEnabled(series.statisticalDescriptor?.dataset.source.rawValue ?? store.sourceID(for: series.id)) {
+            if !store.isSourceEnabled(series.marketInstrument?.provider.rawValue ?? series.statisticalDescriptor?.dataset.source.rawValue ?? store.sourceID(for: series.id)) {
                 Label("Source désactivée · historique conservé, actualisations et alertes en pause.", systemImage: "pause.circle")
                     .font(.subheadline).foregroundStyle(.secondary)
             }
@@ -97,8 +97,10 @@ struct SeriesDetailView: View {
                         Text("Couverture : depuis " + MarketFormat.date(series.observations.first?.date))
                             .font(.subheadline).foregroundStyle(.secondary)
                         Spacer()
-                        Button("Charger tout l’historique") { store.loadAllHistory(series) }
-                            .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series))
+                        if series.marketInstrument == nil {
+                            Button("Charger tout l’historique") { store.loadAllHistory(series) }
+                                .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series))
+                        }
                     }
                 }
             }

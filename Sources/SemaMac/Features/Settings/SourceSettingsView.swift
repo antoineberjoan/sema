@@ -10,6 +10,9 @@ struct SourceSettingsView: View {
         Form {
             Section {
                 sourceRow(id: "webstat", title: "Banque de France · Webstat", summary: "Taux, crédit, épargne et statistiques financières.")
+                ForEach(MarketProvider.allCases) { provider in
+                    sourceRow(id: provider.rawValue, title: provider.title, summary: "Cours et historiques · clé personnelle.")
+                }
                 ForEach(StatisticalSource.allCases) { source in
                     sourceRow(id: source.rawValue, title: source.title, summary: summary(source))
                 }
@@ -30,9 +33,12 @@ struct SourceSettingsView: View {
                     }
                 }
                 Link("Obtenir une clé sur Webstat", destination: WebstatClient.loginURL)
-                Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Les autres sources sont accessibles sans clé.")
+                Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Les catalogues statistiques publics sont accessibles sans clé.")
                     .font(.subheadline).foregroundStyle(.secondary)
                 if let error = store.webstatError { Text(error).font(.subheadline).foregroundStyle(.red) }
+            }
+            ForEach(MarketProvider.allCases) { provider in
+                Section(provider.title) { MarketConnectionView(provider: provider) }
             }
         }
         .formStyle(.grouped).onDisappear { apiKey = "" }

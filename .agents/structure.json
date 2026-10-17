@@ -15,6 +15,7 @@
   "Sources/MarketCore/Preferences/": "Préférences locales, profil, raccourcis et leur persistance.",
   "Sources/MarketCore/Webstat/": "Client et catalogue Webstat de la Banque de France.",
   "Sources/MarketCore/Statistical/": "Producteurs statistiques publics, décodage SDMX et catalogues.",
+  "Sources/MarketCore/Markets/": "Catalogues et cours boursiers des fournisseurs à clé personnelle.",
   "Sources/MarketCore/ECB/": "Taux de change de référence publiés par la BCE.",
   "Sources/MarketCore/Demo/": "Séries fictives identifiées de la démonstration.",
   "Sources/SemaMac/AGENTS.md": "Règles propres à l’app native.",

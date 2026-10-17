@@ -4,6 +4,7 @@ import MarketCore
 
 extension AppStore {
     func checkWebstatKey() async {
+        await checkMarketKeys()
         guard !didCheckWebstatKey else { return }
         didCheckWebstatKey = true
         do { hasWebstatKey = try await webstatKeychain.read() != nil }
@@ -49,15 +50,19 @@ extension AppStore {
         var updated: [MarketSeries] = []; var failures: [String: String] = [:]
         var changedMeasurements: Set<String> = []
         let generations = sourceGenerations
+        var blockedMarkets: [String: String] = [:]
         for id in preferences.followedSeriesIDs {
             let source = sourceID(for: id)
             guard isSourceEnabled(source), generations[source] == sourceGenerations[source] else { continue }
+            if let blocked = blockedMarkets[source] { failures[id] = blocked; continue }
             do {
                 try Task.checkCancellation()
                 let old = series.first { $0.id == id && !$0.isDemo }
                 let value: MarketSeries
                 var measurementChanged = false
-                if let descriptor = old?.statisticalDescriptor ?? statisticalDescriptors[id] {
+                if let instrument = old?.marketInstrument {
+                    value = try await fetchMarket(instrument)
+                } else if let descriptor = old?.statisticalDescriptor ?? statisticalDescriptors[id] {
                     let structure = try await StatisticalClient().structure(dataset: descriptor.dataset)
                     value = try await StatisticalClient().fetch(dataset: descriptor.dataset, structure: structure, key: descriptor.key)
                     measurementChanged = value.statisticalDescriptor.map { !descriptor.usesSameMeasurement(as: $0) } ?? true
@@ -78,7 +83,13 @@ extension AppStore {
                         completeHistory: old?.hasCompleteHistory))
                 }
             } catch is CancellationError { break }
-            catch { if isSourceEnabled(source), generations[source] == sourceGenerations[source] { failures[id] = error.localizedDescription } }
+            catch {
+                if isSourceEnabled(source), generations[source] == sourceGenerations[source] {
+                    failures[id] = error.localizedDescription
+                    if MarketProvider(rawValue: source) != nil, let issue = error as? MarketDataError,
+                       issue == .quota || issue == .invalidKey { blockedMarkets[source] = issue.localizedDescription }
+                }
+            }
         }
         updated.removeAll { !isSourceEnabled(for: $0.id) || generations[sourceID(for: $0.id)] != sourceGenerations[sourceID(for: $0.id)] }
         if !changedMeasurements.isEmpty {
@@ -109,7 +120,7 @@ extension AppStore {
             evaluateAlerts(in: updated.filter { !changedMeasurements.contains($0.id) })
         }
         status = "\(updated.count) repères actualisés" + (failures.isEmpty ? " · alertes vérifiées." : " · \(failures.count) à vérifier.")
-        webstatError = failures.keys.contains { id in series.first(where: { $0.id == id })?.statisticalDescriptor == nil }
+        webstatError = failures.keys.contains { id in sourceID(for: id) == "webstat" }
             ? "Certaines séries Webstat demandent une vérification. Consultez leur détail." : nil
     }
 

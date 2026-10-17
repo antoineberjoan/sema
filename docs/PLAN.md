@@ -4,6 +4,8 @@ Index des chantiers. Un chantier à plusieurs étapes ou repris par un autre age
 
 ## En cours
 
+- [Connexions personnelles et catalogues de cours](plans/market-sources.md)
+
 - [Navigation clavier et bandeau Repère](plans/keyboard-navigation.md)
 
 ## À réconcilier
