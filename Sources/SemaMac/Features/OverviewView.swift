@@ -3,54 +3,41 @@ import MarketCore
 
 struct OverviewView: View {
     @Environment(AppStore.self) private var store
-    @State private var removal: MarketSeries?
+    var showsQuickSwitcher = false
 
     var body: some View {
-        if store.followedSeries.isEmpty {
+        if let selected = store.selectedSeries {
+            VStack(spacing: 32) {
+                SeriesDetailView(series: selected, focus: true)
+                if showsQuickSwitcher {
+                    ScrollView(.horizontal) {
+                        HStack(spacing: 28) {
+                            ForEach(store.followedSeries) { item in
+                                let current = item.id == selected.id
+                                Button { store.show(item) } label: {
+                                    Text(store.displayedSeries(item).name)
+                                        .font(.system(size: 12)).foregroundStyle(current ? .primary : .secondary)
+                                        .padding(.bottom, 10)
+                                        .overlay(alignment: .bottom) {
+                                            if current { Rectangle().frame(height: 1).foregroundStyle(.primary) }
+                                        }
+                                }
+                                .buttonStyle(.plain).accessibilityAddTraits(current ? .isSelected : [])
+                            }
+                        }.padding(.horizontal, 2)
+                    }
+                    .scrollIndicators(.hidden).fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        } else {
             ContentUnavailableView {
                 Label("Vos repères, à votre façon.", systemImage: "chart.xyaxis.line")
             } description: {
-                Text("Explorez les catalogues pour composer votre panorama.")
+                Text("Explorez les catalogues pour composer votre sélection.")
             } actions: {
                 Button("Explorer les repères") { store.section = .explorer }.buttonStyle(.borderedProminent)
             }
             .frame(maxWidth: .infinity, minHeight: 450)
-        } else {
-            HStack(alignment: .top, spacing: 26) {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text("Mes repères").font(.system(size: 12, weight: .medium)).foregroundStyle(.secondary)
-                        Spacer()
-                        Button { store.section = .explorer } label: { Image(systemName: "plus") }
-                            .buttonStyle(.borderless).help("Ajouter un repère")
-                    }.padding(.horizontal, 12)
-                    List {
-                        ForEach(store.followedSeries) { item in
-                            IndicatorTile(series: item, selected: store.selectedSeriesID == item.id) { store.show(item) }
-                                .listRowInsets(EdgeInsets()).listRowSeparator(.hidden)
-                                .listRowBackground(Color.clear)
-                                .contextMenu {
-                                    Button("Monter") { store.moveFollowed(item.id, by: -1) }
-                                    Button("Descendre") { store.moveFollowed(item.id, by: 1) }
-                                    Divider()
-                                    Button("Retirer de mes repères", role: .destructive) { removal = item }
-                                }
-                        }
-                        .onMove { store.moveFollowed(from: $0, to: $1) }
-                    }
-                    .listStyle(.plain).scrollContentBackground(.hidden).frame(minHeight: 510)
-                }
-                .frame(width: 285)
-                if let selected = store.selectedSeries {
-                    SeriesDetailView(series: selected).frame(minWidth: 360, maxWidth: .infinity)
-                }
-            }
-            .confirmationDialog("Retirer ce repère ?", isPresented: Binding(get: { removal != nil }, set: { if !$0 { removal = nil } }), titleVisibility: .visible) {
-                Button("Retirer de mes repères", role: .destructive) { if let removal { _ = store.unfollow(removal.id) }; removal = nil }
-                Button("Annuler", role: .cancel) { removal = nil }
-            } message: {
-                Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
-            }
         }
     }
 }
@@ -154,162 +141,197 @@ struct SeriesDetailView: View {
     @Environment(AppStore.self) private var store
     let series: MarketSeries
     var preview = false
+    var focus = false
     @State private var period: HistoryPeriod = .year
 
     var body: some View {
         let displayed = store.displayedSeries(series)
-        Surface {
-            VStack(alignment: .leading, spacing: 22) {
-                HStack(alignment: .top, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(displayed.name).font(.system(size: 18, weight: .semibold)).textSelection(.enabled)
+        VStack(alignment: .leading, spacing: focus ? 28 : 22) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(displayed.name)
+                        .font(.system(size: focus ? 14 : 18, weight: focus ? .regular : .semibold))
+                        .foregroundStyle(focus ? .secondary : .primary).textSelection(.enabled)
+                    if !focus {
                         Text(displayed.subtitle).font(.system(size: 12)).foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    Spacer(minLength: 0)
+                }
+                Spacer(minLength: 0)
+                if focus {
+                    periodPicker.frame(maxWidth: 320)
+                } else {
                     ExchangeDirectionButton(series: series)
                     OriginBadge(series: series)
                 }
-                if !store.isSourceEnabled(series.statisticalDescriptor?.dataset.source.rawValue ?? store.sourceID(for: series.id)) {
-                    Label("Source désactivée · historique conservé, actualisations et alertes en pause.", systemImage: "pause.circle")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-                VStack(alignment: .leading, spacing: 7) {
-                    Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
-                        .font(.system(size: 40, weight: .medium)).tracking(-1.2).monospacedDigit()
-                        .lineLimit(1).minimumScaleFactor(0.8)
-                    Text(displayed.displayUnit).font(.system(size: 12)).foregroundStyle(.secondary)
-                    if series.latest != nil {
-                        Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
-                            .font(.system(size: 11)).foregroundStyle(.secondary)
-                    }
-                }
-                if series.observations.isEmpty {
-                    ContentUnavailableView("Historique indisponible", systemImage: "chart.xyaxis.line",
-                        description: Text("La description de cette série reste consultable. Aucune observation numérique n’a été reçue."))
-                        .frame(height: 190)
-                } else {
-                    Picker("Période de l’historique", selection: $period) {
-                        ForEach(HistoryPeriod.allCases.filter { $0 == .all || series.supports($0) }) { Text($0.title).tag($0) }
-                    }
-                    .pickerStyle(.segmented).labelsHidden()
-                    HistoryChart(series: displayed, period: period, height: preview ? 170 : 235)
-                }
-                if period == .all, !series.isDemo, series.hasCompleteHistory != true {
-                    HStack(spacing: 12) {
-                        if store.historyLoadingID == series.id {
-                            ProgressView().controlSize(.small)
-                            Text(store.historyProgress ?? "Chargement…").font(.system(size: 11)).foregroundStyle(.secondary)
-                            Spacer()
-                            Button("Annuler") { store.cancelHistory() }.buttonStyle(.borderless)
-                        } else {
-                            Text("Couverture : depuis " + MarketFormat.date(series.observations.first?.date))
-                                .font(.system(size: 11)).foregroundStyle(.secondary)
-                            Spacer()
-                            Button("Charger tout l’historique") { store.loadAllHistory(series) }
-                                .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series))
-                        }
-                    }
-                }
-                HStack(alignment: .firstTextBaseline) {
-                    Label(observationPeriod, systemImage: "calendar")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                    Spacer(minLength: 8)
-                    if store.isFollowing(series.id) {
-                        Button {
-                            store.prepareAlert(for: series)
-                        } label: { Label("Créer une alerte", systemImage: "bell.badge") }
-                        .buttonStyle(.borderless).font(.system(size: 12)).disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
-                    }
-                }
-                if store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
-                    Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-                if !series.canAlert {
-                    Text("Alertes suspendues : l’unité ou son échelle n’est pas interprétée. Les codes de la source restent disponibles ci-dessous.")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-                if let error = store.seriesErrors[series.id] {
-                    Label(error + " Les observations conservées restent visibles.", systemImage: "exclamationmark.triangle")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-                DisclosureGroup("Source et définition") {
-                    VStack(alignment: .leading, spacing: 10) {
-                        if series.isDemo { Text("Valeurs fictives pour explorer l’application.") }
-                        else {
-                            if let descriptor = series.descriptor {
-                                Text(descriptor.definition).textSelection(.enabled)
-                                LabeledContent("Producteur", value: descriptor.producer)
-                                LabeledContent("Fréquence", value: descriptor.frequencyTitle)
-                                LabeledContent("Unité et échelle", value: descriptor.displayUnit)
-                                LabeledContent("Début publié", value: MarketFormat.date(descriptor.firstPeriod))
-                                LabeledContent("Dernière période", value: MarketFormat.date(descriptor.lastPeriod))
-                                if let base = descriptor.attributes["UNIT_INDEX_BASE"] { LabeledContent("Base de l’indice", value: base) }
-                            } else if let descriptor = series.statisticalDescriptor {
-                                Text(descriptor.definition).textSelection(.enabled)
-                                LabeledContent("Producteur", value: descriptor.fields["PRODUCER"] ?? series.source)
-                                LabeledContent("Fréquence", value: descriptor.frequency.title)
-                                LabeledContent("Unité et échelle", value: descriptor.displayUnit)
-                                Text(descriptor.dataset.source.attribution).textSelection(.enabled)
-                                Link("Conditions de réutilisation ↗", destination: descriptor.dataset.source.termsURL)
-                            } else { Text(series.frequency?.title ?? "Fréquence non renseignée") }
-                            if let status = series.latest?.status { LabeledContent("Statut de l’observation", value: status) }
-                            if let updated = series.latest?.updatedAt { LabeledContent("Mise à jour source", value: MarketFormat.date(updated)) }
-                            if let sync = series.syncedAt { LabeledContent("Téléchargé le", value: MarketFormat.date(sync)) }
-                            let accessPoints = SeriesEquivalence.accessPoints(for: series)
-                            if accessPoints.count > 1 {
-                                Text("Accès à cette même série").fontWeight(.medium)
-                                ForEach(accessPoints, id: \.sourceID) { point in
-                                    Link("\(store.sourceName(point.sourceID)) ↗", destination: point.url)
-                                }
-                            } else if let url = series.sourceURL { Link("Consulter la source ↗", destination: url) }
-                            Button("Recharger l’historique complet") { store.loadAllHistory(series, reload: true) }
-                                .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series) || store.historyLoadingID != nil)
-                        }
-                    }
+            }
+            if !store.isSourceEnabled(series.statisticalDescriptor?.dataset.source.rawValue ?? store.sourceID(for: series.id)) {
+                Label("Source désactivée · historique conservé, actualisations et alertes en pause.", systemImage: "pause.circle")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading).padding(.top, 8)
+            }
+            VStack(alignment: .leading, spacing: 7) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
+                        .font(.system(size: focus ? 72 : 40, weight: focus ? .regular : .medium))
+                        .tracking(focus ? -2.5 : -1.2).monospacedDigit()
+                        .lineLimit(1).minimumScaleFactor(0.55)
+                    if focus {
+                        Text(displayed.displayUnit).font(.system(size: 22)).foregroundStyle(.secondary)
+                        Spacer(minLength: 12)
+                        ExchangeDirectionButton(series: series)
+                        FavoriteButton(seriesID: series.id, seriesName: displayed.name)
+                    }
                 }
-                .font(.system(size: 11)).foregroundStyle(.secondary)
-                if let descriptor = series.descriptor {
-                    DisclosureGroup("Métadonnées de Webstat") {
-                        VStack(alignment: .leading, spacing: 7) {
-                            Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
-                            ForEach(descriptor.raw.keys.sorted(), id: \.self) { key in
-                                if let text = descriptor.raw[key]?.text {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(key).fontWeight(.medium)
-                                        Text(text).textSelection(.enabled)
-                                    }.frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                            }
-                        }.font(.system(size: 10)).padding(.top, 8)
-                    }.font(.system(size: 11)).foregroundStyle(.secondary)
-                }
-                if let descriptor = series.statisticalDescriptor {
-                    DisclosureGroup("Métadonnées de la source") {
-                        VStack(alignment: .leading, spacing: 7) {
-                            Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
-                            ForEach(descriptor.fields.keys.sorted(), id: \.self) { key in
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(key).fontWeight(.medium)
-                                    Text(descriptor.fields[key] ?? "").textSelection(.enabled)
-                                }.frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                        }.font(.system(size: 10)).padding(.top, 8)
-                    }.font(.system(size: 11)).foregroundStyle(.secondary)
+                if !focus { Text(displayed.displayUnit).font(.system(size: 12)).foregroundStyle(.secondary) }
+                if series.latest != nil {
+                    Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
+                        .font(.system(size: focus ? 13 : 11)).foregroundStyle(.secondary)
                 }
             }
+            if series.observations.isEmpty {
+                ContentUnavailableView("Historique indisponible", systemImage: "chart.xyaxis.line",
+                    description: Text("La description de cette série reste consultable. Aucune observation numérique n’a été reçue."))
+                    .frame(height: 190)
+            } else {
+                if !focus { periodPicker }
+                HistoryChart(series: displayed, period: period, height: focus ? 250 : preview ? 170 : 235, showsReading: !focus)
+            }
+            if period == .all, !series.isDemo, series.hasCompleteHistory != true {
+                HStack(spacing: 12) {
+                    if store.historyLoadingID == series.id {
+                        ProgressView().controlSize(.small)
+                        Text(store.historyProgress ?? "Chargement…").font(.system(size: 11)).foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Annuler") { store.cancelHistory() }.buttonStyle(.borderless)
+                    } else {
+                        Text("Couverture : depuis " + MarketFormat.date(series.observations.first?.date))
+                            .font(.system(size: 11)).foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Charger tout l’historique") { store.loadAllHistory(series) }
+                            .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series))
+                    }
+                }
+            }
+            HStack(alignment: .firstTextBaseline) {
+                Group {
+                    if focus { Text((series.isDemo ? "Données fictives · " : "") + series.source + " · " + observationPeriod) }
+                    else { Label(observationPeriod, systemImage: "calendar") }
+                }
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 8)
+                if store.isFollowing(series.id) {
+                    Button {
+                        store.prepareAlert(for: series)
+                    } label: { Label("Créer une alerte", systemImage: "bell.badge") }
+                    .buttonStyle(.borderless).font(.system(size: 12)).disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
+                }
+            }
+            if store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
+                Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+            if !series.canAlert {
+                Text("Alertes suspendues : l’unité ou son échelle n’est pas interprétée. Les codes de la source restent disponibles ci-dessous.")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+            if let error = store.seriesErrors[series.id] {
+                Label(error + " Les observations conservées restent visibles.", systemImage: "exclamationmark.triangle")
+                    .font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+            DisclosureGroup("Source et définition") {
+                VStack(alignment: .leading, spacing: 10) {
+                    if focus { Text(displayed.subtitle).textSelection(.enabled) }
+                    if series.isDemo { Text("Valeurs fictives pour explorer l’application.") }
+                    else {
+                        if let descriptor = series.descriptor {
+                            Text(descriptor.definition).textSelection(.enabled)
+                            LabeledContent("Producteur", value: descriptor.producer)
+                            LabeledContent("Fréquence", value: descriptor.frequencyTitle)
+                            LabeledContent("Unité et échelle", value: descriptor.displayUnit)
+                            LabeledContent("Début publié", value: MarketFormat.date(descriptor.firstPeriod))
+                            LabeledContent("Dernière période", value: MarketFormat.date(descriptor.lastPeriod))
+                            if let base = descriptor.attributes["UNIT_INDEX_BASE"] { LabeledContent("Base de l’indice", value: base) }
+                        } else if let descriptor = series.statisticalDescriptor {
+                            Text(descriptor.definition).textSelection(.enabled)
+                            LabeledContent("Producteur", value: descriptor.fields["PRODUCER"] ?? series.source)
+                            LabeledContent("Fréquence", value: descriptor.frequency.title)
+                            LabeledContent("Unité et échelle", value: descriptor.displayUnit)
+                            Text(descriptor.dataset.source.attribution).textSelection(.enabled)
+                            Link("Conditions de réutilisation ↗", destination: descriptor.dataset.source.termsURL)
+                        } else { Text(series.frequency?.title ?? "Fréquence non renseignée") }
+                        if let status = series.latest?.status { LabeledContent("Statut de l’observation", value: status) }
+                        if let updated = series.latest?.updatedAt { LabeledContent("Mise à jour source", value: MarketFormat.date(updated)) }
+                        if let sync = series.syncedAt { LabeledContent("Téléchargé le", value: MarketFormat.date(sync)) }
+                        let accessPoints = SeriesEquivalence.accessPoints(for: series)
+                        if accessPoints.count > 1 {
+                            Text("Accès à cette même série").fontWeight(.medium)
+                            ForEach(accessPoints, id: \.sourceID) { point in
+                                Link("\(store.sourceName(point.sourceID)) ↗", destination: point.url)
+                            }
+                        } else if let url = series.sourceURL { Link("Consulter la source ↗", destination: url) }
+                        Button("Recharger l’historique complet") { store.loadAllHistory(series, reload: true) }
+                            .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series) || store.historyLoadingID != nil)
+                    }
+                }
+                .font(.system(size: 11)).foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading).padding(.top, 8)
+            }
+            .font(.system(size: 11)).foregroundStyle(.secondary)
+            if let descriptor = series.descriptor {
+                DisclosureGroup("Métadonnées de Webstat") {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
+                        ForEach(descriptor.raw.keys.sorted(), id: \.self) { key in
+                            if let text = descriptor.raw[key]?.text {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(key).fontWeight(.medium)
+                                    Text(text).textSelection(.enabled)
+                                }.frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                        }
+                    }.font(.system(size: 10)).padding(.top, 8)
+                }.font(.system(size: 11)).foregroundStyle(.secondary)
+            }
+            if let descriptor = series.statisticalDescriptor {
+                DisclosureGroup("Métadonnées de la source") {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text(descriptor.key).font(.system(size: 10, design: .monospaced)).textSelection(.enabled)
+                        ForEach(descriptor.fields.keys.sorted(), id: \.self) { key in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(key).fontWeight(.medium)
+                                Text(descriptor.fields[key] ?? "").textSelection(.enabled)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }.font(.system(size: 10)).padding(.top, 8)
+                }.font(.system(size: 11)).foregroundStyle(.secondary)
+            }
         }
+        .modifier(SeriesDetailSurface(focus: focus))
         .onChange(of: series.id, initial: true) { _, _ in period = series.supports(.year) ? .year : .all }
     }
+
+    private var periodPicker: some View {
+        Picker("Période de l’historique", selection: $period) {
+            ForEach(HistoryPeriod.allCases.filter { $0 == .all || series.supports($0) }) { Text($0.title).tag($0) }
+        }
+        .pickerStyle(.segmented).labelsHidden()
+    }
+
     private var observationPeriod: String {
         guard let latest = series.latest else { return "Aucune observation disponible" }
         if let end = latest.periodEnd, end != latest.date {
             return "Période du " + MarketFormat.date(latest.date) + " au " + MarketFormat.date(end)
         }
         return "Observation du " + MarketFormat.date(latest.date)
+    }
+}
+
+private struct SeriesDetailSurface: ViewModifier {
+    let focus: Bool
+    @ViewBuilder func body(content: Content) -> some View {
+        if focus { content }
+        else { Surface { content } }
     }
 }
 
