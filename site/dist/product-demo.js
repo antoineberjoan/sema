@@ -152,8 +152,14 @@
     }
   });
   if ('IntersectionObserver' in window) {
+    let hasEntered = false;
     const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) { setStage(); observer.disconnect(); }
+      if (entry.isIntersecting && !hasEntered) {
+        hasEntered = true;
+        setStage();
+      } else if (!entry.isIntersecting) {
+        demo.dataset.stage = '0';
+      }
     }, { threshold: .3 });
     observer.observe(demo);
   }
