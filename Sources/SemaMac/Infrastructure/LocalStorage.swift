@@ -1,3 +1,4 @@
+// Adapte les chemins macOS et les caches locaux aux contrats de persistance du cœur.
 import Foundation
 import MarketCore
 

@@ -1,3 +1,4 @@
+// Vérifie le profil local, l’activation des sources et les équivalences de séries.
 import Foundation
 import Testing
 @testable import MarketCore

@@ -1,3 +1,4 @@
+// Vérifie les seuils stricts, la déduplication et la reprise des évaluations d’alertes.
 import Foundation
 import Testing
 @testable import MarketCore

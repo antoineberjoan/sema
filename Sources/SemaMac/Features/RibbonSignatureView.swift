@@ -1,3 +1,4 @@
+// Orchestre le tracé du symbole et la signature à chaque ouverture, avec réduction des animations.
 import AppKit
 import SwiftUI
 

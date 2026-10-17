@@ -1,3 +1,4 @@
+// Assemble les scènes SwiftUI et le cycle de vie de l’app accessible depuis la barre de menus.
 import AppKit
 import SwiftUI
 import UserNotifications

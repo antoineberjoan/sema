@@ -1,3 +1,4 @@
+// Lit, migre et écrit atomiquement les préférences sans remplacer un document illisible.
 import Foundation
 
 public struct AppPreferences: Codable, Equatable, Sendable {

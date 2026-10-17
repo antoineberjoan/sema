@@ -1,3 +1,4 @@
+// Propose la recherche rapide locale et Webstat avec sélection au clavier.
 import SwiftUI
 import MarketCore
 

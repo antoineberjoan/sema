@@ -1,3 +1,4 @@
+// Explore les jeux et dimensions des sources publiques pour ajouter un repère précis.
 import SwiftUI
 import MarketCore
 

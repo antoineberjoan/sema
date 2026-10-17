@@ -1,3 +1,4 @@
+// Réunit les rubriques de réglages dans la fenêtre native de sema.
 import SwiftUI
 
 struct SemaSettingsView: View {

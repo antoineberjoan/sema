@@ -1,3 +1,4 @@
+// Dessine le fond d’installation du DMG à partir du symbole et des conventions sema.
 import AppKit
 import Foundation
 

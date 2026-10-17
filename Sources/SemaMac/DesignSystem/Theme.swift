@@ -1,3 +1,4 @@
+// Centralise palettes, formatage financier, symbole et composants visuels partagés.
 import AppKit
 import SwiftUI
 import MarketCore

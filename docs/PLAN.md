@@ -1,5 +1,7 @@
 # Plan sema pour le catalogue et la distribution
 
+Navigation du travail : [socle agentique en cours](plans/agent-foundation.md). Les plans ci-dessous sont conservés dans leur état documenté ; certains lots ont depuis été implémentés. Leur statut doit être réconcilié avec les preuves et l’arbitrage d’Antoine avant de les reprendre comme tâches. Le périmètre courant est décrit dans [PRODUCT.md](PRODUCT.md).
+
 16 octobre 2026. Direction validée avec Antoine ; fonctionnalités ci-dessous à réaliser. Le logo de barre de menus à 2 pt est déjà intégré et compilé.
 
 sema doit permettre à chaque utilisateur de composer ses repères dans le catalogue Webstat. La première installation doit prolonger la même identité, du site au DMG puis à l’accueil natif. L’ouverture du catalogue et la distribution sont deux chantiers distincts, avec une exigence commune : une interface calme, précise et attentive.

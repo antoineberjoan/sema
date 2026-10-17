@@ -1,3 +1,4 @@
+// Reconnaît les paires vérifiées et projette leur cotation inverse uniquement pour l’affichage.
 import Foundation
 
 /// A verified ECB spot quotation, published as units of currency for one euro.

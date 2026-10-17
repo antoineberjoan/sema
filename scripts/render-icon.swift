@@ -1,3 +1,4 @@
+// Produit les tailles d’icône nécessaires au bundle à partir du tracé natif du symbole.
 import AppKit
 import Foundation
 

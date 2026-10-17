@@ -1,3 +1,4 @@
+// Gère l’autorisation et l’envoi des notifications système demandées par l’app.
 import Foundation
 import UserNotifications
 

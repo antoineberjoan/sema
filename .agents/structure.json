@@ -1,0 +1,22 @@
+{
+  "AGENTS.md": "Entrée commune et règles de travail du projet.",
+  "CLAUDE.md": "Import de l’entrée commune pour Claude Code, sans copie des règles.",
+  "README.md": "Démarrage et navigation dans le dépôt.",
+  "Package.swift": "Cibles, produits et plateforme du package Swift.",
+  ".gitignore": "Exclusion des secrets, caches et sorties locales.",
+  ".agents/": "Structure contrôlée et procédures portables chargées à la demande.",
+  ".githooks/": "Contrôles Git locaux sans publication ni modification des fichiers.",
+  ".github/": "CI et contrats des issues et pull requests.",
+  "Sources/MarketCore/": "Modèles, calculs, contrats de données et persistance indépendants de l’interface.",
+  "Sources/SemaMac/AGENTS.md": "Règles propres à l’app native.",
+  "Sources/SemaMac/App/": "Cycle de vie, commandes et état partagé de l’app.",
+  "Sources/SemaMac/Features/": "Parcours et vues organisés par fonctionnalité.",
+  "Sources/SemaMac/DesignSystem/": "Composants, formatage et choix visuels réutilisés.",
+  "Sources/SemaMac/Infrastructure/": "Effets dépendants de macOS et adaptation aux services système.",
+  "Tests/MarketCoreTests/": "Preuves exécutables des règles métier et contrats de données.",
+  "Resources/": "Métadonnées du bundle et ressources graphiques livrées.",
+  "scripts/": "Construction, contrôles et distribution ; scripts/tests vérifie ces outils.",
+  "docs/": "Contrats techniques, décisions, plans et preuves ; engineering décrit le socle agentique.",
+  "site/": "Sources du site statique, guide de marque et configuration de publication.",
+  "distribution/": "Manifeste canonique de release et copie du cask public."
+}

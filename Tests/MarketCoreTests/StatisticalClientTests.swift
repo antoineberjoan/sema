@@ -1,3 +1,4 @@
+// Vérifie les contrats de découverte et de décodage des fournisseurs publics.
 import Foundation
 import Testing
 @testable import MarketCore

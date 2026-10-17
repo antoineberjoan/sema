@@ -1,3 +1,4 @@
+// Présente, édite et teste les règles de seuil sur les séries suivies.
 import SwiftUI
 import MarketCore
 

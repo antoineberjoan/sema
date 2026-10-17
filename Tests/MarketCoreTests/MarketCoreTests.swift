@@ -1,3 +1,4 @@
+// Vérifie les modèles, variations et contrats de persistance du cœur.
 import Foundation
 import Testing
 @testable import MarketCore

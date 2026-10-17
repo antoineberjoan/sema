@@ -1,3 +1,4 @@
+// Vérifie la conservation du mode d’apparence et le repli des préférences anciennes.
 import Foundation
 import Testing
 @testable import MarketCore

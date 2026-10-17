@@ -1,3 +1,4 @@
+// Présente les connexions et l’activation des sources sans effacer leurs données en cache.
 import SwiftUI
 import MarketCore
 

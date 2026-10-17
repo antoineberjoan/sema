@@ -1,3 +1,4 @@
+// Permet de chercher et prévisualiser les séries Webstat avant de les ajouter à sa sélection.
 import SwiftUI
 import MarketCore
 

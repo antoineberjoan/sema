@@ -1,3 +1,4 @@
+// Place et ferme le panneau macOS des favoris en coordonnant écrans, événements et transitions.
 import AppKit
 import SwiftUI
 import QuartzCore

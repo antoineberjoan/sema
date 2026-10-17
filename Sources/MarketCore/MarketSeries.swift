@@ -1,3 +1,4 @@
+// Porte les séries, observations, unités et périodes, ainsi que leurs variations financières.
 import Foundation
 
 public enum SeriesCategory: String, Codable, CaseIterable, Sendable {

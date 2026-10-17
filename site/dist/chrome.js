@@ -1,3 +1,4 @@
+// Adapte le lien de téléchargement du header à la visibilité de l’action principale.
 const header = document.querySelector('.marketing-header');
 const headerDownload = header?.querySelector('[data-header-download]');
 const primaryDownload = document.querySelector('.hero .button, .release-action [data-download]');

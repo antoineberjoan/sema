@@ -1,7 +1,8 @@
-name: Swift checks
+name: Contrôles sema
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -19,7 +20,7 @@ jobs:
           persist-credentials: false
       - name: Toolchain
         run: swift --version
-      - name: Build and test
+      - name: Garde-fous et tests
         run: ./scripts/check.sh
       - name: Create local app bundle
         run: SEMA_CONFIGURATION=debug ./scripts/build-app.sh

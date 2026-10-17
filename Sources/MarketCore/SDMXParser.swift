@@ -1,3 +1,4 @@
+// Décode les structures et observations SDMX en conservant leurs métadonnées officielles.
 import Foundation
 
 /// The same XML reader handles SDMX 2.1 generic and structure-specific messages.

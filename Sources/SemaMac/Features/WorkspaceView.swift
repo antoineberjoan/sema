@@ -1,3 +1,4 @@
+// Organise Focus et la sidebar persistante ou survolée, avec sélection ordonnée et accès au profil.
 import SwiftUI
 import MarketCore
 

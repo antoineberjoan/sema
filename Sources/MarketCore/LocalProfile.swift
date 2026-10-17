@@ -1,3 +1,4 @@
+// Décrit l’identité locale facultative, sans compte ni métadonnées de photo originales.
 import Foundation
 
 /// Optional identity for this Mac. No account, network service or original photo metadata.

@@ -1,3 +1,4 @@
+// Résout le mode système, clair ou sombre de manière commune à SwiftUI et AppKit.
 import AppKit
 import SwiftUI
 

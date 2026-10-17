@@ -1,3 +1,4 @@
+// Fournit les séries fictives identifiées pour explorer l’app sans connexion.
 import Foundation
 
 /// Fixed fixtures. No value in this catalog is presented as a current market quote.

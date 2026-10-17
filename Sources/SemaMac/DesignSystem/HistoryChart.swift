@@ -1,3 +1,4 @@
+// Dessine l’historique et permet de lire l’observation originale au survol du graphique.
 import SwiftUI
 import Charts
 import MarketCore

@@ -1,3 +1,4 @@
+// Coordonne les données, préférences et actions partagées par la fenêtre et le bandeau sur le MainActor.
 import AppKit
 import Foundation
 import Observation

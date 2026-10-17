@@ -1,3 +1,4 @@
+// Vérifie l’inversion des cotations, les variations et le rejet des valeurs non inversibles.
 import Foundation
 import Testing
 @testable import MarketCore

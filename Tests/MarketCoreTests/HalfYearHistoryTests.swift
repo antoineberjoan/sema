@@ -1,3 +1,4 @@
+// Vérifie la fenêtre de six mois et sa disponibilité selon les observations reçues.
 import Foundation
 import Testing
 @testable import MarketCore

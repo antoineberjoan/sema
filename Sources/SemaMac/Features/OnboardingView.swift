@@ -1,3 +1,4 @@
+// Guide la première connexion et le choix des repères sans remplacer la sélection personnelle.
 import SwiftUI
 import MarketCore
 

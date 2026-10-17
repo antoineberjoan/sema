@@ -1,3 +1,4 @@
+// Définit les seuils et évalue les franchissements sans doubler les notifications d’une observation.
 import Foundation
 
 public enum AlertDirection: String, Codable, CaseIterable, Sendable {

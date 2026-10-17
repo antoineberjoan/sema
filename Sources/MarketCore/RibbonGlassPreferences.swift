@@ -1,3 +1,4 @@
+// Normalise les réglages du verre indépendamment de la palette et du mode d’affichage.
 import Foundation
 
 /// Appearance of the ribbon surfaces, independent of the palette and display mode.

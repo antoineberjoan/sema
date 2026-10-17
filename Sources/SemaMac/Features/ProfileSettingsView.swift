@@ -1,3 +1,4 @@
+// Permet de modifier le profil de ce Mac et sa photo sans créer de compte.
 import SwiftUI
 import UniformTypeIdentifiers
 

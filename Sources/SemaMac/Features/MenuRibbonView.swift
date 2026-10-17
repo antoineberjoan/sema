@@ -1,3 +1,4 @@
+// Présente les favoris et leurs historiques dans le bandeau partagé avec le hub.
 import AppKit
 import SwiftUI
 import Charts

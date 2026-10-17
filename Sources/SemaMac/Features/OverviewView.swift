@@ -1,3 +1,4 @@
+// Présente le détail Focus, les favoris et les actions de lecture des séries.
 import SwiftUI
 import MarketCore
 

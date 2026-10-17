@@ -1,4 +1,5 @@
 #!/bin/bash
+# Construit le bundle macOS local, ses ressources et sa signature ad hoc.
 set -euo pipefail
 
 project_root="$(cd "$(dirname "$0")/.." && pwd)"

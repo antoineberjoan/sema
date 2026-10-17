@@ -1,3 +1,4 @@
+/* Définit la base visuelle et les composants partagés des pages publiques. */
 :root {
   color-scheme: dark;
   --page: #101010;

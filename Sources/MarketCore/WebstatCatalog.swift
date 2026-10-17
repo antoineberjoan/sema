@@ -1,3 +1,4 @@
+// Modélise les descripteurs, valeurs brutes et recherches paginées du catalogue Webstat.
 import Foundation
 
 /// Source values are kept verbatim, including fields that Sema does not interpret yet.
