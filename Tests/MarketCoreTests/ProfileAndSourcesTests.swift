@@ -14,6 +14,9 @@ struct ProfileAndSourcesTests {
         #expect(restored.followedSeriesIDs.isEmpty)
         #expect(restored.profile == nil)
         for id in ["webstat"] + StatisticalSource.allCases.map(\.rawValue) { #expect(restored.isSourceEnabled(id)) }
+        let fresh = AppPreferences()
+        #expect(StatisticalSource.allCases.filter { !fresh.isSourceEnabled($0.rawValue) }.map(\.rawValue).sorted() == ["bis", "newYorkFed", "oecd", "worldBank"])
+        #expect(fresh.isSourceEnabled("webstat") && fresh.isSourceEnabled("insee") && fresh.isSourceEnabled("ecb") && fresh.isSourceEnabled("eurostat"))
     }
 
     @Test func localProfileAndSourcePausesSurviveAtomicSave() throws {

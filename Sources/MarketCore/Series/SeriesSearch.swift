@@ -14,6 +14,9 @@ public enum SeriesSearch {
 
     private static let aliases = [
         "fr10": "OAT France français dix ans emprunt phare obligataire rendement mensuel",
+        "de10": "Bund allemand Allemagne dix ans obligataire rendement mensuel",
+        "us10": "Treasury américain États-Unis US dix ans obligataire rendement mensuel",
+        "mro": "BCE refinancement principal MRO taux directeur",
         "ecb": "BCE Banque centrale européenne facilité dépôt taux directeur",
         "estr": "ESTR euro short term monétaire",
         "mortgage-fr": "crédit immobilier immo emprunt prêt habitat logement",

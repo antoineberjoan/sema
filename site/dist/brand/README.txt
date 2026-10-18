@@ -1,7 +1,7 @@
 sema — IDENTITÉ 1.3
 16 octobre 2026
 
-Ouvrir index.html pour consulter le guide et ses démonstrations hors ligne.
+Ouvrir index.html pour consulter le guide hors ligne.
 Version hébergée : https://sema.raregoat8192.chatgpt.site/brand/
 
 Signature : Gardez vos repères.
@@ -22,10 +22,8 @@ tokens.json contient les choix de référence ; tokens.css les variables web.
 La police du guide est la police système. La signature SVG contient uniquement
 les contours des quatre lettres : aucun fichier de police n’est embarqué.
 
-Le laboratoire est une démonstration de marque : aucun appel API, aucune notification
-système et aucune surveillance financière. Ses valeurs sont fictives. Les séquences
-restent une spécification de design à intégrer progressivement dans l’app.
-Le nouveau symbole est intégré à l’app SwiftUI et à la landing.
+L’aperçu de thème du guide emploie des valeurs fictives : aucun appel API, aucune notification
+système et aucune surveillance financière. Le nouveau symbole est intégré à l’app SwiftUI et à la landing.
 
-Les sources Interface Craft sont liées dans la section Références du guide.
+Interface Craft, notre méthode, est citée dans la ligne Méthode du chapitre 01 du guide.
 Le contenu du cours n’est pas reproduit dans le kit.

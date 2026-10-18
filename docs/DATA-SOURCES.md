@@ -29,7 +29,10 @@ Les catalogues publics supplémentaires sont désormais intégrés dans l’incr
 | `eurchf` | `EXR.D.CHF.EUR.SP00.A` | Référence quotidienne ; CHF pour 1 EUR. |
 | `eurgbp` | `EXR.D.GBP.EUR.SP00.A` | Référence quotidienne ; GBP pour 1 EUR. |
 | `mortgage-fr` | `MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N` | Mensuelle ; nouveaux crédits à l’habitat hors renégociations, pas un TAEG ni une offre bancaire. |
-| `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage compact : « Emprunt phare FR · 10 ans ». Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
+| `de10` | `FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD` | Bund à 10 ans : même définition que `fr10` pour l’Allemagne, moyenne mensuelle du rendement de l’obligation de référence. Ajouté le 18 octobre 2026 à la sélection de départ pour comparer avec la France. |
+| `us10` | `FM.M.US.USD.FR2.BB.US10YT_RR.YLD` | Treasury américain à 10 ans, même définition, rendement en % annuel. Ajouté le 18 octobre 2026 ; observations non encore vérifiées par appel réel. |
+| `mro` | `FM.D.U2.EUR.4F.KR.MRR_FR.LEV` | Quotidienne ; taux des opérations principales de refinancement de la BCE. Ajouté le 18 octobre 2026 ; observations non encore vérifiées par appel réel. |
+| `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage : « OAT France · 10 ans » (public de conseillers en gestion de patrimoine, décision d’Antoine, 18 octobre 2026). Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
 
 Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. Les anciens identifiants sema sont migrés vers la clé Webstat, qui devient l’identifiant stable des observations, favoris et alertes.
 
@@ -48,7 +51,7 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 
 ## Démonstration et compatibilité
 
-Avant connexion, les treize repères de départ portent `isDemo = true` ; huit d’entre eux disposent des fixtures historiques de `DemoCatalog`, les autres ne reçoivent pas de valeurs inventées. Après connexion, les séries choisies sont remplacées par les observations reçues de Webstat. Les fonds ne sont plus exposés ; leurs anciennes règles et favoris restent conservés sans être actifs. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
+Avant connexion, les seize repères de départ portent `isDemo = true` ; huit d’entre eux disposent des fixtures historiques de `DemoCatalog`, les autres ne reçoivent pas de valeurs inventées. Après connexion, les séries choisies sont remplacées par les observations reçues de Webstat. Les fonds ne sont plus exposés ; leurs anciennes règles et favoris restent conservés sans être actifs. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
 
 L’ancien client public `ECBExchangeRateClient` et son parseur restent présents pour compatibilité. Si aucun cache Webstat n’existe, les trois parités de l’ancien `ecb-cache.json` peuvent encore être consultées. L’interface actuelle n’appelle plus directement le flux BCE de 90 jours.
 
@@ -75,9 +78,9 @@ Repérage du 16 octobre 2026 à partir du catalogue officiel et de ses fiches. L
 
 | Priorité | Repère candidat | Série / fréquence | Intérêt pour un CGP |
 | --- | --- | --- | --- |
-| Haute | Bund allemand à 10 ans | [FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD](https://webstat.banque-france.fr/fr/catalogue/fm/FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD), mensuelle, BdF | Comparaison avec France 10 ans ; écart de taux mensuels à dates et conventions alignées. |
-| Haute | États-Unis à 10 ans | [FM.M.US.USD.FR2.BB.US10YT_RR.YLD](https://webstat.banque-france.fr/fr/catalogue/fm/FM.M.US.USD.FR2.BB.US10YT_RR.YLD), mensuelle, BdF | Contexte mondial des taux longs. |
-| Haute | BCE refinancement principal | [FM.D.U2.EUR.4F.KR.MRR_FR.LEV](https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.U2.EUR.4F.KR.MRR_FR.LEV), quotidienne, BCE via BdF | Compléter le taux de dépôt déjà présent. |
+| Intégré | Bund allemand à 10 ans | [FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD](https://webstat.banque-france.fr/fr/catalogue/fm/FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD), mensuelle, BdF | Comparaison avec France 10 ans ; écart de taux mensuels à dates et conventions alignées. |
+| Intégré | États-Unis à 10 ans | [FM.M.US.USD.FR2.BB.US10YT_RR.YLD](https://webstat.banque-france.fr/fr/catalogue/fm/FM.M.US.USD.FR2.BB.US10YT_RR.YLD), mensuelle, BdF | Contexte mondial des taux longs. |
+| Intégré | BCE refinancement principal | [FM.D.U2.EUR.4F.KR.MRR_FR.LEV](https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.U2.EUR.4F.KR.MRR_FR.LEV), quotidienne, BCE via BdF | Compléter le taux de dépôt déjà présent. |
 | Haute | BCE prêt marginal | [FM.D.U2.EUR.4F.KR.MLFR.LEV](https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.U2.EUR.4F.KR.MLFR.LEV), quotidienne, BCE via BdF | Compléter le corridor des taux directeurs. |
 | Haute | Crédit immobilier par durée | Famille `MIR1.Q.FR.R.A22FRX`, trimestrielle : durées `<10`, `10–<15`, `15–<20`, `20–<25`, `25+` ans | Comparer les conditions par horizon ; taux effectifs au sens étroit, pas une grille commerciale ni un TAEG. [Exemple 20–<25 ans](https://webstat.banque-france.fr/fr/catalogue/mir1/MIR1.Q.FR.R.A22FRX.Y.R.A.2254FR.EUR.N). |
 | Haute | Taux d’usure immobilier | `MIR1.Q.FR.R.A22FRF.W1/W2/W3.U.A.2254FR.EUR.N`, trimestrielle ; vérifier les trois fiches complètes avant intégration | Plafonds réglementaires selon la durée. [Sélection officielle](https://webstat.banque-france.fr/fr/selection/5385584/). Les variantes mensuelles arrêtées ne doivent pas être reprises. |

@@ -8,7 +8,7 @@ Cinq rubriques : Général, Sources, Profil, Apparence, À propos. « Mon espace
 
 ### Sources
 
-Un interrupteur par source : Webstat, Insee, BCE, Eurostat, BRI, OCDE, Fed de New York et Banque mondiale. Les réglages n’exposent pas une liste éditoriale de séries : Explorer garde les catalogues complets des sources activées et le choix des jeux et dimensions. Aucun catalogue complet d’observations n’est importé automatiquement.
+Un interrupteur par source : Webstat, Insee, BCE, Eurostat, BRI, OCDE, Fed de New York et Banque mondiale. À la première ouverture, Webstat, Insee, BCE et Eurostat sont actives ; les quatre autres, plus spécialisées, s’activent dans les réglages (décision d’Antoine, 18 octobre 2026). Les préférences existantes ne changent pas. Les réglages n’exposent pas une liste éditoriale de séries : Explorer garde les catalogues complets des sources activées et le choix des jeux et dimensions. Aucun catalogue complet d’observations n’est importé automatiquement.
 
 - Les préférences existantes continuent à rendre toutes les sources accessibles. Aucune hiérarchie ou sélection de fournisseurs n’est imposée.
 - Désactiver une source la retire d’Explorer et suspend son actualisation, le chargement d’historique et les alertes correspondantes. Les repères, favoris, règles et observations restent conservés. La connexion Webstat est distincte : désactiver Webstat ne supprime pas sa clé.

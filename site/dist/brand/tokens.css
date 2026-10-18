@@ -1,17 +1,154 @@
-/* Déclare les couleurs et valeurs visuelles réutilisées dans le guide de marque. */
+/* Déclare les valeurs visuelles de la marque, du guide et du site ; aucune autre feuille CSS n’écrit de valeur brute. */
 :root {
+  /* Identité (tokens.json) */
   --ink: #141414;
   --paper: #FAFAFA;
   --secondary: #AAAAAA;
+  --secondary-light: #5C5C5C;
   --surface: #262626;
   --graphite: #474747;
   --signal: #D6D6D6;
-  --motion-feedback: 120ms;
-  --motion-selection: 180ms;
-  --motion-panel: 240ms;
-  --motion-exit: 160ms;
-  --motion-ease: cubic-bezier(.22, 1, .36, 1);
   --radius-control: 8px;
   --radius-surface: 16px;
   --shadow-panel: 0 2px 4px #0003, 0 12px 26px #0002;
+  --motion-feedback: 120ms;
+  --motion-selection: 180ms;
+
+  /* Surfaces et texte du site */
+  --page: #0e0e0e;
+  --page-glass: #0e0e0ed9;
+  --page-glass-solid: #0e0e0ef2;
+  --surface-deep: #1f1f1f;
+  --tile-light: #e5e5e5;
+  --tile-ink: #303030;
+  --paper-soft: #f5f5f5;
+  --bright: #ffffff;
+  --text: #eeeeee;
+  --text-strong: #dbdbdb;
+  --text-soft: #c2c2c2;
+  --meta: #b4b4b4;
+  --muted: #929292;
+  --quiet: #858585;
+  --line: #555555;
+  --button: #efefef;
+  --button-ink: #171717;
+  --veil: #ffffff0c;
+  --selection: #d6d6d633;
+
+  /* Typographie */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 600;
+  --text-1: 10px;
+  --text-2: 11px;
+  --text-3: 12px;
+  --text-4: 13px;
+  --text-5: 14px;
+  --text-6: 16px;
+  --text-7: 18px;
+  --text-8: 20px;
+  --text-9: 24px;
+  --text-10: 28px;
+  --text-11: 32px;
+  --text-12: 40px;
+  --text-13: 48px;
+  --text-command: clamp(13px, 1.4vw, 18px);
+  --display-hero: clamp(42px, 5.6vw, 80px);
+  --display-hero-compact: clamp(39px, 8.7vw, 58px);
+  --display-brand: clamp(60px, 7.5vw, 104px);
+  --display-section: clamp(27px, 3.1vw, 40px);
+  --display-legal: clamp(30px, 4vw, 44px);
+  --display-specimen: 124px;
+  --display-specimen-compact: 100px;
+  --tracking-tight: -.01em;
+  --tracking-title: -.02em;
+  --tracking-heading: -.04em;
+  --tracking-display: -.045em;
+  --tracking-specimen: -.08em;
+  --tracking-label: .03em;
+  --underline-offset: 4px;
+
+  /* Espacement et dimensions */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-11: 80px;
+  --space-12: 96px;
+  --space-13: 128px;
+  --block-1: 160px;
+  --block-2: 192px;
+  --block-3: 224px;
+  --block-4: 256px;
+  --block-5: 288px;
+  --block-6: 320px;
+  --block-8: 448px;
+  --width-content: 1360px;
+  --width-chrome: 1520px;
+  --width-guide: 1120px;
+  --width-prose: 720px;
+  --wrap-fill: 88%;
+  --target-min: 44px;
+  --control-height: 52px;
+  --control-height-compact: 34px;
+  --mark-size: 36px;
+  --header-height: 76px;
+  --header-gap: 24px;
+  --header-download-width: 116px;
+  --focus-width: 2px;
+  --blur-glass: 16px;
+  --radius-card: 12px;
+  --radius-panel: 20px;
+  --radius-pill: 999px;
+  --layer-header: 10;
+  --layer-skip: 20;
+  --shadow-button: 0 4px 16px #0002;
+  --motion-write: cubic-bezier(.35, 0, .2, 1);
+  --logo-write-delay: 160ms;
+  --logo-write-duration: 2400ms;
+
+  /* Scènes de présentation de la landing : une seule fois, à l’entrée dans l’écran ; les tons viennent des thèmes sema (Bleu ciel, Lavande, Menthe, Sarcelle) */
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  --motion-spring: cubic-bezier(.34, 1.45, .64, 1);
+  --scene-settle: 900ms;
+  --scene-enter: 400ms;
+  --scene-stagger: 90ms;
+  --scene-draw: 1200ms;
+  --scene-cards-start: 200ms;
+  --scene-lines-start: 900ms;
+  --scene-keys: 1100ms;
+  --scene-panel-start: 900ms;
+  --scene-type-start: 1500ms;
+  --scene-type: 640ms;
+  --scene-results-start: 2300ms;
+  --scene-select-start: 3100ms;
+  --scene-step: 700ms;
+  --scene-open-start: 5400ms;
+  --scene-pointer-start: 7000ms;
+  --scene-pointer: 2600ms;
+  --scene-swap: 700ms;
+  --scene-swap-start: 8600ms;
+  --scene-loop: 13000ms;
+  --scene-dot-delay: 1000ms;
+  --scene-tint: 22%;
+  --tone-sky: #89cff3;
+  --tone-lavender: #d0a2f7;
+  --tone-mint: #9ed5c5;
+  --tone-teal: #2d9596;
+}
+
+@media (max-width: 700px) {
+  :root {
+    --wrap-fill: calc(100% - var(--space-8));
+    --header-height: 64px;
+    --header-gap: var(--space-4);
+  }
 }

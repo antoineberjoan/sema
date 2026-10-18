@@ -177,7 +177,7 @@ struct WebstatCatalogTests {
         try old.write(to: file)
         let store = PreferencesStore(fileURL: file)
         let migrated = try store.load()
-        #expect(migrated.followedSeriesIDs.count == 13)
+        #expect(migrated.followedSeriesIDs.count == WebstatClient.starterIDs.count)
         #expect(try Data(contentsOf: file.appendingPathExtension("v1-backup")) == old)
         #expect(try store.load() == migrated)
     }

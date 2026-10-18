@@ -4,6 +4,8 @@ import Foundation
 public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifiable {
     case insee, ecb, eurostat, bis, oecd, newYorkFed, worldBank
     public var id: String { rawValue }
+    /// Sources de niche pour un conseiller : proposées dans les réglages, inactives à la première ouverture.
+    public static let inactiveByDefault: Set<String> = [StatisticalSource.bis, .oecd, .newYorkFed, .worldBank].reduce(into: []) { $0.insert($1.rawValue) }
     public var title: String {
         switch self { case .insee: "Insee"; case .ecb: "BCE"; case .eurostat: "Eurostat"
         case .bis: "BRI"; case .oecd: "OCDE"; case .newYorkFed: "Fed de New York"; case .worldBank: "Banque mondiale" }

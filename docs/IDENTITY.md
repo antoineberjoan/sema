@@ -65,7 +65,7 @@ Le nom s’écrit **sema**, toujours en minuscules, y compris en début de phras
 
 Signature : **Gardez vos repères.** La promesse est de réunir les repères économiques du conseiller dans une petite app Mac. Trois qualités guident les choix : calme, précision, attention aux détails. Le ton est direct, posé et concret ; vouvoiement, phrases courtes, vocabulaire financier explicité. Toujours afficher source, période et unité. Une hausse de taux n’est pas automatiquement une bonne nouvelle : garder une couleur neutre et une variation signée.
 
-Le guide de marque v1.3 et ses démonstrations de mouvement sont accessibles dans le site privé, à `/brand/`. Le kit de livraison comprend les SVG, les tokens JSON/CSS et le guide HTML autonome. Les démonstrations du guide ne changent pas le fonctionnement de l’app. Les animations actuelles restent natives, avec Réduire les animations respecté ; toute nouvelle séquence se valide au clavier, à vitesse normale et en interruption rapide.
+Le guide de marque v1.3, volontairement minimal (marque, signe, couleur, typographie, voix, kit), est accessible sans lien public à `/brand/`. Il sert de kit de livraison : SVG, tokens JSON/CSS et guide HTML autonome. Les décisions et leur explication vivent dans Notion ; l’interface et le mouvement se jugent dans l’app. Les animations actuelles restent natives, avec Réduire les animations respecté ; toute nouvelle séquence se valide au clavier, à vitesse normale et en interruption rapide.
 
 ### Présentation web — retenue du 17 octobre
 

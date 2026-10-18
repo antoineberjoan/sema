@@ -50,6 +50,17 @@ IDENTIFIER = re.compile(r"\b[A-Za-z_]\w*\b")
 TOP_EXTENSION = re.compile(r"^(?:@\w+\s+)*(?:(?:public|internal|private|fileprivate)\s+)?extension\s+(?P<name>\w+)", re.MULTILINE)
 
 
+# Une valeur visuelle du site se nomme une fois dans la feuille de tokens ; les paliers `@media` ne peuvent pas utiliser de variable.
+TOKEN_SHEET = "site/dist/brand/tokens.css"
+CSS_NOISE = re.compile(r"/\*[\s\S]*?\*/|\"[^\"\n]*\"|'[^'\n]*'|url\([^)]*\)|@(?:media|supports)[^{]*")
+RAW_STYLE = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\(|cubic-bezier\(|(?<![\w.#])(?P<number>\d*\.?\d+)(?P<unit>px|ms|s|rem)\b"
+                       r"|\b(?:z-index|font-weight|letter-spacing)\s*:\s*-?[.\d]")
+CSS_SELECTOR = re.compile(r"([^{};]+)\{")
+CSS_NAME = re.compile(r"[.#](-?[A-Za-z_][\w-]*)")
+CSS_VARIABLE_USE = re.compile(r"var\((--[\w-]+)")
+CSS_VARIABLE_DEFINITION = re.compile(r"(?<![\w-])(--[\w-]+)\s*:|setProperty\(\s*[\"'](--[\w-]+)")
+
+
 class Snapshot:
     """Lit le contenu indexé au commit, ou le travail local incluant les nouveaux fichiers."""
 
@@ -232,6 +243,28 @@ def unused_types(sources):
     return errors
 
 
+def web_errors(sources):
+    """Contrôle les feuilles du site : valeurs en dur, variables inconnues et styles que ni HTML ni JS n’utilisent."""
+    errors = []
+    styles = {path: re.sub(CSS_NOISE.pattern, lambda m: re.sub(r"[^\n]", " ", m[0]), source)
+              for path, source in sources.items() if path.endswith(".css")}
+    pages = "\n".join(source for path, source in sources.items() if not path.endswith(".css"))
+    defined = {name for source in sources.values() for match in CSS_VARIABLE_DEFINITION.finditer(source) for name in match.groups() if name}
+    for path, css in sorted(styles.items()):
+        if path != TOKEN_SHEET:
+            for number, line in enumerate(css.splitlines(), 1):
+                for match in RAW_STYLE.finditer(line):
+                    if match["unit"] == "px" and float(match["number"]) in (0, 1):
+                        continue
+                    errors.append(f"{path}:{number} : valeur visuelle en dur `{match[0]}` ; la nommer dans {TOKEN_SHEET}.")
+        errors.extend(f"{path} : `{name}` n’est défini nulle part ; l’ajouter à {TOKEN_SHEET}."
+                      for name in sorted(set(CSS_VARIABLE_USE.findall(css)) - defined))
+        names = {name for selector in CSS_SELECTOR.findall(css) for name in CSS_NAME.findall(selector)}
+        errors.extend(f"{path} : le sélecteur `{name}` n’apparaît dans aucun HTML ou JS du site ; supprimer le style mort."
+                      for name in sorted(names) if not re.search(r"(?<![\w-])%s(?![\w-])" % re.escape(name), pages))
+    return errors
+
+
 def markdown_prose(source):
     """Écarte les exemples en blocs délimités ou en code en ligne du contrôle des liens."""
     lines = []
@@ -269,6 +302,7 @@ def check(snapshot):
             if len(cells) > 3:
                 glossary.update({name.lower(): name for name in re.findall(r"`(\w+)`", cells[2])})
     swift_sources = {}
+    web_sources = {}
 
     for path in sorted(snapshot.paths):
         if not any(path == route or (route.endswith("/") and path.startswith(route)) for route in structure):
@@ -300,6 +334,8 @@ def check(snapshot):
             errors.extend(glossary_variants(path, source, glossary))
         if path.startswith(("Sources/", "Tests/")) and suffix == ".swift":
             swift_sources[path] = source
+        if path.startswith("site/dist/") and suffix in {".css", ".html", ".js"}:
+            web_sources[path] = source
         if suffix == ".json":
             try:
                 json.loads(source)
@@ -322,6 +358,7 @@ def check(snapshot):
                 errors.append(f"{path} : nom et description de skill invalides.")
 
     errors.extend(unused_types(swift_sources))
+    errors.extend(web_errors(web_sources))
     if "AGENTS.md" not in snapshot.paths:
         errors.append("AGENTS.md : entrée commune obligatoire manquante.")
     if "CLAUDE.md" not in snapshot.paths or snapshot.read("CLAUDE.md").strip() != "@AGENTS.md":

@@ -14,7 +14,8 @@ struct WebstatClientTests {
             "MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O", "MIR1.M.FR.B.L23FRLP.H.R.A.2250U6.EUR.O",
             "HICP.M.FR.N.000000.4D0.ANR", "MIR1.M.FR.B.L23FRLD.D.R.A.2254U6.EUR.O",
             "ESTR.B.EU000A2X2A25.WT", "HICP.M.U2.N.000000.4D0.ANR",
-            "EXR.D.GBP.EUR.SP00.A", "MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N"
+            "EXR.D.GBP.EUR.SP00.A", "MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N",
+            "FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD", "FM.M.US.USD.FR2.BB.US10YT_RR.YLD", "FM.D.U2.EUR.4F.KR.MRR_FR.LEV"
         ]
         let rows = keys.map { key in
             """
@@ -27,8 +28,8 @@ struct WebstatClientTests {
     @Test
     func decodesExactDecimalsUnitsFrequencyAndSource() throws {
         let series = try WebstatClient.parse(fixture(), now: now)
-        #expect(series.count == 13)
-        #expect(Set(series.map(\.id)).count == 13)
+        #expect(series.count == 16)
+        #expect(Set(series.map(\.id)).count == 16)
         #expect(series.allSatisfy { !$0.isDemo && $0.sourceURL?.host == "webstat.banque-france.fr" })
         let dollar = try #require(series.first { $0.id == "eurusd" })
         #expect(dollar.unit == .usd)

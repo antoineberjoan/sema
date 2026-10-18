@@ -1,4 +1,4 @@
-/* Copie la commande Homebrew et lance une seule fois la démonstration visible, avec arrêt explicite. */
+/* Copie la commande Homebrew et déclenche chaque scène animée de la landing à son entrée dans l’écran ; la scène recherche se rejoue tant qu’elle est visible. */
 (() => {
   const COPY = { feedbackDuration: 2200 };
   const button = document.querySelector('[data-copy-homebrew]');
@@ -27,23 +27,40 @@
   }
   addEventListener('pagehide', () => clearTimeout(resetTimer));
 
-  const video = document.querySelector('[data-demo-video]');
-  if (!video) return;
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let played = false;
-  let observer;
-  const stop = () => { video.pause(); observer?.disconnect(); };
-  video.addEventListener('play', () => { played = true; });
-  if (!reduced.matches && 'IntersectionObserver' in window) {
-    observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting || entry.intersectionRatio < .35) { video.pause(); return; }
-      if (played || document.hidden || reduced.matches) return;
-      played = true;
-      video.play().catch(() => { /* Les contrôles natifs restent disponibles si la lecture automatique est refusée. */ });
-    }, { threshold: .35 });
-    observer.observe(video);
+  // Chaque scène part de son état caché puis joue quand 35 % de sa hauteur est visible. Une scène « data-loop » se rejoue après une pause, tant qu’elle reste visible. Sans script ou avec « réduire les animations », elle s’affiche déjà terminée.
+  const scenes = document.querySelectorAll('[data-scene]');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const timers = new Map();
+  const duration = (name) => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+  const play = (scene) => {
+    scene.removeAttribute('data-rewind');
+    scene.dataset.play = '';
+    if (!('loop' in scene.dataset)) return;
+    timers.set(scene, setTimeout(() => {
+      scene.dataset.rewind = '';
+      timers.set(scene, setTimeout(() => {
+        delete scene.dataset.play;
+        void scene.offsetWidth;
+        play(scene);
+      }, duration('--scene-enter')));
+    }, duration('--scene-loop')));
+  };
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const scene = entry.target;
+      if (entry.isIntersecting) {
+        if (!('play' in scene.dataset)) play(scene);
+        continue;
+      }
+      if (!('loop' in scene.dataset)) continue;
+      clearTimeout(timers.get(scene));
+      scene.removeAttribute('data-play'); scene.removeAttribute('data-rewind');
+    }
+    for (const entry of entries) if (entry.isIntersecting && !('loop' in entry.target.dataset)) observer.unobserve(entry.target);
+  }, { threshold: .35 });
+  for (const scene of scenes) {
+    scene.dataset.armed = '';
+    observer.observe(scene);
   }
-  reduced.addEventListener('change', () => { if (reduced.matches) stop(); });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); });
-  addEventListener('pagehide', stop);
+  addEventListener('pagehide', () => timers.forEach(clearTimeout));
 })();

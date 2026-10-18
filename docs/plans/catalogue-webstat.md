@@ -4,7 +4,7 @@
 
 ## Résultat attendu
 
-Un utilisateur peut découvrir les séries accessibles avec sa clé Webstat, examiner leur définition, consulter leur historique et suivre celles qui l’intéressent. Les 13 repères actuels deviennent une sélection de départ modifiable. Aucune liste manuelle ne doit fermer l’accès au reste du catalogue. Une indisponibilité fournisseur ou une unité non interprétée est expliquée dans la fiche.
+Un utilisateur peut découvrir les séries accessibles avec sa clé Webstat, examiner leur définition, consulter leur historique et suivre celles qui l’intéressent. Les repères de départ (13, puis 16 le 18 octobre 2026) deviennent une sélection de départ modifiable. Aucune liste manuelle ne doit fermer l’accès au reste du catalogue. Une indisponibilité fournisseur ou une unité non interprétée est expliquée dans la fiche.
 
 Le périmètre reste Webstat. L’utilisateur cherche une série par son nom, ses dimensions ou son code ; il n’a pas à renseigner une URL d’API. La clé personnelle reste dans le Trousseau et dans l’en-tête d’authentification des requêtes Webstat.
 

@@ -338,6 +338,40 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("`seriesId` s’écrit `seriesID`", errors[0])
 
+    def write_site(self, css, tokens="--space-1: 4px; --ink: #141414;"):
+        self.write("site/dist/brand/tokens.css", f"/* Déclare les valeurs du site. */\n:root {{ {tokens} }}\n")
+        self.write("site/dist/page.css", "/* Compose une page. */\n" + css + "\n")
+        self.write("site/dist/index.html", "<!-- Page de test. -->\n<p class=\"card\" id=\"top\"></p>\n")
+
+    def test_raw_site_values_are_rejected(self):
+        for declaration in ("padding: 12px", "color: #fff", "transition: color 160ms ease", "transition: color .2s",
+                            "margin: calc(-1 * 2px)", "z-index: 20", "font-weight: 500", "letter-spacing: -.02em",
+                            "animation: fade cubic-bezier(0, 0, 1, 1)", "background: rgb(0 0 0 / 10%)"):
+            with self.subTest(declaration=declaration):
+                self.write_site(f".card {{ {declaration}; }}")
+                errors = self.errors()
+                self.assertEqual(len(errors), 1)
+                self.assertIn("site/dist/page.css:2 : valeur visuelle en dur", errors[0])
+
+    def test_named_and_structural_site_values_are_accepted(self):
+        self.write_site(".card { padding: var(--space-1); border: 1px solid var(--ink); margin: 0; width: 100%; line-height: 1.6; }\n"
+                        "@media (max-width: 700px) { .card { gap: var(--space-1); } }\n"
+                        ".card::after { content: '12px #fff'; background: url('a-1px.svg'); }\n"
+                        "/* 12px #fff reste un commentaire */\n#top { opacity: .7; }")
+        self.assertEqual(self.errors(), [])
+
+    def test_site_variable_must_be_defined(self):
+        self.write_site(".card { padding: var(--space-9); margin: var(--wrap-max, var(--space-1)); }\n.card { --wrap-max: var(--space-1); }")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`--space-9` n’est défini nulle part", errors[0])
+
+    def test_dead_site_selector_is_rejected(self):
+        self.write_site(".card { margin: 0; }\n.old:hover, #gone { margin: 0; }\n@media (max-width: 700px) { .older { margin: 0; } }")
+        errors = self.errors()
+        self.assertEqual(len(errors), 3)
+        self.assertTrue(all("styles morts" in error or "style mort" in error for error in errors))
+
     def test_shadow_belongs_to_design_system(self):
         source = "// Décrit une surface flottante.\n.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius)\n"
         self.write("Sources/SemaMac/Features/Panel.swift", source)

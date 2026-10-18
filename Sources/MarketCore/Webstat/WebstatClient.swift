@@ -40,7 +40,7 @@ public struct WebstatClient: Sendable {
     }
 
     private static let definitions: [Definition] = [
-        .init(id: "fr10", key: "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", name: "Emprunt phare FR · 10 ans",
+        .init(id: "fr10", key: "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", name: "OAT France · 10 ans",
               subtitle: "Rendement · série mensuelle", category: .markets, unit: .percent,
               digits: 2, frequency: .monthly, producer: "Banque de France"),
         .init(id: "ecb", key: "FM.D.U2.EUR.4F.KR.DFR.LEV", name: "Taux de dépôt BCE",
@@ -78,7 +78,16 @@ public struct WebstatClient: Sendable {
               digits: 4, frequency: .daily, producer: "BCE · via Banque de France"),
         .init(id: "mortgage-fr", key: "MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N", name: "Crédit immobilier",
               subtitle: "Nouveaux crédits à l’habitat · hors renégociations", category: .savings, unit: .percent,
-              digits: 2, frequency: .monthly, producer: "Banque de France")
+              digits: 2, frequency: .monthly, producer: "Banque de France"),
+        .init(id: "de10", key: "FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD", name: "Bund · 10 ans",
+              subtitle: "Rendement · série mensuelle", category: .markets, unit: .percent,
+              digits: 2, frequency: .monthly, producer: "Banque de France"),
+        .init(id: "us10", key: "FM.M.US.USD.FR2.BB.US10YT_RR.YLD", name: "Treasury US · 10 ans",
+              subtitle: "Rendement · série mensuelle", category: .markets, unit: .percent,
+              digits: 2, frequency: .monthly, producer: "Banque de France"),
+        .init(id: "mro", key: "FM.D.U2.EUR.4F.KR.MRR_FR.LEV", name: "Taux de refinancement BCE",
+              subtitle: "Opérations principales · politique monétaire", category: .savings, unit: .percent,
+              digits: 2, frequency: .daily, producer: "BCE · via Banque de France")
     ]
 
     public init() {}

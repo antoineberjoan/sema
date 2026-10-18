@@ -1,14 +1,13 @@
 /* Met en page les documents légaux avec une largeur de lecture commune. */
-.legal-page { --page: #0e0e0e; }
-.legal-content.wrap { width: min(720px, calc(100% - 80px)); padding-block: 76px 100px; }
-.legal-content h1 { font-size: clamp(30px, 4vw, 44px); font-weight: 500; letter-spacing: -.035em; }
-.legal-content .updated { margin: 18px 0 60px; color: var(--quiet); font-size: 12px; }
-.legal-content section + section { margin-top: 40px; }
-.legal-content h2 { font-size: 19px; letter-spacing: -.4px; font-weight: 500; margin: 0 0 14px; }
-.legal-content p { color: #a6a6a6; font-size: 14px; line-height: 1.8; margin: 12px 0; }
-.legal-content a { color: #ccc; text-decoration: underline; text-decoration-color: #555; text-underline-offset: 4px; }
-.legal-content a:hover { color: #fff; }
-@media(max-width:650px) {
-  .legal-content.wrap { width: calc(100% - 40px); padding-block: 48px 70px; }
-  .legal-content .updated { margin-bottom: 40px; }
+.legal-content.wrap { --wrap-max: var(--width-prose); padding-block: var(--space-11) var(--space-12); }
+.legal-content h1 { margin: 0; font-size: var(--display-legal); font-weight: var(--weight-medium); line-height: 1.14; letter-spacing: var(--tracking-heading); }
+.legal-content .updated { margin: var(--space-4) 0 var(--space-10); color: var(--quiet); font-size: var(--text-3); }
+.legal-content section + section { margin-top: var(--space-8); }
+.legal-content h2 { margin: 0 0 var(--space-3); font-size: var(--text-8); font-weight: var(--weight-medium); line-height: 1.15; letter-spacing: var(--tracking-title); }
+.legal-content p { color: var(--secondary); font-size: var(--text-5); line-height: 1.8; margin: var(--space-3) 0; }
+.legal-content a { color: var(--text-soft); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: var(--underline-offset); transition: color var(--motion-selection) ease; }
+.legal-content a:hover { color: var(--bright); }
+@media (max-width: 700px) {
+  .legal-content.wrap { padding-block: var(--space-9) var(--space-10); }
+  .legal-content .updated { margin-bottom: var(--space-8); }
 }

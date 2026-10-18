@@ -7,7 +7,7 @@ public enum DemoCatalog {
 
     public static func series() -> [MarketSeries] {
         [
-            make("fr10", "Emprunt phare FR · 10 ans", "Rendement · série mensuelle", .markets, .percent, "3.42", 2, seed: 2, trend: -0.04),
+            make("fr10", "OAT France · 10 ans", "Rendement · série mensuelle", .markets, .percent, "3.42", 2, seed: 2, trend: -0.04),
             make("ecb", "Taux de dépôt BCE", "Politique monétaire", .savings, .percent, "2.00", 2, seed: 3, trend: 0, flat: true),
             make("eurusd", "Euro / Dollar", "USD pour 1 EUR", .markets, .usd, "1.1642", 4, seed: 4, trend: 0.04),
             make("eurjpy", "Euro / Yen", "JPY pour 1 EUR", .markets, .jpy, "171.46", 2, seed: 5, trend: 0.03),

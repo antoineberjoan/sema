@@ -153,7 +153,7 @@ public struct SeriesExplanation: Equatable, Sendable {
     private static func rateRule(_ id: String) -> (definition: String, implication: String, referenceURL: URL?)? {
         switch id {
         case "fr10":
-            return ("Ce taux est le rendement publié de l’emprunt phare français à dix ans, pas son coupon ni son prix.",
+            return ("Ce taux est le rendement publié de l’OAT française à dix ans (l’emprunt phare), pas son coupon ni son prix.",
                 "À caractéristiques comparables, une hausse des rendements tend à faire baisser le prix des obligations à taux fixe existantes, et inversement.",
                 Reference.amfBondPrices)
         case "ecb":
