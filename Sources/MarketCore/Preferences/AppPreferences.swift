@@ -21,7 +21,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
 
     public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
                 alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "graphite", appearanceID: String? = nil,
-                followedSeriesIDs: [String] = WebstatClient.starterIDs, onboardingCompleted: Bool? = nil,
+                followedSeriesIDs: [String] = [], onboardingCompleted: Bool? = nil,
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = StatisticalSource.inactiveByDefault,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
                 ribbonGlass: RibbonGlassPreferences? = nil, shortcuts: ShortcutPreferences? = nil) {

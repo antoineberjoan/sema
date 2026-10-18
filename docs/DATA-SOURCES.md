@@ -51,7 +51,7 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 
 ## Démonstration et compatibilité
 
-Avant connexion, les seize repères de départ portent `isDemo = true` ; huit d’entre eux disposent des fixtures historiques de `DemoCatalog`, les autres ne reçoivent pas de valeurs inventées. Après connexion, les séries choisies sont remplacées par les observations reçues de Webstat. Les fonds ne sont plus exposés ; leurs anciennes règles et favoris restent conservés sans être actifs. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
+Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil (décision d’Antoine, 18 octobre 2026). Avant connexion, ceux que l’utilisateur choisit portent `isDemo = true` ; huit d’entre eux disposent des fixtures historiques de `DemoCatalog`, les autres ne reçoivent pas de valeurs inventées. Après connexion, les séries choisies sont remplacées par les observations reçues de Webstat. Les fonds ne sont plus exposés ; leurs anciennes règles et favoris restent conservés sans être actifs. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
 
 L’ancien client public `ECBExchangeRateClient` et son parseur restent présents pour compatibilité. Si aucun cache Webstat n’existe, les trois parités de l’ancien `ecb-cache.json` peuvent encore être consultées. L’interface actuelle n’appelle plus directement le flux BCE de 90 jours.
 
