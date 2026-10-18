@@ -3,18 +3,20 @@ import Foundation
 import Security
 
 /// A device-local credential. Never copied into preferences, caches or the distributed app.
-actor WebstatKeychain {
+actor SourceKeychain {
     private let service: String
+    private let title: String
     private let account = "api-key"
 
-    init(service: String = (Bundle.main.bundleIdentifier ?? "com.antoineberjoan.sema") + ".webstat") {
-        self.service = service
+    init(sourceID: String, title: String) {
+        service = (Bundle.main.bundleIdentifier ?? "com.antoineberjoan.sema") + "." + sourceID
+        self.title = title
     }
 
     struct KeychainError: Error, LocalizedError {
         let status: OSStatus
         var errorDescription: String? {
-            "Le Trousseau macOS n’a pas pu accéder à la clé Webstat (code \(status))."
+            "Le Trousseau macOS n’a pas pu accéder à la clé personnelle (code \(status))."
         }
     }
 
@@ -36,7 +38,7 @@ actor WebstatKeychain {
         if status == errSecItemNotFound {
             var item = identity
             item[kSecValueData as String] = Data(key.utf8)
-            item[kSecAttrLabel as String] = "sema · clé personnelle Webstat"
+            item[kSecAttrLabel as String] = "sema · clé personnelle \(title)"
             status = SecItemAdd(item as CFDictionary, nil)
         }
         guard status == errSecSuccess else { throw KeychainError(status: status) }

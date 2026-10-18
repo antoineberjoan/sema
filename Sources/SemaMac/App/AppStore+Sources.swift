@@ -18,16 +18,16 @@ extension AppStore {
 
     func isSourceEnabled(_ id: String) -> Bool { preferences.isSourceEnabled(id) }
 
-    func sourceID(for id: String) -> String { statisticalDescriptors[id]?.dataset.source.rawValue ?? "webstat" }
+    func sourceID(for id: String) -> String { series.first { $0.id == id }?.marketInstrument?.provider.rawValue ?? statisticalDescriptors[id]?.dataset.source.rawValue ?? "webstat" }
 
     func isSourceEnabled(for id: String) -> Bool { isSourceEnabled(sourceID(for: id)) }
 
-    func sourceName(_ id: String) -> String { id == "webstat" ? "Webstat" : StatisticalSource(rawValue: id)?.title ?? id }
+    func sourceName(_ id: String) -> String { id == "webstat" ? "Webstat" : MarketProvider(rawValue: id)?.title ?? StatisticalSource(rawValue: id)?.title ?? id }
 
     func sourceSeriesCount(_ id: String) -> Int { storedFollowedSeries.filter { sourceID(for: $0.id) == id }.count }
 
     func setSourceEnabled(_ id: String, enabled: Bool) {
-        guard id == "webstat" || StatisticalSource(rawValue: id) != nil, enabled != isSourceEnabled(id) else { return }
+        guard id == "webstat" || StatisticalSource(rawValue: id) != nil || MarketProvider(rawValue: id) != nil, enabled != isSourceEnabled(id) else { return }
         guard mutatePreferences({ value in
             var disabled = value.disabledSourceIDs ?? []
             if enabled { disabled.remove(id) } else { disabled.insert(id) }

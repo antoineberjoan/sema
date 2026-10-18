@@ -1,4 +1,4 @@
-// Réunit les sources activables et la connexion Webstat sans modifier les données en cache.
+// Réunit les sources activables et leurs clés personnelles sans modifier les données en cache.
 import SwiftUI
 import MarketCore
 
@@ -8,9 +8,15 @@ struct SourceSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Webstat") { WebstatConnectionView() }
+            Section("Webstat") { SourceKeyView(source: "webstat") }
+            ForEach(MarketProvider.allCases) { provider in
+                Section(provider.title) { SourceKeyView(source: provider.rawValue) }
+            }
             Section("Catalogues") {
                 sourceRow(id: "webstat", title: "Banque de France · Webstat")
+                ForEach(MarketProvider.allCases) { provider in
+                    sourceRow(id: provider.rawValue, title: provider.title)
+                }
                 ForEach(StatisticalSource.allCases) { source in
                     sourceRow(id: source.rawValue, title: source.title)
                 }
@@ -18,6 +24,7 @@ struct SourceSettingsView: View {
             .help("Désactiver une source met ses alertes en pause et conserve ses historiques.")
         }
         .formStyle(.grouped)
+        .task { await store.checkMarketKeys() }
     }
 
     private func sourceRow(id: String, title: String) -> some View {

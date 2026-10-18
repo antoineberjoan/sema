@@ -19,6 +19,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public let descriptor: WebstatSeriesDescriptor?
     public let syncedAt: Date?
     public let hasCompleteHistory: Bool?
+    public let marketInstrument: MarketInstrument?
     public let statisticalDescriptor: StatisticalSeriesDescriptor?
 
     public init(
@@ -27,7 +28,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         sourceURL: URL? = nil, isDemo: Bool, frequency: ObservationFrequency? = nil,
         observations: [MarketObservation], descriptor: WebstatSeriesDescriptor? = nil,
         syncedAt: Date? = nil, hasCompleteHistory: Bool? = nil,
-        statisticalDescriptor: StatisticalSeriesDescriptor? = nil
+        statisticalDescriptor: StatisticalSeriesDescriptor? = nil, marketInstrument: MarketInstrument? = nil
     ) {
         self.id = id
         self.name = name
@@ -43,17 +44,18 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         self.syncedAt = syncedAt
         self.hasCompleteHistory = hasCompleteHistory
         self.statisticalDescriptor = statisticalDescriptor
+        self.marketInstrument = marketInstrument
         // One publication per date; the last input for that date wins.
         let unique = Dictionary(observations.map { ($0.date, $0) }, uniquingKeysWith: { _, latest in latest })
         self.observations = unique.values.sorted { $0.date < $1.date }
     }
 
     public var latest: MarketObservation? { observations.last }
-    public var originBadge: String { statisticalDescriptor?.dataset.source.title ?? (sourceURL?.host == "webstat.banque-france.fr" ? "BdF" : "BCE") }
+    public var originBadge: String { marketInstrument?.provider.title ?? statisticalDescriptor?.dataset.source.title ?? (sourceURL?.host == "webstat.banque-france.fr" ? "BdF" : "BCE") }
     public var variationConvention: VariationConvention {
         descriptor?.variation ?? statisticalDescriptor?.variation ?? (unit == .percent ? .points : .relativePercent)
     }
-    public var displayUnit: String { descriptor?.displayUnit ?? statisticalDescriptor?.displayUnit ?? unit.symbol }
+    public var displayUnit: String { marketInstrument?.displayUnit ?? descriptor?.displayUnit ?? statisticalDescriptor?.displayUnit ?? unit.symbol }
     public var canAlert: Bool { descriptor?.canAlert ?? statisticalDescriptor?.canAlert ?? (unit != .unknown) }
 
     public func replacing(observations: [MarketObservation], syncedAt: Date? = nil,
@@ -62,14 +64,14 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
             fractionDigits: fractionDigits, source: source, sourceURL: sourceURL, isDemo: isDemo,
             frequency: frequency, observations: observations, descriptor: descriptor ?? self.descriptor,
             syncedAt: syncedAt ?? self.syncedAt, hasCompleteHistory: completeHistory ?? hasCompleteHistory,
-            statisticalDescriptor: statisticalDescriptor)
+            statisticalDescriptor: statisticalDescriptor, marketInstrument: marketInstrument)
     }
 
     public func withID(_ id: String) -> MarketSeries {
         MarketSeries(id: id, name: name, subtitle: subtitle, category: category, unit: unit,
             fractionDigits: fractionDigits, source: source, sourceURL: sourceURL, isDemo: isDemo,
             frequency: frequency, observations: observations, descriptor: descriptor,
-            syncedAt: syncedAt, hasCompleteHistory: hasCompleteHistory, statisticalDescriptor: statisticalDescriptor)
+            syncedAt: syncedAt, hasCompleteHistory: hasCompleteHistory, statisticalDescriptor: statisticalDescriptor, marketInstrument: marketInstrument)
     }
 
     public func history(for period: HistoryPeriod) -> [MarketObservation] {

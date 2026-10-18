@@ -26,7 +26,7 @@ extension AppStore {
     }
 
     func saveFollowed(_ value: MarketSeries) throws -> Bool {
-        let source = value.statisticalDescriptor?.dataset.source.rawValue ?? "webstat"
+        let source = value.marketInstrument?.provider.rawValue ?? value.statisticalDescriptor?.dataset.source.rawValue ?? "webstat"
         guard isSourceEnabled(source) else { return false }
         if let existing = followedMatch(for: value) {
             status = "Ce repère est déjà suivi via \(existing.originBadge)."

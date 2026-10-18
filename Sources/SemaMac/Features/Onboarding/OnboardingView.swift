@@ -235,7 +235,7 @@ struct OnboardingView: View {
     }
 
     private var connectionStep: some View {
-        WebstatConnectionView(didConnect: complete)
+        SourceKeyView(source: "webstat", didConnect: complete)
     }
 
     private var footer: some View {

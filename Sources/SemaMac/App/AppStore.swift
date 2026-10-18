@@ -49,7 +49,13 @@ final class AppStore {
     var statisticalDescriptors: [String: StatisticalSeriesDescriptor] = [:]
     let storage: LocalStorage
     let notifications = NotificationService()
-    let webstatKeychain = WebstatKeychain()
+    let webstatKeychain = SourceKeychain(sourceID: "webstat", title: "Webstat")
+    let marketClients = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, MarketDataClient(provider: $0)) })
+    let marketKeychains = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, SourceKeychain(sourceID: $0.rawValue, title: $0.title)) })
+    var connectedMarkets: Set<MarketProvider> = []
+    var connectingMarkets: Set<MarketProvider> = []
+    var marketErrors: [MarketProvider: String] = [:]
+    var didCheckMarketKeys = false
     var didCheckWebstatKey = false
     private var canSavePreferences = true
     var searchTask: Task<Void, Never>?

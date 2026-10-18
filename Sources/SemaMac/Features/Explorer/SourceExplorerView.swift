@@ -14,7 +14,7 @@ struct SourceExplorerView: View {
     @State private var sourceID = ""
     var compact = false
     var close: (() -> Void)?
-    private var enabledIDs: [String] { (["webstat"] + StatisticalSource.allCases.map(\.rawValue)).filter { store.isSourceEnabled($0) } }
+    private var enabledIDs: [String] { (["webstat"] + MarketProvider.allCases.map(\.rawValue) + StatisticalSource.allCases.map(\.rawValue)).filter { store.isSourceEnabled($0) } }
     var body: some View {
         VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
             HStack {
@@ -40,6 +40,8 @@ struct SourceExplorerView: View {
                 } actions: {
                     Button("Activer une source") { store.settingsTab = .sources; openSettings() }
                 }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let provider = MarketProvider(rawValue: sourceID), store.isSourceEnabled(sourceID) {
+                MarketExplorerView(provider: provider, close: close).id(sourceID)
             } else if sourceID.isEmpty {
                 ScrollView {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: compact ? Self.compactCardMinWidth : Self.cardMinWidth), spacing: SemaTheme.majorSpacing)], spacing: SemaTheme.majorSpacing) {
@@ -73,6 +75,7 @@ struct SourceExplorerView: View {
     }
 
     private func sourceTopics(_ id: String) -> String {
+        if let provider = MarketProvider(rawValue: id) { return provider.quota }
         guard let source = StatisticalSource(rawValue: id) else { return "Banque de France · taux et crédit" }
         switch source {
         case .insee: return "Prix, loyers et économie française"
