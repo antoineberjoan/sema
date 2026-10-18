@@ -57,8 +57,9 @@ struct SeriesDetailView: View {
                         .buttonStyle(.borderedProminent).tint(store.palette.accent)
                 }
             }
-            .frame(maxWidth: .infinity, minHeight: HistoryChart.defaultHeight)
+            .frame(maxWidth: .infinity, minHeight: HistoryChart.defaultHeight, maxHeight: .infinity)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .modifier(SeriesDetailSurface(focus: focus))
     }
 

@@ -68,6 +68,7 @@ struct SourceExplorerView: View {
                 StatisticalExplorerView(source: source, compact: compact, close: close).id(sourceID)
             } else if sourceID == "webstat", store.isSourceEnabled("webstat") { CatalogueBrowserView(compact: compact, close: close) }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onChange(of: sourceID) { _, _ in store.closePreview() }
         .onChange(of: enabledIDs, initial: true) { _, ids in
             if !sourceID.isEmpty && !ids.contains(sourceID) { sourceID = ""; store.closePreview() }

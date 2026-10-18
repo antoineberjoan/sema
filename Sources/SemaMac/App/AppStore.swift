@@ -110,7 +110,8 @@ final class AppStore {
 
     var starterSeries: [MarketSeries] { WebstatClient.starterSeries }
     var storedFollowedSeries: [MarketSeries] { preferences.followedSeriesIDs.compactMap { id in series.first { $0.id == id } } }
-    var followedSeries: [MarketSeries] { SeriesEquivalence.unique(storedFollowedSeries) }
+    /// Seuls les repères qui ont des valeurs sont visibles ; les autres restent suivis et reviennent avec leurs données.
+    var followedSeries: [MarketSeries] { SeriesEquivalence.unique(storedFollowedSeries).filter { !$0.observations.isEmpty } }
     var macroSeries: [MarketSeries] { followedSeries }
     var alertableSeries: [MarketSeries] { followedSeries.filter { $0.canAlert && isSourceEnabled(for: $0.id) } }
     var favorites: [MarketSeries] { followedSeries.filter { isFavorite($0.id) } }

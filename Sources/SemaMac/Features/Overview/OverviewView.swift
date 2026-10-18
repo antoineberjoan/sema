@@ -8,6 +8,7 @@ struct OverviewView: View {
     private static let switcherInset: CGFloat = 2
     private static let emptyMinHeight: CGFloat = 450
     @Environment(AppStore.self) private var store
+    @Environment(\.openSettings) private var openSettings
     var showsQuickSwitcher = false
 
     var body: some View {
@@ -34,6 +35,15 @@ struct OverviewView: View {
                     .scrollIndicators(.hidden).fixedSize(horizontal: false, vertical: true)
                 }
             }
+        } else if !store.storedFollowedSeries.isEmpty && !store.hasWebstatKey {
+            ContentUnavailableView {
+                Label("Vos repères attendent leurs données", systemImage: "key")
+            } description: {
+                Text("Connectez votre clé Webstat pour afficher vos repères.")
+            } actions: {
+                Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderedProminent)
+            }
+            .frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight, maxHeight: .infinity)
         } else {
             ContentUnavailableView {
                 Label("Vos repères, à votre façon.", systemImage: "chart.xyaxis.line")
@@ -42,7 +52,7 @@ struct OverviewView: View {
             } actions: {
                 Button("Explorer les repères") { store.section = .explorer }.buttonStyle(.borderedProminent)
             }
-            .frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight)
+            .frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight, maxHeight: .infinity)
         }
     }
 }

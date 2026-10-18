@@ -36,6 +36,7 @@ struct MarketExplorerView: View {
                 Label("Connecter \(provider.title)", systemImage: "key")
             } description: { Text("Retrouvez les instruments avec votre clé personnelle.") }
             actions: { Button("Ouvrir les sources") { store.settingsTab = .sources; openSettings() } }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .task { await store.checkMarketKeys() }
         } else {
             HStack(alignment: .top, spacing: SemaTheme.majorSpacing) {

@@ -118,7 +118,6 @@ struct OnboardingView: View {
 
     private static let previewExamples = DemoCatalog.series()
     private var suggestions: [MarketSeries] { WebstatClient.starterSeries }
-    private var selectedCount: Int { selection.intersection(Set(suggestions.map(\.id))).count }
 
     /// Une carte d’exemple fictif par thème choisi : le seul endroit où sema montre des valeurs inventées.
     private var previewSeries: [MarketSeries] {
@@ -337,9 +336,6 @@ struct OnboardingView: View {
                     .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
             case 1:
                 Button("Retour") { go(to: 0) }.buttonStyle(.borderless)
-                Text(selectedCount == 1 ? "1 repère choisi" : "\(selectedCount) repères choisis")
-                    .font(.callout).foregroundStyle(.secondary).monospacedDigit()
-                    .contentTransition(.numericText())
                 Spacer()
                 Button("Continuer") {
                     let starterIDs = Set(suggestions.map(\.id))
