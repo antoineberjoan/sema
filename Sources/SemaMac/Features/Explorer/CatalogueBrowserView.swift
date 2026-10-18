@@ -1,16 +1,14 @@
-// Cherche et prévisualise les séries Webstat avant leur ajout, depuis Explorer comme depuis ⌘K.
+// Présente le catalogue Webstat et la prévisualisation d’une série avant son ajout, depuis Explorer comme depuis ⌘K.
 import SwiftUI
 import MarketCore
 
 /// Shared by Explorer and ⌘K. Result rows stay in place while the detail loads.
 struct CatalogueBrowserView: View {
-    private static let searchFont = Font.system(size: 16)
     private static let titleFont = Font.system(size: 18, weight: .semibold)
-    private static let codeFont = Font.system(size: 9)
     private static let sectionSpacing: CGFloat = 16
-    private static let searchSpacing: CGFloat = 10
     private static let textInset: CGFloat = 4
     private static let filterSpacing: CGFloat = 14
+    private static let toolbarSpacing: CGFloat = 12
     private static let clearButtonTopPadding: CGFloat = 4
     private static let columnSpacing: CGFloat = 20
     private static let compactResultsMinWidth: CGFloat = 260
@@ -35,54 +33,50 @@ struct CatalogueBrowserView: View {
     @State private var showsFilters = false
     @State private var selectedID: String?
     @State private var isAdding = false
-    @FocusState private var searchFocused: Bool
     var compact = false
     var close: (() -> Void)?
 
     var body: some View {
         @Bindable var store = store
         VStack(alignment: .leading, spacing: Self.sectionSpacing) {
-            HStack(spacing: Self.searchSpacing) {
-                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                TextField("Titre, thème ou code Webstat…", text: $store.catalogueSearch.query)
-                    .textFieldStyle(.plain).font(Self.searchFont).focused($searchFocused)
-                    .accessibilityLabel("Rechercher dans le catalogue Webstat")
-                    .onSubmit(openSelection)
-                    .onKeyPress(.downArrow) { moveSelection(1); return .handled }
-                    .onKeyPress(.upArrow) { moveSelection(-1); return .handled }
-                if store.isSearchingCatalogue { ProgressView().controlSize(.small) }
-                Button { showsFilters.toggle() } label: { Label("Filtres", systemImage: "line.3.horizontal.decrease") }
-                    .buttonStyle(.borderless).font(.callout)
-            }.padding(.horizontal, Self.textInset)
-            if showsFilters || hasFilters {
-                HStack(alignment: .top, spacing: Self.filterSpacing) {
-                    Picker("Jeu", selection: $store.catalogueSearch.datasetID) {
-                        Text("Tous les jeux").tag("")
-                        ForEach(store.catalogueDatasets) { Text($0.title).tag($0.id) }
-                    }.frame(maxWidth: .infinity)
-                    Picker("Zone", selection: $store.catalogueSearch.area) {
-                        Text("Toutes les zones").tag("")
-                        ForEach(areas, id: \.key) { Text($0.value).tag($0.key) }
-                    }.frame(maxWidth: .infinity)
-                    Picker("Fréquence", selection: $store.catalogueSearch.frequency) {
-                        Text("Toutes").tag("")
-                        ForEach(frequencies, id: \.key) { Text($0.value).tag($0.key) }
-                    }.frame(maxWidth: .infinity)
-                    if hasFilters {
-                        Button { store.catalogueSearch.datasetID = ""; store.catalogueSearch.area = ""; store.catalogueSearch.frequency = "" } label: {
-                            Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
-                        }.buttonStyle(.plain).help("Retirer les filtres").padding(.top, Self.clearButtonTopPadding)
-                    }
-                }.font(.subheadline)
-            }
             if !store.hasWebstatKey {
-                ContentUnavailableView {
-                    Label("Tout Webstat, à portée de main.", systemImage: "globe.europe.africa")
-                } description: {
-                    Text("Connectez votre clé personnelle pour explorer les jeux de données. Vos repères déjà enregistrés restent consultables.")
-                } actions: { Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderedProminent) }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                HStack(spacing: Self.sectionSpacing) {
+                    Label("Clé personnelle requise", systemImage: "key").foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }
+                        .buttonStyle(.borderedProminent).tint(store.palette.controlAccent)
+                }.padding(SemaTheme.majorSpacing).background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: SemaTheme.cardCorner))
+                Spacer(minLength: 0)
             } else {
+                HStack(spacing: Self.toolbarSpacing) {
+                    CatalogueSearchField(query: $store.catalogueSearch.query, prompt: "Rechercher dans Webstat…",
+                        isSearching: store.isSearchingCatalogue, submit: openSelection, move: moveSelection)
+                    Button { showsFilters.toggle() } label: {
+                        Label("Filtres", systemImage: hasFilters ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease")
+                    }.buttonStyle(.borderless).help("Filtrer les résultats")
+                        .accessibilityValue(showsFilters ? "Ouverts" : "Fermés")
+                }
+                if showsFilters {
+                    HStack(alignment: .top, spacing: Self.filterSpacing) {
+                        Picker("Jeu", selection: $store.catalogueSearch.datasetID) {
+                            Text("Tous les jeux").tag("")
+                            ForEach(store.catalogueDatasets) { Text($0.title).tag($0.id) }
+                        }.frame(maxWidth: .infinity)
+                        Picker("Zone", selection: $store.catalogueSearch.area) {
+                            Text("Toutes les zones").tag("")
+                            ForEach(areas, id: \.key) { Text($0.value).tag($0.key) }
+                        }.frame(maxWidth: .infinity)
+                        Picker("Fréquence", selection: $store.catalogueSearch.frequency) {
+                            Text("Toutes").tag("")
+                            ForEach(frequencies, id: \.key) { Text($0.value).tag($0.key) }
+                        }.frame(maxWidth: .infinity)
+                        if hasFilters {
+                            Button { store.catalogueSearch.datasetID = ""; store.catalogueSearch.area = ""; store.catalogueSearch.frequency = "" } label: {
+                                Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                            }.buttonStyle(.plain).help("Retirer les filtres").padding(.top, Self.clearButtonTopPadding)
+                        }
+                    }.font(.callout)
+                }
                 HStack(alignment: .top, spacing: Self.columnSpacing) {
                     results.frame(minWidth: compact ? Self.compactResultsMinWidth : Self.resultsMinWidth, maxWidth: store.previewDescriptor == nil ? .infinity : Self.resultsMaxWidth)
                     if let descriptor = store.previewDescriptor {
@@ -94,8 +88,8 @@ struct CatalogueBrowserView: View {
                 .animation(reduceMotion ? nil : .easeOut(duration: previewDuration), value: store.previewDescriptor?.key)
             }
         }
-        .onAppear { store.searchCatalogue(); searchFocused = true }
-         .onChange(of: store.catalogueSearch) { old, new in
+        .onAppear { store.searchCatalogue() }
+        .onChange(of: store.catalogueSearch) { old, new in
             if old.datasetID != new.datasetID { store.catalogueSearch.area = "" }
             store.searchCatalogue(); selectedID = nil
         }
@@ -169,19 +163,17 @@ struct CatalogueBrowserView: View {
                     HStack {
                         Text(store.isSearchingCatalogue && store.catalogueResults.isEmpty ? "Recherche…" : "\(store.catalogueTotal.formatted()) \(store.catalogueTotal == 1 ? "série" : "séries")")
                         Spacer()
-                        Text("Webstat")
                     }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, SemaTheme.rowPadding).padding(.bottom, SemaTheme.minorSpacing)
                     ForEach(store.catalogueResults) { item in
                         Button { selectedID = item.id; store.openPreview(item) } label: {
                             VStack(alignment: .leading, spacing: SemaTheme.rowTextSpacing) {
                                 HStack(alignment: .top, spacing: SemaTheme.minorSpacing) {
-                                    Text(item.title).font(.callout.weight(.medium)).lineLimit(SemaTheme.rowTitleLines)
+                                    Text(MarketFormat.name(item.series(observations: []))).font(.callout.weight(.medium)).lineLimit(SemaTheme.rowTitleLines)
                                     Spacer(minLength: 0)
                                     if store.followedMatch(for: item.series(observations: [])) != nil { Image(systemName: "checkmark").foregroundStyle(accent).accessibilityLabel("Déjà suivi") }
                                 }
                                 Text([item.area, item.frequencyTitle, item.displayUnit].compactMap { $0 }.joined(separator: " · "))
                                     .font(.caption).foregroundStyle(.secondary).lineLimit(Self.detailLines)
-                                Text(item.datasetID).font(Self.codeFont).foregroundStyle(.tertiary)
                             }
                             .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(SemaTheme.rowPadding)
                             .background(selectedID == item.id ? accent.opacity(SemaTheme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
@@ -195,8 +187,7 @@ struct CatalogueBrowserView: View {
                         Label(error, systemImage: "exclamationmark.triangle").font(.callout).foregroundStyle(.secondary).padding(Self.messagePadding)
                         Button("Réessayer") { store.searchCatalogue() }.buttonStyle(.borderless).padding(.horizontal, Self.messagePadding)
                     } else if !store.isSearchingCatalogue && store.catalogueResults.isEmpty {
-                        ContentUnavailableView("Aucun repère trouvé", systemImage: "magnifyingglass",
-                            description: Text("Essayez un autre terme, un code exact ou retirez un filtre."))
+                        ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass")
                     }
                     if store.canLoadMoreCatalogue {
                         Button("Afficher les résultats suivants") { store.searchCatalogue(loadMore: true) }

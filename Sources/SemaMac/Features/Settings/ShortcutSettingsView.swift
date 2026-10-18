@@ -21,8 +21,8 @@ struct ShortcutSettingsView: View {
                 }
             }
             Section("Navigation") {
-                LabeledContent("Repère précédent / suivant", value: "↑  ↓")
-                LabeledContent("Choisir à vue", value: "⌘ ↑  ⌘ ↓")
+                LabeledContent("Repère précédent / suivant", value: "↑ ↓  ← →")
+                LabeledContent("Choisir à vue", value: "⌘ ↑ ↓  ← →")
                 LabeledContent("Rechercher", value: "⌘ K")
                 LabeledContent("Réglages", value: "⌘ ,")
             }

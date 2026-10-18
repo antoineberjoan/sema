@@ -53,11 +53,11 @@ private struct AlertRow: View {
             Image(systemName: rule.isEnabled ? "bell" : "bell.slash").foregroundStyle(accent)
                 .frame(width: Self.iconSize, height: Self.iconSize)
             VStack(alignment: .leading, spacing: Self.textSpacing) {
-                Text(item?.name ?? "Repère indisponible").font(Self.titleFont)
-                Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "").")
+                Text(item.map(MarketFormat.name) ?? "Repère indisponible").font(Self.titleFont)
+                Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "").")
                     .font(.callout).foregroundStyle(.secondary)
                 if let event = lastEvent, let value = event.observedValue {
-                    Text("Dernier signal : \(MarketFormat.number(value, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "") · \(MarketFormat.date(event.observedAt))")
+                    Text("Dernier signal : \(MarketFormat.number(value, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "") · \(MarketFormat.date(event.observedAt))")
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
                 HStack(spacing: Self.actionSpacing) {
@@ -65,7 +65,7 @@ private struct AlertRow: View {
                     Button(rule.isEnabled ? "Mettre en pause" : "Réactiver") { store.toggleAlert(rule.id) }
                         .disabled(!store.isSourceEnabled(for: rule.seriesID) || (!rule.isEnabled && (!store.isFollowing(rule.seriesID) || item?.canAlert != true)))
                     Button(role: .destructive) { store.deleteAlert(rule.id) } label: { Image(systemName: "trash") }
-                        .help("Supprimer cette alerte").accessibilityLabel("Supprimer l’alerte sur \(item?.name ?? "ce repère")")
+                        .help("Supprimer cette alerte").accessibilityLabel("Supprimer l’alerte sur \(item.map(MarketFormat.name) ?? "ce repère")")
                 }
                 .buttonStyle(.borderless).font(.subheadline)
             }

@@ -29,7 +29,7 @@ private struct IndicatorTile: View {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: compact ? Self.compactSpacing : Self.spacing) {
                     HStack(spacing: Self.titleSpacing) {
-                        Text(displayed.name).font(.body.weight(.medium)).lineLimit(1)
+                        Text(MarketFormat.name(displayed)).font(.body.weight(.medium)).lineLimit(1)
                         if !store.isSourceEnabled(for: series.id) { Image(systemName: "pause.circle").foregroundStyle(.secondary).help("Source désactivée · historique conservé") }
                     }
                     .padding(.trailing, series.exchangeRatePair == nil ? Self.singleActionInset : Self.doubleActionInset)
@@ -50,11 +50,11 @@ private struct IndicatorTile: View {
                 .contentShape(RoundedRectangle(cornerRadius: SemaTheme.rowCorner, style: .continuous))
             }
             .buttonStyle(SemaPressStyle())
-            .accessibilityLabel("\(displayed.name), \(MarketFormat.value(displayed))\(series.isDemo ? ", démonstration" : "")")
+            .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(series.isDemo ? ", démonstration" : "")")
             .accessibilityValue(selected ? "Sélectionné" : "")
             HStack(spacing: 0) {
                 ExchangeDirectionButton(series: series)
-                FavoriteButton(seriesID: series.id, seriesName: displayed.name)
+                FavoriteButton(seriesID: series.id, seriesName: MarketFormat.name(displayed))
             }.padding(SemaTheme.minorSpacing)
         }
         .onHover { isHovered = $0 }

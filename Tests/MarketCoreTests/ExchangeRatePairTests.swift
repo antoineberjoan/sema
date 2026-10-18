@@ -79,6 +79,15 @@ struct ExchangeRatePairTests {
         #expect((inverse.latest?.value ?? 0) > 0)
     }
 
+    @Test func inverseDemoCannotBeRelabelledAsThePublishedQuotation() throws {
+        let demo = try #require(DemoCatalog.series().first { $0.id == "eurjpy" })
+        let inverse = try #require(demo.invertedExchangeRateForDisplay())
+        #expect(demo.exchangeRatePair?.currency == "JPY")
+        #expect(inverse.exchangeRatePair == nil)
+        #expect(inverse.name == "Yen / Euro")
+        #expect(inverse.displayUnit == "€")
+    }
+
     @Test func directionPersistsWithoutChangingFavoritesOrAlerts() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-quote-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }

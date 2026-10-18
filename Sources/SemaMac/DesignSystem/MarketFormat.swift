@@ -15,10 +15,19 @@ enum MarketFormat {
         return signed && value > 0 ? "+" + formatted : formatted
     }
 
+    static func name(_ series: MarketSeries) -> String {
+        series.exchangeRatePair?.publishedName ?? series.name
+    }
+
+    static func unit(_ series: MarketSeries) -> String {
+        series.exchangeRatePair?.currency ?? series.displayUnit
+    }
+
     static func value(_ series: MarketSeries) -> String {
         guard let value = series.latest?.value else { return "—" }
         let n = number(value, digits: series.fractionDigits)
-        return n + (series.displayUnit.isEmpty ? "" : " " + series.displayUnit)
+        let label = unit(series)
+        return n + (label.isEmpty ? "" : " " + label)
     }
 
     static func change(_ series: MarketSeries, period: HistoryPeriod) -> String {

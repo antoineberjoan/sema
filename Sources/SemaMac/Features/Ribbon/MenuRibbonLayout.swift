@@ -10,7 +10,7 @@ enum MenuRibbonLayout {
     static let cardPadding: CGFloat = 16
     static let height = topPadding + cardHeight + bottomPadding
     static let verticalWidth: CGFloat = 368
-    static let signatureHeight: CGFloat = 184
+    static let signatureHeight = cardHeight
     static let screenInset: CGFloat = 6
     static let padding: CGFloat = 18
     static let topPadding: CGFloat = 6
@@ -18,10 +18,9 @@ enum MenuRibbonLayout {
     static let headerHeight: CGFloat = 32
     static let headerSpacing: CGFloat = 6
     static let spacing: CGFloat = 12
-    static let minimumCardWidth: CGFloat = 248
-    static let maximumCardWidth: CGFloat = 600
+    static let minimumCardWidth: CGFloat = 208
     static let preferredVisibleCards = 4
-    static let cardHeight: CGFloat = 184
+    static let cardHeight: CGFloat = 216
     static let controlColumnWidth: CGFloat = 84
     static let periodRowHeight: CGFloat = 24
     static let controlColumnPadding: CGFloat = 8

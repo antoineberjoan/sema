@@ -18,8 +18,8 @@ struct DemoNotificationView: View {
             SemaMark(size: Self.markSize)
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text("sema · TEST DE NOTIFICATION").font(Self.eyebrowFont).tracking(Self.eyebrowTracking).foregroundStyle(.secondary)
-                Text(item?.name ?? "Repère de démonstration").font(.body.weight(.medium))
-                Text("Valeur simulée : \(MarketFormat.number(event.observedValue ?? 0, digits: item?.fractionDigits ?? 2)) \(item?.displayUnit ?? "").")
+                Text(item.map(MarketFormat.name) ?? "Repère de démonstration").font(.body.weight(.medium))
+                Text("Valeur simulée : \(MarketFormat.number(event.observedValue ?? 0, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "").")
                     .font(.callout).foregroundStyle(.secondary)
             }
             Spacer(minLength: 0)

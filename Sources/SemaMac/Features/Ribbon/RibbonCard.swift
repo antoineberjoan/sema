@@ -9,6 +9,7 @@ struct RibbonCard: View {
     private static let valueTracking: CGFloat = -0.9
     private static let valueMinimumScale: CGFloat = 0.7
     private static let unitLines = 2
+    private static let headingLines = 2
     private static let sparklineHeight: CGFloat = 45
     @Environment(\.semaAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -37,16 +38,14 @@ struct RibbonCard: View {
         .buttonStyle(SemaPressStyle())
         .onHover { hovered = $0 }
         .animation(reduceMotion ? nil : .easeOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
-        .help(series.name + " · Ouvrir le détail dans sema")
+        .help(MarketFormat.name(series) + " · Ouvrir le détail dans sema")
         .accessibilityLabel(accessibilityDescription)
     }
 
     private var heading: some View {
         HStack(spacing: Self.headingSpacing) {
-            Text(series.name).font(.body.weight(.medium)).lineLimit(1)
+            Text(MarketFormat.name(series)).font(.body.weight(.medium)).lineLimit(Self.headingLines)
             Spacer(minLength: 0)
-            OriginBadge(series: series)
-            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(.tertiary)
         }
     }
     private var value: some View {
@@ -54,7 +53,7 @@ struct RibbonCard: View {
             Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
                 .font(MenuRibbonLayout.valueFont).tracking(Self.valueTracking).monospacedDigit()
                 .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
-            Text(series.displayUnit).font(.subheadline).foregroundStyle(.secondary).lineLimit(Self.unitLines)
+            Text(MarketFormat.unit(series)).font(.subheadline).foregroundStyle(.secondary).lineLimit(Self.unitLines)
             Spacer(minLength: 0)
         }
     }
@@ -82,7 +81,7 @@ struct RibbonCard: View {
         .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
     }
     private var accessibilityDescription: String {
-        series.name + ", " + MarketFormat.value(series)
+        MarketFormat.name(series) + ", " + MarketFormat.value(series)
             + (series.isDemo ? ", démonstration" : "") + ", " + comparison
             + " sur " + period.title + ", publication du " + MarketFormat.date(series.latest?.date)
     }

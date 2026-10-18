@@ -62,30 +62,34 @@ struct MenuRibbonView: View {
 
     private var horizontalFavorites: some View {
         GeometryReader { geometry in
+            // Reserve a slot outside the scroll view so feedback is always visible.
             let capacity = max(1, Int((geometry.size.width + MenuRibbonLayout.spacing)
-                                     / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)))
+                                     / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)) - 1)
             let visibleCount = max(1, min(items.count, capacity, MenuRibbonLayout.preferredVisibleCards))
-            let cardWidth = min(MenuRibbonLayout.maximumCardWidth,
-                (geometry.size.width - CGFloat(visibleCount - 1) * MenuRibbonLayout.spacing) / CGFloat(visibleCount))
-            if items.isEmpty {
-                emptyState.frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: MenuRibbonLayout.spacing) {
-                        ForEach(items) { item in
-                            RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
-                                .frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
+            let cardWidth = (geometry.size.width - CGFloat(visibleCount) * MenuRibbonLayout.spacing)
+                / CGFloat(visibleCount + 1)
+            HStack(spacing: MenuRibbonLayout.spacing) {
+                if items.isEmpty {
+                    emptyState.frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView(.horizontal) {
+                        LazyHStack(spacing: MenuRibbonLayout.spacing) {
+                            ForEach(items) { item in
+                                RibbonCard(series: store.displayedSeries(item), period: period) { open(item) }
+                                    .frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
+                            }
                         }
-                        RibbonSignatureView(presentationID: presentationID)
-                            .frame(width: cardWidth, height: MenuRibbonLayout.signatureHeight)
+                        .scrollTargetLayout()
                     }
-                    .scrollTargetLayout()
+                    .scrollIndicators(.automatic)
+                    .scrollTargetBehavior(.viewAligned)
+                    .frame(width: CGFloat(visibleCount) * cardWidth + CGFloat(visibleCount - 1) * MenuRibbonLayout.spacing)
                 }
-                .scrollIndicators(.automatic)
-                .scrollClipDisabled()
-                .scrollTargetBehavior(.viewAligned)
-                .frame(height: MenuRibbonLayout.cardHeight)
+                RibbonSignatureView(presentationID: presentationID)
+                    .frame(width: cardWidth, height: MenuRibbonLayout.signatureHeight)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: MenuRibbonLayout.cardHeight)
         }
     }
 

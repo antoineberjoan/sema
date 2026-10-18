@@ -21,7 +21,7 @@ struct AlertEditorView: View {
                 GridRow {
                     Text("Repère").gridColumnAlignment(.trailing)
                     Picker("Repère", selection: $seriesID) {
-                        ForEach(store.alertableSeries) { Text($0.name).tag($0.id) }
+                        ForEach(store.alertableSeries) { Text(MarketFormat.name($0)).tag($0.id) }
                     }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading)
                 }
                 GridRow {
@@ -36,7 +36,7 @@ struct AlertEditorView: View {
                     HStack(spacing: SemaTheme.minorSpacing) {
                         TextField("Seuil", text: $thresholdText)
                             .textFieldStyle(.roundedBorder).accessibilityLabel("Seuil")
-                        Text(item?.displayUnit ?? "").foregroundStyle(.secondary)
+                        Text(item.map(MarketFormat.unit) ?? "").foregroundStyle(.secondary)
                     }
                 }
             }

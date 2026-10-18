@@ -11,15 +11,16 @@ public struct ExchangeRatePair: Equatable, Sendable {
     public var id: String { "EUR/" + currency }
     public var publishedDescription: String { currency + " pour 1 EUR" }
     public var inverseDescription: String { "EUR pour 1 " + currency }
-    public var inverseName: String {
-        let name = switch currency {
+    public var publishedName: String { "Euro / " + currencyName }
+    public var inverseName: String { currencyName + " / Euro" }
+    private var currencyName: String {
+        switch currency {
         case "USD": "Dollar"
         case "JPY": "Yen"
         case "CHF": "Franc suisse"
         case "GBP": "Livre sterling"
         default: currency
         }
-        return name + " / Euro"
     }
 
     public init?(_ series: MarketSeries) {
@@ -33,6 +34,8 @@ public struct ExchangeRatePair: Equatable, Sendable {
             key = String(verified.dropFirst(SeriesEquivalence.referencePrefix.count))
         }
         guard let parts = SeriesEquivalence.spotRateParts(key), parts[1] != "EUR", parts[1].count == 3 else { return nil }
+        // An inverse display projection keeps the source ID, but is no longer the published demo quotation.
+        guard !series.isDemo || series.unit.symbol == parts[1] else { return nil }
         currency = parts[1]
     }
 }

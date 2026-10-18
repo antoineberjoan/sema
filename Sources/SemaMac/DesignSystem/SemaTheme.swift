@@ -38,6 +38,8 @@ enum SemaTheme {
     // Vertical rhythm: the minor unit separates related items, the major unit separates groups.
     static let minorSpacing: CGFloat = 8
     static let majorSpacing: CGFloat = 16
+    static let badgeVerticalInset: CGFloat = 6
+    static let badgeFillOpacity = 0.12
     static let hairline: CGFloat = 0.5
     static let hoverDuration = 0.14
 

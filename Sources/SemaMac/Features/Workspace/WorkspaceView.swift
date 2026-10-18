@@ -85,12 +85,12 @@ struct WorkspaceView: View {
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }
-                if store.section != .overview, store.status != nil || store.connectedMarkets.isEmpty {
+                if store.section != .overview, store.section != .explorer, store.status != nil || store.connectedMarkets.isEmpty {
                     dataStatus.padding(.horizontal, SemaTheme.contentPadding).padding(.vertical, Self.statusPadding)
                 }
             }
             .background(SemaTheme.background)
-            .navigationTitle(store.section == .overview ? "sema" : store.section.title)
+            .navigationTitle(store.section == .overview ? "" : store.section.title)
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
                     if store.section == .alerts {
@@ -187,14 +187,14 @@ struct WorkspaceView: View {
             if Int(event.keyCode) == kVK_Escape { closeSwitcher(); return true }
             if [kVK_Return, kVK_ANSI_KeypadEnter].contains(Int(event.keyCode)) { commitSwitcher(); return true }
         }
-        guard event.type == .keyDown, [kVK_DownArrow, kVK_UpArrow].contains(Int(event.keyCode)),
+        guard event.type == .keyDown, [kVK_LeftArrow, kVK_RightArrow, kVK_DownArrow, kVK_UpArrow].contains(Int(event.keyCode)),
               modifiers.isEmpty || modifiers == .command else {
             if event.type == .keyDown { closeSwitcher() }
             return false
         }
         let items = store.followedSeries
         let current = items.firstIndex { $0.id == (switcherSelection ?? store.selectedSeries?.id) } ?? 0
-        let step = Int(event.keyCode) == kVK_DownArrow ? 1 : -1
+        let step = [kVK_RightArrow, kVK_DownArrow].contains(Int(event.keyCode)) ? 1 : -1
         if modifiers == .command || switcherSelection != nil {
             let next = (current + step + items.count) % items.count
             dismissSidebarPreview()
@@ -365,7 +365,7 @@ private struct SidebarSeriesRow: View {
         let displayed = store.displayedSeries(series)
         Button { store.show(series); store.section = .overview } label: {
             VStack(alignment: .leading, spacing: Self.textSpacing) {
-                Text(displayed.name).font(.callout.weight(selected ? .medium : .regular))
+                Text(MarketFormat.name(displayed)).font(.callout.weight(selected ? .medium : .regular))
                     .foregroundStyle(.primary).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
                 Text(MarketFormat.value(displayed)).font(.subheadline).monospacedDigit().foregroundStyle(SemaTheme.sidebarSecondaryText)
             }
@@ -374,7 +374,7 @@ private struct SidebarSeriesRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SemaPressStyle())
-        .accessibilityLabel("\(displayed.name), \(MarketFormat.value(displayed))\(series.isDemo ? ", données fictives" : "")")
+        .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(series.isDemo ? ", données fictives" : "")")
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

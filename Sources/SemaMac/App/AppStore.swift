@@ -26,6 +26,7 @@ final class AppStore {
     var isOnboardingPresented = false
     var shortcutError: String?
     let globalShortcuts = GlobalShortcuts()
+    let loginItem = LoginItem()
     var opensAlertAfterSearch = false
     var seriesErrors: [String: String] = [:]
     var historyLoadingID: String?

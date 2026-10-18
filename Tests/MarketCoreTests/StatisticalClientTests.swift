@@ -102,4 +102,62 @@ struct StatisticalClientTests {
         let xml = Data("<!DOCTYPE x [<!ENTITY test 'expanded'>]><Structure><Dataflow id='x' agencyID='x'><Name>&test;</Name></Dataflow></Structure>".utf8)
         #expect(throws: (any Error).self) { _ = try SDMXParser.datasets(xml, source: .insee) }
     }
+    @Test func listsPublishedSeriesWithoutObservationsAndPreservesOfficialMetadata() throws {
+        let xml = Data("""
+        <StructureSpecificData><DataSet UNIT_MULT="0"><Series FREQ="Q" REF_AREA="FR" TITLE_FR="Libellé officiel français" TITLE_EN="English" UNIT_MEASURE="PC" IDBANK="123456789"/>
+        <Series FREQ="A" REF_AREA="DE" TITLE="Autre série" UNIT_MEASURE="EUR"/></DataSet></StructureSpecificData>
+        """.utf8)
+        let items = try SDMXParser.catalogue(xml, dataset: dataset, structure: structure)
+        #expect(items.count == 2)
+        let value = try #require(items.first { $0.key == "Q.FR" })
+        #expect(value.title == "Libellé officiel français")
+        #expect(value.fields["IDBANK"] == "123456789")
+        #expect(value.frequency == .quarterly && value.unit == .percent && value.multiplier == 0)
+        #expect(value.series(observations: []).observations.isEmpty)
+        let observed = try SDMXParser.series(data(), dataset: dataset, structure: structure)
+        #expect(value.id == observed.id)
+    }
+    @Test func listsGenericSeriesAndBuildsMissingTitlesFromPublishedLabels() throws {
+        let xml = Data("<GenericData><DataSet><Series><SeriesKey><Value id='FREQ' value='A'/><Value id='REF_AREA' value='FR'/></SeriesKey></Series></DataSet></GenericData>".utf8)
+        let labels = StatisticalStructure(dimensions: structure.dimensions, labels: ["FREQ": ["A": "Annuel"], "REF_AREA": ["FR": "France"]])
+        let item = try #require(SDMXParser.catalogue(xml, dataset: dataset, structure: labels).first)
+        #expect(item.title == "Un jeu nouveau · Annuel · France")
+        #expect(item.key == "A.FR")
+    }
+    @Test func rejectsIncompleteTruncatedAndConflictingCatalogues() {
+        for xml in [
+            "<Data><DataSet><Series FREQ='A'/></DataSet></Data>",
+            "<Data><DataSet><Series FREQ='A' REF_AREA='FR'/></DataSet><Footer>partial</Footer></Data>",
+            "<Data><DataSet><Series FREQ='A' REF_AREA='FR' UNIT='PC'/><Series FREQ='A' REF_AREA='FR' UNIT='EUR'/></DataSet></Data>",
+            "<!DOCTYPE x [<!ENTITY test 'expanded'>]><Data><DataSet><Series FREQ='A' REF_AREA='FR' TITLE='&test;'/></DataSet></Data>"
+        ] {
+            #expect(throws: (any Error).self) { _ = try SDMXParser.catalogue(Data(xml.utf8), dataset: dataset, structure: structure) }
+        }
+    }
+    @Test func requestsOnlySeriesMetadataOnEachPublicSDMXHost() throws {
+        for source in StatisticalSource.allCases where source.isSDMX {
+            let flow = StatisticalDataset(source: source, code: "FLOW", agency: "AGENCY", version: "1.0", title: "Jeu", detail: "")
+            let request = StatisticalClient.seriesCatalogueRequest(flow)
+            let url = try #require(request.url)
+            #expect(url.host == URL(string: source.baseURL)?.host)
+            #expect(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems == [URLQueryItem(name: "detail", value: "nodata")])
+            #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
+            #expect(request.value(forHTTPHeaderField: "Accept")?.contains("structurespecificdata") == true)
+            let observation = try StatisticalClient.observationsRequest(dataset: flow, key: "A.FR")
+            #expect(observation.url?.path == url.path + "/A.FR")
+        }
+    }
+    @Test func listsFedMeasuresAndWorldBankCountriesWithoutInventingCombinations() async throws {
+        for source in [StatisticalSource.newYorkFed, .worldBank] {
+            let flow = StatisticalDataset(source: source, code: "TEST", agency: "SOURCE", version: "1", title: "Indicateur", detail: "")
+            let dimension = StatisticalDimension(id: source == .newYorkFed ? "MEASURE" : "REF_AREA", title: "Choix", position: 1,
+                codes: [.init(id: source == .newYorkFed ? "targetRateFrom" : "FR", title: "Libellé publié")])
+            let structure = StatisticalStructure(dimensions: [dimension], labels: [:])
+            let items = try await StatisticalClient().seriesCatalogue(dataset: flow, structure: structure)
+            #expect(items.count == 1 && items[0].key == dimension.codes[0].id)
+            #expect(items[0].title == "Indicateur · Libellé publié")
+            #expect(items[0].series(observations: []).observations.isEmpty)
+        }
+    }
+
 }

@@ -118,6 +118,42 @@ public enum SDMXParser {
         return .init(dimensions: dimensions, labels: labels, missingCodelists: Array(missing))
     }
 
+    public static func catalogue(_ data: Data, dataset: StatisticalDataset, structure: StatisticalStructure) throws -> [StatisticalSeriesDescriptor] {
+        let root = try StatisticalXMLReader.read(data)
+        guard root.descendants("Footer").isEmpty else { throw StatisticalClient.ClientError.invalidData }
+        var items: [String: StatisticalSeriesDescriptor] = [:]
+        for set in root.descendants("DataSet") {
+            let shared = fields(set)
+            for node in set.children where node.name == "Series" {
+                let value = try descriptor(fields: shared.merging(fields(node), uniquingKeysWith: { _, new in new }), dataset: dataset, structure: structure)
+                if let previous = items[value.id], previous != value { throw StatisticalClient.ClientError.invalidData }
+                items[value.id] = value
+            }
+        }
+        guard !items.isEmpty else { throw StatisticalClient.ClientError.noData }
+        return items.values.sorted {
+            let order = $0.title.localizedStandardCompare($1.title)
+            return order == .orderedSame ? $0.key < $1.key : order == .orderedAscending
+        }
+    }
+
+    private static func descriptor(fields: [String: String], dataset: StatisticalDataset, structure: StatisticalStructure) throws -> StatisticalSeriesDescriptor {
+        var attributes = fields
+        var labels: [String: String] = [:]
+        for (field, value) in attributes { labels[field] = structure.labels[field]?[value] }
+        if attributes["TITLE_FR"] == nil && attributes["TITLE"] == nil && attributes["TITLE_EN"] == nil {
+            let title = structure.dimensions.compactMap { dimension -> String? in
+                let field = dimension.id.uppercased()
+                guard let code = attributes[field] else { return nil }
+                return labels[field] ?? code
+            }.joined(separator: " · ")
+            attributes["TITLE"] = dataset.title + (title.isEmpty ? "" : " · " + title)
+        }
+        let parts = structure.dimensions.map { attributes[$0.id.uppercased()] ?? "" }
+        guard parts.allSatisfy({ !$0.isEmpty }), !parts.isEmpty else { throw StatisticalClient.ClientError.invalidData }
+        return .init(dataset: dataset, key: parts.joined(separator: "."), dimensionIDs: structure.dimensions.map(\.id), fields: attributes, labels: labels)
+    }
+
     public static func series(_ data: Data, dataset: StatisticalDataset, structure: StatisticalStructure,
                               fullHistory: Bool = false, now: Date = .now) throws -> MarketSeries {
         let root = try StatisticalXMLReader.read(data)
@@ -126,21 +162,8 @@ public enum SDMXParser {
         for set in root.descendants("DataSet") {
             let shared = fields(set)
             for node in set.children where node.name == "Series" {
-                var attributes = shared.merging(fields(node), uniquingKeysWith: { _, new in new })
-                var labels: [String: String] = [:]
-                for (field, value) in attributes { labels[field] = structure.labels[field]?[value] }
-                if attributes["TITLE_FR"] == nil && attributes["TITLE"] == nil && attributes["TITLE_EN"] == nil {
-                    let title = structure.dimensions.compactMap { dimension -> String? in
-                        let field = dimension.id.uppercased()
-                        guard let code = attributes[field] else { return nil }
-                        return labels[field] ?? code
-                    }.joined(separator: " · ")
-                    attributes["TITLE"] = dataset.title + (title.isEmpty ? "" : " · " + title)
-                }
-                let keyParts = structure.dimensions.map { attributes[$0.id.uppercased()] ?? "" }
-                guard keyParts.allSatisfy({ !$0.isEmpty }) else { throw StatisticalClient.ClientError.invalidData }
-                let descriptor = StatisticalSeriesDescriptor(dataset: dataset, key: keyParts.joined(separator: "."),
-                    dimensionIDs: structure.dimensions.map(\.id), fields: attributes, labels: labels)
+                let descriptor = try descriptor(fields: shared.merging(fields(node), uniquingKeysWith: { _, new in new }), dataset: dataset, structure: structure)
+                let attributes = descriptor.fields
                 var points: [MarketObservation] = []
                 for obs in node.children where obs.name == "Obs" {
                     let observation = fields(obs)

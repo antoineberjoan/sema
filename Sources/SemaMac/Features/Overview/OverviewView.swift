@@ -20,7 +20,7 @@ struct OverviewView: View {
                             ForEach(store.followedSeries) { item in
                                 let current = item.id == selected.id
                                 Button { store.show(item) } label: {
-                                    Text(store.displayedSeries(item).name)
+                                    Text(MarketFormat.name(store.displayedSeries(item)))
                                         .font(.callout).foregroundStyle(current ? .primary : .secondary)
                                         .padding(.bottom, Self.switcherBottomPadding)
                                         .overlay(alignment: .bottom) {
