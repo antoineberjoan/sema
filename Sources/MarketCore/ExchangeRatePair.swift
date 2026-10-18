@@ -32,6 +32,8 @@ public struct ExchangeRatePair: Equatable, Sendable {
         let parts = key.split(separator: ".").map(String.init)
         guard parts.count == 5, parts[2] == "EUR", parts[3] == "SP00", parts[4] == "A",
               parts[1] != "EUR", parts[1].count == 3 else { return nil }
+        // An inverse display projection keeps the source ID, but is no longer the published demo quotation.
+        guard !series.isDemo || series.unit.symbol == parts[1] else { return nil }
         currency = parts[1]
     }
 }

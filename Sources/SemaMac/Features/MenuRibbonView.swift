@@ -22,7 +22,6 @@ enum MenuRibbonLayout {
     static let headerSpacing: CGFloat = 6
     static let spacing: CGFloat = 12
     static let minimumCardWidth: CGFloat = 208
-    static let maximumCardWidth: CGFloat = 232
     static let preferredVisibleCards = 4
     static let cardHeight: CGFloat = 216
     static let controlColumnWidth: CGFloat = 84
@@ -85,8 +84,8 @@ struct MenuRibbonView: View {
             let capacity = max(1, Int((geometry.size.width + MenuRibbonLayout.spacing)
                                      / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)) - 1)
             let visibleCount = max(1, min(items.count, capacity, MenuRibbonLayout.preferredVisibleCards))
-            let cardWidth = min(MenuRibbonLayout.maximumCardWidth,
-                (geometry.size.width - CGFloat(visibleCount) * MenuRibbonLayout.spacing) / CGFloat(visibleCount + 1))
+            let cardWidth = (geometry.size.width - CGFloat(visibleCount) * MenuRibbonLayout.spacing)
+                / CGFloat(visibleCount + 1)
             HStack(spacing: MenuRibbonLayout.spacing) {
                 if items.isEmpty {
                     emptyState.frame(maxWidth: .infinity, maxHeight: .infinity)

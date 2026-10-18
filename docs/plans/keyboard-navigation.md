@@ -10,7 +10,7 @@ Source : demandes d’Antoine dans le chat du 17 octobre et pages Notion [Produi
 - Les raccourcis globaux configurables du bandeau et du hub restent inchangés. Les quatre combinaisons ⌘ + flèche sont réservées à la navigation locale.
 - Repère conserve ses cinq périodes : 3 mois, 1 an, 3 ans, 5 ans, Tout. Quatre favoris sont visibles sur écran assez large, en plus du cartouche ; les favoris supplémentaires défilent seuls. Une largeur moindre réduit leur nombre visible.
 - Le cartouche signature et « Une idée ou un bug ? » restent hors du défilement horizontal, y compris sans favori. Les positions latérales conservent leur signature fixe et leurs contrôles natifs.
-- Cartes horizontales de 208 à 232 pt de large et 216 pt de haut. Le cartouche reprend l’accent approfondi de la palette choisie, dont le gris de Graphite. Aucun badge d’origine ni flèche décorative dans les cartes ; les données fictives restent identifiées dans le détail et par VoiceOver.
+- Cartes horizontales de 216 pt de haut, dont la largeur partage tout l’espace disponible entre favoris visibles et signature. Le minimum de 208 pt détermine le nombre visible ; quatre favoris au maximum précèdent le cartouche. Le plafond de 232 pt est retiré à la demande d’Antoine du 18 octobre pour supprimer le vide à droite. Le cartouche reprend l’accent approfondi de la palette choisie, dont le gris de Graphite. Aucun badge d’origine ni flèche décorative dans les cartes ; les données fictives restent identifiées dans le détail et par VoiceOver.
 - Aucun changement de préférences, de sélection, d’ordre personnel, de source ou d’alerte ; aucun nouvel appel réseau.
 
 ## Preuves de cette correction
@@ -23,6 +23,8 @@ Source : demandes d’Antoine dans le chat du 17 octobre et pages Notion [Produi
 - Captures conservées dans les artefacts du chat : `sema-ribbon-signature-graphite.png` et `sema-ribbon-signature-lavande.png`. Les préférences habituelles et le dossier principal, occupé par un autre chantier, n’ont pas été modifiés.
 
 ## Vérifications restantes et livraison
+
+Ajustement du 18 octobre : le plafond des largeurs expliquait le vide signalé avec trois favoris. Critère de correction : en haut et en bas, le bord droit du cartouche rejoint la marge du panneau, quel que soit le nombre de favoris ; seule la liste défile lorsque la sélection dépasse le nombre visible. Bundle debug compilé et signature stricte valide ; revue native avec trois favoris et la signature observés jusqu’à la marge droite du panneau, à hauteur inchangée. Les autres nombres de favoris et le placement en bas restent à observer dans cette revue.
 
 Position latérale, écran de moindre largeur et options d’accessibilité pris en charge par les chemins existants et la réservation de place, mais non observés dans cette revue. Le contrôle natif s’est interrompu pendant le dernier contrôle d’état ; aucune validation de ces cas n’est déclarée.
 

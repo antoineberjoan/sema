@@ -143,9 +143,13 @@ struct SeriesDetailView: View {
     var preview = false
     var focus = false
     @State private var period: HistoryPeriod = .year
+    @State private var showsExplanation = false
 
     var body: some View {
         let displayed = store.displayedSeries(series)
+        let explanation = SeriesExplanation(series: series, period: period,
+            inverted: store.isExchangeRateInverted(series),
+            formatNumber: { MarketFormat.number($0, digits: $1) })
         VStack(alignment: .leading, spacing: focus ? 28 : 22) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 6) {
@@ -182,6 +186,12 @@ struct SeriesDetailView: View {
                             .font(.system(size: 11)).foregroundStyle(.secondary)
                     }
                 }
+            }
+            if let explanation, focus || explanation.reading != nil || explanation.implication != nil {
+                DisclosureGroup("Comprendre", isExpanded: $showsExplanation) {
+                    SeriesExplanationView(explanation: explanation)
+                }
+                .font(.system(size: 12)).fixedSize(horizontal: false, vertical: true)
             }
             if series.observations.isEmpty {
                 ContentUnavailableView("Historique indisponible", systemImage: "chart.xyaxis.line",
@@ -239,6 +249,7 @@ struct SeriesDetailView: View {
         .modifier(SeriesDetailSurface(focus: focus))
         .onChange(of: series.id, initial: true) { _, _ in
             period = series.supports(.year) ? .year : .all
+            showsExplanation = false
         }
     }
 
