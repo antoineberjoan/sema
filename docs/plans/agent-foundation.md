@@ -1,15 +1,16 @@
 # Socle agentique
 
-Statut : socle implémenté et validé, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
+Statut : socle implémenté et contrôles validés, livré dans la [PR nº 3 en brouillon](https://github.com/antoineberjoan/sema/pull/3) le 17 octobre 2026. Chargement validé dans Cursor et Claude ; connexions et correction réelle validées dans Claude. Notion connecté dans Cursor après autorisation ; son scénario réel reste incomplet et Antoine demande de poursuivre sans Cursor faute d’accès Agent utilisable. Aucune fusion vers `main`. Référence : [Équipe](https://app.notion.com/p/3fbd18bb0dea81c9b117c11a249e57df).
 
 ## Résultat
 
-Une entrée commune, des procédures chargées à la demande et les mêmes contrôles exécutables pour Codex, Claude Code, Cursor et Antigravity. Aucun changement de comportement produit ni nouvelle dépendance de production. Les sessions des autres clients restent à éprouver ; leur prise en charge n’est pas validée par la présence des fichiers seuls.
+Une entrée commune, des procédures chargées à la demande et les mêmes contrôles exécutables pour Codex, Claude Code, Cursor et Antigravity. Aucun changement de comportement produit ni nouvelle dépendance de production. Le [test des clients](../validation/agent-clients.md) prouve la découverte et la lecture des trois skills, ainsi que la restitution des règles dans Cursor et Claude. Antigravity reste à éprouver.
 
 - Autorité Notion/GitHub explicite et arbitrage humain en cas de divergence.
 - Carte des responsabilités, vocabulaire commun et descriptifs des fichiers de code.
 - Contrôles locaux et CI testés sur des cas qui doivent échouer, y compris un index Git différent du disque.
 - Mémoire courte dans les plans, décisions et PR ; aucun journal automatique.
+- Porte d’entrée visible au début du README : autorités, règles, skills et contrôles renvoient vers leurs sources uniques.
 
 ## Arbitrages et limites
 
@@ -37,7 +38,18 @@ Une entrée commune, des procédures chargées à la demande et les mêmes contr
 - Les instructions du site suivent le circuit Vercel déjà documenté ; Sites reste réservé à une demande explicite. Les formats d’instructions et de skills annoncés pour Cursor et Antigravity sont reconfirmés dans leurs documentations officielles, sans prétendre avoir testé leurs clients.
 - La revue ne modifie aucun comportement applicatif. La suite Swift locale reste bloquée par l’absence de `Testing` ; les contrôles de la PR portent la validation CI du dernier commit.
 
+## Vérification des clients du 17 octobre
+
+- Cursor 3.25.6 : instructions communes présentes, trois skills découvertes et utilisées, instructions Mac lues, autorité et validation correctement restituées. Les trois entrées du menu restent uniques après la correction Claude.
+- Claude Code 2.1.236 : import des instructions reconnu ; absence des skills natives reproduite puis corrigée par trois liens vers les sources communes. Après reconnexion CLI, quatre lectures réussies couvrent les trois skills et les instructions Mac ; autorité, arbitrage et commande documentaire sont correctement restitués. Une invocation distincte de `/sema-change` charge aussi la procédure native. Résultats sans erreur ni refus de permission.
+- 22 tests Python passent. Le garde-fou refuse la suppression, la copie, la mauvaise cible et les liens orphelins, dans le travail local et l’index Git.
+- Les deux premiers scénarios de chargement sont terminés. Ils ne valident ni une implémentation fonctionnelle complète dans chaque client ni leurs connecteurs externes ; l’essai complémentaire est détaillé ci-dessous. La fusion reste interdite sans autorisation.
+
 ## Livraison
+
+Essai complémentaire de bout en bout : chaque client doit lire réellement la page Notion Équipe et la PR privée nº 3, réaliser une correction ciblée, lancer les contrôles et transmettre un diff relu. Claude a corrigé l’absence de `AGENTS.md` : test rouge observé, 23 tests Python verts, diff limité aux deux fichiers Python et relais effectué. Lecture Notion et GitHub réussie. La validation Swift, indisponible localement, repose sur la CI du commit intégré.
+
+Cursor a lu la PR privée en direct mais atteint sa limite d’usage avant d’éditer. Antoine a autorisé la connexion Notion, désormais affichée connectée. Le quota bloque encore Grok 4.6 Medium après rechargement et chat neuf. Le 17 octobre, Antoine confirme qu’aucun autre accès n’est disponible et demande de poursuivre sans ce test. Ne pas relancer les essais ni demander un autre modèle sans changement d’accès signalé. Une reprise éventuelle suivra le [protocole de validation](../validation/agent-clients.md), qui distingue les étapes restantes de celles terminées. Aucun achat ni changement de droits non autorisé ; les travaux applicatifs parallèles restent exclus.
 
 La PR reste volontairement en brouillon. Ses contrôles GitHub font foi pour le dernier commit ; la preuve ci-dessus porte sur le commit d’implémentation. Toute fusion vers `main`, qui déploie le site, nécessite une autorisation couvrant cette publication.
 

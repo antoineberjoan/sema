@@ -2,7 +2,7 @@
 import AppKit
 import Foundation
 
-// Render the same original vector used by sema-icon.svg and SemaSymbol.
+// Render the same original vector used by SemaSymbol.
 let directory = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)
 try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 

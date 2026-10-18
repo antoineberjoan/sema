@@ -89,7 +89,7 @@ final class GlobalShortcuts {
     }
 
     private func isReserved(_ shortcut: AppShortcut) -> Bool {
-        if shortcut.modifiers == .command, [kVK_UpArrow, kVK_DownArrow].contains(Int(shortcut.keyCode)) { return true }
+        if shortcut.modifiers == .command, [kVK_UpArrow, kVK_DownArrow, kVK_LeftArrow, kVK_RightArrow].contains(Int(shortcut.keyCode)) { return true }
         if isReserved(in: NSApplication.shared.mainMenu, shortcut: shortcut) { return true }
         var symbolicKeys: Unmanaged<CFArray>?
         if CopySymbolicHotKeys(&symbolicKeys) == noErr,

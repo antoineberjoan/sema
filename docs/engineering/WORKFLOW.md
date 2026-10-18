@@ -27,7 +27,7 @@ Une correction technique à périmètre inchangé n’exige pas de créer une pa
 | [sema-change](../../.agents/skills/sema-change/SKILL.md) | Exécuter un changement vérifiable | Fonctionnalité ou chantier complexe |
 | [sema-design](../../.agents/skills/sema-design/SKILL.md) | Interface Craft appliqué aux supports de sema | Design, copy ou mouvement |
 | [sema-handoff](../../.agents/skills/sema-handoff/SKILL.md) | Préserver le contexte utile | Relais ou fin de chantier |
-| [guardrails.py](../../scripts/guardrails.py) | Contrats mécaniques | Local, pre-commit et CI |
+| [guardrails.py](../../scripts/guardrails.py) | Contrats mécaniques | Hooks d’agent, local, pre-commit et CI |
 
 Pas de copie des règles dans quatre configurations, pas de rôles permanents ni de flotte d’agents sans besoin. Une « compétence » répétable est une skill ; une contrainte brève est une règle ; un fait vérifiable est un contrôle ; une décision durable est une note de décision. Ne pas ajouter un de ces objets pour une préférence ponctuelle.
 
@@ -38,14 +38,16 @@ Les documentations officielles ont été consultées le 17 octobre 2026 ; la pri
 | Agent | Entrée | Procédures |
 | --- | --- | --- |
 | Codex | `AGENTS.md` | `.agents/skills` découvert par le client |
-| Claude Code | `CLAUDE.md` importe `AGENTS.md` | Lire la skill référencée par la table de routage ; aucun répertoire de skills dupliqué |
+| Claude Code | `CLAUDE.md` importe `AGENTS.md` | `.claude/skills` expose les skills communes par liens symboliques, sans copie |
 | Cursor | `AGENTS.md` | `.agents/skills` découvert par le client |
 | Antigravity | `AGENTS.md` | `.agents/skills` découvert par le client |
 | Autre agent | Lui demander de lire `AGENTS.md` | Même lecture ciblée et mêmes scripts |
 
-Une skill peut être demandée explicitement : « Applique sema-design à ce changement ». On ne suppose pas qu’une commande slash existe dans tous les clients. Claude peut lire les procédures via le routeur sans installation ni liens symboliques. Ses skills natives utilisent un autre répertoire ; on évite d’en maintenir une seconde copie.
+Une skill peut être demandée explicitement : « Applique sema-design à ce changement ». Cursor et Claude proposent aussi `/sema-design` dans leur catalogue natif ; l’invocation explicite dépend du client. Les trois liens de `.claude/skills` conservent les mêmes noms et pointent vers `.agents/skills`, seule source à éditer. Le contrôle refuse un lien absent, détourné, remplacé par une copie ou un simple fichier texte. Le clone Git doit conserver les liens symboliques ; aucune copie de secours n’est maintenue. La table de routage reste utilisable par les autres agents.
 
-Sur un nouvel outil, demander d’identifier les sources d’instructions chargées et la commande de validation, puis faire une petite tâche réversible. La découverte automatique et l’obéissance effective ne sont pas validées par la simple présence des fichiers. Les sessions Claude, Cursor et Antigravity n’ont pas été exécutées dans ce chantier.
+Sur un nouvel outil, demander d’identifier les sources d’instructions chargées et la commande de validation, puis faire une petite tâche réversible. La découverte automatique et l’obéissance effective ne sont pas validées par la simple présence des fichiers. Le [test des clients](../validation/agent-clients.md) distingue catalogue, lecture et exécution : Cursor et Claude chargent les trois skills et les instructions Mac. Claude a aussi lu Notion et GitHub puis corrigé un garde-fou avec test avant/après. Cursor lit GitHub et son connecteur Notion est connecté ; la lecture Notion et son changement réel restent arrêtés par le quota Agent. Antigravity reste non testé.
+
+Les connexions et permissions restent propres à chaque client. Avant un chantier qui dépend de Notion, lire réellement la page source avec son connecteur ; un catalogue ou l’état « connecté » ne suffisent pas. Pour GitHub, le terminal `gh` authentifié peut lire la PR privée et effectuer les opérations autorisées sans ajouter un second connecteur. Ne pas copier de jeton dans Git ou entre clients. Une connexion sans accès à la ressource, une permission manquante ou un quota épuisé restent des blocages explicites, jamais une validation réussie. Références de connexion : [Claude MCP](https://code.claude.com/docs/en/mcp), [Cursor MCP](https://cursor.com/help/customization/mcp), [Notion MCP](https://developers.notion.com/guides/mcp/get-started-with-mcp).
 
 Références : [OpenAI, AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [OpenAI, skills](https://learn.chatgpt.com/docs/build-skills), [Claude, mémoire et imports](https://code.claude.com/docs/en/memory), [Claude, skills](https://code.claude.com/docs/en/skills), [Cursor, règles](https://cursor.com/help/customization/rules), [Cursor, skills](https://cursor.com/help/customization/skills), [Antigravity, règles](https://antigravity.google/docs/rules), [Antigravity, skills](https://antigravity.google/docs/skills).
 
@@ -53,15 +55,16 @@ Références : [OpenAI, AGENTS.md](https://learn.chatgpt.com/docs/agent-configur
 
 Après un clone, exécuter `./scripts/setup.sh`. Il configure uniquement ce dépôt et refuse de remplacer un autre chemin de hooks. Le hook est versionné ; son activation Git reste locale et doit être refaite après un nouveau clone. Pour le désactiver intentionnellement : `git config --local --unset core.hooksPath`.
 
+- Hooks d’agent : [.claude/settings.json](../../.claude/settings.json) appelle [agent-hook.py](../../scripts/agent-hook.py) après chaque édition, avec les refus du seul fichier édité, puis en fin de tour sur tout le dépôt, avec une seule relance. Cursor lit ce même fichier par défaut (réglage Third-Party Imports) ; aucun `.cursor/hooks.json` ne le double. Codex et Antigravity restent couverts par le hook Git et la CI.
 - `python3 scripts/guardrails.py` vérifie le travail local, nouveaux fichiers non ignorés inclus.
 - `python3 scripts/guardrails.py --staged` lit l’index Git exact, y compris les liens et fichiers supprimés. C’est le contrôle pre-commit ; il ne modifie et n’indexe rien.
 - `./scripts/check.sh` ajoute les tests des contrôles et les tests Swift, puis la syntaxe des scripts concernés et le plist.
 - `./scripts/build-app.sh` construit et signe le bundle local ad hoc.
 - La CI exécute `check.sh` et construit un bundle pour chaque PR, chaque push sur `main` et les lancements manuels. Aucune dépendance de production n’a été ajoutée.
 
-Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, duplication des instructions dans `CLAUDE.md`, absence ou divergence des manifestes de release local et web.
+Le contrôle bloque : emplacement sans responsabilité, descriptif absent, import d’interface interdit dans le cœur, valeur visuelle, ombre ou code de touche en dur selon les [conventions](CONVENTIONS.md), type Swift hors du fichier à son nom, marqueur de conflit, certains fichiers de secrets, JSON invalide, lien Markdown local cassé, skill mal déclarée, entrée commune `AGENTS.md` absente, duplication des instructions dans `CLAUDE.md`, adaptateur de skill Claude absent ou divergent, absence ou divergence des manifestes de release local et web.
 
-Ces vérifications sont volontairement bornées : le contrôle des liens Markdown en ligne ignore les exemples en code et ne résout ni les liens par référence, ni les URL réseau, ni les ancres. L’analyse des imports masque commentaires et chaînes Swift mais ne remplace pas le compilateur. L’en-tête est détecté mais son utilité se relit ; le contrôle de secrets par nom ne remplace pas une revue des valeurs. Duplication sémantique, code mort, bonne abstraction, exactitude de la copy et qualité native demandent une revue. Aucun script ne prétend vérifier « zéro hardcode » en interdisant tous les littéraux.
+Ces vérifications sont volontairement bornées : le contrôle des liens Markdown en ligne ignore les exemples en code et ne résout ni les liens par référence, ni les URL réseau, ni les ancres. L’analyse des imports masque commentaires et chaînes Swift mais ne remplace pas le compilateur. L’en-tête est détecté mais son utilité se relit ; le contrôle de secrets par nom ne remplace pas une revue des valeurs. Duplication sémantique, code mort, bonne abstraction, exactitude de la copy et qualité native demandent une revue. Le contrôle des valeurs en dur lit ligne par ligne les modificateurs et arguments de mise en page de l’app ; les règles métier du cœur se relisent, et aucun script ne juge la pertinence d’un nom.
 
 ## GitHub et production
 

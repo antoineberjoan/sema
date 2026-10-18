@@ -1,0 +1,25 @@
+{
+  "version": "0.5.2",
+  "build": "16",
+  "sourceCommit": "d7442e768d9d76e5f3ae7705a12229b7e84b6af7",
+  "ci": "https://github.com/antoineberjoan/sema/actions/runs/39014134477",
+  "localSwiftTesting": "unavailable in installed Command Line Tools; suite passed on macOS CI",
+  "nativeReview": {
+    "isolatedPreferences": true,
+    "lightAndDark": true,
+    "selection": "Favoris → Emprunt phare FR · 10 ans → Euro / Dollar",
+    "periods": "3 months → 1 year",
+    "profilePinnedBelowScrollingList": true,
+    "notificationsEnabled": false
+  },
+  "productionBundle": "dist/Sema.app",
+  "localBundleUpdated": true,
+  "codeSHA256": "1bfc85212c277d33439b16d5d6a1d5d76fa3dc0133d359d1db95eb845f1f3712",
+  "publication": {
+    "state": "awaiting explicit approval after automatic review rejected the public release",
+    "downloadAndHomebrewRemain": "0.5.1",
+    "artifact": "dist/releases/0.5.2/Sema-0.5.2-arm64.dmg",
+    "sha256": "c07ac66e1ca13de3dab9735e0aaa170ecd4cacc8c77b69e72cadf1ffd8154a0b",
+    "byteSize": 2864740
+  }
+}

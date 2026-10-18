@@ -4,7 +4,7 @@ Ces règles servent une lecture directe du code. Une règle mécanique appartien
 
 ## Une responsabilité, un emplacement
 
-La carte exécutable est [structure.json](../../.agents/structure.json). Placer une vue dans la fonctionnalité qu’elle sert, un calcul pur dans le cœur, un effet système dans l’infrastructure. Centraliser un composant uniquement lorsque plusieurs usages partagent réellement son contrat. Pas de dossiers `utils`, `misc`, `common` ou de framework interne par anticipation.
+La carte exécutable est [structure.json](../../.agents/structure.json). Placer une vue dans la fonctionnalité qu’elle sert, un calcul pur dans le cœur, un effet système dans l’infrastructure. Centraliser un composant uniquement lorsque plusieurs usages partagent réellement son contrat. Pas de dossiers `utils`, `misc`, `common` ou de framework interne par anticipation. Le nom d’un type suffit à retrouver son fichier : `guardrails.py` refuse un second type visible dans un fichier et un fichier d’extensions mal nommé. Découper un type volumineux en extensions `Type+Rôle.swift` oblige à rendre `internal` les membres partagés entre ces fichiers ; le faire seulement quand le gain de lecture le justifie.
 
 Avant d’ajouter un fichier, pouvoir écrire sa responsabilité en une phrase. Cette phrase ouvre le fichier, après le shebang, la directive SwiftPM ou le doctype si nécessaire. Conserver un descriptif existant utile ; pas d’auteur, de date de session, de récit des changements ou de commentaire qui répète le nom du fichier. JSON, images et autres formats sans commentaire n’ont pas d’en-tête artificiel.
 
@@ -28,6 +28,10 @@ Zéro duplication de connaissance : un contrat métier possède un propriétaire
 | Choix personnel | Modèle de préférences et persistance existants |
 | Environnement, URL publique de configuration | Configuration du bundle ou de l’outil propriétaire |
 | Secret | Trousseau ou environnement autorisé, jamais le dépôt |
+
+Dans l’app, aucune valeur visuelle n’est écrite dans l’appel : rayon, police, trait, durée, ressort, marge, espacement, cadre, opacité, décalage, approche, nombre de lignes et échelle minimale se nomment dans un rôle de `SemaTheme` ou un `static let` de leur propriétaire. `guardrails.py` le refuse, ternaires compris ; `0` et `1` restent permis. Une police reprend le style de texte natif quand sa taille existe (`.body`, `.callout`, `.subheadline`…), une ombre est une `SemaTheme.Shadow`, une touche une constante Carbon `kVK_…`.
+
+Les valeurs partagées vivent dans `SemaTheme` et se nomment par rôle : rayons `rowCorner`, `cardCorner`, `surfaceCorner` ; lignes `rowPadding`, `rowSpacing`, `rowTextSpacing`, `rowTitleLines` ; `contentPadding`, `iconButtonSize`, `selectionOpacity`, `hoverFill`, `quietFill`. Le rythme suit deux unités, `minorSpacing` entre éléments liés et `majorSpacing` entre groupes ; une nouvelle vue part de ces unités. Réutiliser un rôle existant avant d’en créer un. Dans le cœur, une règle métier se nomme sur son type : seuils d’alerte, précision des séries, fenêtre d’historique récente, délais et limites des fournisseurs, versions de schéma.
 
 Une constante se définit une seule fois à la portée utile. Les littéraux structurels évidents (`0`, `1`, collection vide), les valeurs exactes d’un protocole et les fixtures identifiées ne deviennent pas des options de configuration. Une URL de fournisseur peut rester une constante du client : rendre l’hôte configurable sans besoin fragiliserait notamment l’envoi des clés. Ne pas externaliser tous les textes dans un registre générique ; mutualiser ceux qui portent réellement la même copy.
 
