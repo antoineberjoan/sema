@@ -3,13 +3,12 @@ import SwiftUI
 import MarketCore
 
 struct WebstatConnectionView: View {
-    private static let spacing: CGFloat = 16
     @Environment(AppStore.self) private var store
     @State private var apiKey = ""
     var didConnect: () -> Void = {}
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Self.spacing) {
+        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
             if store.hasWebstatKey {
                 Label("Connecté", systemImage: "checkmark.circle.fill")
                     .foregroundStyle(store.palette.accent)

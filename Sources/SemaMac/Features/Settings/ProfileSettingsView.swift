@@ -4,7 +4,6 @@ import UniformTypeIdentifiers
 
 struct ProfileSettingsView: View {
     private static let avatarSize: CGFloat = 56
-    private static let avatarSpacing: CGFloat = 16
     @Environment(AppStore.self) private var store
     @State private var showsImporter = false
     @State private var isImporting = false
@@ -13,7 +12,7 @@ struct ProfileSettingsView: View {
     var body: some View {
         Form {
             Section {
-                HStack(spacing: Self.avatarSpacing) {
+                HStack(spacing: SemaTheme.majorSpacing) {
                     Button { showsImporter = true } label: {
                         ProfileAvatar(profile: store.profile, size: Self.avatarSize)
                     }

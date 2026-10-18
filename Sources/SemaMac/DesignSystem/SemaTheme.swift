@@ -37,7 +37,7 @@ enum SemaTheme {
     static let contentPadding: CGFloat = 26
     // Vertical rhythm: the minor unit separates related items, the major unit separates groups.
     static let minorSpacing: CGFloat = 8
-    static let majorSpacing: CGFloat = 24
+    static let majorSpacing: CGFloat = 16
     static let hairline: CGFloat = 0.5
     static let hoverDuration = 0.14
 
