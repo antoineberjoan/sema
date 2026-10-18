@@ -8,11 +8,11 @@ Plusieurs clients d’agents travaillent sur les mêmes sources. Copier les inst
 
 ## Décision
 
-Une entrée `AGENTS.md`, des règles de zone, trois skills ciblées dans `.agents/skills` et des contrôles Python sans dépendance externe. `CLAUDE.md` importe l’entrée commune. Aucun framework d’agents, nouvelle cible ou serveur.
+Une entrée `AGENTS.md`, des règles de zone, trois skills ciblées dans `.agents/skills` et des contrôles Python sans dépendance externe. `CLAUDE.md` importe l’entrée commune. Trois liens symboliques dans `.claude/skills` permettent la découverte native par Claude Code, sans recopier les procédures ; leur présence et leur cible sont vérifiées dans le travail local et l’index Git. Aucun framework d’agents, nouvelle cible ou serveur.
 
 Notion porte l’intention ; GitHub porte l’exécution et ses preuves. Une divergence de direction exige de demander à Antoine la version à garder. Les agents poursuivent le travail indépendant sans arbitrer à sa place.
 
-Le hook pre-commit vérifie l’index exact ; la CI appelle le même contrôle par `check.sh`. Les plans et décisions conservent seulement le contexte utile ; les historiques détaillés restent dans Git.
+Le hook pre-commit vérifie l’index exact ; la CI appelle le même contrôle par `check.sh`. Complément du 17 octobre 2026 : un hook d’agent unique dans `.claude/settings.json`, lu aussi par Cursor, renvoie les refus pendant le travail ; les valeurs visuelles et codes de touche en dur deviennent un refus mécanique. Les plans et décisions conservent seulement le contexte utile ; les historiques détaillés restent dans Git.
 
 ## Conséquences
 

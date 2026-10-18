@@ -5,7 +5,7 @@ set -euo pipefail
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$project_root"
 configuration="${SEMA_CONFIGURATION:-release}"
-destination="${1:-$project_root/dist/Sema.app}"
+destination="${1:-$project_root/build/Sema.app}"
 if [[ "$destination" != *.app ]]; then
     echo "La destination doit se terminer par .app" >&2
     exit 1

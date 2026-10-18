@@ -30,6 +30,10 @@ Le cartouche dit **« L’économie bouge. Gardez vos repères. »**. Le tracé 
 
 **SF Pro**, via `.system` : aucune police à télécharger ou embarquer. Conserver les styles natifs des contrôles ; utiliser `monospacedDigit()` pour aligner les valeurs financières. Les titres emploient les graisses medium et semibold. Éviter d’ajouter une seconde famille typographique.
 
+## Rythme et rayons
+
+Deux unités d’espacement, selon le principe d’Interface Craft repris de Josh Puckett : 8 pt entre éléments liés, 24 pt entre groupes. Un rayon par rôle : 12 pt pour les lignes et tuiles sélectionnables, 16 pt pour les cartes dans une vue, 22 pt pour les surfaces et panneaux flottants. Une sélection prend une teinte à 12 %, accent ou neutre dans la sidebar ; un survol, un voile neutre à 4 %. Valeurs posées le 17 octobre 2026, à valider à l’œil dans l’app.
+
 ## Couleurs
 
 Graphite est le thème par défaut : noir, blanc et gris. Six thèmes restent disponibles dans **Réglages → Apparence** ; les choix enregistrés sont conservés. Sarcelle, Menthe, Lavande, Bleu ciel et Bleu polaire sont des personnalisations facultatives.
@@ -51,9 +55,7 @@ Retenu le 16 octobre 2026. Le dessin « Palier — Référence » d’Antoine re
 
 La géométrie est identique en SVG, SwiftUI et Core Graphics. Trois poids optiques dans le kit : Display (trait source 3,6, à partir de 96 px), Standard (6, de 28 à 95 px), Compact (8,5, de 16 à 27 px). Le symbole ne descend pas sous 16 px. L’icône d’app utilise le poids Compact dans un carré encre aux coins arrondis, avec un signe blanc.
 
-- `Resources/Brand/sema-symbol.svg` : Standard, transparent.
-- `Resources/Brand/sema-symbol-mono.svg` : variante renforcée pour la barre de menus, trait source 20,915033 (2 pt à 18 pt). Le poids Compact général reste inchangé.
-- `Resources/Brand/sema-icon.svg` : icône de l’app.
+- `Resources/Brand/sema-logo.svg` : Standard, transparent.
 - `SemaSymbol` : géométrie native, poids adapté à la taille.
 - `scripts/render-icon.swift` : PNG et icône du bundle.
 

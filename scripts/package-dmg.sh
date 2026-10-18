@@ -8,7 +8,7 @@ if [[ $# -lt 1 || $# -gt 2 ]]; then
     exit 1
 fi
 bundle="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
-output_directory="${2:-$project_root/dist/releases}"
+output_directory="${2:-$project_root/build/releases}"
 mkdir -p "$output_directory"
 output_directory="$(cd "$output_directory" && pwd)"
 
@@ -46,7 +46,7 @@ CLANG_MODULE_CACHE_PATH="$project_root/.build/ModuleCache" swiftc \
     "$project_root/scripts/render-dmg.swift" -o "$staging/render-dmg"
 clang -framework CoreServices -Wno-deprecated-declarations \
     "$project_root/scripts/distribution/finder-alias.c" -o "$staging/finder-alias"
-"$staging/render-dmg" "$project_root/Resources/Distribution/dmg-background.svg" "$staging/background"
+"$staging/render-dmg" "$project_root/Resources/DMG/dmg-background.svg" "$staging/background"
 mkdir -p "$output_directory/background-preview"
 cp "$staging/background/"*.png "$output_directory/background-preview/"
 tiffutil -cathidpicheck "$staging/background/background@1x.png" \

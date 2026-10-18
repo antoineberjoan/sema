@@ -12,10 +12,11 @@ Entrée commune à tous les agents. Lire les sections utiles de `docs/PRODUCT.md
 ## Code et structure
 
 - Une seule implémentation active par responsabilité. Pas d’alias de compatibilité, de code mort, de branche de secours spéculative ni de copie « v2 », « new » ou « final ». Les migrations de données sont traitées dans `docs/engineering/CONVENTIONS.md`.
-- Noms courts et explicites, même terme pour le même concept : `docs/engineering/GLOSSARY.md`. Respecter les API natives et les schémas externes.
+- Noms courts et explicites, même terme pour le même concept : `docs/engineering/GLOSSARY.md`. Pas de préfixe `Sema` dans un nouvel identifiant : le projet le dit déjà. Respecter les API natives et les schémas externes.
 - Chaque fichier de code commence par une courte description de sa responsabilité, avant les imports et après les directives obligatoires. Expliquer son utilité, sans paraphraser son nom.
-- Chaque emplacement a un rôle dans `.agents/structure.json`. Réutiliser la zone existante ; justifier un nouvel emplacement. Pas de dossier fourre-tout.
-- Centraliser les choix métier, visuels et d’environnement chez leur propriétaire. Pas de valeur magique ni de secret dans le code ; pas de configuration spéculative. Détails dans `docs/engineering/CONVENTIONS.md`.
+- Chaque emplacement a un rôle dans `.agents/structure.json`. Réutiliser la zone existante ; justifier un nouvel emplacement. Pas de dossier fourre-tout. Un fichier Swift porte un seul type visible, à son nom ; ses aides restent `private` et les extensions d’un type vivent dans `Type+Rôle.swift`.
+- Centraliser les choix métier, visuels et d’environnement chez leur propriétaire. Pas de valeur en dur ni de secret dans le code ; pas de configuration spéculative. Détails dans `docs/engineering/CONVENTIONS.md`.
+- Un système durable qui se réutilise : partir de l’existant (`DesignSystem`, conventions, composants), l’étendre plutôt que réinventer. Changer seulement pour une valeur réelle, jamais pour changer.
 - Changements ciblés, patterns existants, aucune abstraction sans usage concret. Ne supprimer que ce qui devient inutile pour la tâche.
 - Ne pas ajouter de dépendance de production sans accord. Pas de nouvelle cible, framework d’architecture ou service serveur sans besoin explicite.
 - App **sema**, en minuscules dans les textes visibles. Français pour l’interface et la documentation ; anglais pour les identifiants.
@@ -37,7 +38,7 @@ Ces chemins fonctionnent aussi quand l’agent ne découvre pas les skills autom
 ## Validation et autonomie
 
 - Définir une condition de réussite observable avant un gros changement. Lire le diff et exécuter le plus petit contrôle pertinent.
-- `python3 scripts/guardrails.py` : structure, descriptifs, frontières, liens et cohérence mécanique. `./scripts/check.sh` : contrôles et tests après modification fonctionnelle. `./scripts/build-app.sh` : validation du bundle.
+- `python3 scripts/guardrails.py` : structure, descriptifs, frontières, liens, valeurs en dur et cohérence mécanique ; les hooks Claude et Cursor le lancent après chaque édition et en fin de tour. `./scripts/check.sh` : contrôles et tests après modification fonctionnelle. `./scripts/build-app.sh` : validation du bundle.
 - Après modification UI, vérifier le parcours dans l’app native ou le navigateur : clavier, états utiles, accessibilité et interruption des animations. Séparer ce qui est observé de ce qui reste à vérifier.
 - Les réparations et validations locales dans le périmètre demandé sont autonomes. Ne pas élargir la mission ni modifier les règles pour faire passer un contrôle.
 - Publication, fusion vers `main` (qui déploie le site), dépense, suppression irréversible et changement de vision nécessitent une autorisation couvrant l’action. Ne pas redemander un accord déjà donné pour cette action.

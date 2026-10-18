@@ -55,7 +55,7 @@ Les états de sélection sont partagés volontairement entre panneau et fenêtre
 
 `GlobalShortcuts` réserve les deux combinaisons via `RegisterEventHotKey` et un gestionnaire Carbon natif. Aucun observateur global de frappe ni permission d’accessibilité n’est ajouté. Les remplacements sont réservés avant de libérer les anciens ; une erreur de réservation ou de sauvegarde conserve le réglage précédent. L’enregistrement suspend les réservations de sema, capture les touches dans son seul champ puis les rétablit à la sortie, y compris à la fermeture de la fenêtre.
 
-`FocusKeyboard` observe uniquement les événements locaux de la fenêtre principale, hors saisie, contrôle de valeur et feuille. `WorkspaceView` possède le choix provisoire du sélecteur ; `AppStore.show` n’est appelé qu’à la validation. Un changement de fenêtre, une feuille ou Échap annule ce choix. Les calculs et données ne sont pas dupliqués. `HistoryPeriods` partage les cinq horizons visibles entre les deux surfaces ; les autres cas du modèle historique restent disponibles aux calculs existants.
+`FocusKeyboard` observe uniquement les événements locaux de la fenêtre principale, hors saisie, contrôle de valeur et feuille. `WorkspaceView` possède le choix provisoire du sélecteur ; `AppStore.show` n’est appelé qu’à la validation. Un changement de fenêtre, une feuille ou Échap annule ce choix. Les calculs et données ne sont pas dupliqués. `HistoryPeriod.visible` partage les cinq horizons visibles entre les deux surfaces ; les autres cas du modèle historique restent disponibles aux calculs existants.
 
 ## Persistance
 

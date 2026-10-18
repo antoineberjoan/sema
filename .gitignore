@@ -1,7 +1,7 @@
 .build/
 .swiftpm/
 __pycache__/
-/dist/
+/build/
 run-data/
 .DS_Store
 *.xcuserstate
@@ -9,6 +9,7 @@ xcuserdata/
 .env
 .env.*
 !.env.example
+.claude/settings.local.json
 
 # Site linking and generated release archives
 .vercel/

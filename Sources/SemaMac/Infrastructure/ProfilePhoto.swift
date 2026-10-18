@@ -4,6 +4,11 @@ import ImageIO
 import UniformTypeIdentifiers
 
 enum ProfilePhoto {
+    private static let maximumFileSize = 25_000_000
+    private static let thumbnailMaxPixelSize = 768
+    /// Stored photos are square, at twice the largest avatar for Retina screens.
+    private static let pixelSize = 384
+    private static let jpegQuality = 0.85
     enum ImportError: Error, LocalizedError {
         case tooLarge, unsupported
         var errorDescription: String? {
@@ -18,18 +23,18 @@ enum ProfilePhoto {
         let access = url.startAccessingSecurityScopedResource()
         defer { if access { url.stopAccessingSecurityScopedResource() } }
         let info = try url.resourceValues(forKeys: [.fileSizeKey])
-        guard (info.fileSize ?? 0) <= 25_000_000 else { throw ImportError.tooLarge }
+        guard (info.fileSize ?? 0) <= Self.maximumFileSize else { throw ImportError.tooLarge }
         guard let source = CGImageSourceCreateWithURL(url as CFURL, [kCGImageSourceShouldCache: false] as CFDictionary),
               let thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0, [
                 kCGImageSourceCreateThumbnailFromImageAlways: true,
                 kCGImageSourceCreateThumbnailWithTransform: true,
-                kCGImageSourceThumbnailMaxPixelSize: 768
+                kCGImageSourceThumbnailMaxPixelSize: Self.thumbnailMaxPixelSize
               ] as CFDictionary),
               let space = CGColorSpace(name: CGColorSpace.sRGB),
-              let context = CGContext(data: nil, width: 384, height: 384, bitsPerComponent: 8,
+              let context = CGContext(data: nil, width: Self.pixelSize, height: Self.pixelSize, bitsPerComponent: 8,
                 bytesPerRow: 0, space: space, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)
         else { throw ImportError.unsupported }
-        let size = CGFloat(384)
+        let size = CGFloat(Self.pixelSize)
         let scale = max(size / CGFloat(thumbnail.width), size / CGFloat(thumbnail.height))
         let width = CGFloat(thumbnail.width) * scale, height = CGFloat(thumbnail.height) * scale
         context.setFillColor(CGColor(gray: 1, alpha: 1)); context.fill(CGRect(x: 0, y: 0, width: size, height: size))
@@ -40,7 +45,7 @@ enum ProfilePhoto {
               let destination = CGImageDestinationCreateWithData(result, UTType.jpeg.identifier as CFString, 1, nil)
         else { throw ImportError.unsupported }
         // A new image carries no EXIF/location metadata from the selected file.
-        CGImageDestinationAddImage(destination, image, [kCGImageDestinationLossyCompressionQuality: 0.85] as CFDictionary)
+        CGImageDestinationAddImage(destination, image, [kCGImageDestinationLossyCompressionQuality: Self.jpegQuality] as CFDictionary)
         guard CGImageDestinationFinalize(destination) else { throw ImportError.unsupported }
         return result as Data
     }

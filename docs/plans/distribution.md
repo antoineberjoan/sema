@@ -89,3 +89,18 @@ Afficher « Version alpha non notarisée » près du téléchargement et fournir
 ## Livrables
 
 Un prototype de page de téléchargement et ses réglages de mouvement ; un fond DMG et un script reproductible ; un accueil natif réutilisant la connexion et les préférences ; un DMG versionné et son empreinte ; un cask testé ; les captures de validation et une courte aide d’installation.
+
+
+## Point de reprise — contraste de la sidebar, 17 octobre 2026
+
+**État : version locale 0.5.2 validée ; publication en attente d’accord explicite.** Source : demande d’Antoine dans le chat, « meilleur contraste sur la sidebar ». Le commit `d7442e768d9d76e5f3ae7705a12229b7e84b6af7` est sur `origin/main`. La sidebar utilise le texte primaire pour les actions, un gris opaque clair/sombre pour les valeurs secondaires et une sélection plus présente. La matière native et le comportement de survol sont conservés. Les preuves de parcours natif et la CI macOS sont dans [sidebar-0.5.2.json](../validation/sidebar-0.5.2.json).
+
+Le bundle local `dist/Sema.app` est mis à jour, build 16. Le DMG préparé est `dist/releases/0.5.2/Sema-0.5.2-arm64.dmg` ; la signature et l’image disque sont vérifiées. Le code du bundle de revue resigné correspond au code de production. Aucune préférence personnelle n’a été remplacée.
+
+Le contrôle automatique a refusé la création de la release publique et l’actualisation du visuel du site, jugeant l’autorisation antérieure insuffisante pour cette nouvelle version. Ne pas relancer ces actions avant une réponse explicite d’Antoine. Le manifeste publié, Homebrew et le téléchargement du site restent en 0.5.1.
+
+Après accord : publier ce DMG et son SHA-256 dans `antoineberjoan/homebrew-sema`, vérifier le téléchargement sans authentification, mettre à jour et tester le cask public (installation et 0.5.1 → 0.5.2), puis synchroniser `distribution/release.json` avec `scripts/distribution/sync-download.py`. Actualiser le visuel seulement si l’accord le couvre. Préserver les changements du socle agentique apparus en parallèle : ils ne font pas partie du correctif de contraste.
+
+### Ajustement local de la sidebar — 17 octobre
+
+La branche distante `codex/sidebar-spacing` (`e4ca175`) retire l’engrenage du hub et ramène la marge supérieure de recherche à 8 pt. Bundle local recompilé, signé et ouvert depuis `dist/Sema.app` ; profil, ⌘K, fermeture/réouverture et périodes vérifiés dans le natif. Les garde-fous et leurs 12 tests passent ; les tests Swift restent bloqués localement par le module `Testing` absent. La CI du commit de contraste ne couvre pas cet ajustement. Le DMG 0.5.2 déjà préparé doit être reconstruit depuis le code retenu avant toute publication autorisée ; son ancien hash reste celui de l’artefact existant.

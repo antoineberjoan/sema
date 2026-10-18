@@ -31,7 +31,7 @@ struct LocalStorage {
         guard FileManager.default.fileExists(atPath: url.path) else { return [] }
         let data = try Data(contentsOf: url)
         if let cache = try? JSONDecoder().decode(WebstatCache.self, from: data) {
-            guard cache.schemaVersion == 2 else { throw PreferencesStore.StoreError.unsupportedVersion(cache.schemaVersion) }
+            guard cache.schemaVersion == WebstatCache.currentSchemaVersion else { throw PreferencesStore.StoreError.unsupportedVersion(cache.schemaVersion) }
             return cache.series
         }
         let legacy = try JSONDecoder().decode([MarketSeries].self, from: data)
@@ -70,15 +70,13 @@ struct LocalStorage {
 }
 
 private struct WebstatCache: Codable {
-    var schemaVersion = 2
+    static let currentSchemaVersion = 2
+    var schemaVersion = WebstatCache.currentSchemaVersion
     let series: [MarketSeries]
 }
-struct WebstatCatalogueCache: Codable {
-    var schemaVersion = 1
-    let datasets: [WebstatDataset]
-    let labels: [String: [String: String]]
-}
+
 private struct StatisticalCatalogueCache: Codable {
+    static let currentSchemaVersion = 1
     var schemaVersion = 1
     let datasets: [String: [StatisticalDataset]]
 }

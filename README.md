@@ -4,7 +4,21 @@
 
 sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoan/sema`.
 
-## Version 0.4
+## Travailler avec un agent
+
+Antoine fixe l’intention. **Notion** fait foi sur la vision, le périmètre souhaité, le business, la marque et la copy ; **GitHub** porte le code, les décisions techniques et les preuves. La [carte des sources](docs/engineering/SOURCES.md) donne les références. Une divergence de direction se résout avec Antoine.
+
+Quel que soit l’agent utilisé, commencer par [AGENTS.md](AGENTS.md), l’entrée commune du projet, puis charger uniquement les instructions utiles au travail :
+
+- **Règles et rangement** : instructions de la zone touchée, [responsabilité des emplacements](.agents/structure.json), [conventions](docs/engineering/CONVENTIONS.md) et [vocabulaire partagé](docs/engineering/GLOSSARY.md).
+- **Procédures à la demande** : [sema-change](.agents/skills/sema-change/SKILL.md) pour réaliser un changement, [sema-design](.agents/skills/sema-design/SKILL.md) pour Interface Craft, [sema-handoff](.agents/skills/sema-handoff/SKILL.md) pour transmettre le contexte utile.
+- **Contrôles et mémoire** : mêmes scripts dans les hooks Claude et Cursor, en local, au commit et en CI ; revue du diff, preuves dans la PR, plans et décisions conservés sous forme condensée. Le [fonctionnement du socle](docs/engineering/WORKFLOW.md) décrit ce circuit et les adaptateurs des clients.
+
+Après un clone, lancer `./scripts/setup.sh` pour activer le hook local. Les contrôles demandent Python 3.9 ou plus récent, sans module externe.
+
+Le système partage les règles et les contrôles ; il ne rend pas les modèles déterministes. Le chargement effectif doit être vérifié dans chaque client : voir les [essais et leurs limites](docs/validation/agent-clients.md). Le README oriente ; les fichiers liés restent les références à maintenir.
+
+## Fonctionnalités
 
 - Un hub Focus : un repère et son grand historique, une sidebar repliable qui apparaît au survol de son icône, et « Mon espace » fixé en bas. Le bandeau de favoris en verre reste accessible depuis la barre de menus.
 - Catalogue Webstat dynamique avec clé personnelle : rechercher, filtrer et prévisualiser les séries accessibles, puis composer une sélection ordonnée. Les treize repères macro précédents restent une sélection de départ.
@@ -21,15 +35,13 @@ Les séries publiques partagent favoris, historiques et alertes avec Webstat. Le
 
 ## Démarrer
 
-Pour contribuer avec un agent, lire [AGENTS.md](AGENTS.md), puis activer les contrôles locaux avec `./scripts/setup.sh`. Les contrôles demandent Python 3.9 ou plus récent, sans module externe. Le [fonctionnement du socle](docs/engineering/WORKFLOW.md) explique les sources Notion, les skills et les validations partagées.
-
 Pré-requis : un Mac sous macOS 14 ou plus récent et un compilateur Swift 6. Xcode complet est recommandé pour le développement visuel. L’app peut être compilée avec les seuls Command Line Tools.
 
 ```sh
 git clone https://github.com/antoineberjoan/sema.git
 cd sema
 ./scripts/build-app.sh
-open dist/Sema.app
+open build/Sema.app
 ```
 
 Le script crée une app avec une signature ad hoc. L’alpha distribuée conserve cette signature et reste non notarisée : macOS peut demander une autorisation manuelle à la première ouverture. Une signature Developer ID et une notarisation Apple permettront de fluidifier une distribution ultérieure.
@@ -57,21 +69,7 @@ La suite utilise Swift Testing. Xcode complet est nécessaire si les seuls Comma
 
 ## Structure
 
-```text
-Sources/
-  MarketCore/             Modèles, calculs, clients Webstat/BCE, préférences
-  SemaMac/
-    App/                  Cycle de vie et état partagé
-    DesignSystem/         Couleurs, typographie, composants et graphiques
-    Features/             Catalogue, aperçu, panorama, favoris, alertes, menu et réglages
-    Infrastructure/       Fichiers, Trousseau et notifications macOS
-Tests/MarketCoreTests/    Règles métier et contrats des données
-Resources/               Métadonnées du bundle et logos SVG
-scripts/                 Vérification et création de l’app
-docs/                    Produit, architecture, sources et décisions
-site/                    Landing, téléchargement et guide de marque statiques
-distribution/            Copie du cask public et métadonnées de release
-```
+La carte des emplacements et de leur rôle est [.agents/structure.json](.agents/structure.json), vérifiée par les garde-fous : un fichier hors d’un emplacement décrit est refusé.
 
 Commencer par [le périmètre produit](docs/PRODUCT.md), puis [l’architecture](docs/ARCHITECTURE.md) et [les sources de données](docs/DATA-SOURCES.md). Les instructions de contribution sont dans [AGENTS.md](AGENTS.md).
 
@@ -89,7 +87,7 @@ Aucune dépendance externe : SwiftUI, AppKit, Swift Charts, Observation, Foundat
 
 ## Suite
 
-Voir [ROADMAP.md](docs/ROADMAP.md). Les priorités sont l’intégration des autres sources officielles, la validation des droits sur les données de fonds et la préparation d’une bêta signée.
+Les priorités font foi dans Notion Stratégie ([carte des sources](docs/engineering/SOURCES.md)) ; les chantiers techniques sont indexés dans [PLAN.md](docs/PLAN.md).
 
 ## Distribution
 
@@ -100,7 +98,5 @@ Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, l
 Le bouton « Une idée ou un bug ? » du bandeau ouvre le [formulaire public](https://antoineberjoan.notion.site/5e95023c58754a8990fd16f5fd1ad5f2). Les réponses sont privées ; [configuration et vérification](docs/FEEDBACK.md).
 
 ## Source de référence
-
-Notion porte la vision, le business, la marque et la copy ; [la carte des sources](docs/engineering/SOURCES.md) donne les pages de référence. GitHub porte l’exécution et les preuves. En cas de divergence de direction, demander à Antoine quelle version garder avant d’aligner les documents.
 
 `origin/main` réunit les sources de l’app, le site et son guide de marque. L’historique du dépôt Sites a été importé dans `site/` sans modifier son identité ni son audience. Le site public reste sur [getsema.app](https://getsema.app/) ; voir [site/README.md](site/README.md) pour le déploiement du site. Les essais et livrables historiques sont inventoriés dans [docs/ARCHIVES.md](docs/ARCHIVES.md). Les clés, préférences personnelles, caches et liens locaux Vercel restent hors de Git.

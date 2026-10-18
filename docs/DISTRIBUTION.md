@@ -7,8 +7,8 @@ La construction de l’app et sa distribution sont deux opérations distinctes. 
 Pré-requis de construction : macOS avec les Command Line Tools (Swift, clang, SetFile), Python 3 et les outils système `hdiutil`, `ditto` et `tiffutil`. Aucune dépendance supplémentaire n’est installée ou embarquée dans sema.
 
 ```sh
-./scripts/build-app.sh dist/Sema.app
-./scripts/package-dmg.sh dist/Sema.app dist/releases/0.4.0
+./scripts/build-app.sh build/Sema.app
+./scripts/package-dmg.sh build/Sema.app build/releases/0.4.0
 ```
 
 Le packaging prend le bundle en argument et lit son `Info.plist`. Il ne modifie pas sa version et ne le signe pas à nouveau. Une copie temporaire est vérifiée avant le montage : identifiant de production, absence de chemin de données de développement ou de fichiers personnels, signature valide, architecture arm64 et macOS minimum cohérent avec le binaire.
@@ -27,7 +27,7 @@ Un fichier DMG versionné existant n’est jamais écrasé. Pour un nouvel essai
 
 ## Fond et disposition Finder
 
-Le fond source est `Resources/Distribution/dmg-background.svg` : papier clair `#F5F6F3`, titre encre `#18221D` et courbe sarcelle. Ce fond conserve la lisibilité des vrais noms noirs du Finder sans changer l’apparence de macOS. `scripts/render-dmg.swift` le rend avec AppKit à 640 × 400 pt, en représentations 1× et 2× réunies dans un TIFF HiDPI. La présentation est écrite dans `.DS_Store` sans automatiser le Finder : fenêtre 640 × 400, affichage par icônes, icônes de 96 pt centrées en (164, 226) et (476, 226), noms sous les icônes, barres du Finder masquées.
+Le fond source est `Resources/DMG/dmg-background.svg` : papier clair `#F5F6F3`, titre encre `#18221D` et courbe sarcelle. Ce fond conserve la lisibilité des vrais noms noirs du Finder sans changer l’apparence de macOS. `scripts/render-dmg.swift` le rend avec AppKit à 640 × 400 pt, en représentations 1× et 2× réunies dans un TIFF HiDPI. La présentation est écrite dans `.DS_Store` sans automatiser le Finder : fenêtre 640 × 400, affichage par icônes, icônes de 96 pt centrées en (164, 226) et (476, 226), noms sous les icônes, barres du Finder masquées.
 
 Le petit outil C `finder-alias.c` utilise l’Alias Manager de macOS pour lier le fond au fichier **sur le volume monté**. Ces API sont dépréciées mais produisent le format `backgroundImageAlias` encore employé par le Finder ; elles ne sont jamais utilisées dans l’app livrée. Le writer Python est volontairement limité à cette disposition : une seule feuille B-tree, aucun éditeur DS_Store générique.
 
@@ -39,7 +39,7 @@ Le site est versionné sous `site/` dans ce même dépôt ; son hébergement res
 
 ```sh
 python3 scripts/distribution/sync-download.py \
-  dist/releases/0.4.0/release.json site/dist --local-preview
+  build/releases/0.4.0/release.json site/dist --local-preview
 ```
 
 `--local-preview` vérifie la taille et le SHA-256, copie le fichier sous `downloads/`, écrit le manifeste de préversion et insère un vrai lien HTML. Le téléchargement fonctionne ainsi même sans JavaScript. Ce mode est prévu pour la prévisualisation ou le site privé ; il ne décide pas de son audience.
