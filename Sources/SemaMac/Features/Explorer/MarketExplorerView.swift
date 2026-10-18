@@ -21,6 +21,9 @@ struct MarketExplorerView: View {
     @State private var error: String?
     @State private var task: Task<Void, Never>?
     @State private var generation = UUID()
+    private var starterCount: Int {
+        query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? catalogue?.starters.count ?? 0 : 0
+    }
     private var selected: MarketInstrument? { results.first { $0.id == selectedID } }
     private var catalogueID: String {
         provider.rawValue + (store.sourceGenerations[provider.rawValue]?.uuidString ?? "")
@@ -47,11 +50,11 @@ struct MarketExplorerView: View {
                         Button("Réessayer") { retry = UUID() }
                     }
                     List(selection: $selectedID) {
-                        ForEach(results) { item in
-                            VStack(alignment: .leading, spacing: SemaTheme.rowTextSpacing) {
-                                Text(item.name)
-                                Text(item.summary).font(.caption).foregroundStyle(.secondary)
-                            }.tag(item.id).padding(.vertical, SemaTheme.rowPadding)
+                        if starterCount > 0 {
+                            Section("Pour commencer") { rows(results.prefix(starterCount)) }
+                            Section("Catalogue") { rows(results.dropFirst(starterCount)) }
+                        } else {
+                            rows(results[...])
                         }
                     }.listStyle(.plain)
                     if let catalogue {
@@ -111,11 +114,26 @@ struct MarketExplorerView: View {
             catalogueError = error.localizedDescription; catalogueLoading = false
         }
     }
+    private func rows(_ items: ArraySlice<MarketInstrument>) -> some View {
+        ForEach(items) { item in
+            VStack(alignment: .leading, spacing: SemaTheme.rowTextSpacing) {
+                Text(item.name)
+                Text(item.summary).font(.caption).foregroundStyle(.secondary)
+            }.tag(item.id).padding(.vertical, SemaTheme.rowPadding)
+        }
+    }
     private func filter() {
         let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        results = (catalogue?.instruments ?? []).filter {
-            text.isEmpty || $0.name.localizedStandardContains(text) || $0.symbol.localizedStandardContains(text)
-                || $0.exchange.localizedStandardContains(text)
+        let all = catalogue?.instruments ?? []
+        if text.isEmpty {
+            let starters = catalogue?.starters ?? []
+            let ids = Set(starters.map(\.id))
+            results = starters + all.filter { !ids.contains($0.id) }
+        } else {
+            results = all.filter {
+                $0.name.localizedStandardContains(text) || $0.symbol.localizedStandardContains(text)
+                    || $0.exchange.localizedStandardContains(text)
+            }
         }
         if let selectedID, !results.contains(where: { $0.id == selectedID }) { self.selectedID = nil }
     }

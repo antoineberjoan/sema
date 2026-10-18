@@ -1,6 +1,6 @@
 # Connexions personnelles et catalogues de cours
 
-Statut : intégré localement à `codex/agent-foundation`, sur la base `f1a5834`, le 17 octobre 2026. Validation Swift complète en CI et tests du catalogue avec clés personnelles restants. Aucun push, aucune fusion vers main ni publication.
+Statut : récupéré de la PR #6 et consolidé avec le chantier du site, le 18 octobre 2026, avant fusion dans `main`. Suite Swift complète exécutée (Command Line Tools) ; tests du catalogue avec clés personnelles restants.
 
 ## Intention et périmètre
 
@@ -14,6 +14,7 @@ Chaque utilisateur fournit sa clé personnelle. Aucun secret partagé, serveur n
 - Explorer montre le catalogue de la source dès son ouverture. Le filtre par nom, symbole et place est local. Les métadonnées restent en mémoire pendant la session et sont invalidées au remplacement ou retrait de clé ; aucun appel par frappe.
 - Twelve Data : `api_usage.plan_category`, puis `stocks`, `etf` et `indices` avec `show_plan=true`. Filtrage par `access.plan` individuel ou `access.plan_business` Business. Droits absents ou inconnus exclus ; forfait de compte inconnu signalé. Aucun droit déduit du quota. Un catalogue tronqué est refusé. Il s’agit des niveaux publiés, pas d’un test de chaque cours ou des accords de place.
 - Alpha Vantage : `LISTING_STATUS&state=active`, actions et ETF américains. Ce catalogue de couverture ne décrit pas les droits individuels ; l’aperçu confirme l’accès effectif. CSV cité, guillemets doublés, BOM et CRLF reconnus ; lignes tronquées refusées et titres radiés exclus.
+- Pour commencer : SPY, QQQ, VTI, AAPL et MSFT sont épinglés en tête du catalogue, seulement s’ils figurent dans celui du forfait de l’utilisateur. Aucune série n’est préconfigurée : une clé personnelle est nécessaire, donc rien ne se télécharge avant connexion.
 - Aperçu avant ajout, fournisseur/symbole/place et fréquence distincts. Un ETF reste un ETF, sans être présenté comme son indice sous-jacent. Les données sont Decimal, avec devise et provenance conservées dans le cache.
 - Cours non ajustés : Twelve Data `adjust=none`, Alpha Vantage TIME_SERIES_DAILY ou TIME_SERIES_WEEKLY. Quotidien gratuit Alpha Vantage limité à 100 séances ; hebdomadaire pour l’historique long. Les fréquences ont des identifiants distincts et ne sont pas fusionnées.
 - Actualisation raccordée au mécanisme de la branche : séries suivies uniquement, cache préservé en cas d’échec ; refus de quota ou de clé suspend le reste du lot pour ce fournisseur. Espacement conservateur Twelve Data 8/minute et Alpha Vantage 1,1 seconde. Catalogue, validation et aperçu consomment aussi des appels.

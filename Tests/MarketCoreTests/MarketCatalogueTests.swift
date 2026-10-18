@@ -51,4 +51,12 @@ struct MarketCatalogueTests {
             #expect(throws: MarketDataError.invalidData) { try MarketCatalogue.alpha(Data(text.utf8)) }
         }
     }
+    @Test func startersComeFromTheCatalogueOnly() {
+        func item(_ symbol: String, _ currency: String = "USD") -> MarketInstrument {
+            MarketInstrument(provider: .twelveData, symbol: symbol, name: symbol, exchange: "X", currency: currency, kind: "ETF")
+        }
+        let catalogue = MarketCatalogue(instruments: [item("MSFT"), item("SPY", "EUR"), item("SPY"), item("ZZZ")], scope: "")
+        #expect(catalogue.starters.map(\.symbol) == ["SPY", "MSFT"])
+        #expect(catalogue.starters.first?.currency == "USD")
+    }
 }

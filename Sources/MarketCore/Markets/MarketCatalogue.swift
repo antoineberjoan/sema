@@ -4,6 +4,12 @@ import Foundation
 public struct MarketCatalogue: Equatable, Sendable {
     public let instruments: [MarketInstrument]
     public let scope: String
+    // Repères américains courants, proposés seulement s’ils figurent au catalogue du forfait.
+    private static let starterSymbols = ["SPY", "QQQ", "VTI", "AAPL", "MSFT"]
+
+    public var starters: [MarketInstrument] {
+        Self.starterSymbols.compactMap { symbol in instruments.first { $0.symbol == symbol && $0.currency == "USD" } }
+    }
 
     static func twelve(_ data: [String: Any], plan: String, kind: String?) throws -> [MarketInstrument] {
         guard let rows = data["data"] as? [[String: Any]], let count = data["count"] as? Int,
