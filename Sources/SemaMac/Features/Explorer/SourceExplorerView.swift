@@ -265,7 +265,7 @@ private struct StatisticalExplorerView: View {
                             if !dataset.detail.isEmpty { Text(dataset.detail).font(.caption).foregroundStyle(.secondary).textSelection(.enabled) }
                         }.padding(.top, Self.formSpacing)
                     }.frame(maxHeight: Self.advancedMaxHeight)
-                }.font(.callout)
+                }.font(.callout).disclosureGroupStyle(RowDisclosureStyle())
             }
         }
     }

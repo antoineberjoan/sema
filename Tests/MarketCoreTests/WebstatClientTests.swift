@@ -26,6 +26,13 @@ struct WebstatClientTests {
     }
 
     @Test
+    func starterSeriesCarryNoInventedValues() {
+        let starters = WebstatClient.starterSeries
+        #expect(starters.count == 16)
+        #expect(starters.allSatisfy { !$0.isDemo && $0.observations.isEmpty })
+    }
+
+    @Test
     func decodesExactDecimalsUnitsFrequencyAndSource() throws {
         let series = try WebstatClient.parse(fixture(), now: now)
         #expect(series.count == 16)

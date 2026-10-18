@@ -116,14 +116,17 @@ struct OnboardingView: View {
         _selection = State(initialValue: Set(initialSelection))
     }
 
+    private static let previewExamples = DemoCatalog.series()
     private var suggestions: [MarketSeries] { WebstatClient.starterSeries }
     private var selectedCount: Int { selection.intersection(Set(suggestions.map(\.id))).count }
 
-    /// Une carte par thème choisi, uniquement avec les données de démonstration qui ont un historique.
+    /// Une carte d’exemple fictif par thème choisi : le seul endroit où sema montre des valeurs inventées.
     private var previewSeries: [MarketSeries] {
         WelcomeCollection.all.compactMap { collection in
-            collection.seriesIDs.lazy.compactMap { id in suggestions.first { $0.id == id } }
-                .first { selection.contains($0.id) && $0.observations.count > Self.minimumPreviewObservations }
+            collection.items.lazy
+                .filter { selection.contains(WebstatClient.canonicalID($0.id)) }
+                .compactMap { item in Self.previewExamples.first { $0.id == item.id } }
+                .first { $0.observations.count > Self.minimumPreviewObservations }
         }
         .prefix(Self.previewCardCount).map { $0 }
     }
@@ -242,7 +245,7 @@ struct OnboardingView: View {
                 ForEach(WelcomeCollection.all) { collection in themeTile(collection) }
             }
             VStack(alignment: .leading, spacing: WelcomeLayout.previewSpacing) {
-                Text("Aperçu du bandeau, avec des données de démonstration.")
+                Text("Aperçu du bandeau, avec des exemples fictifs.")
                     .font(.subheadline).foregroundStyle(.secondary)
                 preview
             }

@@ -97,14 +97,12 @@ public struct WebstatClient: Sendable {
     }
     public static func canonicalID(_ id: String) -> String { legacyIDs[id] ?? id }
     public static var starterIDs: [String] { definitions.map(\.key) }
+    /// Repères sans observation : leurs valeurs viennent de Webstat, jamais d’un exemple.
     public static var starterSeries: [MarketSeries] {
-        let demos = DemoCatalog.series()
-        return definitions.map { definition in
-            let sample = demos.first { $0.id == definition.id }
-            return MarketSeries(id: definition.key, name: definition.name, subtitle: definition.subtitle,
+        definitions.map { definition in
+            MarketSeries(id: definition.key, name: definition.name, subtitle: definition.subtitle,
                 category: definition.category, unit: definition.unit, fractionDigits: definition.digits,
-                source: definition.producer, isDemo: true, frequency: definition.frequency,
-                observations: sample?.observations ?? [])
+                source: definition.producer, isDemo: false, frequency: definition.frequency, observations: [])
         }
     }
 

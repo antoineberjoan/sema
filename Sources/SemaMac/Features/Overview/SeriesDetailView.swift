@@ -23,6 +23,7 @@ struct SeriesDetailView: View {
     private static let metadataFieldSpacing: CGFloat = 7
     private static let metadataLabelSpacing: CGFloat = 2
     @Environment(AppStore.self) private var store
+    @Environment(\.openSettings) private var openSettings
     let series: MarketSeries
     var preview = false
     var focus = false
@@ -30,11 +31,45 @@ struct SeriesDetailView: View {
     @State private var showsExplanation = false
 
     var body: some View {
+        if series.observations.isEmpty { noData } else { populated }
+    }
+
+    private var noData: some View {
+        let displayed = store.displayedSeries(series)
+        return VStack(alignment: .leading, spacing: Self.sectionSpacing) {
+            VStack(alignment: .leading, spacing: Self.titleSpacing) {
+                Text(MarketFormat.name(displayed))
+                    .font(focus ? Self.focusNameFont : Self.nameFont)
+                    .foregroundStyle(focus ? .secondary : .primary).textSelection(.enabled)
+                if !focus {
+                    Text(displayed.subtitle).font(.callout).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            ContentUnavailableView {
+                Label("Pas encore de données", systemImage: "chart.xyaxis.line")
+            } description: {
+                Text(needsWebstatKey ? "Connectez votre clé Webstat pour afficher ce repère."
+                     : "Aucune observation n’a été reçue pour l’instant.")
+            } actions: {
+                if needsWebstatKey {
+                    Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }
+                        .buttonStyle(.borderedProminent).tint(store.palette.accent)
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: HistoryChart.defaultHeight)
+        }
+        .modifier(SeriesDetailSurface(focus: focus))
+    }
+
+    private var needsWebstatKey: Bool { store.sourceID(for: series.id) == "webstat" && !store.hasWebstatKey }
+
+    private var populated: some View {
         let displayed = store.displayedSeries(series)
         let explanation = SeriesExplanation(series: series, period: period,
             inverted: store.isExchangeRateInverted(series),
             formatNumber: { MarketFormat.number($0, digits: $1) })
-        VStack(alignment: .leading, spacing: focus ? Self.focusSectionSpacing : Self.sectionSpacing) {
+        return VStack(alignment: .leading, spacing: focus ? Self.focusSectionSpacing : Self.sectionSpacing) {
             HStack(alignment: .top, spacing: Self.headerSpacing) {
                 VStack(alignment: .leading, spacing: Self.titleSpacing) {
                     Text(MarketFormat.name(displayed))
@@ -77,14 +112,8 @@ struct SeriesDetailView: View {
                 }
                 .font(.callout).fixedSize(horizontal: false, vertical: true)
             }
-            if series.observations.isEmpty {
-                ContentUnavailableView("Historique indisponible", systemImage: "chart.xyaxis.line",
-                    description: Text("La description de cette série reste consultable. Aucune observation numérique n’a été reçue."))
-                    .frame(height: HistoryChart.defaultHeight)
-            } else {
-                if !focus { periodPicker }
-                HistoryChart(series: displayed, period: period, height: focus ? nil : preview ? Self.previewChartHeight : Self.chartHeight, showsReading: !focus)
-            }
+            if !focus { periodPicker }
+            HistoryChart(series: displayed, period: period, height: focus ? nil : preview ? Self.previewChartHeight : Self.chartHeight, showsReading: !focus)
             if period == .all, !series.isDemo, series.hasCompleteHistory != true {
                 HStack(spacing: Self.actionSpacing) {
                     if store.historyLoadingID == series.id {
@@ -133,6 +162,7 @@ struct SeriesDetailView: View {
             }
         }
         .modifier(SeriesDetailSurface(focus: focus))
+        .disclosureGroupStyle(RowDisclosureStyle())
         .onChange(of: series.id, initial: true) { _, _ in
             period = series.supports(.year) ? .year : .all
             showsExplanation = false

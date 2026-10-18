@@ -342,9 +342,10 @@ struct WorkspaceView: View {
 
     private var dataStatus: some View {
         HStack(spacing: SemaTheme.minorSpacing) {
-            Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
-            Text(store.status ?? "Démonstration · valeurs fictives")
-                .lineLimit(Self.statusLines).help(store.status ?? "Les valeurs de démonstration ne sont pas des cours actuels.")
+            if let status = store.status {
+                Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
+                Text(status).lineLimit(Self.statusLines).help(status)
+            }
             Spacer(minLength: Self.statusSpacing)
             if !store.hasWebstatKey, store.connectedMarkets.isEmpty {
                 Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
@@ -367,14 +368,16 @@ private struct SidebarSeriesRow: View {
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text(MarketFormat.name(displayed)).font(.callout.weight(selected ? .medium : .regular))
                     .foregroundStyle(.primary).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
-                Text(MarketFormat.value(displayed)).font(.subheadline).monospacedDigit().foregroundStyle(SemaTheme.sidebarSecondaryText)
+                if displayed.latest != nil {
+                    Text(MarketFormat.value(displayed)).font(.subheadline).monospacedDigit().foregroundStyle(SemaTheme.sidebarSecondaryText)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading).padding(SemaTheme.rowPadding)
             .background(selected ? SemaTheme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
             .contentShape(Rectangle())
         }
         .buttonStyle(SemaPressStyle())
-        .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(series.isDemo ? ", données fictives" : "")")
+        .accessibilityLabel(displayed.latest == nil ? MarketFormat.name(displayed) : "\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))")
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
