@@ -40,4 +40,14 @@ struct ShortcutPreferencesTests {
         #expect(AppShortcut(keyCode: 11, modifiers: [.control, .option], key: "B").isValid)
         #expect(AppShortcut(keyCode: 11, modifiers: [.control, .option], key: "b").matches(ShortcutPreferences.standard.ribbon!))
     }
+    @Test func retiredHubDefaultChangesWithoutReplacingCustomBindings() throws {
+        let ribbon = AppShortcut(keyCode: 49, modifiers: [.control, .shift], key: "espace")
+        let previous = AppShortcut(keyCode: 4, modifiers: [.control, .option], key: "H")
+        let migrated = AppPreferences(shortcuts: .init(ribbon: ribbon, workspace: previous))
+        #expect(try migrated.migrated().shortcuts?.workspace == ShortcutPreferences.standard.workspace)
+        #expect(try migrated.migrated().shortcuts?.ribbon == ribbon)
+        let custom = AppShortcut(keyCode: 46, modifiers: [.command, .shift], key: "M")
+        #expect(ShortcutPreferences(ribbon: ribbon, workspace: custom).migrated().workspace == custom)
+        #expect(ShortcutPreferences(ribbon: nil, workspace: nil).migrated().workspace == nil)
+    }
 }

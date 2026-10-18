@@ -17,7 +17,6 @@ struct SeriesDetailView: View {
     private static let valueTracking: CGFloat = -1.2
     private static let valueMinimumScale: CGFloat = 0.55
     private static let actionSpacing: CGFloat = 12
-    private static let focusChartHeight: CGFloat = 250
     private static let previewChartHeight: CGFloat = 170
     private static let chartHeight: CGFloat = 235
     private static let metadataSpacing: CGFloat = 16
@@ -84,7 +83,7 @@ struct SeriesDetailView: View {
                     .frame(height: HistoryChart.defaultHeight)
             } else {
                 if !focus { periodPicker }
-                HistoryChart(series: displayed, period: period, height: focus ? Self.focusChartHeight : preview ? Self.previewChartHeight : Self.chartHeight, showsReading: !focus)
+                HistoryChart(series: displayed, period: period, height: focus ? nil : preview ? Self.previewChartHeight : Self.chartHeight, showsReading: !focus)
             }
             if period == .all, !series.isDemo, series.hasCompleteHistory != true {
                 HStack(spacing: Self.actionSpacing) {

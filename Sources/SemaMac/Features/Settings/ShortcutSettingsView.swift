@@ -1,4 +1,4 @@
-// Présente les deux accès globaux modifiables et rappelle la navigation clavier de Focus.
+// Présente les deux accès globaux modifiables et rappelle la navigation clavier du hub.
 import AppKit
 import Carbon
 import SwiftUI
@@ -12,19 +12,17 @@ struct ShortcutSettingsView: View {
 
     var body: some View {
         Form {
-            Section("Depuis n’importe quelle app") {
-                shortcutRow(.ribbon, title: "Bandeau", subtitle: "Afficher ou masquer vos favoris.")
-                shortcutRow(.workspace, title: "Hub", subtitle: "Ouvrir votre repère dans Focus.")
+            Section("Accès globaux") {
+                shortcutRow(.ribbon, title: "Bandeau")
+                shortcutRow(.workspace, title: "Hub")
                 if let error = store.shortcutError {
                     Text(error).font(.callout).foregroundStyle(.red)
                         .accessibilityLabel("Raccourci indisponible : " + error)
                 }
             }
-            Section("Dans Focus") {
-                LabeledContent("Repère précédent ou suivant", value: "↑  ↓")
+            Section("Navigation") {
+                LabeledContent("Repère précédent / suivant", value: "↑  ↓")
                 LabeledContent("Choisir à vue", value: "⌘ ↑  ⌘ ↓")
-                Text("Maintenez ⌘ pour parcourir, relâchez pour ouvrir. Entrée valide aussi ; Échap annule.")
-                    .font(.subheadline).foregroundStyle(.secondary)
                 LabeledContent("Rechercher", value: "⌘ K")
                 LabeledContent("Réglages", value: "⌘ ,")
             }
@@ -32,12 +30,9 @@ struct ShortcutSettingsView: View {
         .formStyle(.grouped)
     }
 
-    private func shortcutRow(_ action: ShortcutAction, title: String, subtitle: String) -> some View {
+    private func shortcutRow(_ action: ShortcutAction, title: String) -> some View {
         HStack(spacing: Self.rowSpacing) {
-            VStack(alignment: .leading, spacing: SemaTheme.settingsTextSpacing) {
-                Text(title)
-                Text(subtitle).font(.subheadline).foregroundStyle(.secondary)
-            }
+            Text(title)
             Spacer()
             Button { store.setShortcut(ShortcutPreferences.standard[action], for: action) } label: {
                 Image(systemName: "arrow.counterclockwise").font(.subheadline)

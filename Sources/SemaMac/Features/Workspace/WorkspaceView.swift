@@ -9,7 +9,6 @@ struct WorkspaceView: View {
     private static let minimumWidth: CGFloat = 980
     private static let minimumHeight: CGFloat = 680
     private static let focusHorizontalMargin: CGFloat = 48
-    private static let focusTopMargin: CGFloat = 36
     private static let statusPadding: CGFloat = 14
     private static let statusSpacing: CGFloat = 12
     private static let statusLines = 2
@@ -67,19 +66,22 @@ struct WorkspaceView: View {
             VStack(spacing: 0) {
                 if store.section == .explorer {
                     ExplorerView().padding(SemaTheme.contentPadding).frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if store.section == .overview {
+                    ViewThatFits(in: .vertical) {
+                        overviewContent
+                        ScrollView { overviewContent }
+                    }
                 } else {
                     ScrollView {
                         Group {
                             switch store.section {
-                            case .overview: OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
+                            case .overview: EmptyView()
                             case .favorites: FavoritesView()
                             case .alerts: AlertsView()
                             case .explorer: EmptyView()
                             }
                         }
-                        .padding(.horizontal, store.section == .overview ? Self.focusHorizontalMargin : SemaTheme.contentPadding)
-                        .padding(.top, store.section == .overview ? Self.focusTopMargin : SemaTheme.contentPadding)
-                        .padding(.bottom, SemaTheme.contentPadding)
+                        .padding(SemaTheme.contentPadding)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }
@@ -102,6 +104,7 @@ struct WorkspaceView: View {
             }
         }
         .navigationSplitViewStyle(.balanced)
+        .toolbarBackground(.hidden, for: .windowToolbar)
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 Button {
@@ -126,6 +129,12 @@ struct WorkspaceView: View {
             }
         }
         .frame(minWidth: Self.minimumWidth, minHeight: Self.minimumHeight)
+    }
+
+    private var overviewContent: some View {
+        OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
+            .padding(.horizontal, Self.focusHorizontalMargin).padding(.top, SemaTheme.majorSpacing)
+            .padding(.bottom, SemaTheme.contentPadding)
     }
 
     private var keyboardWorkspace: some View {

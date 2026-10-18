@@ -3,10 +3,9 @@ import SwiftUI
 import MarketCore
 
 struct AlertEditorView: View {
-    private static let sheetWidth: CGFloat = 530
-    private static let sheetPadding: CGFloat = 30
-    private static let sectionSpacing: CGFloat = 22
-    private static let thresholdWidth: CGFloat = 190
+    private static let sheetWidth: CGFloat = 480
+    private static let inset: CGFloat = 24
+    private static let rowSpacing: CGFloat = 16
     @Environment(AppStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var seriesID = ""
@@ -16,43 +15,60 @@ struct AlertEditorView: View {
     private var item: MarketSeries? { store.macroSeries.first { $0.id == seriesID } }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Self.sectionSpacing) {
-            Text("Créer une alerte").font(.title2)
-            Form {
-                Picker("Repère", selection: $seriesID) {
-                    ForEach(store.alertableSeries) { Text($0.name).tag($0.id) }
+        VStack(alignment: .leading, spacing: Self.inset) {
+            Text("Créer une alerte").font(.title2.weight(.semibold))
+            Grid(alignment: .leading, horizontalSpacing: Self.rowSpacing, verticalSpacing: Self.rowSpacing) {
+                GridRow {
+                    Text("Repère").gridColumnAlignment(.trailing)
+                    Picker("Repère", selection: $seriesID) {
+                        ForEach(store.alertableSeries) { Text($0.name).tag($0.id) }
+                    }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading)
                 }
-                Picker("Me prévenir quand la valeur", selection: $direction) {
-                    ForEach(AlertDirection.allCases, id: \.self) { Text($0.crossingTitle.lowercased()).tag($0) }
+                GridRow {
+                    Text("Franchissement")
+                    Picker("Franchissement", selection: $direction) {
+                        ForEach(AlertDirection.allCases, id: \.self) { Text($0.crossingTitle.lowercased()).tag($0) }
+                    }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading)
+                        .help("Un nouveau passage strict au-dessus ou au-dessous du seuil est nécessaire.")
                 }
-                HStack {
-                    TextField("Seuil", text: $thresholdText).textFieldStyle(.roundedBorder).frame(width: Self.thresholdWidth)
-                    Text(item?.displayUnit ?? "").foregroundStyle(.secondary)
-                }
-                if threshold == nil {
-                    Text("Saisissez un nombre, par exemple 3,5. Zéro et les valeurs négatives sont acceptés.")
-                        .font(.subheadline).foregroundStyle(.red)
-                }
-                if let item {
-                    LabeledContent("Dernière valeur") { Text(MarketFormat.value(item)) }
-                    Text(item.isDemo ? "Valeurs fictives : connectez Webstat pour activer la vérification réelle."
-                         : item.frequency == .monthly ? "Publication mensuelle : l’alerte suit les nouveaux mois publiés."
-                         : "L’alerte suit les nouvelles observations publiées par la source.")
-                        .font(.subheadline).foregroundStyle(.secondary)
+                GridRow {
+                    Text("Seuil")
+                    HStack(spacing: SemaTheme.minorSpacing) {
+                        TextField("Seuil", text: $thresholdText)
+                            .textFieldStyle(.roundedBorder).accessibilityLabel("Seuil")
+                        Text(item?.displayUnit ?? "").foregroundStyle(.secondary)
+                    }
                 }
             }
-            Label("Un nouveau franchissement strict est nécessaire. Vérification à l’actualisation des repères ; aucune surveillance en arrière-plan.", systemImage: "info.circle")
-                .font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            if threshold == nil {
+                Text("Saisissez un nombre valide, par exemple 3,5.")
+                    .font(.callout).foregroundStyle(.red)
+            }
+            if let item {
+                VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+                    HStack {
+                        Text("Dernière valeur").foregroundStyle(.secondary)
+                        Spacer()
+                        Text(MarketFormat.value(item)).monospacedDigit()
+                    }
+                    Text(item.isDemo
+                         ? "Données fictives · vérification après connexion."
+                         : "Vérification à l’actualisation des repères.")
+                        .font(.callout).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .help("Aucun contrôle quand sema est quittée ou le Mac en veille. La règle suit les nouvelles observations publiées.")
+                }
+            }
             HStack {
-                Button("Annuler") { dismiss() }.keyboardShortcut(.cancelAction)
                 Spacer()
+                Button("Annuler") { dismiss() }.keyboardShortcut(.cancelAction)
                 Button("Créer l’alerte") {
                     if let threshold, store.addAlert(seriesID: seriesID, direction: direction, threshold: threshold) { dismiss() }
                 }
                 .buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction).disabled(threshold == nil || item?.canAlert != true)
             }
         }
-        .padding(Self.sheetPadding).frame(width: Self.sheetWidth)
+        .padding(Self.inset).frame(width: Self.sheetWidth)
         .onAppear {
             seriesID = store.alertableSeries.first(where: { $0.id == store.selectedSeriesID })?.id ?? store.alertableSeries.first?.id ?? ""
             thresholdText = item?.latest.map { NSDecimalNumber(decimal: $0.value).stringValue.replacingOccurrences(of: ".", with: ",") } ?? "3,0"

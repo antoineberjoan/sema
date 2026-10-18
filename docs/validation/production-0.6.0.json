@@ -1,0 +1,20 @@
+{
+  "version": "0.6.0",
+  "build": "17",
+  "sourceMergeCommit": "e4cf8c447a56bb6f3d0aae9e4c4b7b0e2f62f1d5",
+  "ciMain": "https://github.com/antoineberjoan/sema/actions/runs/39048395666",
+  "vercelProject": "prj_7UXEqS57A2g9cXkTuvi5LzTllNan",
+  "vercelDeployment": "dpl_85pMs8RJCWejauwDg4k44rG2ki3i",
+  "vercelState": "READY",
+  "productionURL": "https://getsema.app/",
+  "publicManifestVerified": true,
+  "downloadFilename": "Sema-0.6.0-arm64.dmg",
+  "downloadSha256": "a7e6abc3112a8fd40c7df2e043a3650c02e0ffd25d825bc33aee184d84da150b",
+  "publicTapCommit": "908bc97",
+  "publicHomebrewInstallVerified": true,
+  "publicHomebrewUpgradeVerified": true,
+  "upgradeFrom": "0.5.1",
+  "guardrails": true,
+  "swiftTests": 81,
+  "pythonTests": 17
+}

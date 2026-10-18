@@ -31,7 +31,6 @@ private enum WelcomeLayout {
     static let stepSpacing: CGFloat = 20
     static let gridSpacing: CGFloat = 14
     static let noteOffset: CGFloat = -10
-    static let noteSpacing: CGFloat = 6
     static let collectionSpacing: CGFloat = 17
     static let collectionHeaderSpacing: CGFloat = 12
     static let collectionTitleSpacing: CGFloat = 3
@@ -44,7 +43,6 @@ private enum WelcomeLayout {
     static let choicePadding: CGFloat = 10
     static let choiceHeight: CGFloat = 30
     static let choiceMinimumScale: CGFloat = 0.9
-    static let connectionSpacing: CGFloat = 18
     static let footerSpacing: CGFloat = 12
     static let wordmarkFont = Font.system(size: 16, weight: .semibold)
     static let titleFont = Font.system(size: 30, weight: .semibold)
@@ -84,9 +82,7 @@ struct OnboardingView: View {
     @State private var selection: Set<String>
     @State private var step = 0
     @State private var drawProgress: CGFloat = 0
-    @State private var apiKey = ""
     @State private var selectionError: String?
-    @FocusState private var keyFocused: Bool
 
     init(initialSelection: [String], selectSeries: @escaping ([String]) -> Bool,
          finish: @escaping () -> Bool) {
@@ -159,7 +155,6 @@ struct OnboardingView: View {
             await store.checkWebstatKey()
             withAnimation(reduceMotion ? nil : .easeOut(duration: WelcomeMotion.drawDuration)) { drawProgress = 1 }
         }
-        .onDisappear { apiKey = "" }
     }
 
     private var selectionStep: some View {
@@ -240,38 +235,7 @@ struct OnboardingView: View {
     }
 
     private var connectionStep: some View {
-        VStack(alignment: .leading, spacing: WelcomeLayout.connectionSpacing) {
-            if store.hasWebstatKey {
-                Label("Votre clé est déjà enregistrée dans le Trousseau.", systemImage: "checkmark.circle")
-                    .font(.body).foregroundStyle(accent)
-            } else {
-                VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
-                    Text("Clé API Webstat").font(.callout.weight(.medium))
-                    SecureField("Votre clé personnelle", text: $apiKey)
-                        .textFieldStyle(.roundedBorder).textContentType(.password)
-                        .privacySensitive().focused($keyFocused)
-                        .accessibilityLabel("Clé API Webstat")
-                        .onSubmit { connect() }
-                    Link("Obtenir une clé sur Webstat ↗", destination: WebstatClient.loginURL)
-                        .font(.subheadline)
-                }
-                Text("Elle reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Vous pourrez la retirer dans les réglages.")
-                    .font(.callout).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                if let error = store.webstatError {
-                    Text(error).font(.callout).foregroundStyle(.red)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            Spacer(minLength: 0)
-            VStack(alignment: .leading, spacing: WelcomeLayout.noteSpacing) {
-                Label("À votre rythme", systemImage: "leaf")
-                    .font(.callout.weight(.medium))
-                Text("Vous pouvez découvrir sema en démonstration et connecter vos données plus tard.")
-                    .font(.callout).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
+        SourceKeyView(source: "webstat", didConnect: complete)
     }
 
     private var footer: some View {
@@ -290,12 +254,10 @@ struct OnboardingView: View {
                     }
                     selectionError = nil
                     withAnimation(reduceMotion ? nil : .easeInOut(duration: WelcomeMotion.stepDuration)) { step = 1 }
-                    keyFocused = true
                 }
                 .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
             } else {
                 Button("Retour") {
-                    apiKey = ""
                     withAnimation(reduceMotion ? nil : .easeInOut(duration: WelcomeMotion.stepDuration)) { step = 0 }
                 }
                 .buttonStyle(.borderless).disabled(store.isLoading)
@@ -304,11 +266,8 @@ struct OnboardingView: View {
                     Button("Ouvrir sema", action: complete)
                         .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
                 } else {
-                    Button("Découvrir la démo", action: complete)
+                    Button("Plus tard", action: complete)
                         .buttonStyle(.borderless).disabled(store.isLoading)
-                    Button(store.isLoading ? "Connexion…" : "Connecter") { connect() }
-                        .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
-                        .disabled(store.isLoading || apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
         }
@@ -319,16 +278,6 @@ struct OnboardingView: View {
         guard finish() else {
             selectionError = store.errorMessage ?? "L’accueil n’a pas pu être enregistré."
             return
-        }
-    }
-
-    private func connect() {
-        guard !store.isLoading, !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        Task {
-            if await store.connectWebstat(apiKey: apiKey) {
-                apiKey = ""
-                complete()
-            }
         }
     }
 }
