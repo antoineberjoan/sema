@@ -3,12 +3,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ProfileSettingsView: View {
-    private static let avatarSize: CGFloat = 76
-    private static let nameFont = Font.system(size: 20, weight: .medium)
-    private static let avatarSpacing: CGFloat = 20
-    private static let nameSpacing: CGFloat = 10
-    private static let actionSpacing: CGFloat = 14
-    private static let headerPadding: CGFloat = 12
+    private static let avatarSize: CGFloat = 56
+    private static let avatarSpacing: CGFloat = 16
     @Environment(AppStore.self) private var store
     @State private var showsImporter = false
     @State private var isImporting = false
@@ -18,37 +14,36 @@ struct ProfileSettingsView: View {
         Form {
             Section {
                 HStack(spacing: Self.avatarSpacing) {
-                    ProfileAvatar(profile: store.profile, size: Self.avatarSize)
-                    VStack(alignment: .leading, spacing: Self.nameSpacing) {
-                        Text(store.profile.displayName.isEmpty ? "Votre espace" : store.profile.displayName)
-                            .font(Self.nameFont)
-                        HStack(spacing: Self.actionSpacing) {
-                            Button(isImporting ? "Importation…" : "Choisir une photo…") { showsImporter = true }
-                                .disabled(isImporting)
-                            if store.profile.avatarJPEG != nil {
-                                Button("Retirer") {
-                                    var profile = store.profile; profile.avatarJPEG = nil; store.setProfile(profile)
-                                }.disabled(isImporting)
-                            }
-                        }.font(.callout)
+                    Button { showsImporter = true } label: {
+                        ProfileAvatar(profile: store.profile, size: Self.avatarSize)
                     }
+                    .buttonStyle(.plain).disabled(isImporting)
+                    .accessibilityLabel("Modifier la photo")
+                    VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+                        if !store.profile.displayName.isEmpty {
+                            Text(store.profile.displayName).font(.title3.weight(.medium))
+                        }
+                        Button(isImporting ? "Importation…" : store.profile.avatarJPEG == nil ? "Ajouter une photo…" : "Modifier la photo…") {
+                            showsImporter = true
+                        }.disabled(isImporting)
+                        if store.profile.avatarJPEG != nil {
+                            Button("Retirer la photo", role: .destructive) {
+                                var profile = store.profile; profile.avatarJPEG = nil; store.setProfile(profile)
+                            }.disabled(isImporting)
+                        }
+                    }.buttonStyle(.link)
                     Spacer()
-                }.padding(.vertical, Self.headerPadding)
-            }
-            Section("Identité") {
-                TextField("Prénom", text: Binding(get: { store.profile.firstName }, set: {
-                    var profile = store.profile; profile.firstName = $0; store.setProfile(profile)
-                }))
-                .textContentType(.givenName)
-                TextField("Nom", text: Binding(get: { store.profile.lastName }, set: {
-                    var profile = store.profile; profile.lastName = $0; store.setProfile(profile)
-                }))
-                .textContentType(.familyName)
+                }.padding(.vertical, SemaTheme.minorSpacing)
             }
             Section {
-                Text("Ces informations sont facultatives et restent sur ce Mac. La photo est recadrée au centre et enregistrée en petit format, sans les métadonnées du fichier d’origine.")
-                    .font(.callout).foregroundStyle(.secondary)
+                TextField("Prénom", text: Binding(get: { store.profile.firstName }, set: {
+                    var profile = store.profile; profile.firstName = $0; store.setProfile(profile)
+                })).textContentType(.givenName)
+                TextField("Nom", text: Binding(get: { store.profile.lastName }, set: {
+                    var profile = store.profile; profile.lastName = $0; store.setProfile(profile)
+                })).textContentType(.familyName)
             }
+            .help("Profil conservé sur ce Mac. Les métadonnées de la photo sont retirées.")
         }
         .formStyle(.grouped)
         .fileImporter(isPresented: $showsImporter, allowedContentTypes: [.image]) { result in

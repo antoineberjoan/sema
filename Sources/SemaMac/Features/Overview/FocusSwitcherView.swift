@@ -7,7 +7,6 @@ struct FocusSwitcherView: View {
     private static let panelInset: CGFloat = 40
     private static let panelSpacing: CGFloat = 12
     private static let tilesPadding: CGFloat = 12
-    private static let hintBottomPadding: CGFloat = 14
     private static let strokeOpacity = 0.08
     private static let contrastStrokeOpacity = 0.6
     private static let selectedStrokeOpacity = 0.6
@@ -42,8 +41,6 @@ struct FocusSwitcherView: View {
                     withAnimation(reduceMotion ? nil : FocusSwitcherMotion.selection) { proxy.scrollTo(id, anchor: .center) }
                 }
             }
-            Text("↑ ↓  ·  relâchez ⌘ pour ouvrir")
-                .font(.subheadline).foregroundStyle(.secondary).padding(.bottom, Self.hintBottomPadding)
         }
         .frame(maxWidth: Self.panelMaxWidth)
         .background {

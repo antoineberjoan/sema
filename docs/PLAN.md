@@ -5,6 +5,7 @@ Index des chantiers. Un chantier à plusieurs étapes ou repris par un autre age
 ## En cours
 
 - [Navigation clavier et bandeau Repère](plans/keyboard-navigation.md)
+- [Démonstration de la landing](plans/landing-demos.md)
 
 ## À réconcilier
 
@@ -17,4 +18,6 @@ Plans conservés dans leur état documenté ; certains lots ont été réalisés
 
 ## Terminés
 
+- [Actualisation quotidienne](plans/automatic-refresh.md), publiée en 0.6.0.
+- [Réglages avec sidebar](plans/settings-sidebar.md), publiés en 0.6.0.
 - [Socle agentique](plans/agent-foundation.md), livré en PR brouillon.

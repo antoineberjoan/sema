@@ -92,13 +92,6 @@ final class AppStore {
         isOnboardingPresented = canSavePreferences && preferences.onboardingCompleted != true
     }
 
-    func beginOnboarding() {
-        guard canSavePreferences else { return }
-        isSearchPresented = false
-        isAlertSheetPresented = false
-        isOnboardingPresented = true
-    }
-
     @discardableResult func finishOnboarding() -> Bool {
         var next = preferences
         next.onboardingCompleted = true
@@ -115,13 +108,7 @@ final class AppStore {
     var alertableSeries: [MarketSeries] { followedSeries.filter { $0.canAlert && isSourceEnabled(for: $0.id) } }
     var favorites: [MarketSeries] { followedSeries.filter { isFavorite($0.id) } }
     var selectedSeries: MarketSeries? { followedSeries.first { $0.id == selectedSeriesID } ?? followedSeries.first }
-    var originSummary: String {
-        let sources = Set(followedSeries.filter { !$0.isDemo }.map(\.originBadge)).sorted()
-        return sources.isEmpty ? "Démonstration · sources à explorer" : sources.joined(separator: " · ")
-    }
-    var canRefresh: Bool {
-        preferences.followedSeriesIDs.contains { isSourceEnabled(for: $0) && (hasWebstatKey || statisticalDescriptors[$0] != nil) }
-    }
+    var canRefresh: Bool { !automaticRefreshSeries.isEmpty }
 
     var profile: LocalProfile { preferences.profile ?? LocalProfile() }
     @discardableResult func setProfile(_ profile: LocalProfile) -> Bool { mutatePreferences { $0.profile = profile } }

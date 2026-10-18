@@ -1,7 +1,7 @@
-// Adapte le lien de téléchargement du header à la visibilité de l’action principale.
+/* Partage le téléchargement principal et son apparition dans le header. */
 const header = document.querySelector('.marketing-header');
 const headerDownload = header?.querySelector('[data-header-download]');
-const primaryDownload = document.querySelector('.hero .button, .release-action [data-download]');
+const primaryDownload = document.querySelector('.hero [data-download]');
 
 if (header && headerDownload && primaryDownload && 'IntersectionObserver' in window) {
   // La destination vient du bouton principal : une seule URL à maintenir par page.

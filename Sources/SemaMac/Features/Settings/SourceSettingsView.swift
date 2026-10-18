@@ -1,66 +1,36 @@
-// Présente les connexions et l’activation des sources sans effacer leurs données en cache.
+// Réunit les sources activables et la connexion Webstat sans modifier les données en cache.
 import SwiftUI
 import MarketCore
 
 struct SourceSettingsView: View {
+    private static let rowPadding: CGFloat = 4
     @Environment(AppStore.self) private var store
-    @State private var apiKey = ""
 
     var body: some View {
         Form {
-            Section {
-                sourceRow(id: "webstat", title: "Banque de France · Webstat", summary: "Taux, crédit, épargne et statistiques financières.")
+            Section("Webstat") { WebstatConnectionView() }
+            Section("Catalogues") {
+                sourceRow(id: "webstat", title: "Banque de France · Webstat")
                 ForEach(StatisticalSource.allCases) { source in
-                    sourceRow(id: source.rawValue, title: source.title, summary: summary(source))
+                    sourceRow(id: source.rawValue, title: source.title)
                 }
-            } header: { Text("Catalogues disponibles") } footer: {
-                Text("Activez les sources à explorer, puis choisissez vos séries dans Explorer. Seuls les repères suivis sont actualisés. Désactiver une source suspend ses actualisations et ses alertes ; les historiques restent consultables.")
             }
-            Section("Connexion Webstat") {
-                LabeledContent("Clé personnelle") { Text(store.hasWebstatKey ? "Enregistrée dans le Trousseau" : "À renseigner") }
-                SecureField(store.hasWebstatKey ? "Nouvelle clé Webstat" : "Votre clé API Webstat", text: $apiKey)
-                    .textContentType(.password).privacySensitive().accessibilityLabel("Clé API Webstat")
-                    .disabled(!store.isSourceEnabled("webstat"))
-                HStack {
-                    Button(store.isLoading ? "Connexion…" : "Enregistrer et connecter") {
-                        Task { if await store.connectWebstat(apiKey: apiKey) { apiKey = "" } }
-                    }.disabled(store.isLoading || !store.isSourceEnabled("webstat") || apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    if store.hasWebstatKey {
-                        Button("Retirer la clé", role: .destructive) { Task { await store.removeWebstatKey() } }.disabled(store.isLoading)
-                    }
-                }
-                Link("Obtenir une clé sur Webstat", destination: WebstatClient.loginURL)
-                Text("Votre clé reste dans le Trousseau de ce Mac et est transmise uniquement à Webstat. Les autres sources sont accessibles sans clé.")
-                    .font(.subheadline).foregroundStyle(.secondary)
-                if let error = store.webstatError { Text(error).font(.subheadline).foregroundStyle(.red) }
-            }
+            .help("Désactiver une source met ses alertes en pause et conserve ses historiques.")
         }
-        .formStyle(.grouped).onDisappear { apiKey = "" }
+        .formStyle(.grouped)
     }
 
-    private func sourceRow(id: String, title: String, summary: String) -> some View {
+    private func sourceRow(id: String, title: String) -> some View {
         Toggle(isOn: Binding(get: { store.isSourceEnabled(id) }, set: { store.setSourceEnabled(id, enabled: $0) })) {
-            VStack(alignment: .leading, spacing: SemaTheme.settingsTextSpacing) {
+            HStack {
                 Text(title)
-                Text(summary).font(.subheadline).foregroundStyle(.secondary)
-                if store.sourceSeriesCount(id) > 0 {
-                    let count = store.sourceSeriesCount(id)
-                    Text("\(count) \(count == 1 ? "repère suivi" : "repères suivis")" + (store.isSourceEnabled(id) ? "" : " · en pause"))
-                        .font(.caption).foregroundStyle(.secondary)
+                Spacer()
+                let count = store.sourceSeriesCount(id)
+                if count > 0 {
+                    Text("\(count) \(count == 1 ? "repère" : "repères")")
+                        .font(.callout).foregroundStyle(.secondary)
                 }
-            }.padding(.vertical, SemaTheme.settingsRowPadding)
+            }.padding(.vertical, Self.rowPadding)
         }.toggleStyle(.switch).accessibilityLabel("Activer \(title)")
-    }
-
-    private func summary(_ source: StatisticalSource) -> String {
-        switch source {
-        case .insee: "Loyers, construction, emploi et économie française."
-        case .ecb: "Catalogues statistiques de la zone euro."
-        case .eurostat: "Comparaisons européennes et données régionales."
-        case .bis: "Crédit, dette et système financier international."
-        case .oecd: "Immobilier, cycle économique et comparaisons entre pays."
-        case .newYorkFed: "Taux monétaires américains et mesures associées."
-        case .worldBank: "Indicateurs économiques et structurels mondiaux."
-        }
     }
 }

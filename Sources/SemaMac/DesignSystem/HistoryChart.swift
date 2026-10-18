@@ -28,7 +28,7 @@ struct HistoryChart: View {
     @Environment(\.semaAccent) private var accent
     let series: MarketSeries
     let period: HistoryPeriod
-    var height = Self.defaultHeight
+    var height: CGFloat? = Self.defaultHeight
     var showsReading = true
     @State private var hoveredDate: Date?
 
@@ -115,7 +115,7 @@ struct HistoryChart: View {
                     }
                 }
             }
-            .frame(height: height)
+            .frame(minHeight: height ?? Self.defaultHeight, maxHeight: height ?? .infinity)
             .accessibilityLabel("Historique de \(series.name), en \(series.displayUnit)")
 
             if showsReading {

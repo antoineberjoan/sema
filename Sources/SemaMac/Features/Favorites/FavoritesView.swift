@@ -30,7 +30,6 @@ private struct IndicatorTile: View {
                 VStack(alignment: .leading, spacing: compact ? Self.compactSpacing : Self.spacing) {
                     HStack(spacing: Self.titleSpacing) {
                         Text(displayed.name).font(.body.weight(.medium)).lineLimit(1)
-                        if series.isDemo { Text("Démo").font(.subheadline).foregroundStyle(.secondary) }
                         if !store.isSourceEnabled(for: series.id) { Image(systemName: "pause.circle").foregroundStyle(.secondary).help("Source désactivée · historique conservé") }
                     }
                     .padding(.trailing, series.exchangeRatePair == nil ? Self.singleActionInset : Self.doubleActionInset)

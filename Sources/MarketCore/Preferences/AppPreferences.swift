@@ -79,6 +79,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                 threshold: rule.threshold, isEnabled: rule.isEnabled, condition: rule.effectiveCondition,
                 lastEvaluatedAt: rule.lastEvaluatedAt)
         }
+        value.shortcuts = shortcuts?.migrated()
         if schemaVersion == 1 { value.onboardingCompleted = true }
         return value
     }
