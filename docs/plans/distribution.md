@@ -40,9 +40,10 @@ Choisir l’outil de packaging après un essai local. Préférer les outils macO
 
 L’accueil s’affiche seulement au premier lancement ou sur demande depuis les réglages. Un utilisateur existant conserve ses préférences et entre directement dans son espace. L’état d’accueil est local et versionné ; quitter pendant une étape ne détruit aucune sélection.
 
-1. **Vos premiers repères.** Une courte apparition du signe, un titre et quatre collections — Taux & marchés, Économie réelle, Épargne et Devises. Les 16 repères (13 d’origine, plus Bund, Treasury US et refinancement BCE) se choisissent par pastilles, sans défilement ni bordure décorative. Les repères sont des suggestions, décochées par défaut ; on peut poursuivre sans en choisir ou ouvrir ensuite le catalogue complet. Aucun carrousel de présentation obligatoire.
-2. **Vos données Webstat.** Expliquer comment obtenir et connecter sa clé personnelle. Réutiliser la validation et le stockage dans le Trousseau. Proposer « Découvrir en démonstration » ; un refus réseau conserve la saisie en mémoire et permet de réessayer ou de passer.
-3. **Arrivée dans l’espace.** Les choix apparaissent dans la liste de repères, avec une brève transition de continuité. Si l’on a choisi la démonstration, les données fictives restent signalées. La permission de notifications est demandée au moment de créer une alerte, avec une action explicite.
+1. **Bienvenue.** Le signe se dessine au centre, sous le titre « Bienvenue dans sema. » ; trois lignes avec icône présentent le bandeau, l’historique et les alertes. Actions « Continuer » et « Passer » visibles dès le début.
+2. **Vos thèmes.** Quatre grandes tuiles — Taux & marchés, Économie réelle, Épargne et Devises — ajoutent chacune leurs repères d’un geste. Un aperçu du bandeau, avec des données de démonstration signalées, se compose sous les tuiles à chaque choix. Les repères sont des suggestions, décochées par défaut ; on peut poursuivre sans en choisir ou ouvrir ensuite le catalogue complet. Les 16 repères (13 d’origine, plus Bund, Treasury US et refinancement BCE) restent la base des thèmes. Aucun carrousel de présentation obligatoire.
+3. **Vos données Webstat.** Expliquer comment obtenir et connecter sa clé personnelle. Réutiliser la validation et le stockage dans le Trousseau. Proposer « Découvrir en démonstration » ; un refus réseau conserve la saisie en mémoire et permet de réessayer ou de passer.
+4. **Arrivée dans l’espace.** Les choix apparaissent dans la liste de repères, avec une brève transition de continuité. Si l’on a choisi la démonstration, les données fictives restent signalées. La permission de notifications est demandée au moment de créer une alerte, avec une action explicite.
 
 Le lien « Passer » est visible. Les boutons sont utilisables pendant les transitions. Tester le lancement depuis le DMG, depuis Applications et via Homebrew : même accueil, sans copie automatique surprise de l’app et sans demande administrateur ajoutée par sema.
 
@@ -53,7 +54,7 @@ Les valeurs suivantes sont des points de départ sema à régler dans les protot
 | Moment | Séquence initiale | Accessibilité et interruption |
 | --- | --- | --- |
 | Démonstration web | 0 ms : composition visible. 120–480 ms : la courbe se dessine. 480–900 ms : l’icône suit le chemin. 900–1080 ms : la destination s’accentue puis revient au repos. | Une seule lecture, bouton Rejouer. Réduire les animations : trois étapes statiques. Aucun blocage du téléchargement. |
-| Accueil natif | 0–360 ms : dessin du signe. 120–300 ms : titre et contenu apparaissent, déplacement maximal 6 pt. | Actions visibles dès le début. Si interrompu, état final cohérent ; pas de reprise systématique de l’introduction. |
+| Accueil natif | 0–360 ms : dessin du signe. 120–300 ms : titre et contenu apparaissent, déplacement maximal 6 pt. Choix d’un thème : tuile et aperçu du bandeau suivent en 180 ms. | Actions visibles dès le début. Si interrompu, état final cohérent ; pas de reprise systématique de l’introduction. |
 | Choix d’un repère | Confirmation immédiate ; ajustement visuel amorti sur 160–220 ms. | Aucun saut de ligne pendant la sélection ; état annoncé à VoiceOver. |
 | Entrée dans l’espace | Transition de 220–280 ms de la sélection vers la liste principale. | Focus déplacé vers le premier repère ou l’état vide ; sans vol d’icônes si Réduire les animations. |
 | Copier Homebrew | Le libellé passe à « Copié », puis revient après un court délai. | Échec du presse-papiers explicite ; commande sélectionnable manuellement. |
