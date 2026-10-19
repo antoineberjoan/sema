@@ -1,6 +1,6 @@
 # Préparer une version de sema
 
-La construction de l’app et sa distribution sont deux opérations distinctes. Le dépôt source reste privé. Ces outils ne créent aucun dépôt distant, aucune release et aucun téléchargement public.
+La construction de l’app et sa distribution sont deux opérations distinctes. Le code source est public sous licence MIT. Ces outils ne créent aucun dépôt distant, aucune release et aucun téléchargement public.
 
 ## Construire l’image disque
 

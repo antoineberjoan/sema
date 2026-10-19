@@ -91,7 +91,7 @@ Les priorités font foi dans Notion Stratégie ([carte des sources](docs/enginee
 
 ## Distribution
 
-Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, le manifeste de release, la page de téléchargement et la préparation Homebrew. Les scripts de packaging restent locaux et ne publient aucun artefact. Le dépôt public [homebrew-sema](https://github.com/antoineberjoan/homebrew-sema) ne contient que le cask et les versions binaires ; ce dépôt source reste privé.
+Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, le manifeste de release, la page de téléchargement et la préparation Homebrew. Les scripts de packaging restent locaux et ne publient aucun artefact. Le dépôt public [homebrew-sema](https://github.com/antoineberjoan/homebrew-sema) ne contient que le cask et les versions binaires ; le code source est public sous [licence MIT](LICENSE).
 
 ## Retours
 

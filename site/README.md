@@ -14,7 +14,7 @@ La landing présente le produit avec deux mises en scène différentes, sans vid
 - Configuration statique : `vercel.json`, répertoire publié `dist`.
 - `.vercel` est local et ignoré ; `.vercelignore` exclut les métadonnées Sites et les documents internes du transfert Vercel.
 
-Le site est désormais versionné dans `site/` du dépôt privé `antoineberjoan/sema`, sur `origin/main`. L’historique Sites est conservé dans Git.
+Le site est désormais versionné dans `site/` du dépôt public `antoineberjoan/sema`, sur `origin/main`. L’historique Sites est conservé dans Git.
 
 Le projet Vercel est relié à `antoineberjoan/sema`, branche de production `main`, avec **Root Directory = `site`**. Chaque push sur `origin/main` déclenche le déploiement du site depuis `site/vercel.json` et publie `site/dist/`. Vérifier les tests et le contenu avant de pousser.
 
