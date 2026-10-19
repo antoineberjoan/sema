@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Signaler une vulnérabilité en privé
+    url: https://github.com/antoineberjoan/sema/security/advisories/new
+    about: Pour les problèmes de sécurité, sans divulgation publique.

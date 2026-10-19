@@ -1,0 +1,17 @@
+name: Proposer une amélioration
+description: Partir d’un besoin concret.
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Quel problème souhaitez-vous résoudre ?
+      description: Décrivez une situation réelle et ce qui vous manque aujourd’hui.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Quel résultat serait utile ?
+      description: Une proposition ou une alternative, sans imposer une solution technique.
+    validations:
+      required: true

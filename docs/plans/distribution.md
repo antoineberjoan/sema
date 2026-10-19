@@ -110,4 +110,20 @@ La branche distante `codex/sidebar-spacing` (`e4ca175`) retire l’engrenage du 
 
 Statut : publiée sur autorisation explicite d’Antoine dans le chat du 19 octobre, qui remplace l’attente d’autorisation des anciennes notes ci-dessus. Les trois commits locaux sont poussés, la CI du code source est verte, le DMG public et le cask sont en 0.7.0. Téléchargement sans session, mise à jour 0.6.0 → 0.7.0, installation neuve, signature, quarantaine et identité du binaire vérifiés ; essais temporaires retirés. [Preuves courantes](../validation/distribution-0.7.0.json).
 
-Limites conservées : seul le premier écran du nouvel accueil a été observé nativement après un contrôle anormalement lent. Le parcours complet, le glisser Finder sur un autre compte et le premier lancement Internet ne sont pas déclarés validés. La discussion sur une ouverture du code ne constitue pas une décision de visibilité ou de licence.
+Limites conservées : seul le premier écran du nouvel accueil a été observé nativement après un contrôle anormalement lent. Le parcours complet, le glisser Finder sur un autre compte et le premier lancement Internet ne sont pas déclarés validés. Le code est désormais public sous licence MIT.
+
+
+## Accueil public et essai restant — 19 octobre 2026
+
+README centré sur l’installation et les capacités, aperçu existant clairement daté, guide de contribution, politique de sécurité et formulaires pour bugs et idées. Les règles restent dans AGENTS.md. Le signalement privé de vulnérabilités GitHub est activé.
+
+Le contrôle Gatekeeper du bundle de production renvoie `rejected`, alors que `codesign --verify --deep --strict` réussit. C’est compatible avec la signature ad hoc non notarisée ; aucune protection macOS n’a été modifiée. Cet essai ne remplace pas un lancement depuis un téléchargement sur un autre Mac.
+
+Essai encore nécessaire sur un Mac Apple Silicon avec macOS 14+ ou un compte de test disponible :
+
+1. Télécharger le DMG depuis le site public avec un navigateur, l’ouvrir dans le Finder et copier sema dans Applications.
+2. Ouvrir l’app, relever le message exact de macOS et, si l’utilisateur choisit de faire confiance à cette version, suivre la procédure Apple liée dans le README.
+3. Parcourir l’accueil au clavier, vérifier le passage sans clé, la sélection des repères et les états sans données ; ne pas joindre de clé aux preuves.
+4. Fermer puis relancer ; vérifier la conservation des choix. Relever version de macOS, puce et résultat de chaque étape.
+
+Aucun autre Mac ni compte de test accessible n’a été identifié dans cette session. Ce point reste ouvert ; les vérifications Homebrew déjà réussies ne valent pas validation de ce parcours.

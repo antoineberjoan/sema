@@ -25,6 +25,13 @@
     "isolatedProfile": true,
     "welcomeStepVisible": true,
     "completeOnboardingReviewed": false,
-    "note": "Le contrôle natif a mis anormalement longtemps à répondre. Seul l’accueil étape 1 sur 3 a été observé ; pas de validation intégrale du nouveau parcours."
+    "note": "Le contrôle natif a mis anormalement longtemps à répondre. Seul l’accueil étape 1 sur 3 a été observé ; pas de validation intégrale du nouveau parcours.",
+    "gatekeeperAssessment": {
+      "verifiedAt": "2026-10-19",
+      "tool": "spctl --assess --type execute --verbose=2",
+      "result": "rejected",
+      "strictCodeSignature": "valid",
+      "scope": "Bundle de production local ; ce contrôle ne prouve pas le premier lancement après téléchargement sur un autre Mac."
+    }
   }
 }

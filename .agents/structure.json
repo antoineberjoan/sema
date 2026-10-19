@@ -36,5 +36,7 @@
   "docs/": "Contrats techniques, décisions, plans et preuves ; engineering décrit le socle agentique.",
   "site/": "Sources du site statique, guide de marque et configuration de publication.",
   "distribution/": "Manifeste canonique de release et copie du cask public.",
-  "LICENSE": "Licence MIT du code et de la documentation du projet."
+  "LICENSE": "Licence MIT du code et de la documentation du projet.",
+  "CONTRIBUTING.md": "Accueil des contributeurs et parcours de contribution, sans duplication des conventions.",
+  "SECURITY.md": "Canal privé de signalement des vulnérabilités et périmètre de maintenance."
 }

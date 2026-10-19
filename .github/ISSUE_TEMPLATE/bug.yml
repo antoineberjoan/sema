@@ -1,0 +1,30 @@
+name: Signaler un bug
+description: Décrire un problème reproductible dans sema.
+body:
+  - type: markdown
+    attributes:
+      value: "Ne joignez ni clé API ni données personnelles. Pour une vulnérabilité, utilisez le signalement privé dans l’onglet Security."
+  - type: input
+    id: environment
+    attributes:
+      label: Environnement
+      description: Version de sema, version de macOS, puce du Mac et mode d’installation.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes pour reproduire
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Résultat attendu et résultat observé
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Éléments utiles
+      description: Capture anonymisée, source publique et code de série si pertinent. Aucune clé.

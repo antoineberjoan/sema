@@ -1,106 +1,74 @@
 # sema
 
-**Vos repères, à portée de main.** Une application macOS native pour consulter ses repères économiques, conserver ses favoris et suivre des seuils sur les taux, l’inflation et les devises.
+**Vos repères, à portée de main.** Une application macOS native pour consulter des séries économiques, retrouver ses favoris et suivre des seuils sur les taux, l’inflation et les devises.
 
-sema vient du grec σῆμα, « signe, signal ». Le dépôt est `antoineberjoan/sema`.
+[Installer sema](https://getsema.app/download/) · [Signaler un bug](https://github.com/antoineberjoan/sema/issues/new?template=bug.yml) · [Contribuer](CONTRIBUTING.md) · [Licence MIT](LICENSE)
 
-## Travailler avec un agent
+![Vue Focus de sema : une série et son historique](site/dist/assets/sema-focus-macos.png)
 
-Antoine fixe l’intention. **Notion** fait foi sur la vision, le périmètre souhaité, le business, la marque et la copy ; **GitHub** porte le code, les décisions techniques et les preuves. La [carte des sources](docs/engineering/SOURCES.md) donne les références. Une divergence de direction se résout avec Antoine.
+*Aperçu de l’interface conservé sur le site, avec données fictives datées du 15 octobre 2026. Les détails peuvent différer de la version actuelle.*
 
-Quel que soit l’agent utilisé, commencer par [AGENTS.md](AGENTS.md), l’entrée commune du projet, puis charger uniquement les instructions utiles au travail :
+## Installer
 
-- **Règles et rangement** : instructions de la zone touchée, [responsabilité des emplacements](.agents/structure.json), [conventions](docs/engineering/CONVENTIONS.md) et [vocabulaire partagé](docs/engineering/GLOSSARY.md).
-- **Procédures à la demande** : [sema-change](.agents/skills/sema-change/SKILL.md) pour réaliser un changement, [sema-design](.agents/skills/sema-design/SKILL.md) pour Interface Craft, [sema-handoff](.agents/skills/sema-handoff/SKILL.md) pour transmettre le contexte utile.
-- **Contrôles et mémoire** : mêmes scripts dans les hooks Claude et Cursor, en local, au commit et en CI ; revue du diff, preuves dans la PR, plans et décisions conservés sous forme condensée. Le [fonctionnement du socle](docs/engineering/WORKFLOW.md) décrit ce circuit et les adaptateurs des clients.
+La version distribuée demande **macOS 14 ou plus récent et un Mac avec puce Apple**. Télécharger le DMG sur [getsema.app](https://getsema.app/download/), puis glisser sema dans Applications, ou utiliser Homebrew :
 
-Après un clone, lancer `./scripts/setup.sh` pour activer le hook local. Les contrôles demandent Python 3.9 ou plus récent, sans module externe.
+```sh
+brew install --cask antoineberjoan/sema/sema-app
+```
 
-Le système partage les règles et les contrôles ; il ne rend pas les modèles déterministes. Le chargement effectif doit être vérifié dans chaque client : voir les [essais et leurs limites](docs/validation/agent-clients.md). Le README oriente ; les fichiers liés restent les références à maintenir.
+Pour une installation Homebrew existante :
 
-## Fonctionnalités
+```sh
+brew update
+brew upgrade --cask antoineberjoan/sema/sema-app
+```
 
-- Un hub Focus : un repère et son grand historique, une sidebar repliable qui apparaît au survol de son icône, et « Mon espace » fixé en bas. Le bandeau de favoris en verre reste accessible depuis la barre de menus.
-- Catalogue Webstat dynamique avec clé personnelle : rechercher, filtrer et prévisualiser les séries accessibles, puis composer une sélection ordonnée. Les treize repères macro précédents restent une sélection de départ.
-- Catalogues publics Insee, BCE, Eurostat, BRI et OCDE, indicateurs Banque mondiale et taux de référence de la Fed de New York : jeux et dimensions provenant des sources, sans liste fermée d’indices. Voir [le périmètre précis et les limites](docs/PUBLIC-CATALOGUES.md).
-- Sources activables dans les réglages, profil local avec prénom, nom et photo facultatifs, lien discret pour soutenir sema sur Ko-fi. Les équivalences vérifiées entre Webstat et la BCE évitent les doublons ; le choix du fournisseur reste explicite. Voir [la personnalisation](docs/PERSONALIZATION.md).
-- Vues sur 1 mois, 3 mois, 1 an, 3 ans, 5 ans et Tout selon la profondeur disponible ; chargement des périodes anciennes par tranches annulables. Définition, unité, échelle, fréquence, périodes, base des indices et métadonnées officielles. Cache local conservé hors connexion. Sans clé, la démonstration reste disponible et porte le badge **Démo**.
-- Un bandeau natif translucide affiche les favoris, leurs valeurs, variations, courbes et dates. Sa position se choisit dans Réglages → Apparence : haut, bas, gauche ou droite ; un encart trace le signe sema puis révèle sa signature. Clic sur une carte pour approfondir dans le hub ; défilement horizontal quand nécessaire et fermeture avec Échap ou clic extérieur. **⌘⇧B** permet aussi de l’ouvrir dans sema.
-- **⌘K** propose Mes repères et Catalogue Webstat ; recherche par noms ou codes, filtres jeu/zone/fréquence, navigation par flèches puis Entrée. **⌘1/⌘2/⌘3/⌘4** ouvrent Mes repères/Favoris/Alertes/Explorer ; **⌘R** actualise Webstat. **⌘⌥↑ / ⌘⌥↓** réordonnent le repère sélectionné.
-- Composition native sans contours décoratifs : sidebar sobre, liste de repères et panneau de graphique avec une ombre légère.
-- Favoris persistants et six thèmes au choix dans **Réglages → Apparence** : Graphite par défaut, puis Sarcelle, Menthe, Lavande, Bleu ciel et Bleu polaire. La marque et l’icône d’app restent monochromes.
-- Alertes de franchissement strict au-dessus ou en dessous d’un seuil, sur les repères dont l’unité et l’échelle sont explicites. Création, pause, suppression et test ; vérification des nouvelles observations à chaque actualisation, sans doublon par date.
+La version alpha porte une signature ad hoc et **n’est pas notarisée par Apple**. macOS peut bloquer sa première ouverture. Après avoir vérifié la provenance du téléchargement, suivre la [procédure Apple](https://support.apple.com/fr-fr/102445). Homebrew ne supprime pas cette étape. Voir les [vérifications et limites de la distribution](docs/validation/distribution-0.7.0.json).
 
-Les séries publiques partagent favoris, historiques et alertes avec Webstat. Les fonds individuels restent hors de l’interface ; les anciennes préférences sont conservées. Aucun minuteur ni service de surveillance en arrière-plan ne tourne : les alertes sont vérifiées à l’actualisation manuelle, pas quand l’app est quittée ou le Mac en veille. Les notifications système restent optionnelles.
+## Ce que fait sema
 
-## Démarrer
+- Explorer les catalogues économiques de Webstat, de la BCE, de l’Insee et d’autres producteurs publics, puis choisir ses séries.
+- Lire un repère et son historique dans Focus ; consulter ses favoris dans un bandeau accessible depuis la barre de menus.
+- Garder les observations en cache pour les relire hors connexion.
+- Définir des seuils et recevoir une notification lorsque les nouvelles observations franchissent ces seuils.
+- Personnaliser le bandeau, les raccourcis et l’apparence.
 
-Pré-requis : un Mac sous macOS 14 ou plus récent et un compilateur Swift 6. Xcode complet est recommandé pour le développement visuel. L’app peut être compilée avec les seuls Command Line Tools.
+Les dates, unités et sources accompagnent les séries. Les [catalogues pris en charge et leurs limites](docs/PUBLIC-CATALOGUES.md) précisent la couverture réelle.
+
+## Sources et données personnelles
+
+Webstat demande une clé personnelle gratuite, à créer dans son [espace utilisateur](https://webstat.banque-france.fr/login/) puis à saisir dans **Réglages → Sources**. Elle est validée avant stockage dans le Trousseau macOS. Les catalogues publics accessibles sans clé restent disponibles indépendamment de Webstat.
+
+Les préférences et caches restent sur le Mac, dans `~/Library/Application Support/Sema/`. Les clés ne sont pas enregistrées dans ces fichiers. Les requêtes de données vont aux fournisseurs concernés ; leurs conditions de réutilisation s’appliquent. Voir [les sources de données](docs/DATA-SOURCES.md).
+
+## Limites actuelles
+
+- Les données suivent la fréquence de leurs producteurs ; ce ne sont pas des cotations garanties en temps réel.
+- L’app vérifie les séries suivies au lancement, au réveil et à échéance lorsque leur dernière synchronisation remonte à au moins 24 heures. L’actualisation manuelle reste disponible. Les alertes sont évaluées sur les nouvelles observations ; aucune surveillance ne tourne lorsque sema est quittée. Voir [l’actualisation quotidienne](docs/plans/automatic-refresh.md).
+- La version binaire distribuée cible Apple Silicon ; aucune version Intel n’est proposée.
+- L’installation et la mise à jour Homebrew sont vérifiées. Le parcours complet de première ouverture sur un autre Mac reste à valider.
+
+## Développer et contribuer
+
+Le projet utilise SwiftUI, AppKit et les frameworks Apple, sans dépendance externe pour l’app. Prévoir Swift 6, macOS 14+ et Xcode complet pour la suite Swift Testing.
 
 ```sh
 git clone https://github.com/antoineberjoan/sema.git
 cd sema
+./scripts/setup.sh
+./scripts/check.sh
 ./scripts/build-app.sh
 open build/Sema.app
 ```
 
-Le script crée une app avec une signature ad hoc. L’alpha distribuée conserve cette signature et reste non notarisée : macOS peut demander une autorisation manuelle à la première ouverture. Une signature Developer ID et une notarisation Apple permettront de fluidifier une distribution ultérieure.
+[CONTRIBUTING.md](CONTRIBUTING.md) explique comment proposer un changement. [AGENTS.md](AGENTS.md) est l’unique entrée des règles pour les assistants ; les instructions liées ne sont pas dupliquées ici.
 
-Dans Xcode : ouvrir `Package.swift`. Pour tester les comportements dépendant d’un vrai bundle (dont les notifications), lancer l’app produite par le script.
+Pour comprendre le code : [produit](docs/PRODUCT.md), [architecture](docs/ARCHITECTURE.md), [structure des dossiers](.agents/structure.json) et [plans techniques](docs/PLAN.md). Le site statique est dans [site/](site/README.md) ; le cask et les binaires sont publiés dans [homebrew-sema](https://github.com/antoineberjoan/homebrew-sema).
 
-## Connecter Webstat
+## Retours et sécurité
 
-1. Créer un compte gratuit sur [Webstat](https://webstat.banque-france.fr/login/), puis générer une clé dans l’espace utilisateur.
-2. Ouvrir **sema → Réglages → Sources**, coller la clé dans le champ sécurisé et cliquer sur **Enregistrer et connecter**.
-3. Les données sont validées avant l’enregistrement de la clé dans le Trousseau macOS. La clé reste sur ce Mac et est envoyée uniquement à Webstat dans un header HTTP.
-4. Utiliser **Actualiser les repères** pour les mises à jour suivantes. Les données du cache restent consultables sans clé ; **Retirer la clé** supprime uniquement la connexion Webstat. Les autres sources publiques restent accessibles dans Explorer, sans cette clé.
-
-Ne jamais ajouter une clé personnelle au code ou au dépôt. Les données sources sont accessibles gratuitement auprès de leurs producteurs ; l’accès par clé personnelle ne remplace pas leurs conditions de réutilisation.
-
-## Vérifier
-
-```sh
-./scripts/check.sh
-```
-
-La CI utilise macOS avec Xcode et lance la même suite. Les tests couvrent aussi le JSON Webstat, les erreurs d’accès et de quota, la précision des nombres, les valeurs absentes ou futures, les périodes mensuelles, les révisions et la compatibilité des anciens caches.
-
-La suite utilise Swift Testing. Xcode complet est nécessaire si les seuls Command Line Tools installés ne fournissent pas son environnement d’exécution.
-
-## Structure
-
-La carte des emplacements et de leur rôle est [.agents/structure.json](.agents/structure.json), vérifiée par les garde-fous : un fichier hors d’un emplacement décrit est refusé.
-
-Commencer par [le périmètre produit](docs/PRODUCT.md), puis [l’architecture](docs/ARCHITECTURE.md) et [les sources de données](docs/DATA-SOURCES.md). Les instructions de contribution sont dans [AGENTS.md](AGENTS.md).
-
-L’interface utilise **SF Pro**, les contrôles macOS et six palettes avec des accents adaptés aux modes clair et sombre. Le symbole original est disponible en SVG dans `Resources/Brand`. Voir [l’identité visuelle](docs/IDENTITY.md).
-
-## Données locales
-
-Par défaut, les favoris et alertes sont dans `~/Library/Application Support/Sema/preferences.json`. Les observations Webstat sont dans `webstat-cache.json`, sans clé API. L’ancien `ecb-cache.json` reste lisible. Les préférences et le cache v1 migrent vers v2 avec copie du fichier original. Les écritures sont atomiques. Un fichier de préférences illisible ou d’une version inconnue est conservé ; l’app signale le problème et désactive sa sauvegarde.
-
-Pour une session de validation isolée, `SEMA_DEVELOPMENT_DATA_DIRECTORY` peut définir l’emplacement des données lors de la création du bundle. `SEMA_CONFIGURATION=debug` permet de produire une app de développement. Ces valeurs ne sont pas nécessaires à une utilisation normale.
-
-## Bibliothèques
-
-Aucune dépendance externe : SwiftUI, AppKit, Swift Charts, Observation, Foundation, Security et UserNotifications. Les bibliothèques possibles pour des besoins ultérieurs sont documentées dans [les décisions techniques](docs/decisions/001-native-and-dependencies.md).
-
-## Suite
-
-Les priorités font foi dans Notion Stratégie ([carte des sources](docs/engineering/SOURCES.md)) ; les chantiers techniques sont indexés dans [PLAN.md](docs/PLAN.md).
-
-## Distribution
-
-Le [guide de distribution](docs/DISTRIBUTION.md) décrit le DMG personnalisé, le manifeste de release, la page de téléchargement et la préparation Homebrew. Les scripts de packaging restent locaux et ne publient aucun artefact. Le dépôt public [homebrew-sema](https://github.com/antoineberjoan/homebrew-sema) ne contient que le cask et les versions binaires ; le code source est public sous [licence MIT](LICENSE).
-
-## Retours
-
-Le bouton « Une idée ou un bug ? » du bandeau ouvre le [formulaire public](https://antoineberjoan.notion.site/5e95023c58754a8990fd16f5fd1ad5f2). Les réponses sont privées ; [configuration et vérification](docs/FEEDBACK.md).
-
-## Source de référence
-
-`origin/main` réunit les sources de l’app, le site et son guide de marque. L’historique du dépôt Sites a été importé dans `site/` sans modifier son identité ni son audience. Le site public reste sur [getsema.app](https://getsema.app/) ; voir [site/README.md](site/README.md) pour le déploiement du site. Les essais et livrables historiques sont inventoriés dans [docs/ARCHIVES.md](docs/ARCHIVES.md). Les clés, préférences personnelles, caches et liens locaux Vercel restent hors de Git.
+Une question, un bug reproductible ou une idée : [ouvrir une issue](https://github.com/antoineberjoan/sema/issues/new/choose). Une vulnérabilité doit suivre [SECURITY.md](SECURITY.md).
 
 ## Licence
 
-Le code et la documentation sont proposés sous [licence MIT](LICENSE). La licence ne remplace pas les conditions d’accès et de réutilisation des données des fournisseurs : voir [les sources de données](docs/DATA-SOURCES.md).
+Code et documentation sous [licence MIT](LICENSE). Cette licence ne remplace pas les conditions d’accès et de réutilisation des données des fournisseurs.
