@@ -100,3 +100,7 @@ Le bouton « Une idée ou un bug ? » du bandeau ouvre le [formulaire public](ht
 ## Source de référence
 
 `origin/main` réunit les sources de l’app, le site et son guide de marque. L’historique du dépôt Sites a été importé dans `site/` sans modifier son identité ni son audience. Le site public reste sur [getsema.app](https://getsema.app/) ; voir [site/README.md](site/README.md) pour le déploiement du site. Les essais et livrables historiques sont inventoriés dans [docs/ARCHIVES.md](docs/ARCHIVES.md). Les clés, préférences personnelles, caches et liens locaux Vercel restent hors de Git.
+
+## Licence
+
+Le code et la documentation sont proposés sous [licence MIT](LICENSE). La licence ne remplace pas les conditions d’accès et de réutilisation des données des fournisseurs : voir [les sources de données](docs/DATA-SOURCES.md).

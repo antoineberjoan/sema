@@ -16,3 +16,9 @@ L’archive a été retéléchargée depuis GitHub et chaque empreinte de l’in
 Le 17 octobre, les deux dépôts nécessaires conservent chacun uniquement leur branche `main` : sources privées dans `antoineberjoan/sema`, distribution publique dans `antoineberjoan/homebrew-sema`. Les tags temporaires `archive/catalogue-2026-10-17` et `archive/distribution-2026-10-17` sont retirés ; leurs historiques restent dans le bundle Git de l’archive privée.
 
 La release publique et le tag `v0.2.0` sont retirés après vérification de leurs trois fichiers dans l’archive privée. Les métadonnées de cette ancienne release y sont aussi conservées sous `release-0.2.json`. Le dépôt public propose uniquement `v0.4.0`. Son tag correspond au commit du cask 0.4.0 ; le DMG, son URL et son SHA-256 restent inchangés, avec un téléchargement sans authentification revérifié. [Preuves](validation/github-cleanup-2026-10-17.json).
+
+## Préparation de l’ouverture — 19 octobre 2026
+
+Antoine a retenu le principe d’une ouverture sous licence MIT ; la licence est ajoutée au dépôt. La [Stratégie](https://app.notion.com/p/3fbd18bb0dea819bad4bc31bca0ad436) consigne cette décision. La visibilité reste privée : la release `workspace-archive-2026-10-17` expose une archive de travail de 223 Mo si tout le dépôt devient public. Sa suppression sans sauvegarde a été soumise à Antoine ; aucune suppression ni ouverture n’a encore été effectuée.
+
+Le contrôle ciblé de l’historique Git local a examiné 1 253 versions de fichiers texte sans trouver les formats de secrets recherchés. Ce contrôle n’est pas une garantie exhaustive et ne couvre pas les pièces de release, les images ni les références distantes non récupérées. Le package Swift n’a aucune dépendance externe déclarée. Les conditions des données économiques restent propres aux fournisseurs. [État des vérifications](validation/open-source-readiness.json).

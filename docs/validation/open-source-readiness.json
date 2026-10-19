@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-10-19",
+  "license": "MIT",
+  "visibility": "private",
+  "historyScan": {
+    "scope": "reachable text blobs in all local refs",
+    "objects": 2385,
+    "textBlobsScanned": 1253,
+    "findings": [],
+    "limits": "Not an audit of release archives, images, external systems or unreachable server refs."
+  },
+  "dependencyReview": {
+    "swiftExternalDependencies": 0,
+    "trackedCredentialFileNamesFound": false,
+    "gitAuthors": "Antoine Berjoan (two display names)",
+    "limitations": "Asset rights and supplier data terms remain separate from the code license."
+  },
+  "pendingDecision": {
+    "release": "workspace-archive-2026-10-17",
+    "archiveBytes": 223268853,
+    "reason": "Private work archive would become publicly accessible with the repository; deletion without backup requires Antoine’s specific decision."
+  }
+}
