@@ -110,3 +110,11 @@ Le DMG 0.5.1, build 15, contient 2 863 197 octets, SHA-256 `762e891f57f26db57c22
 Build 17, DMG de 3 008 614 octets, SHA-256 `a7e6abc3112a8fd40c7df2e043a3650c02e0ffd25d825bc33aee184d84da150b`. Le même artefact public sert le site et le cask `sema-app`. Téléchargement sans authentification, mise à jour Homebrew 0.5.1 → 0.6.0 et installation neuve vérifiés dans un dossier temporaire, puis retirés. Signature stricte valide, quarantaine conservée, binaire identique à la production. Aucun lancement du binaire téléchargé ni contournement Gatekeeper. [Preuves](validation/distribution-0.6.0.json).
 
 Le lancement, le réveil et l’échéance quotidienne partagent le contrôleur natif. Les données synchronisées depuis moins de 24 h sont conservées sans nouvelle requête ; ⌘R reste une actualisation forcée. Les alertes sont évaluées sur les nouvelles observations. L’app doit rester active, même sans hub ; aucun contrôle pendant la veille ou après sortie. Le contrôleur a été exercé sans fenêtre et le bundle a réellement actualisé une série BCE au lancement. La veille matérielle et une attente réelle de 24 h ne sont pas revendiquées.
+
+## Version 0.7.0 — accueil et lisibilité
+
+Publiée le 19 octobre 2026 à la demande explicite d’Antoine : build 18, DMG de 3 299 046 octets, SHA-256 `b89dcc970ffa8f2c4df7c97de25684cae64748a23987855d5d236111d9dd4e4e`. Le code source `c5336795bc1d735ad032fecb3662f81408f88caa` a passé la CI macOS : 115 tests Swift, 42 tests Python et construction du bundle.
+
+Le téléchargement public sans authentification, une vraie mise à jour Homebrew 0.6.0 → 0.7.0 et une installation neuve ont été vérifiés dans des dossiers Applications temporaires, puis retirés. Signature stricte valide, quarantaine conservée, exécutable identique au bundle de production. Le cask et le site utilisent le même artefact immuable. [Preuves](validation/distribution-0.7.0.json).
+
+L’accueil étape 1 sur 3 a été observé dans une copie locale à profil isolé. Le contrôle natif a répondu après un délai anormal ; les étapes suivantes et le premier lancement du binaire téléchargé restent non vérifiés. Aucune notarisation ni désactivation de Gatekeeper.

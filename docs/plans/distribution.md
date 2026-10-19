@@ -105,3 +105,9 @@ Après accord : publier ce DMG et son SHA-256 dans `antoineberjoan/homebrew-sema
 ### Ajustement local de la sidebar — 17 octobre
 
 La branche distante `codex/sidebar-spacing` (`e4ca175`) retire l’engrenage du hub et ramène la marge supérieure de recherche à 8 pt. Bundle local recompilé, signé et ouvert depuis `dist/Sema.app` ; profil, ⌘K, fermeture/réouverture et périodes vérifiés dans le natif. Les garde-fous et leurs 12 tests passent ; les tests Swift restent bloqués localement par le module `Testing` absent. La CI du commit de contraste ne couvre pas cet ajustement. Le DMG 0.5.2 déjà préparé doit être reconstruit depuis le code retenu avant toute publication autorisée ; son ancien hash reste celui de l’artefact existant.
+
+## Livraison 0.7.0 — 19 octobre 2026
+
+Statut : publiée sur autorisation explicite d’Antoine dans le chat du 19 octobre, qui remplace l’attente d’autorisation des anciennes notes ci-dessus. Les trois commits locaux sont poussés, la CI du code source est verte, le DMG public et le cask sont en 0.7.0. Téléchargement sans session, mise à jour 0.6.0 → 0.7.0, installation neuve, signature, quarantaine et identité du binaire vérifiés ; essais temporaires retirés. [Preuves courantes](../validation/distribution-0.7.0.json).
+
+Limites conservées : seul le premier écran du nouvel accueil a été observé nativement après un contrôle anormalement lent. Le parcours complet, le glisser Finder sur un autre compte et le premier lancement Internet ne sont pas déclarés validés. La discussion sur une ouverture du code ne constitue pas une décision de visibilité ou de licence.

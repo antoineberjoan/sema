@@ -1,0 +1,30 @@
+{
+  "version": "0.7.0",
+  "build": "18",
+  "verifiedAt": "2026-10-19",
+  "sourceCodeValidatedAt": "c5336795bc1d735ad032fecb3662f81408f88caa",
+  "ci": "https://github.com/antoineberjoan/sema/actions/runs/39300389317",
+  "swiftTests": 115,
+  "pythonTests": 42,
+  "sha256": "b89dcc970ffa8f2c4df7c97de25684cae64748a23987855d5d236111d9dd4e4e",
+  "byteSize": 3299046,
+  "publicDownload": {
+    "url": "https://github.com/antoineberjoan/homebrew-sema/releases/download/v0.7.0/Sema-0.7.0-arm64.dmg",
+    "unauthenticatedDownloadVerified": true,
+    "homebrewInstall": true,
+    "homebrewUpgrade": true,
+    "upgradeFrom": "0.6.0",
+    "strictSignatureVerified": true,
+    "quarantinePreserved": true,
+    "installedExecutableMatchesProduction": true,
+    "downloadedAppLaunched": false,
+    "temporaryAppDirectory": true,
+    "publicTapCommit": "0c68a9d057c503b4727f92c14b4a400d2d0bc43a"
+  },
+  "nativeReview": {
+    "isolatedProfile": true,
+    "welcomeStepVisible": true,
+    "completeOnboardingReviewed": false,
+    "note": "Le contrôle natif a mis anormalement longtemps à répondre. Seul l’accueil étape 1 sur 3 a été observé ; pas de validation intégrale du nouveau parcours."
+  }
+}
