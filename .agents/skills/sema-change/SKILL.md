@@ -5,7 +5,7 @@ description: Réaliser un changement fonctionnel sema ou un chantier à plusieur
 
 # Réaliser un changement
 
-1. Lire `AGENTS.md`, l’état Git et les instructions de la zone touchée. Identifier la décision et sa page Notion propriétaire via `docs/engineering/SOURCES.md`, y compris pour un chantier technique. Notion pilote les priorités et le suivi ; le plan du dépôt décrit leur réalisation. En cas de versions contradictoires, demander laquelle garder et travailler sur les parties indépendantes.
+1. Lire `AGENTS.md`, l’état Git et les instructions de la zone touchée. Identifier la source du besoin via `docs/engineering/SOURCES.md` : page Notion pour la vision, le produit, la marque ou la copy ; dépôt (`docs/decisions/`, `docs/plans/`) pour tout le technique, qui y fait foi. En cas de versions contradictoires, demander laquelle garder et travailler sur les parties indépendantes.
 2. Énoncer le résultat observable et le périmètre. Une petite correction tient dans le chat ou l’issue. Un chantier à plusieurs étapes ou repris par un autre agent utilise un seul plan dans `docs/plans/`, référencé par `docs/PLAN.md` : source, statut, critères, étapes restantes, preuves, prochaine action.
 3. Lire les appelants et tests concernés. Reproduire le bug s’il y en a un. Réutiliser les noms du glossaire et les emplacements existants ; appliquer `docs/engineering/CONVENTIONS.md`. Implémenter le changement minimum, supprimer les chemins rendus inutiles.
 4. Lancer `./scripts/check.sh` pour une modification fonctionnelle, sinon `python3 scripts/guardrails.py`. Valider le bundle avec `./scripts/build-app.sh` si l’app ou sa construction change. Pour l’UI, appliquer `sema-design` et vérifier le parcours natif ou web.

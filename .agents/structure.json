@@ -33,7 +33,7 @@
   "Tests/MarketCoreTests/": "Preuves exécutables des règles métier et contrats de données.",
   "Resources/": "Métadonnées du bundle et ressources graphiques livrées.",
   "scripts/": "Construction, contrôles et distribution ; scripts/tests vérifie ces outils.",
-  "docs/": "Contrats implémentés, réalisation des décisions Notion, plans et preuves ; engineering décrit le socle agentique.",
+  "docs/": "Contrats implémentés, décisions techniques (font foi), plans et preuves ; engineering décrit le socle agentique.",
   "site/": "Sources du site statique, guide de marque et configuration de publication.",
   "distribution/": "Manifeste canonique de release et copie du cask public.",
   "LICENSE": "Licence MIT du code et de la documentation du projet.",

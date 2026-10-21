@@ -4,10 +4,10 @@ Entrée commune à tous les agents. Lire les sections utiles de `docs/PRODUCT.md
 
 ## Autorité et arbitrage
 
-- Antoine fixe l’intention. **Notion pilote les objectifs, les priorités, l’organisation, le suivi et toutes les décisions, y compris techniques. GitHub les implémente** : code, configuration et preuves de livraison. Les issues, plans et PR renvoient à la page Notion propriétaire sans constituer un pilotage concurrent. Liens : `docs/engineering/SOURCES.md`.
-- Le code prouve ce qui fonctionne ; il ne valide pas une nouvelle décision, y compris technique. Une page plus récente n’a pas automatiquement raison.
+- Antoine fixe l’intention. **Notion fait foi pour la vision, le ton, le branding, la marque, le business plan et la copy. GitHub fait foi pour tout le technique** : code, configuration, architecture, conventions, décisions techniques (`docs/decisions/`), plans de réalisation et preuves. Une décision technique trouvée dans Notion se signale à Antoine et se reporte ici. Liens et détail : `docs/engineering/SOURCES.md`, ADR 004.
+- Le code prouve ce qui fonctionne ; il ne valide pas seul une nouvelle décision de produit ou de marque. Une page plus récente n’a pas automatiquement raison.
 - Si deux versions se contredisent sur la direction à retenir, présenter l’écart et **demander à Antoine laquelle conserver**. Préserver les deux jusqu’à sa réponse ; avancer sur le travail indépendant. Ne pas choisir silencieusement ni dupliquer une décision pour résoudre le conflit.
-- Une intention formulée dans le chat vaut instruction pour la tâche. Reporter sa décision durable dans sa source d’autorité, avec date et référence, sans transformer une hypothèse en décision.
+- Une intention formulée dans le chat vaut instruction pour la tâche. Reporter sa décision durable dans sa source d’autorité (Notion ou dépôt selon le sujet), avec date et référence, sans transformer une hypothèse en décision.
 
 ## Code et structure
 
