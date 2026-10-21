@@ -2,6 +2,8 @@
 
 Vérification du 17 octobre 2026, sur `codex/agent-foundation`, avant fusion de la PR nº 3. Premier scénario en lecture seule : préparer hypothétiquement un changement de copy Mac suivi d’un relais. Un second scénario vérifie les connexions et une correction réelle des garde-fous. Aucun comportement produit n’est modifié ; les travaux applicatifs parallèles restent hors du test.
 
+Le tableau ci-dessous conserve les observations historiques du 17 octobre. Le cadre courant, harmonisé le 21 octobre 2026 dans [les sources d’autorité](../engineering/SOURCES.md), confie toutes les décisions et le suivi, y compris techniques, à Notion ; GitHub les implémente. Cette mise à jour documentaire ne constitue pas un nouvel essai des clients.
+
 ## Critères et résultats
 
 | Critère | Cursor 3.25.6 | Claude Code 2.1.236 |

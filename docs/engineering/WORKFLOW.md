@@ -6,8 +6,8 @@ Le système rend le travail reproductible et vérifiable. Il ne rend pas un mod�
 
 ```mermaid
 flowchart LR
-    Human["Intention d’Antoine"] --> Notion["Notion : décision et périmètre"]
-    Notion --> Task["Issue ou plan : résultat observable"]
+    Human["Intention d’Antoine"] --> Notion["Notion : toutes les décisions et le suivi"]
+    Notion --> Task["GitHub : réalisation et résultat observable"]
     Task --> Agent["Agent : changement ciblé"]
     Agent --> Checks["Scripts communs et revue"]
     Checks --> PR["PR : résultat et preuves"]
@@ -29,7 +29,7 @@ Une correction technique à périmètre inchangé n’exige pas de créer une pa
 | [sema-handoff](../../.agents/skills/sema-handoff/SKILL.md) | Préserver le contexte utile | Relais ou fin de chantier |
 | [guardrails.py](../../scripts/guardrails.py) | Contrats mécaniques | Hooks d’agent, local, pre-commit et CI |
 
-Pas de copie des règles dans quatre configurations, pas de rôles permanents ni de flotte d’agents sans besoin. Une « compétence » répétable est une skill ; une contrainte brève est une règle ; un fait vérifiable est un contrôle ; une décision durable est une note de décision. Ne pas ajouter un de ces objets pour une préférence ponctuelle.
+Pas de copie des règles dans quatre configurations, pas de rôles permanents ni de flotte d’agents sans besoin. Une « compétence » répétable est une skill ; une contrainte brève est une règle ; un fait vérifiable est un contrôle ; une décision durable vit dans la page Notion propriétaire ; une note du dépôt en décrit la mise en œuvre et renvoie à cette source. Ne pas ajouter un de ces objets pour une préférence ponctuelle.
 
 ## Utiliser un autre agent
 
@@ -68,7 +68,7 @@ Ces vérifications sont volontairement bornées : le contrôle des liens Markdow
 
 ## GitHub et production
 
-Le dépôt source reste privé. Les tâches utilisent le formulaire GitHub quand elles méritent un suivi ; les petites tâches restent dans leur PR. Pas de backlog technique parallèle dans Notion. Une PR référence l’intention, les critères, les preuves et la suite.
+Le dépôt source reste privé. Notion pilote les objectifs, les priorités, l’organisation et le suivi de tous les chantiers, y compris techniques. Une issue ou une PR GitHub peut détailler leur réalisation et relie la page Notion propriétaire, les critères, les preuves et la suite. Aucun backlog ni arbitrage concurrent dans GitHub.
 
 `main` déploie automatiquement le site Vercel : une fusion est donc un acte de production. Les scripts locaux de build ne publient rien. Une autorisation déjà donnée pour une action reste valable ; un contrôle vert n’en crée pas une nouvelle.
 
@@ -78,6 +78,6 @@ Ne pas modifier les permissions, acheter une offre ni rendre le dépôt public p
 
 ## Mémoire utile
 
-`docs/PLAN.md` sert d’entrée vers les chantiers ; `docs/decisions/` garde les choix techniques durables ; PR, commits et `docs/validation/` portent les preuves. Les contrats courants restent dans leurs documents dédiés. Un plan terminé se condense ; il ne reste pas une seconde liste de tâches active.
+`docs/PLAN.md` sert d’entrée vers les plans de réalisation ; `docs/decisions/` décrit les choix techniques implémentés et renvoie à leur décision dans Notion. Les notes historiques conservent leur contexte sans devenir une source d’autorité concurrente. PR, commits et `docs/validation/` portent les preuves. Les contrats implémentés restent dans leurs documents dédiés. Un plan terminé se condense ; il ne reste pas une seconde liste de tâches active.
 
-Pas de dossier de sessions brutes ni de hook de fin de journée. `sema-handoff` préserve les décisions, les preuves et la prochaine action dans le document existant. Ajouter une automatisation seulement si une omission répétée démontre son utilité ; elle doit signaler une différence utile sans réécrire seule l’intention humaine.
+Pas de dossier de sessions brutes ni de hook de fin de journée. `sema-handoff` conserve les décisions et le suivi dans Notion ; les preuves et la prochaine étape de réalisation restent dans les documents du dépôt reliés à cette source. Ajouter une automatisation seulement si une omission répétée démontre son utilité ; elle doit signaler une différence utile sans réécrire seule l’intention humaine.
