@@ -1,6 +1,6 @@
 ## Problème et comportement obtenu
 
-Besoin concret, source Notion ou issue et résultat observable. Si deux versions divergeaient, préciser l’arbitrage d’Antoine.
+Besoin concret, décision Notion source et résultat observable. Une issue liée renvoie aussi à cette décision ; elle ne la remplace pas. Si deux versions divergeaient, préciser l’arbitrage d’Antoine.
 
 ## Périmètre
 
