@@ -9,6 +9,11 @@ enum Theme {
             ? NSColor(srgbRed: 0.16, green: 0.16, blue: 0.16, alpha: 1)
             : .controlBackgroundColor
     })
+    static let sidebarBackground = Color(nsColor: NSColor(name: "SemaSidebarBackground") { appearance in
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            ? NSColor(srgbRed: 0.12, green: 0.12, blue: 0.12, alpha: 1)
+            : NSColor(white: 0.97, alpha: 1)
+    })
     static let sidebarSecondaryText = Color(nsColor: NSColor(name: "SemaSidebarSecondaryText") { appearance in
         let dark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
         return NSColor(white: dark ? 0.76 : 0.36, alpha: 1)

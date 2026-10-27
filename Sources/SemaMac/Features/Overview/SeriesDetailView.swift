@@ -136,8 +136,8 @@ struct SeriesDetailView: View {
             HStack(alignment: .firstTextBaseline) {
                 Group {
                     if focus {
-                    Text(compactObservationPeriod)
-                    } else { Label(observationPeriod, systemImage: "calendar") }
+                    Text(selectedPeriodLabel)
+                    } else { Label(selectedPeriodLabel, systemImage: "calendar") }
                 }
                 .font(.subheadline).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -305,12 +305,12 @@ struct SeriesDetailView: View {
         }
     }
 
-    private var compactObservationPeriod: String {
-        guard let latest = series.latest else { return "Source et définition" }
-        if let end = latest.periodEnd, end != latest.date {
-            return "Période du " + MarketFormat.date(latest.date) + " au " + MarketFormat.date(end)
+    private var selectedPeriodLabel: String {
+        let observations = series.history(for: period)
+        guard let first = observations.first?.date, let last = observations.last?.date else {
+            return period.title
         }
-        return "Donnée du " + MarketFormat.date(latest.date)
+        return "Période du " + MarketFormat.date(first) + " au " + MarketFormat.date(last)
     }
 
     private var periodPicker: some View {
@@ -319,20 +319,12 @@ struct SeriesDetailView: View {
         }
         .pickerStyle(.segmented).labelsHidden()
     }
-
-    private var observationPeriod: String {
-        guard let latest = series.latest else { return "Aucune observation disponible" }
-        if let end = latest.periodEnd, end != latest.date {
-            return "Période du " + MarketFormat.date(latest.date) + " au " + MarketFormat.date(end)
-        }
-        return "Observation du " + MarketFormat.date(latest.date)
-    }
 }
 
 private struct SeriesDetailSurface: ViewModifier {
     let focus: Bool
     @ViewBuilder func body(content: Content) -> some View {
         if focus { content }
-        else { Surface { content } }
+        else { Surface { content }.clipShape(RoundedRectangle(cornerRadius: Theme.surfaceCorner)) }
     }
 }

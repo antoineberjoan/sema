@@ -98,6 +98,7 @@ struct HistoryChart: View {
             .chartYScale(domain: domain)
             .chartXScale(range: .plotDimension(padding: Self.plotPadding))
             .chartXSelection(value: $hoveredDate)
+            .contentShape(Rectangle())
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: Self.axisTickCount)) { _ in
                     AxisValueLabel(format: period.days > HistoryPeriod.year.days

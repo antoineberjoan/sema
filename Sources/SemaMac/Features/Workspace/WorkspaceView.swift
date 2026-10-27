@@ -301,6 +301,7 @@ struct WorkspaceView: View {
 
             profileButton.padding(.horizontal, Self.sidebarMargin).padding(.bottom, Self.sidebarMargin)
         }
+        .background(Theme.sidebarBackground)
     }
 
     private var profileButton: some View {
