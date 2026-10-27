@@ -54,7 +54,7 @@ struct ProfileAndSourcesTests {
         #expect(!SeriesEquivalence.matches(reference, ecbRate(producer: "UNKNOWN")))
         #expect(!SeriesEquivalence.matches(reference, ecbRate(version: "2.0")))
         let other = MarketSeries(id: "other", name: reference.name, subtitle: "", category: .markets,
-            unit: .usd, source: "Autre", isDemo: false, observations: reference.observations)
+            unit: .usd, source: "Autre", observations: reference.observations)
         #expect(!SeriesEquivalence.matches(reference, other))
         #expect(SeriesEquivalence.accessPoints(for: other).isEmpty)
     }

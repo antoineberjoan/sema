@@ -143,16 +143,14 @@ struct SeriesExplanationTests {
         }
     }
 
-    @Test func fictitiousDataStayIdentifiedAndUnknownMeasuresAreNotInvented() throws {
-        let demo = try #require(DemoCatalog.series().first { $0.id == "eurusd" })
-        #expect(explain(demo)?.reading?.hasPrefix("Exemple fictif.") == true)
+    @Test func unknownMeasuresAreNotInvented() throws {
         let unknown = try rate("CUSTOM.M.FR.SERIES", values: [2])
         let fallback = try #require(explain(unknown))
         #expect(fallback.definition == "Définition du fournisseur")
         #expect(fallback.reading == nil)
         #expect(fallback.implication == nil)
         let noDefinition = MarketSeries(id: "X17", name: "Inflation", subtitle: "", category: .markets,
-            unit: .percent, source: "Inconnue", isDemo: false, observations: points([2]))
+            unit: .percent, source: "Inconnue", observations: points([2]))
         #expect(explain(noDefinition) == nil)
     }
 }

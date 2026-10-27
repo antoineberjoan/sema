@@ -6,9 +6,9 @@ import Testing
 struct MacroAlertTests {
     private let start = Date(timeIntervalSince1970: 1_792_022_400)
 
-    private func rate(_ values: [Decimal], demo: Bool = false, id: String = "ecb") -> MarketSeries {
+    private func rate(_ values: [Decimal], id: String = "ecb") -> MarketSeries {
         MarketSeries(id: id, name: "Taux", subtitle: "Fixture", category: .savings, unit: .percent,
-                     source: "Test", isDemo: demo, observations: values.enumerated().map {
+                     source: "Test", observations: values.enumerated().map {
             MarketObservation(date: start.addingTimeInterval(Double($0.offset) * 86_400), value: $0.element)
         })
     }
@@ -39,7 +39,6 @@ struct MacroAlertTests {
                              condition: .level, lastEvaluatedAt: start)
         let events = AlertEvaluator.newEvents(rule, series: item)
         #expect(events.map(\.observedValue) == [4, 5])
-        #expect(events.allSatisfy { !$0.isDemo })
         rule.lastEvaluatedAt = item.latest?.date
         let restored = try JSONDecoder().decode(AlertRule.self, from: JSONEncoder().encode(rule))
         #expect(AlertEvaluator.newEvents(restored, series: item).isEmpty)
