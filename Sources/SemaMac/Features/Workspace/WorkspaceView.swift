@@ -50,10 +50,6 @@ struct WorkspaceView: View {
         } message: {
             Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
         }
-        .overlay(alignment: .topTrailing) {
-            if let event = store.simulatedEvent {
-                DemoNotificationView(event: event).environment(store).padding(SemaTheme.majorSpacing)
-            }
         }
     }
 
@@ -65,7 +61,7 @@ struct WorkspaceView: View {
         } detail: {
             VStack(spacing: 0) {
                 if store.section == .explorer {
-                    ExplorerView().padding(SemaTheme.contentPadding).frame(maxWidth: .infinity, maxHeight: .infinity)
+                    ExplorerView().padding(Theme.contentPadding).frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if store.section == .overview {
                     ViewThatFits(in: .vertical) {
                         overviewContent
@@ -81,15 +77,15 @@ struct WorkspaceView: View {
                             case .explorer: EmptyView()
                             }
                         }
-                        .padding(SemaTheme.contentPadding)
+                        .padding(Theme.contentPadding)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }
                 if store.section != .overview, store.section != .explorer, store.status != nil || store.connectedMarkets.isEmpty {
-                    dataStatus.padding(.horizontal, SemaTheme.contentPadding).padding(.vertical, Self.statusPadding)
+                    dataStatus.padding(.horizontal, Theme.contentPadding).padding(.vertical, Self.statusPadding)
                 }
             }
-            .background(SemaTheme.background)
+            .background(Theme.background)
             .navigationTitle(store.section == .overview ? "" : store.section.title)
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
@@ -121,7 +117,7 @@ struct WorkspaceView: View {
                 sidebarContent
                     .frame(width: FocusMotion.sidebarWidth)
                     .frame(maxHeight: .infinity)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner, style: .continuous))
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous))
                     .shadow(.sidebar)
                     .padding(.leading, Self.previewInset).padding(.vertical, Self.previewVerticalInset)
                     .onHover { sidebarHover(.panel, inside: $0) }
@@ -133,8 +129,8 @@ struct WorkspaceView: View {
 
     private var overviewContent: some View {
         OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
-            .padding(.horizontal, Self.focusHorizontalMargin).padding(.top, SemaTheme.majorSpacing)
-            .padding(.bottom, SemaTheme.contentPadding)
+            .padding(.horizontal, Self.focusHorizontalMargin).padding(.top, Theme.majorSpacing)
+            .padding(.bottom, Theme.contentPadding)
     }
 
     private var keyboardWorkspace: some View {
@@ -262,23 +258,23 @@ struct WorkspaceView: View {
                     Image(systemName: "magnifyingglass")
                     Text("Rechercher")
                     Spacer()
-                    Text("⌘K").font(.subheadline).foregroundStyle(SemaTheme.sidebarSecondaryText)
+                    Text("⌘K").font(.subheadline).foregroundStyle(Theme.sidebarSecondaryText)
                 }
                 .font(.callout).foregroundStyle(.primary)
-                .padding(Self.searchPadding).background(SemaTheme.quietFill, in: RoundedRectangle(cornerRadius: Self.searchCorner))
+                .padding(Self.searchPadding).background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Self.searchCorner))
                 .contentShape(Rectangle())
             }
-            .buttonStyle(SemaPressStyle()).help("Rechercher un repère · ⌘K")
-            .padding(.horizontal, Self.searchInset).padding(.top, SemaTheme.minorSpacing)
+            .buttonStyle(PressStyle()).help("Rechercher un repère · ⌘K")
+            .padding(.horizontal, Self.searchInset)
 
             VStack(spacing: Self.itemSpacing) {
                 ForEach(WorkspaceSection.allCases.filter { $0 != .overview }) { SidebarItem(section: $0) }
             }
             .padding(.horizontal, Self.itemsInset)
 
-            VStack(spacing: SemaTheme.minorSpacing) {
+            VStack(spacing: Theme.minorSpacing) {
                 HStack {
-                    Text("Mes repères").font(.subheadline.weight(.medium)).foregroundStyle(SemaTheme.sidebarSecondaryText)
+                    Text("Mes repères").font(.subheadline.weight(.medium)).foregroundStyle(Theme.sidebarSecondaryText)
                     Spacer()
                     Button { store.section = .explorer } label: { Image(systemName: "plus") }
                         .buttonStyle(.borderless).help("Ajouter un repère")
@@ -305,6 +301,7 @@ struct WorkspaceView: View {
 
             profileButton.padding(.horizontal, Self.sidebarMargin).padding(.bottom, Self.sidebarMargin)
         }
+        .background(Theme.sidebarBackground)
     }
 
     private var profileButton: some View {
@@ -341,7 +338,7 @@ struct WorkspaceView: View {
     }
 
     private var dataStatus: some View {
-        HStack(spacing: SemaTheme.minorSpacing) {
+        HStack(spacing: Theme.minorSpacing) {
             if let status = store.status {
                 Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
                 Text(status).lineLimit(Self.statusLines).help(status)
@@ -353,9 +350,8 @@ struct WorkspaceView: View {
         }
         .font(.subheadline).foregroundStyle(.secondary)
     }
-}
 
-private struct SidebarSeriesRow: View {
+    private struct SidebarSeriesRow: View {
     private static let textSpacing: CGFloat = 6
     private static let nameLines = 2
     @Environment(AppStore.self) private var store
@@ -369,14 +365,14 @@ private struct SidebarSeriesRow: View {
                 Text(MarketFormat.name(displayed)).font(.callout.weight(selected ? .medium : .regular))
                     .foregroundStyle(.primary).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
                 if displayed.latest != nil {
-                    Text(MarketFormat.value(displayed)).font(.subheadline).monospacedDigit().foregroundStyle(SemaTheme.sidebarSecondaryText)
+                    Text(MarketFormat.value(displayed)).font(.subheadline).monospacedDigit().foregroundStyle(Theme.sidebarSecondaryText)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading).padding(SemaTheme.rowPadding)
-            .background(selected ? SemaTheme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
+            .frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
+            .background(selected ? Theme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
             .contentShape(Rectangle())
         }
-        .buttonStyle(SemaPressStyle())
+        .buttonStyle(PressStyle())
         .accessibilityLabel(displayed.latest == nil ? MarketFormat.name(displayed) : "\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))")
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
@@ -399,22 +395,22 @@ private struct SidebarItem: View {
                 Image(systemName: section.symbol).frame(width: Self.iconWidth)
                 Text(section.title)
                 Spacer(minLength: Self.countSpacing)
-                if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(SemaTheme.sidebarSecondaryText) }
+                if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(Theme.sidebarSecondaryText) }
                 if section == .alerts && !store.macroAlerts.isEmpty {
-                    Text("\(store.macroAlerts.count)").foregroundStyle(SemaTheme.sidebarSecondaryText)
+                    Text("\(store.macroAlerts.count)").foregroundStyle(Theme.sidebarSecondaryText)
                 }
             }
             .font(.body.weight(selected ? .medium : .regular))
             .foregroundStyle(.primary)
-            .padding(.horizontal, SemaTheme.rowPadding).padding(.vertical, Self.verticalPadding)
-            .background(selected ? SemaTheme.sidebarSelection : (isHovered ? SemaTheme.hoverFill : .clear),
-                        in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner, style: .continuous))
+            .padding(.horizontal, Theme.rowPadding).padding(.vertical, Self.verticalPadding)
+            .background(selected ? Theme.sidebarSelection : (isHovered ? Theme.hoverFill : .clear),
+                        in: RoundedRectangle(cornerRadius: Theme.rowCorner, style: .continuous))
             .contentShape(Rectangle())
         }
-        .buttonStyle(SemaPressStyle())
+        .buttonStyle(PressStyle())
         .accessibilityAddTraits(selected ? .isSelected : [])
         .onHover { isHovered = $0 }
-        .animation(reduceMotion ? nil : .easeOut(duration: SemaTheme.hoverDuration), value: isHovered)
+        .animation(reduceMotion ? nil : .easeOut(duration: Theme.hoverDuration), value: isHovered)
     }
 }
 
@@ -429,4 +425,5 @@ private enum FocusMotion {
     static let sidebarWidth: CGFloat = 232
     static let sidebar = Animation.snappy(duration: 0.24, extraBounce: 0)
     static let hoverExitDelay: Duration = .milliseconds(220)
+}
 }

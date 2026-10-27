@@ -9,7 +9,7 @@ extension AppStore {
     func addAlert(seriesID: String, direction: AlertDirection, threshold: Decimal) -> Bool {
         guard let item = macroSeries.first(where: { $0.id == seriesID }), item.canAlert, isSourceEnabled(for: seriesID) else { return false }
         let rule = AlertRule(seriesID: seriesID, direction: direction, threshold: threshold,
-            condition: .level, lastEvaluatedAt: item.isDemo ? nil : item.latest?.date)
+            condition: .level, lastEvaluatedAt: item.latest?.date)
         guard rule.isValid, mutatePreferences({ $0.alerts.append(rule) }) else { return false }
         section = .alerts; return true
     }
@@ -21,32 +21,13 @@ extension AppStore {
         guard isSourceEnabled(for: rule.seriesID), rule.isEnabled || (item?.canAlert == true) else { return }
         mutatePreferences { value in
             value.alerts[index].isEnabled.toggle()
-            if value.alerts[index].isEnabled { value.alerts[index].lastEvaluatedAt = item?.isDemo == false ? item?.latest?.date : nil }
+            if value.alerts[index].isEnabled { value.alerts[index].lastEvaluatedAt = item?.latest?.date }
         }
     }
 
     func deleteAlert(_ id: UUID) { mutatePreferences { $0.alerts.removeAll { $0.id == id }; $0.alertBaselineIDs?.remove(id) } }
 
-    func simulate(_ rule: AlertRule) {
-        guard let item = series.first(where: { $0.id == rule.seriesID }), item.canAlert, isSourceEnabled(for: rule.seriesID) else { return }
-        let step = Decimal(string: "0.1")!; let sign: Decimal = rule.direction == .fall ? -1 : 1
-        let sample = item.replacing(observations: [
-            .init(date: Date().addingTimeInterval(-.day), value: rule.threshold - sign * step),
-            .init(date: Date(), value: rule.threshold + sign * step)])
-        let active = AlertRule(id: rule.id, seriesID: rule.seriesID, direction: rule.direction, threshold: rule.threshold, condition: .level)
-        if let event = AlertEvaluator.evaluate(active, series: sample) {
-            simulatedEvent = AlertEvent(ruleID: event.ruleID, seriesID: event.seriesID, observedAt: event.observedAt,
-                changePercent: event.changePercent, isDemo: true, observedValue: event.observedValue)
-        }
-        if preferences.notificationsEnabled {
-            Task {
-                guard isSourceEnabled(for: rule.seriesID) else { return }
-                do { try await notifications.send(title: item.name,
-                    body: "Seuil de \(MarketFormat.number(rule.threshold, digits: item.fractionDigits)) \(item.displayUnit) franchi dans la démonstration.", isDemo: true) }
-                catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
-            }
-        }
-    }
+
 
     func evaluateAlerts(in values: [MarketSeries]) {
         var events: [AlertEvent] = []; var next = preferences; var advanced = false
@@ -54,7 +35,7 @@ extension AppStore {
             let rule = next.alerts[index]
             guard rule.isEnabled, rule.effectiveCondition == .level,
                   isSourceEnabled(for: rule.seriesID),
-                  let item = values.first(where: { $0.id == rule.seriesID }), !item.isDemo, item.canAlert,
+                  let item = values.first(where: { $0.id == rule.seriesID }), item.canAlert,
                   let latest = item.latest else { continue }
             if next.alertBaselineIDs?.contains(rule.id) == true {
                 next.alerts[index].lastEvaluatedAt = max(latest.date, rule.lastEvaluatedAt ?? latest.date)
@@ -73,7 +54,7 @@ extension AppStore {
                 guard isSourceEnabled(for: event.seriesID) else { continue }
                 guard let item = values.first(where: { $0.id == event.seriesID }), let value = event.observedValue else { continue }
                 do { try await notifications.send(title: item.name,
-                    body: "Seuil franchi : \(MarketFormat.number(value, digits: item.fractionDigits)) \(item.displayUnit) · observation du \(MarketFormat.date(event.observedAt)).", isDemo: false) }
+                    body: "Seuil franchi : \(MarketFormat.number(value, digits: item.fractionDigits)) \(item.displayUnit) · observation du \(MarketFormat.date(event.observedAt)).") }
                 catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
             }
         }

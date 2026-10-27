@@ -18,11 +18,11 @@ struct SourceKeyView: View {
     private var canConnect: Bool { !connecting && enabled && !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             if connected {
                 Label("Connecté", systemImage: "checkmark.circle.fill").foregroundStyle(store.palette.accent)
             }
-            HStack(spacing: SemaTheme.minorSpacing) {
+            HStack(spacing: Theme.minorSpacing) {
                 SecureField(connected ? "Nouvelle clé API" : "Clé API personnelle", text: $key)
                     .textFieldStyle(.roundedBorder).textContentType(.password).privacySensitive()
                     .accessibilityLabel("Clé API \(title)").onSubmit(connect)
@@ -46,7 +46,7 @@ struct SourceKeyView: View {
                 Text(error).font(.callout).foregroundStyle(.red).textSelection(.enabled)
             }
         }
-        .padding(.vertical, SemaTheme.minorSpacing)
+        .padding(.vertical, Theme.minorSpacing)
         .help("Clé conservée dans le Trousseau de ce Mac, transmise uniquement à \(title).")
         .onDisappear { key = "" }
     }

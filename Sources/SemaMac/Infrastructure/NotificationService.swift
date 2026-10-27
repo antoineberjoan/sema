@@ -8,9 +8,9 @@ final class NotificationService {
         try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
     }
 
-    func send(title: String, body: String, isDemo: Bool) async throws {
+    func send(title: String, body: String) async throws {
         let content = UNMutableNotificationContent()
-        content.title = isDemo ? "sema · test de notification" : "sema · seuil franchi"
+        content.title = "sema · seuil franchi"
         content.subtitle = title
         content.body = body
         content.sound = .default

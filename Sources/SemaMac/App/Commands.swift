@@ -1,14 +1,14 @@
 // Expose la navigation, la recherche et l’actualisation dans les menus et raccourcis natifs.
 import SwiftUI
 
-struct SemaCommands: Commands {
+struct Commands: Commands {
     @Environment(\.openWindow) private var openWindow
     let store: AppStore
     let showRibbon: () -> Void
 
     var body: some Commands {
         CommandGroup(after: .appInfo) {
-            Link("Soutenir sema…", destination: SemaSupport.url)
+            Link("Soutenir sema…", destination: Support.url)
         }
         CommandGroup(after: .newItem) {
             Button("Rechercher un repère…") {

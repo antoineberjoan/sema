@@ -3,11 +3,16 @@ import AppKit
 import SwiftUI
 
 @MainActor
-enum SemaTheme {
+enum Theme {
     static let surface = Color(nsColor: NSColor(name: "SemaElevatedSurface") { appearance in
         appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
             ? NSColor(srgbRed: 0.16, green: 0.16, blue: 0.16, alpha: 1)
             : .controlBackgroundColor
+    })
+    static let sidebarBackground = Color(nsColor: NSColor(name: "SemaSidebarBackground") { appearance in
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            ? NSColor(srgbRed: 0.12, green: 0.12, blue: 0.12, alpha: 1)
+            : NSColor(white: 0.97, alpha: 1)
     })
     static let sidebarSecondaryText = Color(nsColor: NSColor(name: "SemaSidebarSecondaryText") { appearance in
         let dark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
@@ -44,7 +49,7 @@ enum SemaTheme {
     static let hoverDuration = 0.14
 
     static let menuBarIcon: NSImage = {
-        let renderer = ImageRenderer(content: SemaSymbol(isMenuBarIcon: true).foregroundStyle(.black).frame(width: 18, height: 18))
+        let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(.black).frame(width: 18, height: 18))
         renderer.scale = 2
         let image = renderer.nsImage ?? NSImage(systemSymbolName: "waveform.path", accessibilityDescription: "sema")!
         image.isTemplate = true
@@ -53,7 +58,7 @@ enum SemaTheme {
 }
 
 /// Shared black shadows: opacity, blur and offset of each elevated surface.
-extension SemaTheme {
+extension Theme {
     struct Shadow {
         let opacity: Double
         let radius: CGFloat
@@ -72,7 +77,7 @@ extension SemaTheme {
 }
 
 extension View {
-    func shadow(_ shadow: SemaTheme.Shadow) -> some View {
+    func shadow(_ shadow: Theme.Shadow) -> some View {
         self.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius, x: shadow.x, y: shadow.y)
     }
 }

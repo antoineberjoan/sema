@@ -1,7 +1,7 @@
 // Retour d’appui des boutons, sans mouvement quand les animations sont réduites.
 import SwiftUI
 
-struct SemaPressStyle: ButtonStyle {
+struct PressStyle: ButtonStyle {
     private static let pressedOpacity = 0.82
     private static let pressedScale: CGFloat = 0.99
     private static let response = 0.22

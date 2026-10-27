@@ -6,8 +6,8 @@ struct OriginBadge: View {
     @Environment(\.semaAccent) private var accent
     let series: MarketSeries
     var body: some View {
-        Text(series.isDemo ? "Démo" : series.originBadge)
+        Text(series.originBadge)
             .font(.subheadline.weight(.medium))
-            .foregroundStyle(series.isDemo ? Color.secondary : accent)
+            .foregroundStyle(accent)
     }
 }

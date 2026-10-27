@@ -9,7 +9,7 @@ struct MarketCoreTests {
     private func series(_ values: [Decimal], id: String = "fund-i-eur", unit: ValueUnit = .eur,
                         category: SeriesCategory = .funds) -> MarketSeries {
         MarketSeries(id: id, name: "Test", subtitle: "Part I · EUR", category: category,
-                     unit: unit, source: "Fixture", isDemo: true,
+                     unit: unit, source: "Fixture",
                      observations: values.enumerated().map {
                          MarketObservation(date: date.addingTimeInterval(Double($0.offset) * 86_400), value: $0.element)
                      })
@@ -43,7 +43,7 @@ struct MarketCoreTests {
     @Test
     func testObservationsAreSortedAndDuplicatePublicationIsReplaced() {
         let item = MarketSeries(id: "x", name: "x", subtitle: "", category: .markets,
-            unit: .usd, source: "Test", isDemo: false,
+            unit: .usd, source: "Test",
             observations: [MarketObservation(date: date, value: 2),
                            MarketObservation(date: date.addingTimeInterval(-86_400), value: 1),
                            MarketObservation(date: date, value: 3)])
@@ -110,7 +110,6 @@ struct MarketCoreTests {
         let dollar = try #require(result.first { $0.id == "eurusd" })
         #expect(dollar.latest?.value == Decimal(string: "1.1642")!)
         #expect(dollar.unit == .usd)
-        #expect(!(dollar.isDemo))
         #expect(dollar.observations.count == 2)
         #expect(dollar.observations[0].date < dollar.observations[1].date)
     }
@@ -150,13 +149,5 @@ struct MarketCoreTests {
         #expect(throws: (any Error).self) { _ = try store.load() }
     }
 
-    @Test
-    func testDemoCatalogHasUniqueIDsAndExplicitDemoOrigins() {
-        let items = DemoCatalog.series()
-        #expect(items.count == 12)
-        #expect(Set(items.map(\.id)).count == items.count)
-        #expect(items.allSatisfy { $0.isDemo })
-        #expect(items.allSatisfy { $0.latest?.date == DemoCatalog.observationDate })
-        #expect(items.filter { $0.category == .funds }.count == 4)
-    }
+
 }

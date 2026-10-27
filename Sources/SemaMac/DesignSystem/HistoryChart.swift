@@ -80,7 +80,7 @@ struct HistoryChart: View {
                         .foregroundStyle(Color.secondary.opacity(Self.ruleOpacity))
                     PointMark(x: .value("Date", hovered.date), y: .value(series.displayUnit, MarketFormat.double(hovered.value)))
                         .foregroundStyle(accent).symbolSize(Self.pointSize)
-                        .annotation(position: .top, spacing: SemaTheme.minorSpacing,
+                        .annotation(position: .top, spacing: Theme.minorSpacing,
                                     overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
                             VStack(alignment: .leading, spacing: Self.readingSpacing) {
                                 Text(MarketFormat.date(hovered.date)).foregroundStyle(.secondary)
@@ -89,8 +89,8 @@ struct HistoryChart: View {
                             }
                             .font(.subheadline)
                             .padding(.horizontal, Self.readingHorizontalPadding).padding(.vertical, Self.readingVerticalPadding)
-                            .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: Self.tooltipCorner))
-                            .modifier(SemaElevation())
+                            .background(Theme.surface, in: RoundedRectangle(cornerRadius: Self.tooltipCorner))
+                            .modifier(Elevation())
                             .allowsHitTesting(false)
                         }
                 }
@@ -98,6 +98,7 @@ struct HistoryChart: View {
             .chartYScale(domain: domain)
             .chartXScale(range: .plotDimension(padding: Self.plotPadding))
             .chartXSelection(value: $hoveredDate)
+            .contentShape(Rectangle())
             .chartXAxis {
                 AxisMarks(values: .automatic(desiredCount: Self.axisTickCount)) { _ in
                     AxisValueLabel(format: period.days > HistoryPeriod.year.days
@@ -107,7 +108,7 @@ struct HistoryChart: View {
             }
             .chartYAxis {
                 AxisMarks(position: .trailing, values: .automatic(desiredCount: Self.axisTickCount)) { value in
-                    AxisGridLine().foregroundStyle(SemaTheme.separator)
+                    AxisGridLine().foregroundStyle(Theme.separator)
                     AxisValueLabel {
                         if let number = value.as(Double.self) {
                             Text(MarketFormat.number(Decimal(number), digits: axisDigits))

@@ -10,7 +10,7 @@ struct FavoriteButton: View {
         Button { store.toggleFavorite(seriesID) } label: {
             Image(systemName: store.isFavorite(seriesID) ? "star.fill" : "star")
                 .font(.callout).foregroundStyle(store.isFavorite(seriesID) ? accent : Color.secondary)
-                .frame(width: SemaTheme.iconButtonSize, height: SemaTheme.iconButtonSize).contentShape(Rectangle())
+                .frame(width: Theme.iconButtonSize, height: Theme.iconButtonSize).contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .help(store.isFavorite(seriesID) ? "Retirer des favoris" : "Ajouter aux favoris")

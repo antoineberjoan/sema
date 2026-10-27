@@ -6,7 +6,7 @@ import Foundation
 public enum SeriesEquivalence {
     public static func matches(_ lhs: MarketSeries, _ rhs: MarketSeries) -> Bool {
         if lhs.id == rhs.id { return true }
-        guard !lhs.isDemo, !rhs.isDemo, let key = referenceExchangeRateKey(lhs) else { return false }
+        guard let key = referenceExchangeRateKey(lhs) else { return false }
         return key == referenceExchangeRateKey(rhs)
     }
 
@@ -17,7 +17,7 @@ public enum SeriesEquivalence {
     }
 
     public static func accessPoints(for value: MarketSeries) -> [(sourceID: String, url: URL)] {
-        guard !value.isDemo, let identity = referenceExchangeRateKey(value) else { return [] }
+        guard let identity = referenceExchangeRateKey(value) else { return [] }
         let key = String(identity.dropFirst(referencePrefix.count))
         return [
             ("webstat", URL(string: WebstatClient.catalogueURL + "exr/\(webstatPrefix)\(key)")!),

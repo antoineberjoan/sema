@@ -2,7 +2,7 @@
 import AppKit
 import SwiftUI
 
-enum SemaPalette: String, CaseIterable, Identifiable, Sendable {
+enum Palette: String, CaseIterable, Identifiable, Sendable {
     case graphite, teal, mint, lavender, sky, polar
     var id: String { rawValue }
     var title: String {

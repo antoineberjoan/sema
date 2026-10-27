@@ -25,7 +25,7 @@ public struct ExchangeRatePair: Equatable, Sendable {
 
     public init?(_ series: MarketSeries) {
         let key: String
-        if series.isDemo, series.descriptor == nil, series.statisticalDescriptor == nil {
+        if series.descriptor == nil, series.statisticalDescriptor == nil {
             let canonical = WebstatClient.canonicalID(series.id)
             guard canonical.hasPrefix(SeriesEquivalence.webstatPrefix) else { return nil }
             key = String(canonical.dropFirst(SeriesEquivalence.webstatPrefix.count))
@@ -34,8 +34,6 @@ public struct ExchangeRatePair: Equatable, Sendable {
             key = String(verified.dropFirst(SeriesEquivalence.referencePrefix.count))
         }
         guard let parts = SeriesEquivalence.spotRateParts(key), parts[1] != "EUR", parts[1].count == 3 else { return nil }
-        // An inverse display projection keeps the source ID, but is no longer the published demo quotation.
-        guard !series.isDemo || series.unit.symbol == parts[1] else { return nil }
         currency = parts[1]
     }
 }
@@ -61,7 +59,7 @@ extension MarketSeries {
         return MarketSeries(id: id, name: pair.inverseName,
             subtitle: pair.inverseDescription + " · lecture inversée", category: category, unit: .eur,
             fractionDigits: max(digits, fractionDigits), source: source, sourceURL: sourceURL,
-            isDemo: isDemo, frequency: frequency, observations: inverted,
+            frequency: frequency, observations: inverted,
             syncedAt: syncedAt, hasCompleteHistory: hasCompleteHistory)
     }
 }

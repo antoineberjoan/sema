@@ -3,7 +3,7 @@ import AppKit
 import UserNotifications
 
 @MainActor
-final class SemaAppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     private var menuRibbon: MenuRibbonController?
     private var refreshController: RefreshController?
 

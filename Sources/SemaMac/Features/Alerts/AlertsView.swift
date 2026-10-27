@@ -70,7 +70,7 @@ private struct AlertRow: View {
                 .buttonStyle(.borderless).font(.subheadline)
             }
             Spacer(minLength: 0)
-            Text(!store.isFollowing(rule.seriesID) ? "Repère retiré · en pause" : !store.isSourceEnabled(for: rule.seriesID) ? "Source désactivée · en pause" : !rule.isEnabled ? "En pause" : item?.canAlert == false ? "Unité à vérifier" : item?.isDemo == true ? "Démo · connexion requise" : "À l’actualisation")
+            Text(!store.isFollowing(rule.seriesID) ? "Repère retiré · en pause" : !store.isSourceEnabled(for: rule.seriesID) ? "Source désactivée · en pause" : !rule.isEnabled ? "En pause" : item?.canAlert == false ? "Unité à vérifier" : "À l’actualisation")
                 .font(.subheadline).foregroundStyle(.secondary)
         }
         .padding(.vertical, Self.verticalPadding)
