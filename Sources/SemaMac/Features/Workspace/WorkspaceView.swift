@@ -50,10 +50,6 @@ struct WorkspaceView: View {
         } message: {
             Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
         }
-        .overlay(alignment: .topTrailing) {
-            if let event = store.simulatedEvent {
-                DemoNotificationView(event: event).environment(store).padding(Theme.majorSpacing)
-            }
         }
     }
 

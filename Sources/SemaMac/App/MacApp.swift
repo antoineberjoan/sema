@@ -30,7 +30,6 @@ struct MacApp: App {
         .windowStyle(.automatic)
         .windowToolbarStyle(.unifiedCompact)
         .commands {
-            SidebarCommands()
             Commands(store: store, showRibbon: appDelegate.toggleRibbon)
         }
 

@@ -102,7 +102,7 @@ public struct WebstatClient: Sendable {
         definitions.map { definition in
             MarketSeries(id: definition.key, name: definition.name, subtitle: definition.subtitle,
                 category: definition.category, unit: definition.unit, fractionDigits: definition.digits,
-                source: definition.producer, isDemo: false, frequency: definition.frequency, observations: [])
+                source: definition.producer, frequency: definition.frequency, observations: [])
         }
     }
 
@@ -353,7 +353,7 @@ public struct WebstatClient: Sendable {
                 category: definition.category, unit: definition.unit, fractionDigits: definition.digits,
                 source: definition.producer,
                 sourceURL: URL(string: Self.catalogueURL + "\(definition.key.split(separator: ".")[0].lowercased())/\(definition.key)"),
-                isDemo: false, frequency: definition.frequency, observations: observations)
+                frequency: definition.frequency, observations: observations)
         }
     }
 

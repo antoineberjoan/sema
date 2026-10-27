@@ -51,9 +51,7 @@ struct AlertEditorView: View {
                         Spacer()
                         Text(MarketFormat.value(item)).monospacedDigit()
                     }
-                    Text(item.isDemo
-                         ? "Données fictives · vérification après connexion."
-                         : "Vérification à l’actualisation des repères.")
+                    Text("Vérification à l’actualisation des repères.")
                         .font(.callout).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                         .help("Aucun contrôle quand sema est quittée ou le Mac en veille. La règle suit les nouvelles observations publiées.")

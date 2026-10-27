@@ -48,7 +48,7 @@ public struct ECBExchangeRateClient: Sendable {
                 id: currency.id, name: currency.name, subtitle: "\(currency.code) pour 1 EUR",
                 category: .markets, unit: currency.unit, fractionDigits: currency.digits,
                 source: "Banque centrale européenne", sourceURL: Self.endpoint,
-                isDemo: false, observations: observations
+                observations: observations
             )
         }
         guard !series.isEmpty else { throw ClientError.noObservations }

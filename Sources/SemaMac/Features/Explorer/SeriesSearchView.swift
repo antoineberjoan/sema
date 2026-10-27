@@ -112,7 +112,6 @@ struct SeriesSearchView: View {
     }
 
     private func context(for item: MarketSeries) -> String {
-        if item.isDemo { return "Démo" }
         return item.frequency?.title ?? "Fréquence non renseignée"
     }
 

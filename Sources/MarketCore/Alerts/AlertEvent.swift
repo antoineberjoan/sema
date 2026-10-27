@@ -7,17 +7,15 @@ public struct AlertEvent: Codable, Identifiable, Equatable, Sendable {
     public let seriesID: String
     public let observedAt: Date
     public let changePercent: Decimal
-    public let isDemo: Bool
     public let observedValue: Decimal?
 
-    public init(ruleID: UUID, seriesID: String, observedAt: Date, changePercent: Decimal, isDemo: Bool,
+    public init(ruleID: UUID, seriesID: String, observedAt: Date, changePercent: Decimal,
                 observedValue: Decimal? = nil) {
         self.id = UUID()
         self.ruleID = ruleID
         self.seriesID = seriesID
         self.observedAt = observedAt
         self.changePercent = changePercent
-        self.isDemo = isDemo
         self.observedValue = observedValue
     }
 }

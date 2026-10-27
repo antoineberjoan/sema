@@ -54,7 +54,7 @@ public struct SeriesExplanation: Equatable, Sendable {
     private static func knownRateID(_ series: MarketSeries) -> String? {
         guard series.unit == .percent else { return nil }
         let key: String
-        if series.isDemo, series.descriptor == nil, series.statisticalDescriptor == nil {
+        if series.descriptor == nil, series.statisticalDescriptor == nil {
             key = WebstatClient.canonicalID(series.id)
         } else if let descriptor = series.descriptor,
                   descriptor.unit == .percent, descriptor.multiplier == 0,
@@ -73,7 +73,7 @@ public struct SeriesExplanation: Equatable, Sendable {
     }
 
     private static func identifyingDemo(_ reading: String?, series: MarketSeries) -> String? {
-        reading.map { (series.isDemo ? "Exemple fictif. " : "") + $0 }
+        reading
     }
 
     private static func exchangeRate(_ series: MarketSeries, pair: ExchangeRatePair, period: HistoryPeriod,

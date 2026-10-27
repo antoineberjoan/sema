@@ -115,7 +115,7 @@ struct SeriesDetailView: View {
             }
             if !focus { periodPicker }
             HistoryChart(series: displayed, period: period, height: focus ? nil : preview ? Self.previewChartHeight : Self.chartHeight, showsReading: !focus)
-            if period == .all, !series.isDemo, series.hasCompleteHistory != true {
+            if period == .all, series.hasCompleteHistory != true {
                 HStack(spacing: Self.actionSpacing) {
                     if store.historyLoadingID == series.id {
                         ProgressView().controlSize(.small)
@@ -136,7 +136,7 @@ struct SeriesDetailView: View {
             HStack(alignment: .firstTextBaseline) {
                 Group {
                     if focus {
-                        Text((series.isDemo ? "données fictives · " : "") + compactObservationPeriod)
+                    Text(compactObservationPeriod)
                     } else { Label(observationPeriod, systemImage: "calendar") }
                 }
                 .font(.subheadline).foregroundStyle(.secondary)
@@ -237,7 +237,6 @@ struct SeriesDetailView: View {
             if MarketFormat.name(series) != series.name {
                 LabeledContent("Libellé officiel", value: series.name).textSelection(.enabled)
             }
-            if series.isDemo { Text("Valeurs fictives pour explorer l’application.") }
             else {
                 if let descriptor = series.descriptor {
                     Text(descriptor.definition).textSelection(.enabled)

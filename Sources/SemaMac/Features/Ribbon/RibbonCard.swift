@@ -82,7 +82,7 @@ struct RibbonCard: View {
     }
     private var accessibilityDescription: String {
         MarketFormat.name(series) + ", " + MarketFormat.value(series)
-            + (series.isDemo ? ", démonstration" : "") + ", " + comparison
+            + () + ", " + comparison
             + " sur " + period.title + ", publication du " + MarketFormat.date(series.latest?.date)
     }
 }

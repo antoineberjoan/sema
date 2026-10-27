@@ -19,7 +19,7 @@ final class AppStore {
     var webstatError: String?
     var status: String?
     var errorMessage: String?
-    var simulatedEvent: AlertEvent?
+
     var recentAlertEvents: [AlertEvent] = []
     var isAlertSheetPresented = false
     var isSearchPresented = false
@@ -161,7 +161,7 @@ final class AppStore {
               isSourceEnabled(value.statisticalDescriptor?.dataset.source.rawValue ?? "webstat") else { return false }
         let ids = Set(storedFollowedSeries.filter { SeriesEquivalence.matches($0, value) }.map(\.id))
         do {
-            try storage.cacheWebstat((series.filter { $0.id != value.id } + [value]).filter { !$0.isDemo })
+            try storage.cacheWebstat(series.filter { $0.id != value.id } + [value])
             guard mutatePreferences({ next in
                 var inserted = false
                 next.followedSeriesIDs = next.followedSeriesIDs.compactMap { id in

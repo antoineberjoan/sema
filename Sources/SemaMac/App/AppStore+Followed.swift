@@ -34,10 +34,10 @@ extension AppStore {
         }
         // Persist the cache before preferences, for every provider.
         let merged = series.filter { $0.id != value.id } + [value]
-        try storage.cacheWebstat(merged.filter { !$0.isDemo })
+        try storage.cacheWebstat(merged)
         guard mutatePreferences({ $0.followedSeriesIDs.append(value.id) }) else { return false }
         merge([value])
-        hasLoadedWebstat = series.contains { !$0.isDemo && $0.sourceURL?.host == "webstat.banque-france.fr" }
+        hasLoadedWebstat = series.contains { $0.sourceURL?.host == "webstat.banque-france.fr" }
         status = "Repère ajouté · \(value.source)."
         if selectedSeries == nil { show(value) }
         return true

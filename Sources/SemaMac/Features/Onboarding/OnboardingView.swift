@@ -116,7 +116,7 @@ struct OnboardingView: View {
         _selection = State(initialValue: Set(initialSelection))
     }
 
-    private static let previewExamples = DemoCatalog.series()
+    private static let previewExamples = WebstatClient.starterSeries
     private var suggestions: [MarketSeries] { WebstatClient.starterSeries }
 
     /// Une carte d’exemple fictif par thème choisi : le seul endroit où sema montre des valeurs inventées.

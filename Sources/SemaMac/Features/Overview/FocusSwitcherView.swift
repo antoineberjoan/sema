@@ -82,7 +82,7 @@ struct FocusSwitcherView: View {
             .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(item.isDemo ? ", données fictives" : "")")
+        .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\()")
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
