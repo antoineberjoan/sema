@@ -3,17 +3,17 @@ import AppKit
 import MarketCore
 
 extension AppStore {
-    var palette: SemaPalette { SemaPalette(rawValue: preferences.themeID ?? "") ?? .graphite }
+    var palette: Palette { Palette(rawValue: preferences.themeID ?? "") ?? .graphite }
 
-    var appearance: SemaAppearance { SemaAppearance(rawValue: preferences.appearanceID ?? "") ?? .system }
+    var appearance: Appearance { Appearance(rawValue: preferences.appearanceID ?? "") ?? .system }
 
     var ribbonPosition: MenuRibbonPosition { MenuRibbonPosition(rawValue: preferences.ribbonPositionID ?? "") ?? .top }
 
     var ribbonGlass: RibbonGlassPreferences { preferences.ribbonGlass ?? .standard }
 
-    func setPalette(_ palette: SemaPalette) { mutatePreferences { $0.themeID = palette.rawValue } }
+    func setPalette(_ palette: Palette) { mutatePreferences { $0.themeID = palette.rawValue } }
 
-    func setAppearance(_ appearance: SemaAppearance) {
+    func setAppearance(_ appearance: Appearance) {
         guard mutatePreferences({ $0.appearanceID = appearance.rawValue }) else { return }
         NSApplication.shared.appearance = appearance.nativeAppearance
     }

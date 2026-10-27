@@ -141,7 +141,7 @@ struct SeriesDetailView: View {
                 }
                 .font(.subheadline).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: SemaTheme.minorSpacing)
+                Spacer(minLength: Theme.minorSpacing)
                 if !focus { alertButton }
             }
             if !focus, store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
@@ -171,25 +171,25 @@ struct SeriesDetailView: View {
     }
 
     private func focusHeadline(_ displayed: MarketSeries) -> some View {
-        HStack(spacing: SemaTheme.majorSpacing) {
+        HStack(spacing: Theme.majorSpacing) {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: SemaTheme.majorSpacing) {
+                HStack(spacing: Theme.majorSpacing) {
                     focusValue(displayed)
                     focusActions(displayed)
                 }
-                VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
                     focusValue(displayed)
                     focusActions(displayed)
                 }
             }
-            Spacer(minLength: SemaTheme.minorSpacing)
+            Spacer(minLength: Theme.minorSpacing)
             ExchangeDirectionButton(series: series)
             FavoriteButton(seriesID: series.id, seriesName: MarketFormat.name(displayed))
         }
     }
 
     private func focusActions(_ displayed: MarketSeries) -> some View {
-        VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.minorSpacing) {
             variationBadge(displayed)
             alertButton
         }
@@ -209,7 +209,7 @@ struct SeriesDetailView: View {
     }
 
     private func focusValue(_ displayed: MarketSeries) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: SemaTheme.minorSpacing) {
+        HStack(alignment: .firstTextBaseline, spacing: Theme.minorSpacing) {
             Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
                 .font(Self.focusValueFont).tracking(Self.focusValueTracking).monospacedDigit()
                 .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
@@ -223,9 +223,9 @@ struct SeriesDetailView: View {
             Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
                 .font(.callout.weight(.medium)).monospacedDigit().lineLimit(1)
                 .foregroundStyle(store.palette.accent)
-                .padding(.horizontal, SemaTheme.minorSpacing)
-                .padding(.vertical, SemaTheme.badgeVerticalInset)
-                .background(store.palette.accent.opacity(SemaTheme.badgeFillOpacity), in: Capsule())
+                .padding(.horizontal, Theme.minorSpacing)
+                .padding(.vertical, Theme.badgeVerticalInset)
+                .background(store.palette.accent.opacity(Theme.badgeFillOpacity), in: Capsule())
         } else if series.latest != nil {
             Text(MarketFormat.change(displayed, period: period))
                 .font(.callout).foregroundStyle(.secondary)
@@ -272,7 +272,7 @@ struct SeriesDetailView: View {
             }
         }
         .font(.subheadline).foregroundStyle(.secondary)
-        .frame(maxWidth: .infinity, alignment: .leading).padding(.top, SemaTheme.minorSpacing)
+        .frame(maxWidth: .infinity, alignment: .leading).padding(.top, Theme.minorSpacing)
     }
 
     @ViewBuilder private var metadata: some View {
@@ -288,7 +288,7 @@ struct SeriesDetailView: View {
                             }.frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
-                }.font(.caption).padding(.top, SemaTheme.minorSpacing)
+                }.font(.caption).padding(.top, Theme.minorSpacing)
             }.font(.subheadline).foregroundStyle(.secondary)
         }
         if let descriptor = series.statisticalDescriptor {
@@ -301,7 +301,7 @@ struct SeriesDetailView: View {
                             Text(descriptor.fields[key] ?? "").textSelection(.enabled)
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
-                }.font(.caption).padding(.top, SemaTheme.minorSpacing)
+                }.font(.caption).padding(.top, Theme.minorSpacing)
             }.font(.subheadline).foregroundStyle(.secondary)
         }
     }

@@ -2,7 +2,7 @@
 import AppKit
 import SwiftUI
 
-enum SemaAppearance: String, CaseIterable, Identifiable, Sendable {
+enum Appearance: String, CaseIterable, Identifiable, Sendable {
     case system, light, dark
     var id: String { rawValue }
     var title: String {

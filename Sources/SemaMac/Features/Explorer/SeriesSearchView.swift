@@ -50,10 +50,10 @@ struct SeriesSearchView: View {
                     .onKeyPress(.upArrow) { moveSelection(by: -1); return .handled }
                 Text("⌘K").font(.callout).foregroundStyle(.secondary)
             }
-            .padding(.horizontal, SemaTheme.rowPadding).padding(.top, Self.searchTopPadding)
+            .padding(.horizontal, Theme.rowPadding).padding(.top, Self.searchTopPadding)
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(spacing: SemaTheme.rowSpacing) {
+                    LazyVStack(spacing: Theme.rowSpacing) {
                         ForEach(results) { item in
                             Button { open(item) } label: {
                                 HStack(spacing: Self.iconSpacing) {
@@ -63,18 +63,18 @@ struct SeriesSearchView: View {
                                         Text(MarketFormat.name(item)).font(.body.weight(.medium))
                                         Text(item.subtitle).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
                                     }
-                                    Spacer(minLength: SemaTheme.minorSpacing)
+                                    Spacer(minLength: Theme.minorSpacing)
                                     VStack(alignment: .trailing, spacing: Self.textSpacing) {
                                         Text(MarketFormat.value(item)).font(.body).monospacedDigit()
                                         Text(context(for: item))
                                             .font(.subheadline).foregroundStyle(.secondary)
                                     }
                                 }
-                                .padding(SemaTheme.rowPadding).foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading)
-                                .background(selectedID == item.id ? accent.opacity(SemaTheme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
+                                .padding(Theme.rowPadding).foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading)
+                                .background(selectedID == item.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
                                 .contentShape(Rectangle())
                             }
-                            .buttonStyle(SemaPressStyle()).id(item.id)
+                            .buttonStyle(PressStyle()).id(item.id)
                         }
                         if results.isEmpty {
                             ContentUnavailableView("Aucun repère trouvé", systemImage: "magnifyingglass",
@@ -93,10 +93,10 @@ struct SeriesSearchView: View {
                 Button("Ouvrir", action: openSelected).keyboardShortcut(.defaultAction)
                     .disabled(selectedID == nil).buttonStyle(.borderedProminent)
             }
-            .padding(.horizontal, SemaTheme.rowPadding)
+            .padding(.horizontal, Theme.rowPadding)
         }
             }
-        .padding(Self.sheetPadding).frame(width: Self.sheetWidth, height: Self.sheetHeight).background(SemaTheme.surface)
+        .padding(Self.sheetPadding).frame(width: Self.sheetWidth, height: Self.sheetHeight).background(Theme.surface)
         .onAppear { selectedID = results.first?.id; isSearchFocused = true }
         .onChange(of: query) { _, _ in selectedID = results.first?.id }
         .onChange(of: catalogue) { _, selected in

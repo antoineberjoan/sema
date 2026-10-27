@@ -54,7 +54,7 @@ final class MenuRibbonController: NSObject {
         self.store = store; self.openWorkspace = openWorkspace; self.openSettings = openSettings
         super.init()
         if let button = statusItem.button {
-            button.image = SemaTheme.menuBarIcon
+            button.image = Theme.menuBarIcon
             button.imagePosition = .imageOnly
             button.toolTip = "sema · Vos favoris"
             button.setAccessibilityLabel("sema, afficher les favoris")

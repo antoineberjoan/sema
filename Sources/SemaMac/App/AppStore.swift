@@ -9,7 +9,7 @@ final class AppStore {
     var series = WebstatClient.starterSeries
     var preferences = AppPreferences()
     var section: WorkspaceSection = .overview
-    var settingsTab: SemaSettingsTab = .general
+    var settingsTab: SettingsTab = .general
     var category: SeriesCategory = .markets
     var selectedSeriesID = WebstatClient.canonicalID("eurusd")
     var period: HistoryPeriod = .year

@@ -5,8 +5,8 @@ struct Surface<Content: View>: View {
     @ViewBuilder var content: Content
     var body: some View {
         content
-            .padding(SemaTheme.contentPadding)
-            .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner))
-            .modifier(SemaElevation())
+            .padding(Theme.contentPadding)
+            .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner))
+            .modifier(Elevation())
     }
 }

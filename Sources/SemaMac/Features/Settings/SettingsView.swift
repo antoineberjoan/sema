@@ -1,7 +1,7 @@
 // Organise les réglages en rubriques recherchables, avec un contenu natif et un profil fixé en bas.
 import SwiftUI
 
-private extension SemaSettingsTab {
+private extension SettingsTab {
     static let ordered: [Self] = [.general, .appearance, .shortcuts, .sources, .about, .profile]
     var title: String {
         switch self {
@@ -35,7 +35,7 @@ private extension SemaSettingsTab {
     }
 }
 
-struct SemaSettingsView: View {
+struct SettingsView: View {
     private static let sidebarWidth: CGFloat = 230
     private static let searchSpacing: CGFloat = 8
     private static let searchPadding: CGFloat = 10
@@ -73,9 +73,9 @@ struct SemaSettingsView: View {
     @State private var search = ""
     @FocusState private var searchFocused: Bool
 
-    private var matches: [SemaSettingsTab] {
+    private var matches: [SettingsTab] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
-        return SemaSettingsTab.ordered.filter {
+        return SettingsTab.ordered.filter {
             query.isEmpty || ($0.title + " " + $0.searchTerms).localizedStandardContains(query)
         }
     }
@@ -98,7 +98,7 @@ struct SemaSettingsView: View {
                 .background(Self.searchFill, in: RoundedRectangle(cornerRadius: Self.fieldCorner))
                 .padding(Self.searchInsets)
 
-                List(selection: Binding<SemaSettingsTab?>(get: { store.settingsTab }, set: {
+                List(selection: Binding<SettingsTab?>(get: { store.settingsTab }, set: {
                     if let tab = $0 { store.settingsTab = tab }
                 })) {
                     ForEach(matches.filter { $0 != .profile }, id: \.self) { tab in
@@ -122,7 +122,7 @@ struct SemaSettingsView: View {
                         Spacer()
                     }
                     .padding(Self.profilePadding)
-                    .background(store.settingsTab == .profile ? SemaTheme.sidebarSelection : .clear,
+                    .background(store.settingsTab == .profile ? Theme.sidebarSelection : .clear,
                                 in: RoundedRectangle(cornerRadius: Self.fieldCorner))
                     .contentShape(Rectangle())
                 }
@@ -130,7 +130,7 @@ struct SemaSettingsView: View {
                 .accessibilityAddTraits(store.settingsTab == .profile ? .isSelected : [])
             }
             .frame(width: Self.sidebarWidth)
-            .background(SemaTheme.surface)
+            .background(Theme.surface)
             Divider()
             VStack(alignment: .leading, spacing: 0) {
                 Text(store.settingsTab.title).font(Self.titleFont)
@@ -142,7 +142,7 @@ struct SemaSettingsView: View {
                     .tint(store.palette.accent)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .background(SemaTheme.background)
+            .background(Theme.background)
         }
         .navigationTitle("Réglages")
         .frame(minWidth: Self.minimumWidth, idealWidth: Self.idealWidth, minHeight: Self.minimumHeight, idealHeight: Self.idealHeight)
@@ -193,21 +193,21 @@ struct SemaSettingsView: View {
                 HStack(alignment: .top) {
                     Text("Mode").padding(.top, Self.choiceLabelTop)
                     Spacer(minLength: Self.modeSpacing)
-                    ForEach(SemaAppearance.allCases) { mode in
+                    ForEach(Appearance.allCases) { mode in
                         SettingsChoice(title: mode.title, symbol: appearanceSymbol(mode), selected: store.appearance == mode) {
                             store.setAppearance(mode)
                         }
                     }
-                }.padding(.vertical, SemaTheme.minorSpacing)
+                }.padding(.vertical, Theme.minorSpacing)
             }
             Section("Palette") {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: SemaTheme.minorSpacing), count: SemaPalette.allCases.count), spacing: SemaTheme.minorSpacing) {
-                    ForEach(SemaPalette.allCases) { palette in
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Theme.minorSpacing), count: Palette.allCases.count), spacing: Theme.minorSpacing) {
+                    ForEach(Palette.allCases) { palette in
                         Button { store.setPalette(palette) } label: {
-                            VStack(spacing: SemaTheme.minorSpacing) {
+                            VStack(spacing: Theme.minorSpacing) {
                                 ZStack {
-                                    RoundedRectangle(cornerRadius: Self.swatchCorner).fill(SemaPalette.swatch(palette.swatches[0]))
-                                    RoundedRectangle(cornerRadius: Self.innerSwatchCorner).fill(SemaPalette.swatch(palette.swatches[1]))
+                                    RoundedRectangle(cornerRadius: Self.swatchCorner).fill(Palette.swatch(palette.swatches[0]))
+                                    RoundedRectangle(cornerRadius: Self.innerSwatchCorner).fill(Palette.swatch(palette.swatches[1]))
                                         .padding(Self.innerSwatchInset)
                                 }
                                 .padding(Self.swatchPadding).frame(height: Self.swatchHeight)
@@ -220,7 +220,7 @@ struct SemaSettingsView: View {
                         .buttonStyle(.plain).accessibilityLabel("Palette " + palette.title)
                         .accessibilityAddTraits(store.palette == palette ? .isSelected : [])
                     }
-                }.padding(.vertical, SemaTheme.minorSpacing)
+                }.padding(.vertical, Theme.minorSpacing)
             }
             Section("Bandeau") {
                 HStack(alignment: .top) {
@@ -231,7 +231,7 @@ struct SemaSettingsView: View {
                             store.setRibbonPosition(position)
                         }
                     }
-                }.padding(.vertical, SemaTheme.minorSpacing)
+                }.padding(.vertical, Theme.minorSpacing)
             }
             RibbonGlassSettingsView()
         }.formStyle(.grouped)
@@ -241,7 +241,7 @@ struct SemaSettingsView: View {
         Form {
             Section {
                 HStack(spacing: Self.aboutSpacing) {
-                    SemaMark(size: Self.markSize)
+                    Mark(size: Self.markSize)
                     VStack(alignment: .leading, spacing: Self.aboutTextSpacing) {
                         Text("sema").font(Self.nameFont)
                         Text("Gardez vos repères.").foregroundStyle(.secondary)
@@ -254,13 +254,13 @@ struct SemaSettingsView: View {
                 HStack {
                     Text("sema est gratuite.")
                     Spacer()
-                    Link("Soutenir sur Ko-fi", destination: SemaSupport.url)
+                    Link("Soutenir sur Ko-fi", destination: Support.url)
                 }
             }
         }.formStyle(.grouped)
     }
 
-    private func appearanceSymbol(_ mode: SemaAppearance) -> String {
+    private func appearanceSymbol(_ mode: Appearance) -> String {
         switch mode { case .system: "desktopcomputer"; case .light: "sun.max"; case .dark: "moon" }
     }
 }
@@ -284,7 +284,7 @@ private struct SettingsChoice: View {
             VStack(spacing: Self.spacing) {
                 Image(systemName: symbol).font(Self.symbolFont)
                     .frame(maxWidth: .infinity).frame(height: Self.tileHeight)
-                    .background(selected ? accent.opacity(SemaTheme.selectionOpacity) : Self.restingFill, in: RoundedRectangle(cornerRadius: Self.corner))
+                    .background(selected ? accent.opacity(Theme.selectionOpacity) : Self.restingFill, in: RoundedRectangle(cornerRadius: Self.corner))
                     .overlay(RoundedRectangle(cornerRadius: Self.corner).strokeBorder(selected ? accent : .clear, lineWidth: Self.selectedStroke))
                 Text(title).font(.subheadline).lineLimit(1)
             }

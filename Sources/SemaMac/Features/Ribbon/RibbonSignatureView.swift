@@ -44,12 +44,12 @@ struct RibbonSignatureView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SemaSignalPath().trim(from: 0, to: stage >= SignatureMotion.drawStage ? 1 : 0)
+            SignalPath().trim(from: 0, to: stage >= SignatureMotion.drawStage ? 1 : 0)
                 .stroke(.white, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
                 .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
                 .frame(height: Self.markAreaHeight).accessibilityHidden(true)
                 .animation(reduceMotion ? nil : .easeInOut(duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
-            Spacer(minLength: SemaTheme.minorSpacing)
+            Spacer(minLength: Theme.minorSpacing)
             Text("L’économie bouge.")
                 .font(.callout).foregroundStyle(.white.opacity(Self.contextOpacity))
                 .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
@@ -64,23 +64,23 @@ struct RibbonSignatureView: View {
                     .font(.subheadline.weight(.medium)).padding(.horizontal, Self.feedbackPadding)
                     .frame(height: Self.feedbackHeight).background(.white.opacity(Self.feedbackFillOpacity), in: Capsule())
             }
-            .buttonStyle(SemaPressStyle()).padding(.top, Self.feedbackTopPadding)
-            .help(SemaFeedback.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
+            .buttonStyle(PressStyle()).padding(.top, Self.feedbackTopPadding)
+            .help(Feedback.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
             .accessibilityLabel("Une idée ou un bug ? Ouvrir le formulaire Notion")
-            .disabled(SemaFeedback.formURL == nil)
+            .disabled(Feedback.formURL == nil)
         }
         .foregroundStyle(.white)
         .padding(MenuRibbonLayout.cardPadding).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
-            let shape = RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner, style: .continuous)
+            let shape = RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
             shape.fill(.black)
             shape.fill(LinearGradient(colors: [store.palette.signatureAccent.opacity(Self.backgroundTopOpacity), store.palette.signatureAccent.opacity(Self.backgroundBottomOpacity)],
                                       startPoint: .topLeading, endPoint: .bottomTrailing))
         }
         .overlay {
-            RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner, style: .continuous)
+            RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
                 .strokeBorder(LinearGradient(colors: [.white.opacity(Self.edgeTopOpacity), .white.opacity(Self.edgeBottomOpacity)],
-                                              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: SemaTheme.hairline)
+                                              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: Theme.hairline)
                 .allowsHitTesting(false).accessibilityHidden(true)
         }
         .shadow(.card)
@@ -88,7 +88,7 @@ struct RibbonSignatureView: View {
         .onChange(of: reduceMotion) { _, value in if value { stage = SignatureMotion.missionStage } }
         .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $formUnavailable) {
             Button("Copier le lien") {
-                guard let url = SemaFeedback.formURL else { return }
+                guard let url = Feedback.formURL else { return }
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(url.absoluteString, forType: .string)
             }
@@ -99,7 +99,7 @@ struct RibbonSignatureView: View {
     }
 
     private func openFeedback() {
-        guard let url = SemaFeedback.formURL else { return }
+        guard let url = Feedback.formURL else { return }
         formUnavailable = !NSWorkspace.shared.open(url)
     }
 

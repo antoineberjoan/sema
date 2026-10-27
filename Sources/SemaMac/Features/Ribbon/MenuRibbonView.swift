@@ -111,7 +111,7 @@ struct MenuRibbonView: View {
                         .background(.regularMaterial, in: Capsule())
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(SemaPressStyle())
+                    .buttonStyle(PressStyle())
                     .accessibilityAddTraits(period == candidate ? .isSelected : [])
                     .help(candidate.title + " · Historique disponible sur ce Mac")
                 }
@@ -127,7 +127,7 @@ struct MenuRibbonView: View {
 
     private var settingsButton: some View {
         Button(action: openSettings) {
-            Image(systemName: "gearshape").frame(width: SemaTheme.iconButtonSize, height: SemaTheme.iconButtonSize).contentShape(Circle())
+            Image(systemName: "gearshape").frame(width: Theme.iconButtonSize, height: Theme.iconButtonSize).contentShape(Circle())
         }
         .buttonStyle(.plain)
         .background(.regularMaterial, in: Circle())
@@ -137,7 +137,7 @@ struct MenuRibbonView: View {
     private var header: some View {
         HStack(spacing: 0) {
             Spacer()
-            HStack(spacing: SemaTheme.minorSpacing) {
+            HStack(spacing: Theme.minorSpacing) {
                 if !items.isEmpty {
                     RibbonPeriodPicker(selection: $period, accent: store.palette.controlAccent)
                         .frame(width: isVertical ? Self.verticalPickerWidth : Self.pickerWidth)

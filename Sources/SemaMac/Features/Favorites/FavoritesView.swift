@@ -46,25 +46,25 @@ private struct IndicatorTile: View {
                 .foregroundStyle(.primary)
                 .padding(compact ? Self.compactPadding : Self.padding)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(fill, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner, style: .continuous))
-                .contentShape(RoundedRectangle(cornerRadius: SemaTheme.rowCorner, style: .continuous))
+                .background(fill, in: RoundedRectangle(cornerRadius: Theme.rowCorner, style: .continuous))
+                .contentShape(RoundedRectangle(cornerRadius: Theme.rowCorner, style: .continuous))
             }
-            .buttonStyle(SemaPressStyle())
+            .buttonStyle(PressStyle())
             .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(series.isDemo ? ", démonstration" : "")")
             .accessibilityValue(selected ? "Sélectionné" : "")
             HStack(spacing: 0) {
                 ExchangeDirectionButton(series: series)
                 FavoriteButton(seriesID: series.id, seriesName: MarketFormat.name(displayed))
-            }.padding(SemaTheme.minorSpacing)
+            }.padding(Theme.minorSpacing)
         }
         .onHover { isHovered = $0 }
-        .animation(reduceMotion ? nil : .easeOut(duration: SemaTheme.hoverDuration), value: isHovered)
+        .animation(reduceMotion ? nil : .easeOut(duration: Theme.hoverDuration), value: isHovered)
     }
 
     private var fill: Color {
-        if selected { return accent.opacity(SemaTheme.selectionOpacity) }
-        if isHovered { return SemaTheme.hoverFill }
-        return compact ? SemaTheme.surface : .clear
+        if selected { return accent.opacity(Theme.selectionOpacity) }
+        if isHovered { return Theme.hoverFill }
+        return compact ? Theme.surface : .clear
     }
 }
 

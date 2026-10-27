@@ -33,7 +33,7 @@ struct AlertEditorView: View {
                 }
                 GridRow {
                     Text("Seuil")
-                    HStack(spacing: SemaTheme.minorSpacing) {
+                    HStack(spacing: Theme.minorSpacing) {
                         TextField("Seuil", text: $thresholdText)
                             .textFieldStyle(.roundedBorder).accessibilityLabel("Seuil")
                         Text(item.map(MarketFormat.unit) ?? "").foregroundStyle(.secondary)
@@ -45,7 +45,7 @@ struct AlertEditorView: View {
                     .font(.callout).foregroundStyle(.red)
             }
             if let item {
-                VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
                     HStack {
                         Text("Dernière valeur").foregroundStyle(.secondary)
                         Spacer()

@@ -3,10 +3,10 @@ import AppKit
 import SwiftUI
 
 @main
-struct SemaMacApp: App {
+struct MacApp: App {
     private static let defaultWidth: CGFloat = 1120
     private static let defaultHeight: CGFloat = 760
-    @NSApplicationDelegateAdaptor(SemaAppDelegate.self) private var appDelegate
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var store = AppStore()
 
     var body: some Scene {
@@ -31,11 +31,11 @@ struct SemaMacApp: App {
         .windowToolbarStyle(.unifiedCompact)
         .commands {
             SidebarCommands()
-            SemaCommands(store: store, showRibbon: appDelegate.toggleRibbon)
+            Commands(store: store, showRibbon: appDelegate.toggleRibbon)
         }
 
         Settings {
-            SemaSettingsView().environment(store).tint(store.palette.controlAccent)
+            SettingsView().environment(store).tint(store.palette.controlAccent)
                 .environment(\.semaAccent, store.palette.accent)
                 .preferredColorScheme(store.appearance.colorScheme)
         }

@@ -1,7 +1,7 @@
 // Géométrie de la courbe Palier, dessin original d’Antoine.
 import SwiftUI
 
-struct SemaSignalPath: Shape {
+struct SignalPath: Shape {
     /// Side of the square in which the original curve is drawn.
     static let viewBox: CGFloat = 64
     func path(in rect: CGRect) -> Path {

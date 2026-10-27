@@ -2,7 +2,7 @@
 import SwiftUI
 
 /// A small contact shadow anchors the surface; a softer shadow separates its plane.
-struct SemaElevation: ViewModifier {
+struct Elevation: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     func body(content: Content) -> some View {
         content

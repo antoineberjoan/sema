@@ -145,7 +145,7 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            header.padding(.bottom, SemaTheme.majorSpacing)
+            header.padding(.bottom, Theme.majorSpacing)
 
             if step > 0 {
                 VStack(alignment: .leading, spacing: WelcomeLayout.titleSpacing) {
@@ -154,7 +154,7 @@ struct OnboardingView: View {
                     Text(detail).font(.body).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(.bottom, SemaTheme.majorSpacing)
+                .padding(.bottom, Theme.majorSpacing)
             }
 
             Group {
@@ -179,10 +179,10 @@ struct OnboardingView: View {
                 }
                 .padding(.top, WelcomeLayout.errorTopPadding)
             }
-            footer.padding(.top, SemaTheme.majorSpacing)
+            footer.padding(.top, Theme.majorSpacing)
         }
         .padding(WelcomeLayout.windowPadding).frame(width: WelcomeLayout.windowWidth, height: WelcomeLayout.windowHeight)
-        .background(SemaTheme.background)
+        .background(Theme.background)
         .interactiveDismissDisabled()
         .task {
             await store.checkWebstatKey()
@@ -192,7 +192,7 @@ struct OnboardingView: View {
 
     private var header: some View {
         HStack(alignment: .center) {
-            HStack(spacing: SemaTheme.minorSpacing) {
+            HStack(spacing: Theme.minorSpacing) {
                 WelcomeSignal(progress: reduceMotion ? 1 : drawProgress, lineWidth: WelcomeLayout.signalWidth)
                     .foregroundStyle(accent).frame(width: WelcomeLayout.signalSize, height: WelcomeLayout.signalSize)
                 Text("sema").font(WelcomeLayout.wordmarkFont).tracking(WelcomeLayout.wordmarkTracking)
@@ -262,7 +262,7 @@ struct OnboardingView: View {
                 Text("Choisissez un thème pour composer votre bandeau.")
                     .font(.subheadline).foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(SemaTheme.quietFill, in: RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner))
+                    .background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner))
             }
         }
         .frame(maxWidth: .infinity, minHeight: MenuRibbonLayout.cardHeight, maxHeight: MenuRibbonLayout.cardHeight, alignment: .leading)
@@ -300,16 +300,16 @@ struct OnboardingView: View {
             }
             .padding(WelcomeLayout.tilePadding)
             .frame(maxWidth: .infinity, minHeight: WelcomeLayout.tileMinHeight, alignment: .leading)
-            .background(selected ? accent.opacity(SemaTheme.selectionOpacity) : SemaTheme.surface,
-                        in: RoundedRectangle(cornerRadius: SemaTheme.cardCorner))
+            .background(selected ? accent.opacity(Theme.selectionOpacity) : Theme.surface,
+                        in: RoundedRectangle(cornerRadius: Theme.cardCorner))
             .overlay {
-                RoundedRectangle(cornerRadius: SemaTheme.cardCorner)
+                RoundedRectangle(cornerRadius: Theme.cardCorner)
                     .strokeBorder(selected ? accent : Color.clear, lineWidth: WelcomeLayout.tileBorder)
             }
-            .modifier(SemaElevation())
-            .contentShape(RoundedRectangle(cornerRadius: SemaTheme.cardCorner))
+            .modifier(Elevation())
+            .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
         }
-        .buttonStyle(SemaPressStyle())
+        .buttonStyle(PressStyle())
         .accessibilityLabel(collection.title)
         .accessibilityValue(selected ? "Choisi" : "Non choisi")
         .accessibilityAddTraits(selected ? .isSelected : [])
@@ -376,7 +376,7 @@ private struct WelcomeSignal: View {
     let progress: CGFloat
     let lineWidth: CGFloat
     var body: some View {
-        SemaSignalPath().trim(from: 0, to: progress)
+        SignalPath().trim(from: 0, to: progress)
             .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
             .accessibilityHidden(true)
     }

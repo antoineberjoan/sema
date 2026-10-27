@@ -45,7 +45,7 @@ struct ShortcutSettingsView: View {
                 finish: { store.activateShortcuts() },
                 save: { store.setShortcut($0, for: action) })
                 .frame(width: Self.recorderWidth, height: Self.recorderHeight)
-        }.padding(.vertical, SemaTheme.settingsRowPadding)
+        }.padding(.vertical, Theme.settingsRowPadding)
     }
 }
 

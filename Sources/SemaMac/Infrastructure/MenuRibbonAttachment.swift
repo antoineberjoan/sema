@@ -6,7 +6,7 @@ struct MenuRibbonAttachment: NSViewRepresentable {
     @Environment(\.openWindow) private var openWindow
     @Environment(\.openSettings) private var openSettings
     let store: AppStore
-    let appDelegate: SemaAppDelegate
+    let appDelegate: AppDelegate
 
     func makeNSView(context: Context) -> NSView {
         appDelegate.installRibbon(store: store, openWorkspace: {

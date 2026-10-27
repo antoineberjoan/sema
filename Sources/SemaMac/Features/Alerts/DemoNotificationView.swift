@@ -15,7 +15,7 @@ struct DemoNotificationView: View {
     private var item: MarketSeries? { store.series.first { $0.id == event.seriesID } }
     var body: some View {
         HStack(alignment: .top, spacing: Self.markSpacing) {
-            SemaMark(size: Self.markSize)
+            Mark(size: Self.markSize)
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text("sema · TEST DE NOTIFICATION").font(Self.eyebrowFont).tracking(Self.eyebrowTracking).foregroundStyle(.secondary)
                 Text(item.map(MarketFormat.name) ?? "Repère de démonstration").font(.body.weight(.medium))
@@ -27,8 +27,8 @@ struct DemoNotificationView: View {
                 .buttonStyle(.plain).accessibilityLabel("Fermer la notification")
         }
         .padding(Self.contentPadding).frame(width: Self.bannerWidth)
-        .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: SemaTheme.cardCorner))
-        .modifier(SemaElevation())
+        .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cardCorner))
+        .modifier(Elevation())
         .accessibilityElement(children: .contain)
     }
 }

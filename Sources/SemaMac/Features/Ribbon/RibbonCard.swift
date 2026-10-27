@@ -33,9 +33,9 @@ struct RibbonCard: View {
             .foregroundStyle(.primary).padding(MenuRibbonLayout.cardPadding)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .modifier(RibbonSurface(emphasized: hovered))
-            .contentShape(RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner))
+            .contentShape(RoundedRectangle(cornerRadius: Theme.surfaceCorner))
         }
-        .buttonStyle(SemaPressStyle())
+        .buttonStyle(PressStyle())
         .onHover { hovered = $0 }
         .animation(reduceMotion ? nil : .easeOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
         .help(MarketFormat.name(series) + " · Ouvrir le détail dans sema")
@@ -49,7 +49,7 @@ struct RibbonCard: View {
         }
     }
     private var value: some View {
-        HStack(alignment: .firstTextBaseline, spacing: SemaTheme.minorSpacing) {
+        HStack(alignment: .firstTextBaseline, spacing: Theme.minorSpacing) {
             Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
                 .font(MenuRibbonLayout.valueFont).tracking(Self.valueTracking).monospacedDigit()
                 .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
@@ -73,7 +73,7 @@ struct RibbonCard: View {
         }
     }
     private var publication: some View {
-        HStack(spacing: SemaTheme.minorSpacing) {
+        HStack(spacing: Theme.minorSpacing) {
             Text(comparison).lineLimit(1)
             Spacer(minLength: 0)
             Text(series.latest.map { MarketFormat.date($0.date) } ?? "Aucune publication").lineLimit(1)
