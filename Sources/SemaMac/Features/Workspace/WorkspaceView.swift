@@ -349,9 +349,8 @@ struct WorkspaceView: View {
         }
         .font(.subheadline).foregroundStyle(.secondary)
     }
-}
 
-private struct SidebarSeriesRow: View {
+    private struct SidebarSeriesRow: View {
     private static let textSpacing: CGFloat = 6
     private static let nameLines = 2
     @Environment(AppStore.self) private var store
@@ -425,4 +424,5 @@ private enum FocusMotion {
     static let sidebarWidth: CGFloat = 232
     static let sidebar = Animation.snappy(duration: 0.24, extraBounce: 0)
     static let hoverExitDelay: Duration = .milliseconds(220)
+}
 }
