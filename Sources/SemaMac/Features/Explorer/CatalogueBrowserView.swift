@@ -45,7 +45,7 @@ struct CatalogueBrowserView: View {
                     Spacer()
                     Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }
                         .buttonStyle(.borderedProminent).tint(store.palette.controlAccent)
-                }.padding(SemaTheme.majorSpacing).background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: SemaTheme.cardCorner))
+                }.padding(Theme.majorSpacing).background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cardCorner))
                 Spacer(minLength: 0)
             } else {
                 HStack(spacing: Self.toolbarSpacing) {
@@ -159,26 +159,26 @@ struct CatalogueBrowserView: View {
     private var results: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: SemaTheme.rowSpacing) {
+                LazyVStack(alignment: .leading, spacing: Theme.rowSpacing) {
                     HStack {
                         Text(store.isSearchingCatalogue && store.catalogueResults.isEmpty ? "Recherche…" : "\(store.catalogueTotal.formatted()) \(store.catalogueTotal == 1 ? "série" : "séries")")
                         Spacer()
-                    }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, SemaTheme.rowPadding).padding(.bottom, SemaTheme.minorSpacing)
+                    }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding).padding(.bottom, Theme.minorSpacing)
                     ForEach(store.catalogueResults) { item in
                         Button { selectedID = item.id; store.openPreview(item) } label: {
-                            VStack(alignment: .leading, spacing: SemaTheme.rowTextSpacing) {
-                                HStack(alignment: .top, spacing: SemaTheme.minorSpacing) {
-                                    Text(MarketFormat.name(item.series(observations: []))).font(.callout.weight(.medium)).lineLimit(SemaTheme.rowTitleLines)
+                            VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
+                                HStack(alignment: .top, spacing: Theme.minorSpacing) {
+                                    Text(MarketFormat.name(item.series(observations: []))).font(.callout.weight(.medium)).lineLimit(Theme.rowTitleLines)
                                     Spacer(minLength: 0)
                                     if store.followedMatch(for: item.series(observations: [])) != nil { Image(systemName: "checkmark").foregroundStyle(accent).accessibilityLabel("Déjà suivi") }
                                 }
                                 Text([item.area, item.frequencyTitle, item.displayUnit].compactMap { $0 }.joined(separator: " · "))
                                     .font(.caption).foregroundStyle(.secondary).lineLimit(Self.detailLines)
                             }
-                            .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(SemaTheme.rowPadding)
-                            .background(selectedID == item.id ? accent.opacity(SemaTheme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
+                            .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
+                            .background(selectedID == item.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
                             .contentShape(Rectangle())
-                        }.buttonStyle(SemaPressStyle()).id(item.id)
+                        }.buttonStyle(PressStyle()).id(item.id)
                         .accessibilityAddTraits(selectedID == item.id ? .isSelected : [])
                         .help(item.definition)
                         .animation(reduceMotion ? nil : .easeOut(duration: selectionDuration), value: selectedID == item.id)

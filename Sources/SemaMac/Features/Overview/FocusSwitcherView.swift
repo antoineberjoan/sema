@@ -29,7 +29,7 @@ struct FocusSwitcherView: View {
         VStack(spacing: Self.panelSpacing) {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal) {
-                    HStack(spacing: SemaTheme.minorSpacing) {
+                    HStack(spacing: Theme.minorSpacing) {
                         ForEach(store.followedSeries) { item in
                             tile(item).id(item.id)
                         }
@@ -44,13 +44,13 @@ struct FocusSwitcherView: View {
         }
         .frame(maxWidth: Self.panelMaxWidth)
         .background {
-            let shape = RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner, style: .continuous)
-            if reduceTransparency || contrast == .increased { shape.fill(SemaTheme.surface) }
+            let shape = RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
+            if reduceTransparency || contrast == .increased { shape.fill(Theme.surface) }
             else { shape.fill(.regularMaterial) }
         }
         .overlay {
-            RoundedRectangle(cornerRadius: SemaTheme.surfaceCorner, style: .continuous)
-                .strokeBorder(Color.primary.opacity(contrast == .increased ? Self.contrastStrokeOpacity : Self.strokeOpacity), lineWidth: SemaTheme.hairline)
+            RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
+                .strokeBorder(Color.primary.opacity(contrast == .increased ? Self.contrastStrokeOpacity : Self.strokeOpacity), lineWidth: Theme.hairline)
                 .allowsHitTesting(false)
         }
         .shadow(.switcher)
@@ -71,18 +71,18 @@ struct FocusSwitcherView: View {
                     .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
             }
             .foregroundStyle(.primary).frame(width: Self.tileWidth, alignment: .leading).padding(Self.tilePadding)
-            .background(selected ? store.palette.accent.opacity(SemaTheme.selectionOpacity) : .clear,
-                in: RoundedRectangle(cornerRadius: SemaTheme.cardCorner, style: .continuous))
+            .background(selected ? store.palette.accent.opacity(Theme.selectionOpacity) : .clear,
+                in: RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous))
             .overlay {
                 if selected {
-                    RoundedRectangle(cornerRadius: SemaTheme.cardCorner, style: .continuous)
+                    RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous)
                         .strokeBorder(store.palette.accent.opacity(Self.selectedStrokeOpacity), lineWidth: 1)
                 }
             }
-            .contentShape(RoundedRectangle(cornerRadius: SemaTheme.cardCorner))
+            .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\(item.isDemo ? ", données fictives" : "")")
+        .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\()")
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

@@ -8,7 +8,7 @@ struct SeriesExplanationView: View {
     let explanation: SeriesExplanation
 
     var body: some View {
-        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             Text(explanation.definition).lineLimit(Self.definitionLines)
             if let reading = explanation.reading { Text(reading) }
             if let implication = explanation.implication {
@@ -20,6 +20,6 @@ struct SeriesExplanationView: View {
         }
         .font(.callout).textSelection(.enabled)
         .fixedSize(horizontal: false, vertical: true)
-        .padding(.leading, Self.leadingInset).padding(.top, SemaTheme.minorSpacing)
+        .padding(.leading, Self.leadingInset).padding(.top, Theme.minorSpacing)
     }
 }

@@ -39,8 +39,8 @@ struct MarketExplorerView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .task { await store.checkMarketKeys() }
         } else {
-            HStack(alignment: .top, spacing: SemaTheme.majorSpacing) {
-                VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+            HStack(alignment: .top, spacing: Theme.majorSpacing) {
+                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
                     TextField("Filtrer le catalogue…", text: $query).textFieldStyle(.roundedBorder)
                         .accessibilityLabel("Filtrer les instruments \(provider.title)")
                         .disabled(catalogue == nil)
@@ -65,7 +65,7 @@ struct MarketExplorerView: View {
                     Text(provider.quota).font(.caption).foregroundStyle(.secondary)
                 }.frame(width: Self.listWidth)
                 ScrollView {
-                    VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+                    VStack(alignment: .leading, spacing: Theme.majorSpacing) {
                         if let selected {
                             Picker("Historique", selection: $weekly) {
                                 Text("Quotidien").tag(false)
@@ -117,10 +117,10 @@ struct MarketExplorerView: View {
     }
     private func rows(_ items: ArraySlice<MarketInstrument>) -> some View {
         ForEach(items) { item in
-            VStack(alignment: .leading, spacing: SemaTheme.rowTextSpacing) {
+            VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
                 Text(item.name)
                 Text(item.summary).font(.caption).foregroundStyle(.secondary)
-            }.tag(item.id).padding(.vertical, SemaTheme.rowPadding)
+            }.tag(item.id).padding(.vertical, Theme.rowPadding)
         }
     }
     private func filter() {

@@ -4,7 +4,7 @@ import MarketCore
 
 extension AppStore {
     func canLoadFullHistory(_ item: MarketSeries) -> Bool {
-        !item.isDemo && isSourceEnabled(for: item.id) && (item.statisticalDescriptor != nil || (hasWebstatKey && item.descriptor?.firstPeriod != nil))
+        isSourceEnabled(for: item.id) && (item.statisticalDescriptor != nil || (hasWebstatKey && item.descriptor?.firstPeriod != nil))
     }
 
     func loadAllHistory(_ item: MarketSeries, reload: Bool = false) {
@@ -12,7 +12,7 @@ extension AppStore {
         if let descriptor = item.statisticalDescriptor {
             loadStatisticalHistory(item, descriptor: descriptor); return
         }
-        guard !item.isDemo, let descriptor = item.descriptor else { return }
+        guard let descriptor = item.descriptor else { return }
         historyTask?.cancel(); let generation = UUID(); historyGeneration = generation
         historyLoadingID = item.id; historyProgress = "Chargement des périodes anciennes…"
         historyTask = Task {
@@ -35,7 +35,7 @@ extension AppStore {
                     let complete = start <= first
                     let value = descriptor.series(observations: points, syncedAt: .now, completeHistory: complete)
                     if isFollowing(item.id) {
-                        merge([value]); try storage.cacheWebstat(series.filter { !$0.isDemo })
+                        merge([value]); try storage.cacheWebstat(series)
                     }
                     if previewDescriptor?.key == item.id { previewSeries = value }
                     historyProgress = "Historique reçu depuis \(MarketFormat.date(value.observations.first?.date))"
@@ -59,7 +59,7 @@ extension AppStore {
                 try Task.checkCancellation()
                 guard historyGeneration == generation else { return }
                 if isFollowing(item.id) {
-                    try storage.cacheWebstat((series.filter { $0.id != item.id } + [value]).filter { !$0.isDemo })
+                    try storage.cacheWebstat(series.filter { $0.id != item.id } + [value])
                     merge([value])
                 }
                 if previewSeries?.id == item.id { previewSeries = value }

@@ -29,7 +29,7 @@ struct WebstatClientTests {
     func starterSeriesCarryNoInventedValues() {
         let starters = WebstatClient.starterSeries
         #expect(starters.count == 16)
-        #expect(starters.allSatisfy { !$0.isDemo && $0.observations.isEmpty })
+        #expect(starters.allSatisfy { $0.observations.isEmpty })
     }
 
     @Test
@@ -37,7 +37,7 @@ struct WebstatClientTests {
         let series = try WebstatClient.parse(fixture(), now: now)
         #expect(series.count == 16)
         #expect(Set(series.map(\.id)).count == 16)
-        #expect(series.allSatisfy { !$0.isDemo && $0.sourceURL?.host == "webstat.banque-france.fr" })
+        #expect(series.allSatisfy { $0.sourceURL?.host == "webstat.banque-france.fr" })
         let dollar = try #require(series.first { $0.id == "eurusd" })
         #expect(dollar.unit == .usd)
         #expect(dollar.latest?.value == Decimal(string: "1.1195000001"))
@@ -80,7 +80,7 @@ struct WebstatClientTests {
         let dates = ISO8601DateFormatter()
         dates.formatOptions = [.withFullDate]
         let series = MarketSeries(id: "rate", name: "Rate", subtitle: "", category: .savings,
-            unit: .percent, source: "Fixture", isDemo: false, frequency: .monthly,
+            unit: .percent, source: "Fixture", frequency: .monthly,
             observations: [MarketObservation(date: dates.date(from: "2026-07-01")!, value: 2),
                            MarketObservation(date: dates.date(from: "2026-08-01")!, value: 1)])
         #expect(series.history(for: .month).count == 2)
@@ -128,7 +128,7 @@ struct WebstatClientTests {
     @Test
     func existingCacheRemainsDecodableAndNewMetadataSurvivesRoundTrip() throws {
         let old = """
-        {"id":"eurusd","name":"Dollar","subtitle":"","category":"markets","unit":"usd","fractionDigits":4,"source":"BCE","isDemo":false,"observations":[{"date":0,"value":1.12}]}
+        {"id":"eurusd","name":"Dollar","subtitle":"","category":"markets","unit":"usd","fractionDigits":4,"source":"BCE","observations":[{"date":0,"value":1.12}]}
         """
         let previous = try JSONDecoder().decode(MarketSeries.self, from: Data(old.utf8))
         #expect(previous.frequency == nil)
@@ -142,7 +142,7 @@ struct WebstatClientTests {
         let dates = ISO8601DateFormatter()
         dates.formatOptions = [.withFullDate]
         let monthly = MarketSeries(id: "rate", name: "Rate", subtitle: "", category: .savings,
-            unit: .percent, source: "Fixture", isDemo: false, frequency: .monthly,
+            unit: .percent, source: "Fixture", frequency: .monthly,
             observations: [MarketObservation(date: dates.date(from: "2020-08-01")!, value: 1),
                            MarketObservation(date: dates.date(from: "2021-08-01")!, value: 2),
                            MarketObservation(date: dates.date(from: "2023-08-01")!, value: 3),
@@ -151,6 +151,5 @@ struct WebstatClientTests {
         #expect(monthly.history(for: .fiveYears).map(\.value) == [2, 3, 4])
         #expect(monthly.change(for: .threeYears) == 1)
         #expect(HistoryPeriod.fiveYears.title == "5 ans")
-        #expect(!DemoCatalog.series()[0].supports(.threeYears))
     }
 }

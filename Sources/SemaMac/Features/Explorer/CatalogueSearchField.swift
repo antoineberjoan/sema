@@ -23,8 +23,8 @@ struct CatalogueSearchField: View {
                     .buttonStyle(.plain).accessibilityLabel("Effacer la recherche").help("Effacer la recherche")
             }
         }
-        .font(.title3).padding(SemaTheme.rowPadding)
-        .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
+        .font(.title3).padding(Theme.rowPadding)
+        .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
         .onAppear { focused = true }
     }
 }

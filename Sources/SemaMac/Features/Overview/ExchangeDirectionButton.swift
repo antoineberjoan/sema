@@ -14,7 +14,7 @@ struct ExchangeDirectionButton: View {
             Button { store.toggleExchangeRateDirection(series) } label: {
                 Image(systemName: "arrow.left.arrow.right")
                     .font(.callout).foregroundStyle(inverted ? accent : Color.secondary)
-                    .frame(width: SemaTheme.iconButtonSize, height: SemaTheme.iconButtonSize).contentShape(Rectangle())
+                    .frame(width: Theme.iconButtonSize, height: Theme.iconButtonSize).contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(!series.canInvertExchangeRate)

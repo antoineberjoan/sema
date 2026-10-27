@@ -54,10 +54,8 @@ struct ExchangeRatePairTests {
         #expect(try rate(producer: "UNKNOWN").exchangeRatePair == nil)
         #expect(try rate(key: "EXR.D.USD.EUR.SP00.E").exchangeRatePair == nil)
         let nav = MarketSeries(id: "fund", name: "Euro / Dollar", subtitle: "", category: .funds,
-            unit: .usd, source: "Fonds", isDemo: false, observations: [])
+            unit: .usd, source: "Fonds", observations: [])
         #expect(nav.exchangeRatePair == nil)
-        #expect(DemoCatalog.series().first { $0.id == "eurusd" }?.canInvertExchangeRate == true)
-        #expect(DemoCatalog.series().first { $0.id == "fr10" }?.exchangeRatePair == nil)
     }
 
     @Test func invalidObservationsNeverProduceAnInfiniteQuote() throws {
@@ -79,14 +77,7 @@ struct ExchangeRatePairTests {
         #expect((inverse.latest?.value ?? 0) > 0)
     }
 
-    @Test func inverseDemoCannotBeRelabelledAsThePublishedQuotation() throws {
-        let demo = try #require(DemoCatalog.series().first { $0.id == "eurjpy" })
-        let inverse = try #require(demo.invertedExchangeRateForDisplay())
-        #expect(demo.exchangeRatePair?.currency == "JPY")
-        #expect(inverse.exchangeRatePair == nil)
-        #expect(inverse.name == "Yen / Euro")
-        #expect(inverse.displayUnit == "€")
-    }
+
 
     @Test func directionPersistsWithoutChangingFavoritesOrAlerts() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-quote-" + UUID().uuidString)

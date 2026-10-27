@@ -57,7 +57,7 @@ extension AppStore {
             if let blocked = blockedMarkets[source] { failures[id] = blocked; continue }
             do {
                 try Task.checkCancellation()
-                let old = series.first { $0.id == id && !$0.isDemo }
+                let old = series.first { $0.id == id }
                 let value: MarketSeries
                 var measurementChanged = false
                 if let instrument = old?.marketInstrument {
@@ -110,14 +110,14 @@ extension AppStore {
         } else { seriesErrors = failures }
         if !updated.isEmpty {
             merge(updated)
-            hasLoadedWebstat = series.contains { !$0.isDemo && $0.sourceURL?.host == "webstat.banque-france.fr" }
+            hasLoadedWebstat = series.contains { $0.sourceURL?.host == "webstat.banque-france.fr" }
             if let preview = previewDescriptor, let value = updated.first(where: { $0.id == preview.key }) {
                 previewSeries = value; previewDescriptor = value.descriptor; previewError = nil
             }
             if let id = previewSeries?.id, previewDescriptor == nil, let value = updated.first(where: { $0.id == id }) {
                 previewSeries = value; previewError = nil
             }
-            do { try storage.cacheWebstat(series.filter { !$0.isDemo }) }
+            do { try storage.cacheWebstat(series) }
             catch { errorMessage = "Les repères sont chargés, mais leur sauvegarde locale a échoué." }
             evaluateAlerts(in: updated.filter { !changedMeasurements.contains($0.id) })
         }

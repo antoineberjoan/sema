@@ -33,7 +33,7 @@ struct AlertEditorView: View {
                 }
                 GridRow {
                     Text("Seuil")
-                    HStack(spacing: SemaTheme.minorSpacing) {
+                    HStack(spacing: Theme.minorSpacing) {
                         TextField("Seuil", text: $thresholdText)
                             .textFieldStyle(.roundedBorder).accessibilityLabel("Seuil")
                         Text(item.map(MarketFormat.unit) ?? "").foregroundStyle(.secondary)
@@ -45,15 +45,13 @@ struct AlertEditorView: View {
                     .font(.callout).foregroundStyle(.red)
             }
             if let item {
-                VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
                     HStack {
                         Text("Dernière valeur").foregroundStyle(.secondary)
                         Spacer()
                         Text(MarketFormat.value(item)).monospacedDigit()
                     }
-                    Text(item.isDemo
-                         ? "Données fictives · vérification après connexion."
-                         : "Vérification à l’actualisation des repères.")
+                    Text("Vérification à l’actualisation des repères.")
                         .font(.callout).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                         .help("Aucun contrôle quand sema est quittée ou le Mac en veille. La règle suit les nouvelles observations publiées.")

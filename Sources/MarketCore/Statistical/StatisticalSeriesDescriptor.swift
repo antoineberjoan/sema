@@ -58,7 +58,7 @@ public struct StatisticalSeriesDescriptor: Codable, Equatable, Sendable {
         MarketSeries(id: id, name: title,
             subtitle: [labels["REF_AREA"] ?? fields["REF_AREA"] ?? labels["GEO"] ?? fields["GEO"], frequency.title].compactMap { $0 }.joined(separator: " · "),
             category: .markets, unit: unit, fractionDigits: min(max(Int(fields["DECIMALS"] ?? "") ?? MarketSeries.defaultFractionDigits, 0), MarketSeries.maximumFractionDigits),
-            source: dataset.source.title, sourceURL: sourceURL, isDemo: false, frequency: frequency,
+            source: dataset.source.title, sourceURL: sourceURL, frequency: frequency,
             observations: observations, syncedAt: syncedAt, hasCompleteHistory: completeHistory, statisticalDescriptor: self)
     }
     public var sourceURL: URL {

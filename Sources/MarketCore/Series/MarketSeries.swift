@@ -13,7 +13,6 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public let fractionDigits: Int
     public let source: String
     public let sourceURL: URL?
-    public let isDemo: Bool
     public let frequency: ObservationFrequency?
     public let observations: [MarketObservation]
     public let descriptor: WebstatSeriesDescriptor?
@@ -25,7 +24,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public init(
         id: String, name: String, subtitle: String, category: SeriesCategory,
         unit: ValueUnit, fractionDigits: Int = MarketSeries.defaultFractionDigits, source: String,
-        sourceURL: URL? = nil, isDemo: Bool, frequency: ObservationFrequency? = nil,
+        sourceURL: URL? = nil, frequency: ObservationFrequency? = nil,
         observations: [MarketObservation], descriptor: WebstatSeriesDescriptor? = nil,
         syncedAt: Date? = nil, hasCompleteHistory: Bool? = nil,
         statisticalDescriptor: StatisticalSeriesDescriptor? = nil, marketInstrument: MarketInstrument? = nil
@@ -38,7 +37,6 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         self.fractionDigits = fractionDigits
         self.source = source
         self.sourceURL = sourceURL
-        self.isDemo = isDemo
         self.frequency = frequency
         self.descriptor = descriptor
         self.syncedAt = syncedAt
@@ -61,7 +59,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public func replacing(observations: [MarketObservation], syncedAt: Date? = nil,
                           completeHistory: Bool? = nil, descriptor: WebstatSeriesDescriptor? = nil) -> MarketSeries {
         MarketSeries(id: id, name: name, subtitle: subtitle, category: category, unit: unit,
-            fractionDigits: fractionDigits, source: source, sourceURL: sourceURL, isDemo: isDemo,
+            fractionDigits: fractionDigits, source: source, sourceURL: sourceURL,
             frequency: frequency, observations: observations, descriptor: descriptor ?? self.descriptor,
             syncedAt: syncedAt ?? self.syncedAt, hasCompleteHistory: completeHistory ?? hasCompleteHistory,
             statisticalDescriptor: statisticalDescriptor, marketInstrument: marketInstrument)
@@ -69,7 +67,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
 
     public func withID(_ id: String) -> MarketSeries {
         MarketSeries(id: id, name: name, subtitle: subtitle, category: category, unit: unit,
-            fractionDigits: fractionDigits, source: source, sourceURL: sourceURL, isDemo: isDemo,
+            fractionDigits: fractionDigits, source: source, sourceURL: sourceURL,
             frequency: frequency, observations: observations, descriptor: descriptor,
             syncedAt: syncedAt, hasCompleteHistory: hasCompleteHistory, statisticalDescriptor: statisticalDescriptor, marketInstrument: marketInstrument)
     }

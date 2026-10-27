@@ -131,7 +131,7 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
     public func series(observations: [MarketObservation], syncedAt: Date? = nil, completeHistory: Bool = false) -> MarketSeries {
         MarketSeries(id: key, name: title, subtitle: [area, frequencyTitle].compactMap { $0 }.joined(separator: " · "),
             category: .markets, unit: unit, fractionDigits: decimals ?? MarketSeries.defaultFractionDigits, source: producer,
-            sourceURL: sourceURL, isDemo: false, frequency: frequency, observations: observations,
+            sourceURL: sourceURL, frequency: frequency, observations: observations,
             descriptor: self, syncedAt: syncedAt, hasCompleteHistory: completeHistory)
     }
     public static func isValidKey(_ key: String) -> Bool {

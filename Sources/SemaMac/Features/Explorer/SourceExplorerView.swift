@@ -16,7 +16,7 @@ struct SourceExplorerView: View {
     var close: (() -> Void)?
     private var enabledIDs: [String] { (["webstat"] + MarketProvider.allCases.map(\.rawValue) + StatisticalSource.allCases.map(\.rawValue)).filter { store.isSourceEnabled($0) } }
     var body: some View {
-        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             HStack {
                 if sourceID.isEmpty {
                     Text("Sources").font(.title2.weight(.semibold))
@@ -44,25 +44,25 @@ struct SourceExplorerView: View {
                 MarketExplorerView(provider: provider, close: close).id(sourceID)
             } else if sourceID.isEmpty {
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: compact ? Self.compactCardMinWidth : Self.cardMinWidth), spacing: SemaTheme.majorSpacing)], spacing: SemaTheme.majorSpacing) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: compact ? Self.compactCardMinWidth : Self.cardMinWidth), spacing: Theme.majorSpacing)], spacing: Theme.majorSpacing) {
                         ForEach(enabledIDs, id: \.self) { id in
                             Button { sourceID = id } label: {
-                                VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+                                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
                                     HStack {
                                         Text(store.sourceName(id)).font(.headline)
-                                        Spacer(minLength: SemaTheme.rowPadding)
+                                        Spacer(minLength: Theme.rowPadding)
                                         Image(systemName: "chevron.right").font(.caption).foregroundStyle(.secondary)
                                     }
                                     Text(sourceTopics(id)).font(.callout).foregroundStyle(.secondary)
                                         .lineLimit(Self.topicLines).multilineTextAlignment(.leading)
                                 }
                                 .frame(maxWidth: .infinity, minHeight: Self.cardMinHeight, alignment: .leading)
-                                .padding(SemaTheme.majorSpacing).foregroundStyle(.primary)
-                                .background(SemaTheme.surface, in: RoundedRectangle(cornerRadius: SemaTheme.cardCorner))
-                                .contentShape(RoundedRectangle(cornerRadius: SemaTheme.cardCorner))
-                            }.buttonStyle(SemaPressStyle())
+                                .padding(Theme.majorSpacing).foregroundStyle(.primary)
+                                .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cardCorner))
+                                .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
+                            }.buttonStyle(PressStyle())
                         }
-                    }.padding(.bottom, SemaTheme.rowSpacing)
+                    }.padding(.bottom, Theme.rowSpacing)
                 }
             } else if let source = StatisticalSource(rawValue: sourceID), store.isSourceEnabled(sourceID) {
                 StatisticalExplorerView(source: source, compact: compact, close: close).id(sourceID)
@@ -145,10 +145,10 @@ private struct StatisticalExplorerView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             CatalogueSearchField(query: $query, prompt: "Rechercher dans \(source.title)…", isSearching: loadingCatalogue,
                 submit: { selectedID = keyboardID ?? matches.first?.id }, move: moveSelection)
-            HStack(alignment: .top, spacing: SemaTheme.majorSpacing) {
+            HStack(alignment: .top, spacing: Theme.majorSpacing) {
                 datasetsList.frame(minWidth: Self.datasetsMinWidth, idealWidth: Self.datasetsIdealWidth, maxWidth: selected == nil ? .infinity : Self.datasetsMaxWidth)
                 if let selected {
                     if selectedSeriesKey != nil {
@@ -170,30 +170,30 @@ private struct StatisticalExplorerView: View {
     }
 
     private var datasetsList: some View {
-        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             if !loadingCatalogue {
                 HStack {
                     Text("\(matches.count.formatted()) \(matches.count == 1 ? "jeu de données" : "jeux de données")")
                     Spacer()
                     Button { Task { await loadCatalogue(reload: true) } } label: { Image(systemName: "arrow.clockwise") }
                         .buttonStyle(.borderless).help("Actualiser le catalogue de la source")
-                }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, SemaTheme.rowPadding)
+                }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
             }
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: SemaTheme.rowSpacing) {
+                    LazyVStack(alignment: .leading, spacing: Theme.rowSpacing) {
                         ForEach(Array(matches.prefix(visibleCount))) { dataset in
                             Button { keyboardID = dataset.id; selectedID = dataset.id } label: {
-                                VStack(alignment: .leading, spacing: SemaTheme.rowTextSpacing) {
-                                    Text(dataset.title).font(.body.weight(.medium)).lineLimit(SemaTheme.rowTitleLines)
+                                VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
+                                    Text(dataset.title).font(.body.weight(.medium)).lineLimit(Theme.rowTitleLines)
                                     Text(dataset.code).font(.caption).foregroundStyle(.secondary).lineLimit(1)
-                                }.foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(SemaTheme.rowPadding)
-                                    .background(keyboardID == dataset.id ? accent.opacity(SemaTheme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
+                                }.foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
+                                    .background(keyboardID == dataset.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
                                     .contentShape(Rectangle())
-                            }.buttonStyle(SemaPressStyle()).id(dataset.id)
+                            }.buttonStyle(PressStyle()).id(dataset.id)
                                 .accessibilityAddTraits(keyboardID == dataset.id ? .isSelected : [])
                         }
-                        if matches.count > visibleCount { Button("Afficher les jeux suivants") { visibleCount += 50 }.buttonStyle(.borderless).padding(SemaTheme.rowPadding) }
+                        if matches.count > visibleCount { Button("Afficher les jeux suivants") { visibleCount += 50 }.buttonStyle(.borderless).padding(Theme.rowPadding) }
                         if !loadingCatalogue && matches.isEmpty && error == nil { ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass") }
                     }
                 }.onChange(of: keyboardID) { _, id in if let id { proxy.scrollTo(id) } }
@@ -206,7 +206,7 @@ private struct StatisticalExplorerView: View {
     }
 
     private func seriesList(_ dataset: StatisticalDataset) -> some View {
-        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             Text(dataset.title).font(.headline).textSelection(.enabled)
             CatalogueSearchField(query: $seriesQuery, prompt: "Rechercher une série…", isSearching: loadingStructure,
                 submit: { if let key = keyboardSeriesKey ?? seriesMatches.first?.key { openSeries(key) } }, move: moveSeriesSelection)
@@ -215,21 +215,21 @@ private struct StatisticalExplorerView: View {
             }
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: SemaTheme.rowSpacing) {
+                    LazyVStack(alignment: .leading, spacing: Theme.rowSpacing) {
                         ForEach(Array(seriesMatches.prefix(visibleSeriesCount)), id: \.id) { item in
                             Button { openSeries(item.key) } label: {
-                                VStack(alignment: .leading, spacing: SemaTheme.rowTextSpacing) {
+                                VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
                                     Text(item.title).font(.body.weight(.medium)).lineLimit(Self.seriesTitleLines)
                                     let context = [item.frequency == .unknown ? nil : item.frequency.title, item.unitCode == nil ? nil : item.displayUnit].compactMap { $0 }.joined(separator: " · ")
                                     if !context.isEmpty { Text(context).font(.caption).foregroundStyle(.secondary) }
                                 }
-                                .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(SemaTheme.rowPadding)
-                                .background(keyboardSeriesKey == item.key ? accent.opacity(SemaTheme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: SemaTheme.rowCorner))
+                                .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
+                                .background(keyboardSeriesKey == item.key ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
                                 .contentShape(Rectangle())
-                            }.buttonStyle(SemaPressStyle()).id(item.key)
+                            }.buttonStyle(PressStyle()).id(item.key)
                                 .accessibilityAddTraits(keyboardSeriesKey == item.key ? .isSelected : [])
                         }
-                        if seriesMatches.count > visibleSeriesCount { Button("Afficher les séries suivantes") { visibleSeriesCount += 50 }.buttonStyle(.borderless).padding(SemaTheme.rowPadding) }
+                        if seriesMatches.count > visibleSeriesCount { Button("Afficher les séries suivantes") { visibleSeriesCount += 50 }.buttonStyle(.borderless).padding(Theme.rowPadding) }
                         if !loadingStructure && seriesMatches.isEmpty && seriesError == nil { ContentUnavailableView("Aucune série trouvée", systemImage: "magnifyingglass") }
                     }
                 }.onChange(of: keyboardSeriesKey) { _, key in if let key { proxy.scrollTo(key) } }
@@ -245,14 +245,14 @@ private struct StatisticalExplorerView: View {
                             ForEach(structure.dimensions) { dimension in
                                 HStack(alignment: .firstTextBaseline) {
                                     Text(dimension.title).foregroundStyle(.secondary).frame(maxWidth: Self.advancedLabelMaxWidth, alignment: .leading)
-                                    Spacer(minLength: SemaTheme.minorSpacing)
+                                    Spacer(minLength: Theme.minorSpacing)
                                     if dimension.codes.count == 1, let code = dimension.codes.first { Text(code.title).multilineTextAlignment(.trailing) }
                                     else if dimension.codes.isEmpty {
                                         TextField(dimension.id, text: Binding(get: { values[dimension.id] ?? "" }, set: { values[dimension.id] = $0 }))
                                             .textFieldStyle(.roundedBorder).accessibilityLabel(dimension.title)
                                     } else {
                                         Button { choosingDimension = dimension } label: {
-                                            HStack(spacing: SemaTheme.minorSpacing) {
+                                            HStack(spacing: Theme.minorSpacing) {
                                                 Text(dimension.codes.first { $0.id == values[dimension.id] }?.title ?? "Choisir…").lineLimit(Self.valueLines).multilineTextAlignment(.trailing)
                                                 Image(systemName: "chevron.up.chevron.down").font(.caption2)
                                             }
@@ -272,10 +272,10 @@ private struct StatisticalExplorerView: View {
     }
 
     private var previewPane: some View {
-        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             Button { selectedSeriesKey = nil; store.closePreview() } label: { Label("Séries", systemImage: "chevron.left") }.buttonStyle(.borderless)
             ScrollView {
-                VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+                VStack(alignment: .leading, spacing: Theme.majorSpacing) {
                     if store.isLoadingPreview { ProgressView("Chargement de l’historique…").controlSize(.small) }
                     if let value = store.previewSeries {
                         SeriesDetailView(series: value, preview: true)
@@ -298,7 +298,7 @@ private struct StatisticalExplorerView: View {
                             Button("Actualiser mes repères") { Task { await store.refreshSeries() } }.buttonStyle(.borderless).disabled(store.isLoading)
                         } else if let key = selectedSeriesKey { Button("Réessayer") { openSeries(key) }.buttonStyle(.borderless) }
                     }
-                }.padding(.bottom, SemaTheme.majorSpacing)
+                }.padding(.bottom, Theme.majorSpacing)
             }
         }
     }
@@ -359,20 +359,20 @@ private struct StatisticalCodePicker: View {
     @FocusState private var searchFocused: Bool
     private var codes: [StatisticalCode] { dimension.codes.filter { query.isEmpty || ($0.title + " " + $0.id).localizedStandardContains(query) } }
     var body: some View {
-        VStack(alignment: .leading, spacing: SemaTheme.majorSpacing) {
+        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             Text(dimension.title).font(.headline)
             TextField("Rechercher une valeur ou un code…", text: $query).textFieldStyle(.roundedBorder).focused($searchFocused)
                 .onSubmit { if codes.count == 1, let code = codes.first { choose(code.id); dismiss() } }
             List(codes) { code in
                 Button { choose(code.id); dismiss() } label: {
                     HStack {
-                        VStack(alignment: .leading, spacing: SemaTheme.rowSpacing) { Text(code.title); Text(code.id).font(.caption).foregroundStyle(.secondary) }
+                        VStack(alignment: .leading, spacing: Theme.rowSpacing) { Text(code.title); Text(code.id).font(.caption).foregroundStyle(.secondary) }
                         Spacer()
                         if selected == code.id { Image(systemName: "checkmark") }
                     }.contentShape(Rectangle())
-                }.buttonStyle(.plain).padding(.vertical, SemaTheme.rowSpacing)
+                }.buttonStyle(.plain).padding(.vertical, Theme.rowSpacing)
             }.listStyle(.plain)
             HStack { Text("\(codes.count.formatted()) \(codes.count == 1 ? "valeur" : "valeurs")").font(.caption).foregroundStyle(.secondary); Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
-        }.padding(SemaTheme.majorSpacing).frame(width: Self.size.width, height: Self.size.height).onAppear { searchFocused = true }
+        }.padding(Theme.majorSpacing).frame(width: Self.size.width, height: Self.size.height).onAppear { searchFocused = true }
     }
 }

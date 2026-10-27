@@ -88,7 +88,7 @@ extension AppStore {
         previewSourceID = "webstat"
         statisticalPreviewRequest = nil
         previewTask?.cancel(); previewDescriptor = descriptor
-        previewSeries = series.first { $0.id == descriptor.key && !$0.isDemo }
+        previewSeries = series.first { $0.id == descriptor.key }
         previewError = nil; isLoadingPreview = true
         previewTask = Task {
             do {
@@ -128,7 +128,7 @@ extension AppStore {
                 let value = try await StatisticalClient().fetch(dataset: dataset, structure: structure, key: key)
                 try Task.checkCancellation()
                 guard statisticalPreviewRequest == requestID else { return }
-                if let old = series.first(where: { $0.id == value.id && !$0.isDemo }),
+                if let old = series.first(where: { $0.id == value.id }),
                    let previous = old.statisticalDescriptor, let next = value.statisticalDescriptor,
                    previous.usesSameMeasurement(as: next) {
                     previewSeries = value.replacing(observations: old.observations + value.observations, completeHistory: old.hasCompleteHistory)

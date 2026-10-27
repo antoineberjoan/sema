@@ -12,13 +12,13 @@ struct ProfileSettingsView: View {
     var body: some View {
         Form {
             Section {
-                HStack(spacing: SemaTheme.majorSpacing) {
+                HStack(spacing: Theme.majorSpacing) {
                     Button { showsImporter = true } label: {
                         ProfileAvatar(profile: store.profile, size: Self.avatarSize)
                     }
                     .buttonStyle(.plain).disabled(isImporting)
                     .accessibilityLabel("Modifier la photo")
-                    VStack(alignment: .leading, spacing: SemaTheme.minorSpacing) {
+                    VStack(alignment: .leading, spacing: Theme.minorSpacing) {
                         if !store.profile.displayName.isEmpty {
                             Text(store.profile.displayName).font(.title3.weight(.medium))
                         }
@@ -32,7 +32,7 @@ struct ProfileSettingsView: View {
                         }
                     }.buttonStyle(.link)
                     Spacer()
-                }.padding(.vertical, SemaTheme.minorSpacing)
+                }.padding(.vertical, Theme.minorSpacing)
             }
             Section {
                 TextField("Prénom", text: Binding(get: { store.profile.firstName }, set: {
