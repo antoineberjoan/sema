@@ -265,7 +265,7 @@ struct WorkspaceView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(PressStyle()).help("Rechercher un repère · ⌘K")
-            .padding(.horizontal, Self.searchInset)
+            .padding(.horizontal, Self.searchInset).padding(.top, Theme.minorSpacing)
 
             VStack(spacing: Self.itemSpacing) {
                 ForEach(WorkspaceSection.allCases.filter { $0 != .overview }) { SidebarItem(section: $0) }
