@@ -50,7 +50,7 @@ private struct IndicatorTile: View {
                 .contentShape(RoundedRectangle(cornerRadius: Theme.rowCorner, style: .continuous))
             }
             .buttonStyle(PressStyle())
-            .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\()")
+            .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))")
             .accessibilityValue(selected ? "Sélectionné" : "")
             HStack(spacing: 0) {
                 ExchangeDirectionButton(series: series)
