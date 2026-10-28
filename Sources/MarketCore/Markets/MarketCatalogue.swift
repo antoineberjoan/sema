@@ -5,9 +5,16 @@ public struct MarketCatalogue: Equatable, Sendable {
     public let instruments: [MarketInstrument]
     public let scope: String
     // Repères américains courants, proposés seulement s’ils figurent au catalogue du forfait.
-    private static let twelveStarterSymbols = ["SPY", "QQQ", "VTI", "AAPL", "MSFT"]
+    private static let twelveStarterSymbols: [String] = [
+        // ETF populaires
+        "SPY", "QQQ", "VTI", "VOO", "VXUS", "EFA", "IWM", "XLK", "XLF", "XLE",
+        // Actions tech
+        "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA",
+        // Autres secteurs
+        "JPM", "V", "WMT", "DIS", "BRK-A"
+    ]
     // Favoris Alpha Vantage : actions et ETF les plus suivis
-    private static let alphaStarterSymbols = [
+    private static let alphaStarterSymbols: [String] = [
         // ETF populaires
         "SPY", "QQQ", "VTI", "VOO", "VXUS", "EFA", "IWM", "XLK", "XLF", "XLE",
         // Actions tech
