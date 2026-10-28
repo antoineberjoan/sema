@@ -11,9 +11,9 @@ public struct MarketCatalogue: Equatable, Sendable {
         // Actions tech
         "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA",
         // Autres secteurs
-        "JPM", "V", "WMT", "DIS", "BRK-A"
+        "JPM", "V", "WMT", "DIS", "BRK-A", "JNJ", "PG", "MA"
     ]
-    // Favoris Alpha Vantage : actions et ETF les plus suivis
+    // Favoris Alpha Vantage et Twelve Data : actions et ETF les plus suivis
     private static let alphaStarterSymbols: [String] = [
         // ETF populaires
         "SPY", "QQQ", "VTI", "VOO", "VXUS", "EFA", "IWM", "XLK", "XLF", "XLE",
