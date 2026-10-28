@@ -17,7 +17,7 @@ public struct MarketCatalogue: Equatable, Sendable {
     ]
 
     public var starters: [MarketInstrument] {
-        let symbols = instruments.first?.provider == .alphaVantage ? Self.alphaStarterSymbols : Self.twelveStarterSymbols
+        let symbols = instruments.contains { $0.provider == .alphaVantage } ? Self.alphaStarterSymbols : Self.twelveStarterSymbols
         return symbols.compactMap { symbol in instruments.first { $0.symbol == symbol && $0.currency == "USD" } }
     }
 
