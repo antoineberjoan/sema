@@ -179,7 +179,7 @@ struct CatalogueBrowserView: View {
                             .background(selectedID == item.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
                             .contentShape(Rectangle())
                         }.buttonStyle(PressStyle()).id(item.id)
-                        .accessibilityAddTraits(selectedID == item.id ? .isSelected : [])
+                        .accessibilityAddTraits(selectedID == item.id ? [.isSelected] : [])
                         .help(item.definition)
                         .animation(reduceMotion ? nil : .easeOut(duration: selectionDuration), value: selectedID == item.id)
                     }

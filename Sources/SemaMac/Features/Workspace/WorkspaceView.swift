@@ -374,7 +374,7 @@ struct WorkspaceView: View {
         }
         .buttonStyle(PressStyle())
         .accessibilityLabel(displayed.latest == nil ? MarketFormat.name(displayed) : "\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))")
-        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
 }
 
@@ -408,7 +408,7 @@ private struct SidebarItem: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
-        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityAddTraits(selected ? [.isSelected] : [])
         .onHover { isHovered = $0 }
         .animation(reduceMotion ? nil : .easeOut(duration: Theme.hoverDuration), value: isHovered)
     }

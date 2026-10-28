@@ -83,6 +83,6 @@ struct FocusSwitcherView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))\()")
-        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
 }

@@ -191,7 +191,7 @@ private struct StatisticalExplorerView: View {
                                     .background(keyboardID == dataset.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
                                     .contentShape(Rectangle())
                             }.buttonStyle(PressStyle()).id(dataset.id)
-                                .accessibilityAddTraits(keyboardID == dataset.id ? .isSelected : [])
+                                .accessibilityAddTraits(keyboardID == dataset.id ? [.isSelected] : [])
                         }
                         if matches.count > visibleCount { Button("Afficher les jeux suivants") { visibleCount += 50 }.buttonStyle(.borderless).padding(Theme.rowPadding) }
                         if !loadingCatalogue && matches.isEmpty && error == nil { ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass") }
@@ -227,7 +227,7 @@ private struct StatisticalExplorerView: View {
                                 .background(keyboardSeriesKey == item.key ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
                                 .contentShape(Rectangle())
                             }.buttonStyle(PressStyle()).id(item.key)
-                                .accessibilityAddTraits(keyboardSeriesKey == item.key ? .isSelected : [])
+                                .accessibilityAddTraits(keyboardSeriesKey == item.key ? [.isSelected] : [])
                         }
                         if seriesMatches.count > visibleSeriesCount { Button("Afficher les séries suivantes") { visibleSeriesCount += 50 }.buttonStyle(.borderless).padding(Theme.rowPadding) }
                         if !loadingStructure && seriesMatches.isEmpty && seriesError == nil { ContentUnavailableView("Aucune série trouvée", systemImage: "magnifyingglass") }

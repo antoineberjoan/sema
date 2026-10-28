@@ -70,7 +70,15 @@ extension AppStore {
                 let resolvedItems = items.map { resolvedWithCachedLabels($0) }
                 if loadMore {
                     let known = Set(catalogueResults.map(\.key)); catalogueResults += resolvedItems.filter { !known.contains($0.key) }
-                } else { catalogueResults = resolvedItems }
+                } else {
+                    // Prépendre les séries starters (favoris) si pas de recherche texte
+                    let starters = search.query.isEmpty ? WebstatClient.starterSeries.compactMap { series in
+                        resolvedItems.first { $0.key == series.id }
+                    } : []
+                    let starterKeys = Set(starters.map(\.key))
+                    let nonStarters = resolvedItems.filter { !starterKeys.contains($0.key) }
+                    catalogueResults = starters + nonStarters
+                }
                 catalogueHasMore = hasMore
                 isSearchingCatalogue = false
             } catch is CancellationError { }

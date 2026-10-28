@@ -112,7 +112,7 @@ struct MenuRibbonView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(PressStyle())
-                    .accessibilityAddTraits(period == candidate ? .isSelected : [])
+                    .accessibilityAddTraits(period == candidate ? [.isSelected] : [])
                     .help(candidate.title + " · Historique disponible sur ce Mac")
                 }
             }

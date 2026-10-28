@@ -5,10 +5,27 @@ public struct MarketCatalogue: Equatable, Sendable {
     public let instruments: [MarketInstrument]
     public let scope: String
     // Repères américains courants, proposés seulement s’ils figurent au catalogue du forfait.
-    private static let starterSymbols = ["SPY", "QQQ", "VTI", "AAPL", "MSFT"]
+    private static let twelveStarterSymbols: [String] = [
+        // ETF populaires
+        "SPY", "QQQ", "VTI", "VOO", "VXUS", "EFA", "IWM", "XLK", "XLF", "XLE",
+        // Actions tech
+        "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA",
+        // Autres secteurs
+        "JPM", "V", "WMT", "DIS", "BRK-A", "JNJ", "PG", "MA"
+    ]
+    // Favoris Alpha Vantage et Twelve Data : actions et ETF les plus suivis
+    private static let alphaStarterSymbols: [String] = [
+        // ETF populaires
+        "SPY", "QQQ", "VTI", "VOO", "VXUS", "EFA", "IWM", "XLK", "XLF", "XLE",
+        // Actions tech
+        "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA",
+        // Autres secteurs
+        "JPM", "V", "WMT", "DIS", "BRK-A", "JNJ", "PG", "MA"
+    ]
 
     public var starters: [MarketInstrument] {
-        Self.starterSymbols.compactMap { symbol in instruments.first { $0.symbol == symbol && $0.currency == "USD" } }
+        let symbols = instruments.contains { $0.provider == .alphaVantage } ? Self.alphaStarterSymbols : Self.twelveStarterSymbols
+        return symbols.compactMap { symbol in instruments.first { $0.symbol == symbol && $0.currency == "USD" } }
     }
 
     static func twelve(_ data: [String: Any], plan: String, kind: String?) throws -> [MarketInstrument] {

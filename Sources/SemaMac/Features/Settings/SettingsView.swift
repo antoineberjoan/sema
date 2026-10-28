@@ -127,7 +127,7 @@ struct SettingsView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain).padding(Self.profileInset)
-                .accessibilityAddTraits(store.settingsTab == .profile ? .isSelected : [])
+                .accessibilityAddTraits(store.settingsTab == .profile ? [.isSelected] : [])
             }
             .frame(width: Self.sidebarWidth)
             .background(Theme.surface)
@@ -218,7 +218,7 @@ struct SettingsView: View {
                             }.contentShape(Rectangle())
                         }
                         .buttonStyle(.plain).accessibilityLabel("Palette " + palette.title)
-                        .accessibilityAddTraits(store.palette == palette ? .isSelected : [])
+                        .accessibilityAddTraits(store.palette == palette ? [.isSelected] : [])
                     }
                 }.padding(.vertical, Theme.minorSpacing)
             }
@@ -291,6 +291,6 @@ private struct SettingsChoice: View {
             .frame(width: Self.width).contentShape(Rectangle())
         }
         .buttonStyle(.plain).accessibilityLabel(title)
-        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityAddTraits(selected ? [.isSelected] : [])
     }
 }

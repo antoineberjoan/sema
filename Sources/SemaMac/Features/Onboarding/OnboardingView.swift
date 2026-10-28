@@ -312,7 +312,7 @@ struct OnboardingView: View {
         .buttonStyle(PressStyle())
         .accessibilityLabel(collection.title)
         .accessibilityValue(selected ? "Choisi" : "Non choisi")
-        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityAddTraits(selected ? [.isSelected] : [])
         .accessibilityHint("Ajouter ou retirer ces repères de votre espace")
         .help(collection.items.map(\.title).joined(separator: ", "))
     }
