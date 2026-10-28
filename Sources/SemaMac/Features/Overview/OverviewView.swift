@@ -28,7 +28,7 @@ struct OverviewView: View {
                                             if current { Rectangle().frame(height: 1).foregroundStyle(.primary) }
                                         }
                                 }
-                                .buttonStyle(.plain).accessibilityAddTraits(current ? .isSelected : [])
+                                .buttonStyle(.plain).accessibilityAddTraits(current ? [.isSelected] : [])
                             }
                         }.padding(.horizontal, Self.switcherInset)
                     }
