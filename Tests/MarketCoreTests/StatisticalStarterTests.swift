@@ -13,7 +13,7 @@ struct StatisticalStarterTests {
         }
     }
 
-    @Test func referencesKeepProviderDatasetAndSeriesIdentity() {
+    @Test func referencesKeepProviderDatasetAndSeriesIdentity() throws {
         let ecb = try #require(StatisticalStarter.recommendations(for: .ecb).first)
         #expect(ecb.datasetCode == "EXR")
         #expect(ecb.key == "D.USD.EUR.SP00.A")
