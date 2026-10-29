@@ -4,6 +4,7 @@ Index des chantiers. Un chantier à plusieurs étapes ou repris par un autre age
 
 ## En cours
 
+- [Suggestions de départ par source](plans/starter-series.md)
 - [Connexions personnelles et catalogues de cours](plans/market-sources.md)
 - [Navigation clavier et bandeau Repère](plans/keyboard-navigation.md), corrigée et validée en CI dans la PR nº 5, à revoir avant publication.
 - [Explorer simple et lisible](plans/explorer.md), à revoir avant publication : essai réel Insee réussi, liste, recherche et aperçu BCE observés nativement le 18 octobre ; l’ajout et le nouveau parcours Insee restent à revoir.

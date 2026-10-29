@@ -124,8 +124,13 @@ private struct StatisticalExplorerView: View {
     @State private var visibleSeriesCount = 50
     @State private var keyboardSeriesKey: String?
     @State private var selectedSeriesKey: String?
+    @State private var pendingStarter: StatisticalStarter?
+    @State private var starterError: String?
     @State private var showsAdvanced = false
 
+    private var availableStarters: [StatisticalStarter] {
+        StatisticalStarter.recommendations(for: source).filter { starter in datasets.contains(where: starter.matches) }
+    }
     private var matches: [StatisticalDataset] {
         let words = query.split(whereSeparator: \.isWhitespace).map(String.init)
         return datasets.filter { item in words.allSatisfy { (item.title + " " + item.code + " " + item.detail).localizedStandardContains($0) } }
@@ -182,8 +187,16 @@ private struct StatisticalExplorerView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: Theme.rowSpacing) {
+                        if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !availableStarters.isEmpty {
+                            Text("Pour commencer").font(.caption.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
+                            ForEach(availableStarters) { starter in
+                                starterRow(starter)
+                            }
+                            Divider().padding(.horizontal, Theme.rowPadding)
+                        }
+                        Text("Catalogue").font(.caption.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
                         ForEach(Array(matches.prefix(visibleCount))) { dataset in
-                            Button { keyboardID = dataset.id; selectedID = dataset.id } label: {
+                            Button { pendingStarter = nil; starterError = nil; keyboardID = dataset.id; selectedID = dataset.id } label: {
                                 VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
                                     Text(dataset.title).font(.body.weight(.medium)).lineLimit(Theme.rowTitleLines)
                                     Text(dataset.code).font(.caption).foregroundStyle(.secondary).lineLimit(1)
@@ -208,6 +221,9 @@ private struct StatisticalExplorerView: View {
     private func seriesList(_ dataset: StatisticalDataset) -> some View {
         VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             Text(dataset.title).font(.headline).textSelection(.enabled)
+            if let starterError {
+                Label(starterError, systemImage: "exclamationmark.triangle").font(.callout).foregroundStyle(.secondary)
+            }
             CatalogueSearchField(query: $seriesQuery, prompt: "Rechercher une série…", isSearching: loadingStructure,
                 submit: { if let key = keyboardSeriesKey ?? seriesMatches.first?.key { openSeries(key) } }, move: moveSeriesSelection)
             if !loadingStructure && seriesError == nil {
@@ -303,6 +319,34 @@ private struct StatisticalExplorerView: View {
         }
     }
 
+    private func starterRow(_ starter: StatisticalStarter) -> some View {
+        Button { chooseStarter(starter) } label: {
+            VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
+                Text(starter.title).font(.body.weight(.medium)).lineLimit(Theme.rowTitleLines)
+                Text(datasets.first(where: starter.matches)?.title ?? starter.datasetCode)
+                    .font(.caption).foregroundStyle(.secondary).lineLimit(Theme.rowTitleLines)
+            }.foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
+                .contentShape(Rectangle())
+        }.buttonStyle(PressStyle()).accessibilityLabel("\(starter.title), \(source.title)")
+    }
+    private func chooseStarter(_ starter: StatisticalStarter) {
+        guard let dataset = datasets.first(where: starter.matches) else { return }
+        starterError = nil
+        if selectedID == dataset.id, structure != nil, !loadingStructure, seriesError == nil {
+            if let descriptor = catalogueSeries.first(where: { $0.key == starter.key }) {
+                selectedSeriesKey = descriptor.key; openSeries(descriptor.key)
+            } else {
+                starterError = "Cette suggestion n’apparaît plus dans le catalogue officiel. Recherchez une série dans le catalogue complet."
+            }
+            return
+        }
+        pendingStarter = starter
+        if selectedID == dataset.id {
+            if !loadingStructure { Task { await loadSeriesCatalogue() } }
+        } else {
+            selectedID = dataset.id
+        }
+    }
     private func openSeries(_ key: String) {
         guard let selected, let structure else { return }
         selectedSeriesKey = key
@@ -332,6 +376,15 @@ private struct StatisticalExplorerView: View {
             let items = try await client.seriesCatalogue(dataset: selected, structure: value)
             try Task.checkCancellation(); guard selectedID == id else { return }
             catalogueSeries = items; keyboardSeriesKey = seriesMatches.first?.key
+            if let starter = pendingStarter, starter.matches(selected) {
+                pendingStarter = nil
+                if let descriptor = items.first(where: { $0.key == starter.key }) {
+                    selectedSeriesKey = descriptor.key; keyboardSeriesKey = descriptor.key
+                    openSeries(descriptor.key)
+                } else {
+                    starterError = "Cette suggestion n’apparaît plus dans le catalogue officiel. Recherchez une série dans le catalogue complet."
+                }
+            }
         } catch is CancellationError { }
         catch { if selectedID == id { seriesError = error.localizedDescription } }
     }
