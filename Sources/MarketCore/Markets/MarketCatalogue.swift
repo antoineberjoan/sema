@@ -33,7 +33,7 @@ public struct MarketCatalogue: Equatable, Sendable {
         }
         let indexIDs = Set(indices.map(\.id))
         let remainingETFs = max(0, Self.starterIndices.count - indices.count)
-        return stocks + indices + etfs.filter { !indexIDs.contains($0.id) }.prefix(remainingETFs)
+        return stocks + indices + Array(etfs.filter { !indexIDs.contains($0.id) }.prefix(remainingETFs))
     }
 
     private static func preferred(symbol: String, currency: String, kinds: [String], provider: MarketProvider,
