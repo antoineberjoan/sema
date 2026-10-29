@@ -10,8 +10,8 @@ struct WorkspaceView: View {
     private static let minimumHeight: CGFloat = 680
     private static let focusHorizontalMargin: CGFloat = 48
     private static let statusPadding: CGFloat = 14
-    private static let statusSpacing: CGFloat = 12
-    private static let statusLines = 2
+    static let statusSpacing: CGFloat = 12
+    static let statusLines = 2
     private static let previewInset: CGFloat = 10
     private static let previewVerticalInset: CGFloat = 6
     private static let switcherScrim = Color.black.opacity(0.035)
@@ -49,7 +49,6 @@ struct WorkspaceView: View {
             Button("Annuler", role: .cancel) { removal = nil }
         } message: {
             Text("Ses alertes seront conservées et mises en pause. Son historique restera en cache.")
-        }
         }
     }
 
@@ -337,18 +336,27 @@ struct WorkspaceView: View {
         Binding(get: { store.errorMessage != nil }, set: { if !$0 { store.errorMessage = nil } })
     }
 
-    private var dataStatus: some View {
-        HStack(spacing: Theme.minorSpacing) {
-            if let status = store.status {
-                Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
-                Text(status).lineLimit(Self.statusLines).help(status)
+    private struct DataStatusView: View {
+        @Environment(AppStore.self) private var store
+        @Environment(\.openSettings) private var openSettings
+
+        var body: some View {
+            HStack(spacing: Theme.minorSpacing) {
+                if let status = store.status {
+                    Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
+                    Text(status).lineLimit(WorkspaceView.statusLines).help(status)
+                }
+                Spacer(minLength: WorkspaceView.statusSpacing)
+                if !store.hasWebstatKey, store.connectedMarkets.isEmpty {
+                    Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
+                }
             }
-            Spacer(minLength: Self.statusSpacing)
-            if !store.hasWebstatKey, store.connectedMarkets.isEmpty {
-                Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
-            }
+            .font(.subheadline).foregroundStyle(.secondary)
         }
-        .font(.subheadline).foregroundStyle(.secondary)
+    }
+
+    private var dataStatus: some View {
+        DataStatusView()
     }
 
     private struct SidebarSeriesRow: View {

@@ -81,8 +81,9 @@ struct RibbonCard: View {
         .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
     }
     private var accessibilityDescription: String {
-        MarketFormat.name(series) + ", " + MarketFormat.value(series)
-            + () + ", " + comparison
-            + " sur " + period.title + ", publication du " + MarketFormat.date(series.latest?.date)
+        let name = MarketFormat.name(series)
+        let value = MarketFormat.value(series)
+        let date = MarketFormat.date(series.latest?.date)
+        return "\(name), \(value), \(comparison) sur \(period.title), publication du \(date)"
     }
 }
