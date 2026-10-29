@@ -6,8 +6,8 @@ import Testing
 struct MacroAlertTests {
     private let start = Date(timeIntervalSince1970: 1_792_022_400)
 
-    private func rate(_ values: [Decimal], id: String = "ecb") -> MarketSeries {
-        MarketSeries(id: id, name: "Taux", subtitle: "Fixture", category: .savings, unit: .percent,
+    private func rate(_ values: [Decimal], id: String = "ecb", category: SeriesCategory = .savings) -> MarketSeries {
+        MarketSeries(id: id, name: "Taux", subtitle: "Fixture", category: category, unit: .percent,
                      source: "Test", observations: values.enumerated().map {
             MarketObservation(date: start.addingTimeInterval(Double($0.offset) * 86_400), value: $0.element)
         })
@@ -45,12 +45,12 @@ struct MacroAlertTests {
         #expect(AlertEvaluator.newEvents(restored, series: rate([2, 4, 2, 5, 6, 2, 4])).count == 1)
     }
 
-    @Test func initialConnectionDemoPauseAndWrongSeriesCannotEmitLiveSignals() {
+    @Test func initialConnectionUnsupportedCategoryPauseAndWrongSeriesCannotEmitSignals() {
         let item = rate([2, 4])
         var rule = AlertRule(seriesID: "ecb", direction: .rise, threshold: 3, condition: .level)
         #expect(AlertEvaluator.newEvents(rule, series: item).isEmpty)
         rule.lastEvaluatedAt = start
-        #expect(AlertEvaluator.newEvents(rule, series: rate([2, 4], demo: true)).isEmpty)
+        #expect(AlertEvaluator.newEvents(rule, series: rate([2, 4], category: .funds)).isEmpty)
         #expect(AlertEvaluator.newEvents(rule, series: rate([2, 4], id: "fr10")).isEmpty)
         rule.isEnabled = false
         #expect(AlertEvaluator.newEvents(rule, series: item).isEmpty)

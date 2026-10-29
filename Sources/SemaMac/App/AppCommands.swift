@@ -1,7 +1,8 @@
 // Expose la navigation, la recherche et l’actualisation dans les menus et raccourcis natifs.
 import SwiftUI
 
-struct Commands: Commands {
+@MainActor
+struct AppCommands: Commands {
     @Environment(\.openWindow) private var openWindow
     let store: AppStore
     let showRibbon: () -> Void

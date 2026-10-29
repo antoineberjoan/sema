@@ -27,7 +27,28 @@ extension AppStore {
 
     func deleteAlert(_ id: UUID) { mutatePreferences { $0.alerts.removeAll { $0.id == id }; $0.alertBaselineIDs?.remove(id) } }
 
-
+    func simulate(_ rule: AlertRule) {
+        guard preferences.notificationsEnabled,
+              let item = series.first(where: { $0.id == rule.seriesID }), item.canAlert,
+              isSourceEnabled(for: rule.seriesID) else { return }
+        let now = Date()
+        let step: Decimal = 0.1
+        let sign: Decimal = rule.direction == .fall ? -1 : 1
+        let sample = item.replacing(observations: [
+            .init(date: now.addingTimeInterval(-60), value: rule.threshold - sign * step),
+            .init(date: now, value: rule.threshold + sign * step)
+        ])
+        let testRule = AlertRule(id: rule.id, seriesID: rule.seriesID, direction: rule.direction,
+                                 threshold: rule.threshold, condition: .level)
+        guard let event = AlertEvaluator.evaluate(testRule, series: sample) else { return }
+        Task {
+            guard isSourceEnabled(for: rule.seriesID) else { return }
+            do {
+                try await notifications.send(title: item.name,
+                    body: "Test de notification : seuil de \(MarketFormat.number(rule.threshold, digits: item.fractionDigits)) \(item.displayUnit) franchi · observation du \(MarketFormat.date(event.observedAt)).")
+            } catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
+        }
+    }
 
     func evaluateAlerts(in values: [MarketSeries]) {
         var events: [AlertEvent] = []; var next = preferences; var advanced = false

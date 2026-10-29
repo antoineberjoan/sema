@@ -241,7 +241,7 @@ struct SettingsView: View {
         Form {
             Section {
                 HStack(spacing: Self.aboutSpacing) {
-                    Mark(size: Self.markSize)
+                    Symbol().frame(width: Self.markSize, height: Self.markSize)
                     VStack(alignment: .leading, spacing: Self.aboutTextSpacing) {
                         Text("sema").font(Self.nameFont)
                         Text("Gardez vos repères.").foregroundStyle(.secondary)
