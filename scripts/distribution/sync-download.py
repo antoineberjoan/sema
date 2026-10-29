@@ -66,7 +66,7 @@ def main():
     landing = replace_block(landing, "homebrew", markup)
     landing_page.write_text(landing)
     (args.site_dist / "download/release.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
-    print(f'Page synchronisée : sema {manifest["version"]} · {download['byteSize']} octets · {manifest["architecture"]} · {manifest["channel"]}')
+    print(f"Page synchronisée : sema {manifest['version']} · {download['byteSize']} octets · {manifest['architecture']} · {manifest['channel']}")
 
 
 if __name__ == "__main__":
