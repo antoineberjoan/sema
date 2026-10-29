@@ -51,12 +51,33 @@ struct MarketCatalogueTests {
             #expect(throws: MarketDataError.invalidData) { try MarketCatalogue.alpha(Data(text.utf8)) }
         }
     }
-    @Test func startersComeFromTheCatalogueOnly() {
-        func item(_ symbol: String, _ currency: String = "USD") -> MarketInstrument {
-            MarketInstrument(provider: .twelveData, symbol: symbol, name: symbol, exchange: "X", currency: currency, kind: "ETF")
+    @Test func popularStartersAreConsistentAcrossMarketProviders() {
+        let expected = ["AAPL", "MSFT", "NVDA", "TSLA", "SPY", "QQQ", "GOOGL", "AMZN", "META", "JPM",
+                        "V", "MA", "WMT", "COST", "NFLX", "AVGO", "AMD", "ORCL", "LLY", "XOM"]
+        for provider in MarketProvider.allCases {
+            let items = expected.map { symbol in
+                MarketInstrument(provider: provider, symbol: symbol, name: symbol, exchange: "X", currency: "USD",
+                                 kind: ["SPY", "QQQ"].contains(symbol) ? "ETF" : (provider == .alphaVantage ? "Stock" : "Common Stock"))
+            }
+            let catalogue = MarketCatalogue(instruments: items, scope: "")
+            #expect(catalogue.starters.map(\.symbol) == expected)
+            #expect(catalogue.starters.filter { $0.kind == "ETF" }.map(\.symbol) == ["SPY", "QQQ"])
+            #expect(catalogue.starters.allSatisfy { $0.provider == provider && $0.currency == "USD" })
         }
-        let catalogue = MarketCatalogue(instruments: [item("MSFT"), item("SPY", "EUR"), item("SPY"), item("ZZZ")], scope: "")
-        #expect(catalogue.starters.map(\.symbol) == ["SPY", "MSFT"])
-        #expect(catalogue.starters.first?.currency == "USD")
+    }
+    @Test func startersStayWithinTheMatchingCatalogueAndAssetType() {
+        func item(_ provider: MarketProvider = .twelveData, _ symbol: String, _ currency: String = "USD", _ kind: String = "Common Stock", _ exchange: String = "X") -> MarketInstrument {
+            MarketInstrument(provider: provider, symbol: symbol, name: symbol, exchange: exchange, currency: currency, kind: kind)
+        }
+        let catalogue = MarketCatalogue(instruments: [
+            item(.twelveData, "AAPL", "USD", "ETF"),
+            item(.twelveData, "AAPL", "EUR"),
+            item(.twelveData, "MSFT"),
+            item(.twelveData, "SPY", "USD", "ETF"),
+            item(.twelveData, "QQQ", "USD", "Common Stock"),
+            item(.alphaVantage, "NVDA", "USD", "Stock"),
+            item(.twelveData, "ZZZ")
+        ], scope: "")
+        #expect(catalogue.starters.map(\.symbol) == ["MSFT", "SPY"])
     }
 }

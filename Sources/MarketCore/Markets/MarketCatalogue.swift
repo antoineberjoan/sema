@@ -4,28 +4,29 @@ import Foundation
 public struct MarketCatalogue: Equatable, Sendable {
     public let instruments: [MarketInstrument]
     public let scope: String
-    // Repères américains courants, proposés seulement s’ils figurent au catalogue du forfait.
-    private static let twelveStarterSymbols: [String] = [
-        // ETF populaires
-        "SPY", "QQQ", "VTI", "VOO", "VXUS", "EFA", "IWM", "XLK", "XLF", "XLE",
-        // Actions tech
-        "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA",
-        // Autres secteurs
-        "JPM", "V", "WMT", "DIS", "BRK-A", "JNJ", "PG", "MA"
+    // Actions largement reconnues, suivies de deux ETF indiciels connus, selon le catalogue réel.
+    private static let starterSymbols = [
+        "AAPL", "MSFT", "NVDA", "TSLA", "SPY", "QQQ", "GOOGL", "AMZN", "META", "JPM",
+        "V", "MA", "WMT", "COST", "NFLX", "AVGO", "AMD", "ORCL", "LLY", "XOM"
     ]
-    // Favoris Alpha Vantage et Twelve Data : actions et ETF les plus suivis
-    private static let alphaStarterSymbols: [String] = [
-        // ETF populaires
-        "SPY", "QQQ", "VTI", "VOO", "VXUS", "EFA", "IWM", "XLK", "XLF", "XLE",
-        // Actions tech
-        "AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "META", "NVDA",
-        // Autres secteurs
-        "JPM", "V", "WMT", "DIS", "BRK-A", "JNJ", "PG", "MA"
-    ]
+    private static let starterETFs: Set<String> = ["SPY", "QQQ"]
 
     public var starters: [MarketInstrument] {
-        let symbols = instruments.contains { $0.provider == .alphaVantage } ? Self.alphaStarterSymbols : Self.twelveStarterSymbols
-        return symbols.compactMap { symbol in instruments.first { $0.symbol == symbol && $0.currency == "USD" } }
+        guard let provider = instruments.first?.provider else { return [] }
+        return Self.starterSymbols.compactMap { symbol in
+            instruments.filter { item in
+                let isExpectedType = Self.starterETFs.contains(symbol)
+                    ? item.kind.caseInsensitiveCompare("ETF") == .orderedSame
+                    : ["Stock", "Common Stock"].contains { item.kind.caseInsensitiveCompare($0) == .orderedSame }
+                return item.provider == provider && item.symbol == symbol && item.currency == "USD" && isExpectedType
+            }
+            .sorted {
+                let exchangeOrder = $0.exchange.localizedStandardCompare($1.exchange)
+                if exchangeOrder != .orderedSame { return exchangeOrder == .orderedAscending }
+                return $0.name.localizedStandardCompare($1.name) == .orderedAscending
+            }
+            .first
+        }
     }
 
     static func twelve(_ data: [String: Any], plan: String, kind: String?) throws -> [MarketInstrument] {
