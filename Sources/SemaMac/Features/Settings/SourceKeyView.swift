@@ -9,13 +9,21 @@ struct SourceKeyView: View {
     var didConnect: () -> Void = {}
 
     private static let fredSignupURL = URL(string: "https://fredaccount.stlouisfed.org/apikeys")!
+    private static let claudeSignupURL = URL(string: "https://console.anthropic.com/settings/keys")!
     private var provider: MarketProvider? { MarketProvider(rawValue: source) }
     private var isFRED: Bool { source == StatisticalSource.fred.rawValue }
-    private var title: String { isFRED ? StatisticalSource.fred.title : provider?.title ?? "Webstat" }
-    private var signupURL: URL { isFRED ? Self.fredSignupURL : provider?.signupURL ?? WebstatClient.loginURL }
-    private var connected: Bool { isFRED ? store.hasFREDKey : provider.map { store.connectedMarkets.contains($0) } ?? store.hasWebstatKey }
-    private var connecting: Bool { isFRED ? store.isConnectingFRED : provider.map { store.connectingMarkets.contains($0) } ?? store.isLoading }
-    private var error: String? { isFRED ? store.fredError : provider.map { store.marketErrors[$0] } ?? store.webstatError }
+    private var isClaude: Bool { source == AppStore.claudeSourceID }
+    private var title: String { isClaude ? "Claude" : isFRED ? StatisticalSource.fred.title : provider?.title ?? "Webstat" }
+    private var signupURL: URL { isClaude ? Self.claudeSignupURL : isFRED ? Self.fredSignupURL : provider?.signupURL ?? WebstatClient.loginURL }
+    private var connected: Bool {
+        isClaude ? store.hasClaudeKey : isFRED ? store.hasFREDKey : provider.map { store.connectedMarkets.contains($0) } ?? store.hasWebstatKey
+    }
+    private var connecting: Bool {
+        isClaude ? store.isConnectingClaude : isFRED ? store.isConnectingFRED : provider.map { store.connectingMarkets.contains($0) } ?? store.isLoading
+    }
+    private var error: String? {
+        isClaude ? store.claudeError : isFRED ? store.fredError : provider.map { store.marketErrors[$0] } ?? store.webstatError
+    }
     private var enabled: Bool { store.isSourceEnabled(source) }
     private var canConnect: Bool { !connecting && enabled && !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
@@ -45,6 +53,10 @@ struct SourceKeyView: View {
                 Text("Gratuite · VIX, taux américains quotidiens, dollar et calendrier des publications.")
                     .typeRole(.micro).foregroundStyle(.secondary)
             }
+            if isClaude {
+                Text("Payante à l’usage sur votre compte Anthropic · quelques centimes par synthèse.")
+                    .typeRole(.micro).foregroundStyle(.secondary)
+            }
             if !enabled {
                 Text("Activez \(title) dans les catalogues.").typeRole(.small).foregroundStyle(.secondary)
             }
@@ -60,7 +72,8 @@ struct SourceKeyView: View {
     private func connect() {
         guard canConnect else { return }
         Task {
-            let success = if isFRED { await store.connectFRED(key: key) }
+            let success = if isClaude { await store.connectClaude(key: key) }
+                else if isFRED { await store.connectFRED(key: key) }
                 else if let provider { await store.connectMarket(provider, key: key) }
                 else { await store.connectWebstat(apiKey: key) }
             if success { key = ""; didConnect() }
@@ -68,7 +81,8 @@ struct SourceKeyView: View {
     }
 
     private func remove() async {
-        if isFRED { await store.removeFREDKey() }
+        if isClaude { await store.removeClaudeKey() }
+        else if isFRED { await store.removeFREDKey() }
         else if let provider { await store.removeMarketKey(provider) } else { await store.removeWebstatKey() }
     }
 }

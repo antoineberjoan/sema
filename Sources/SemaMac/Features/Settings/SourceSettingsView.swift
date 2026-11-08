@@ -36,6 +36,18 @@ struct SourceSettingsView: View {
                 Text("Les titres restent des liens vers leurs éditeurs. Alpha Vantage utilise la clé déjà connectée et un appel de son quota quotidien. Conditions d’usage de GDELT à vérifier avant une diffusion large.")
                     .typeRole(.caption).foregroundStyle(.secondary)
             }
+            Section {
+                Picker("Rédacteur", selection: Binding(get: { store.summaryWriter }, set: { store.setSummaryWriter($0) })) {
+                    ForEach(SummaryWriter.allCases) { Text($0.title).tag($0) }
+                }
+                if store.summaryWriter == .appleIntelligence, !store.isAppleIntelligenceAvailable {
+                    Text(AppleSummaryWriter.UnavailableError().errorDescription ?? "").typeRole(.small).foregroundStyle(.secondary)
+                }
+                if store.summaryWriter == .claude { SourceKeyView(source: AppStore.claudeSourceID) }
+            } header: { Text("Synthèse rédigée") } footer: {
+                Text("Désactivée par défaut. Apple Intelligence rédige sur ce Mac, sans réseau. Claude reçoit seulement les faits numérotés de la séance (repères, variations, titres), jamais votre profil ni vos autres clés. Une phrase n’est affichée que si ses chiffres et son sens se retrouvent dans les faits qu’elle cite.")
+                    .typeRole(.caption).foregroundStyle(.secondary)
+            }
         }
         .formStyle(.grouped)
         .task { await store.checkMarketKeys() }

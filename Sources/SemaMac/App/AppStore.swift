@@ -56,6 +56,12 @@ final class AppStore {
     var hasFREDKey = false
     var isConnectingFRED = false
     var fredError: String?
+    let claudeKeychain = SourceKeychain(sourceID: AppStore.claudeSourceID, title: "Claude")
+    var hasClaudeKey = false
+    var isConnectingClaude = false
+    var claudeError: String?
+    /// Verified summaries of a session, kept in memory only, keyed by session and writer.
+    var summaries: [String: SummaryCheck] = [:]
     /// Facts of a session, kept in memory for the session only; never written to disk.
     var dayContexts: [String: DayContext] = [:]
     var isContextPresented = false

@@ -24,6 +24,8 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var moveSensitivityID: String?
     /// Source of the headlines of the day; absent means GDELT.
     public var headlineSourceID: String?
+    /// Writer of the summary of a session; absent means off.
+    public var summaryWriterID: String?
 
     public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
                 alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "brand", appearanceID: String? = nil,
@@ -48,7 +50,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case schemaVersion, favoriteIDs, followedSeriesIDs, alerts, notificationsEnabled, themeID, appearanceID, onboardingCompleted, ribbonPositionID
-        case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass, shortcuts, periodID, moveSensitivityID, headlineSourceID
+        case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass, shortcuts, periodID, moveSensitivityID, headlineSourceID, summaryWriterID
     }
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -69,6 +71,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         periodID = try values.decodeIfPresent(String.self, forKey: .periodID)
         moveSensitivityID = try values.decodeIfPresent(String.self, forKey: .moveSensitivityID)
         headlineSourceID = try values.decodeIfPresent(String.self, forKey: .headlineSourceID)
+        summaryWriterID = try values.decodeIfPresent(String.self, forKey: .summaryWriterID)
         // Empty is a valid v2 selection; absence only means legacy v1.
         if schemaVersion > 1 { followedSeriesIDs = try values.decode([String].self, forKey: .followedSeriesIDs) }
         else { followedSeriesIDs = WebstatClient.starterIDs }

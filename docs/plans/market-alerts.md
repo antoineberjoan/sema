@@ -48,7 +48,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 9. Lecteur XML partagé, flux Fed et BCE, tests sur fichiers d’exemple.
 - [x] 10. Titres GDELT et Alpha Vantage News, tests.
 - [x] 11. Contexte du jour et inspecteur « Faits ».
-- [ ] 12. Synthèse : garde-fou testé, deux rédacteurs, Réglages, onglet « Synthèse ».
+- [x] 12. Synthèse : garde-fou testé, deux rédacteurs, Réglages, onglet « Synthèse ».
 - [ ] 13. Brief du matin : composition, programmation, notification, rubrique.
 - [ ] 14. Documentation, état Notion, description et checklist de la PR.
 
@@ -68,6 +68,7 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 - Étape 9 (8 novembre) : le lecteur XML privé du décodeur SDMX devient `XMLTree`, partagé (entités refusées, CDATA lu). `PressReleaseClient` lit les flux RSS ou Atom de la Fed et de la BCE (`CentralBankFeed`), garde les entrées datées avec un lien https et les trie. Interrupteurs dans Réglages → Sources, via `disabledSourceIDs`. Trois tests dans `PressReleaseClientTests`. Adresses des flux non appelées ici.
 - Étape 10 (8 novembre) : `Headline`, `HeadlineSource` (GDELT par défaut, Alpha Vantage News, aucune) et `headlineSourceID` optionnel. `GDELTClient` interroge la fenêtre de la séance en anglais, sans clé ; `MarketDataClient.news` réutilise la clé, l’espacement et les erreurs d’Alpha Vantage. Liens https seulement. Choix dans Réglages → Sources. Trois tests dans `HeadlineTests`. Conditions d’usage de GDELT non vérifiées.
 - Étape 11 (8 novembre) : `DayContext` (repères liés via `PeerMove`, calendrier FRED `releases/dates`, communiqués, titres, parties indisponibles nommées), fenêtre UTC de la séance. `AppStore.dayContext` charge chaque partie indépendamment et garde le résultat en mémoire pour la session. Focus : bouton « Pourquoi ? » et inspecteur natif `MoveContextView`. Trois tests dans `DayContextTests`.
+- Étape 12 (8 novembre) : `ContextFact` numérote les faits de la séance (mouvement du repère, repères liés, agenda, communiqués, titres). `SummaryCheck` ne garde une phrase que si elle cite des faits existants, si chaque chiffre s’y retrouve (arrondi permis, date de séance exclue, chiffres des noms tolérés), si ses mots de hausse ou de baisse correspondent au sens d’un fait cité et si elle n’affirme aucune cause ; trois phrases au plus, phrases masquées comptées. `SummaryPrompt` est commun aux deux rédacteurs. `ClaudeClient` : un appel Messages en JSON contraint, modèle `claude-opus-5-5`, effort bas, repli serveur `fallbacks: "default"`, clé dans l’en-tête seulement, validée par la liste des modèles. `AppleSummaryWriter` : `FoundationModels` derrière `canImport` et macOS 26. `summaryWriterID` optionnel (désactivé par défaut) ; Réglages → Sources → Synthèse rédigée ; onglets « Faits / Synthèse » dans l’inspecteur, rédaction à la demande, résultat en mémoire par séance et rédacteur. Dix tests dans `SummaryTests`. Non vérifié : compilation Swift, appel réel à Claude, chemin Apple Intelligence, adresse de création de clé Anthropic.
 
 ## Limites connues
 
@@ -78,4 +79,4 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 ## Prochaine action
 
-Étape 12 : synthèse vérifiée et ses deux rédacteurs.
+Étape 13 : brief du matin (composition, programmation, notification, rubrique).

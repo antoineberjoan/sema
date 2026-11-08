@@ -11,6 +11,7 @@ extension AppStore {
             catch { marketErrors[provider] = "Le Trousseau n’a pas pu lire cette clé." }
         }
         await checkFREDKey()
+        await checkClaudeKey()
     }
 
     func connectMarket(_ provider: MarketProvider, key: String) async -> Bool {

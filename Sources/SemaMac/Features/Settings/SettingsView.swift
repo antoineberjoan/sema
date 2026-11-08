@@ -29,7 +29,7 @@ private extension SettingsTab {
         case .general: "notifications alertes seuils mouvements inhabituels sensibilité démarrage session lancement automatique arrière-plan"
         case .appearance: "thème palette couleurs système clair sombre position bandeau verre transparence teinte grain"
         case .shortcuts: "clavier touches hub navigation"
-        case .sources: "connexion clé api webstat banque france insee bce eurostat bis ocde fed banque mondiale"
+        case .sources: "connexion clé api webstat banque france insee bce eurostat bis ocde fed banque mondiale fred titres communiqués synthèse claude apple intelligence"
         case .about: "version soutien ko-fi aide"
         case .profile: "profil prénom nom photo identité"
         }
