@@ -7,7 +7,7 @@ extension AppStore {
         guard isSourceEnabled(source.rawValue) else { throw CancellationError() }
         let generation = sourceGenerations[source.rawValue]
         if !reload, let cached = statisticalCatalogues[source.rawValue] { return cached }
-        let datasets = try await StatisticalClient().datasets(source: source)
+        let datasets = try await statisticalClient().datasets(source: source)
         try Task.checkCancellation()
         guard isSourceEnabled(source.rawValue), generation == sourceGenerations[source.rawValue] else { throw CancellationError() }
         statisticalCatalogues[source.rawValue] = datasets

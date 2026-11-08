@@ -8,7 +8,7 @@ public struct StatisticalClient: Sendable {
     static let fullHistoryStart = "2000-01-01"
     static let measurePrefix = "MEASURE:"
     public enum ClientError: Error, LocalizedError {
-        case unavailable, quotaReached, invalidData, noData, metadataChanged, chooseOneSeries, invalidKey, unsupportedPeriod, catalogueTooLarge
+        case unavailable, quotaReached, invalidData, noData, metadataChanged, chooseOneSeries, invalidKey, unsupportedPeriod, catalogueTooLarge, missingAPIKey, rejectedAPIKey
         public var errorDescription: String? {
             switch self {
             case .unavailable: "La source est indisponible. Les observations précédentes restent conservées."
@@ -20,10 +20,16 @@ public struct StatisticalClient: Sendable {
             case .invalidKey: "Choisissez une valeur pour chaque dimension, ou renseignez une clé exacte valide."
             case .unsupportedPeriod: "La source utilise une période que Sema ne sait pas encore lire. L’historique n’est pas présenté comme complet."
             case .catalogueTooLarge: "Ce catalogue est trop volumineux. Précisez le repère dans Recherche avancée."
+            case .missingAPIKey: "Connectez votre clé FRED gratuite dans Réglages → Sources."
+            case .rejectedAPIKey: "FRED refuse cette clé. Vérifiez-la dans Réglages → Sources ; les observations précédentes restent conservées."
             }
         }
     }
-    public init() {}
+    /// Personal FRED key, added to FRED requests only at sending time so request builders and logs never hold it.
+    private let fredKey: String?
+    public init(fredKey: String? = nil) { self.fredKey = fredKey }
+    /// FRED returns at most 1 000 series per page; a release is listed by popularity, most used first.
+    static let fredPageLimit = 1000
 
     // Bound the XML tree and the list held in memory; never present a truncated catalogue.
     private static let seriesCatalogueByteLimit = 20 * 1024 * 1024
@@ -38,6 +44,7 @@ public struct StatisticalClient: Sendable {
         case .oecd: path = "/dataflow/all/all/latest?references=none"
         case .newYorkFed: path = "/all/latest.json"
         case .worldBank: path = "/indicator?format=json&per_page=20000&page=1"
+        case .fred: path = "/releases?file_type=json&limit=\(fredPageLimit)"
         }
         return request(source: source, path: path, structure: true)
     }
@@ -45,6 +52,7 @@ public struct StatisticalClient: Sendable {
         let data = try await download(Self.catalogueRequest(source))
         if source.isSDMX { return try SDMXParser.datasets(data, source: source) }
         if source == .newYorkFed { return try Self.fedDatasets(data) }
+        if source == .fred { return try Self.fredDatasets(data) }
         var (metadata, rows) = try Self.bankResponse(data)
         var datasets = Self.bankDatasets(rows)
         let pages = Int(metadata["pages"]?.text ?? "1") ?? 1
@@ -64,6 +72,10 @@ public struct StatisticalClient: Sendable {
             let fields = dataset.metadata.keys.filter { $0.hasPrefix(Self.measurePrefix) }.sorted()
             return .init(dimensions: [.init(id: "MEASURE", title: "Mesure", position: 1,
                 codes: fields.map { .init(id: String($0.dropFirst(Self.measurePrefix.count)), title: dataset.metadata[$0]!) })], labels: [:])
+        }
+        if dataset.source == .fred {
+            let data = try await download(Self.fredReleaseSeriesRequest(dataset))
+            return .init(dimensions: [.init(id: "SERIES", title: "Série", position: 1, codes: try Self.fredSeriesCodes(data))], labels: [:])
         }
         if dataset.source == .worldBank {
             let data = try await download(Self.request(source: .worldBank, path: "/country?format=json&per_page=1000", structure: true))
@@ -135,6 +147,9 @@ public struct StatisticalClient: Sendable {
             let route = dataset.metadata["ROUTE"] ?? "all"
             return request(source: source, path: "/\(route)/search.json?startDate=\(fullHistory ? Self.fullHistoryStart : day(start))&endDate=\(day(now))")
         }
+        if source == .fred {
+            return request(source: source, path: "/series/observations?series_id=\(component(key))&file_type=json" + (fullHistory ? "" : "&observation_start=\(day(start))"))
+        }
         if source == .worldBank {
             let period = fullHistory ? "" : "&date=\(calendar.component(.year, from: start)):\(calendar.component(.year, from: now))"
             return request(source: source, path: "/country/\(component(key))/indicator/\(component(dataset.code))?format=json&per_page=20000\(period)&source=\(component(dataset.agency))")
@@ -154,11 +169,21 @@ public struct StatisticalClient: Sendable {
         if dataset.source.isSDMX, key.split(separator: ".", omittingEmptySubsequences: false).count != structure.dimensions.count { throw ClientError.invalidKey }
         let request = try Self.observationsRequest(dataset: dataset, key: key, fullHistory: fullHistory, now: now)
         let data = try await download(request)
+        if dataset.source == .fred {
+            let metadata = try await download(Self.fredSeriesRequest(key: key))
+            return try Self.fredSeries(observations: data, metadata: metadata, dataset: dataset, key: key, fullHistory: fullHistory, now: now)
+        }
         return try Self.parse(data, dataset: dataset, structure: structure, key: key, fullHistory: fullHistory, now: now)
     }
+    /// Loads the current observations of a chosen series, whatever its measurement; callers compare it themselves.
+    public func observations(for descriptor: StatisticalSeriesDescriptor, fullHistory: Bool = false, now: Date = .now) async throws -> MarketSeries {
+        // A FRED series is named by its own identifier: its release list is not needed to refresh it.
+        let structure = descriptor.dataset.source == .fred ? StatisticalStructure(dimensions: [], labels: [:])
+            : try await structure(dataset: descriptor.dataset)
+        return try await fetch(dataset: descriptor.dataset, structure: structure, key: descriptor.key, fullHistory: fullHistory, now: now)
+    }
     public func fetch(_ descriptor: StatisticalSeriesDescriptor, fullHistory: Bool = false, now: Date = .now) async throws -> MarketSeries {
-        let structure = try await structure(dataset: descriptor.dataset)
-        let value = try await fetch(dataset: descriptor.dataset, structure: structure, key: descriptor.key, fullHistory: fullHistory, now: now)
+        let value = try await observations(for: descriptor, fullHistory: fullHistory, now: now)
         guard let next = value.statisticalDescriptor, descriptor.usesSameMeasurement(as: next) else { throw ClientError.metadataChanged }
         return value
     }
@@ -170,16 +195,32 @@ public struct StatisticalClient: Sendable {
             return series
         }
         if dataset.source == .newYorkFed { return try fedSeries(data, dataset: dataset, key: key, fullHistory: fullHistory, now: now) }
+        if dataset.source == .fred { throw ClientError.invalidData } // Needs the series metadata too: use `fredSeries`.
         return try bankSeries(data, dataset: dataset, key: key, fullHistory: fullHistory, now: now)
     }
 
     private func download(_ request: URLRequest) async throws -> Data {
+        var request = request
+        let isFRED = request.url?.absoluteString.hasPrefix(StatisticalSource.fred.baseURL) == true
+        if isFRED {
+            // FRED documents only the `api_key` query parameter; the URL is never logged nor cached.
+            guard let fredKey, !fredKey.isEmpty, let url = request.url,
+                  var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { throw ClientError.missingAPIKey }
+            components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "api_key", value: fredKey)]
+            request.url = components.url
+        }
         let session = URLSession(configuration: .ephemeral)
         defer { session.finishTasksAndInvalidate() }
         let (data, response) = try await session.data(for: request)
         try Task.checkCancellation()
+        if isFRED, (response as? HTTPURLResponse)?.statusCode == 400 { throw ClientError.rejectedAPIKey }
         try Self.validate(response)
         return data
+    }
+
+    /// Checks a FRED key with one small request before it is saved.
+    public func validateFREDKey() async throws {
+        _ = try await download(Self.fredSeriesRequest(key: "DGS10"))
     }
     private static func validate(_ response: URLResponse) throws {
         guard let http = response as? HTTPURLResponse else { throw ClientError.unavailable }
@@ -288,6 +329,67 @@ public struct StatisticalClient: Sendable {
         if let unit = dataset.metadata["UNIT"], !unit.isEmpty { fields["UNIT"] = unit == "%" ? "PC" : unit; fields["UNIT_MULT"] = "0"; labels["UNIT"] = unit }
         if let first = rows.first, case .object(let country) = first["country"] { labels["REF_AREA"] = country["value"]?.text }
         let descriptor = StatisticalSeriesDescriptor(dataset: dataset, key: canonicalCountry, dimensionIDs: ["REF_AREA"], fields: fields, labels: labels)
+        return descriptor.series(observations: points, syncedAt: now, completeHistory: fullHistory)
+    }
+
+    // MARK: FRED
+
+    static func fredReleaseSeriesRequest(_ dataset: StatisticalDataset) -> URLRequest {
+        request(source: .fred, path: "/release/series?release_id=\(component(dataset.code))&file_type=json&limit=\(fredPageLimit)&order_by=popularity&sort_order=desc")
+    }
+    static func fredSeriesRequest(key: String) -> URLRequest {
+        request(source: .fred, path: "/series?series_id=\(component(key))&file_type=json")
+    }
+    private static func fredObject(_ data: Data) throws -> [String: WebstatValue] {
+        guard let root = try? JSONDecoder().decode([String: WebstatValue].self, from: data) else { throw ClientError.invalidData }
+        return root
+    }
+    private static func fredRows(_ data: Data, key: String) throws -> [[String: WebstatValue]] {
+        guard case .array(let values) = try fredObject(data)[key] else { throw ClientError.invalidData }
+        return values.compactMap { if case .object(let row) = $0 { row } else { nil } }
+    }
+    static func fredDatasets(_ data: Data) throws -> [StatisticalDataset] {
+        try fredRows(data, key: "releases").compactMap { row in
+            guard let id = row["id"]?.text, let name = row["name"]?.text else { return nil }
+            return .init(source: .fred, code: id, agency: "FRED", version: "1", title: name, detail: row["notes"]?.text ?? "")
+        }.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+    }
+    static func fredSeriesCodes(_ data: Data) throws -> [StatisticalCode] {
+        try fredRows(data, key: "seriess").compactMap { row in
+            guard let id = row["id"]?.text, let title = row["title"]?.text else { return nil }
+            let detail = [row["units_short"]?.text, row["frequency_short"]?.text].compactMap { $0 }.joined(separator: " · ")
+            return .init(id: id, title: detail.isEmpty ? title : "\(title) · \(detail)")
+        }
+    }
+    /// FRED units become the same unit codes as the other sources, so alerts and variations follow one contract.
+    static func fredUnit(_ units: String) -> (code: String, multiplier: String) {
+        let text = units.lowercased()
+        if text.hasPrefix("percent") { return ("PC", "0") }
+        if text.hasPrefix("index") { return ("IX", "0") }
+        if text.hasPrefix("billions of u.s. dollars") || text.hasPrefix("billions of dollars") { return ("USD", "9") }
+        if text.hasPrefix("millions of u.s. dollars") || text.hasPrefix("millions of dollars") { return ("USD", "6") }
+        if text.hasPrefix("u.s. dollars") { return ("USD", "0") }
+        return (units, "0")
+    }
+    public static func fredSeries(observations: Data, metadata: Data, dataset: StatisticalDataset, key: String,
+                                  fullHistory: Bool = false, now: Date = .now) throws -> MarketSeries {
+        guard let info = try fredRows(metadata, key: "seriess").first, info["id"]?.text?.caseInsensitiveCompare(key) == .orderedSame,
+              let title = info["title"]?.text else { throw ClientError.invalidData }
+        let points = try fredRows(observations, key: "observations").compactMap { row -> MarketObservation? in
+            // FRED marks a missing value with ".", for example on a market holiday.
+            guard let dateText = row["date"]?.text, let period = SDMXParser.period(dateText), period.start <= now,
+                  let raw = row["value"]?.text, raw != ".", let value = SDMXParser.decimal(raw) else { return nil }
+            return .init(date: period.start, value: value)
+        }
+        guard !points.isEmpty else { throw ClientError.noData }
+        let units = info["units"]?.text ?? ""
+        let unit = fredUnit(units)
+        let frequency = info["frequency_short"]?.text ?? ""
+        let fields = ["TITLE": title, "FREQ": frequency == "D" ? "B" : frequency, "UNIT": unit.code, "UNIT_MULT": unit.multiplier,
+                      "DECIMALS": "2", "TITLE_COMPL": info["notes"]?.text ?? dataset.detail]
+        let canonical = info["id"]?.text ?? key
+        let descriptor = StatisticalSeriesDescriptor(dataset: dataset, key: canonical, dimensionIDs: ["SERIES"], fields: fields,
+                                                     labels: ["UNIT": units])
         return descriptor.series(observations: points, syncedAt: now, completeHistory: fullHistory)
     }
 }

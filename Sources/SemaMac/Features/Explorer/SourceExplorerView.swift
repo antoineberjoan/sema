@@ -86,6 +86,7 @@ struct SourceExplorerView: View {
         case .oecd: return "Économies et comparaisons internationales"
         case .newYorkFed: return "Taux de référence américains"
         case .worldBank: return "Indicateurs et économies du monde"
+        case .fred: return "Marchés et taux américains, VIX, dollar"
         }
     }
 }
@@ -368,7 +369,7 @@ private struct StatisticalExplorerView: View {
         let id = selected.id; loadingStructure = true
         defer { if selectedID == id { loadingStructure = false } }
         do {
-            let client = StatisticalClient()
+            let client = await store.statisticalClient()
             let value = try await client.structure(dataset: selected)
             try Task.checkCancellation(); guard selectedID == id else { return }
             structure = value

@@ -133,7 +133,7 @@ extension AppStore {
         let requestID = UUID().uuidString; statisticalPreviewRequest = requestID; isLoadingPreview = true
         previewTask = Task {
             do {
-                let value = try await StatisticalClient().fetch(dataset: dataset, structure: structure, key: key)
+                let value = try await statisticalClient().fetch(dataset: dataset, structure: structure, key: key)
                 try Task.checkCancellation()
                 guard statisticalPreviewRequest == requestID else { return }
                 if let old = series.first(where: { $0.id == value.id }),

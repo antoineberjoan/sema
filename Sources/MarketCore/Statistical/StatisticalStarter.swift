@@ -24,6 +24,7 @@ public struct StatisticalStarter: Equatable, Sendable, Identifiable {
         case .oecd: oecd
         case .newYorkFed: newYorkFed
         case .worldBank: worldBank
+        case .fred: fred
         }
     }
 
@@ -168,6 +169,15 @@ public struct StatisticalStarter: Equatable, Sendable, Identifiable {
         ("SP.URB.TOTL.IN.ZS", "Population urbaine"),
         ("SP.RUR.TOTL.ZS", "Population rurale")
     ]
+    /// FRED release identifiers: 18 = H.15 taux, 17 = H.10 change, 200 = Cboe (à vérifier avec une clé).
+    private static let fred: [StatisticalStarter] = [
+        item(.fred, "FRED", "200", "VIXCLS", "VIX · volatilité du S&P 500"),
+        item(.fred, "FRED", "18", "DGS10", "Treasury américain 10 ans · quotidien"),
+        item(.fred, "FRED", "18", "DGS2", "Treasury américain 2 ans · quotidien"),
+        item(.fred, "FRED", "17", "DTWEXBGS", "Dollar · indice large pondéré"),
+        item(.fred, "FRED", "17", "DEXUSEU", "Euro / Dollar · FRED"),
+    ]
+
     private static var worldBank: [StatisticalStarter] {
         worldBankIndicators.map { code, title in item(.worldBank, "2", code, "FR", "France · \(title)") }
     }

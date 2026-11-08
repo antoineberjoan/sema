@@ -52,6 +52,10 @@ final class AppStore {
     let marketClients = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, MarketDataClient(provider: $0)) })
     let marketKeychains = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, SourceKeychain(sourceID: $0.rawValue, title: $0.title)) })
     var connectedMarkets: Set<MarketProvider> = []
+    let fredKeychain = SourceKeychain(sourceID: StatisticalSource.fred.rawValue, title: StatisticalSource.fred.title)
+    var hasFREDKey = false
+    var isConnectingFRED = false
+    var fredError: String?
     var connectingMarkets: Set<MarketProvider> = []
     var marketErrors: [MarketProvider: String] = [:]
     var didCheckMarketKeys = false

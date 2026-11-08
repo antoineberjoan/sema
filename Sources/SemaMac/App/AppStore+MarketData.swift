@@ -10,6 +10,7 @@ extension AppStore {
             do { if try await marketKeychains[provider]?.read() != nil { connectedMarkets.insert(provider) } }
             catch { marketErrors[provider] = "Le Trousseau n’a pas pu lire cette clé." }
         }
+        await checkFREDKey()
     }
 
     func connectMarket(_ provider: MarketProvider, key: String) async -> Bool {

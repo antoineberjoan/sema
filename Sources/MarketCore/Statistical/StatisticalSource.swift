@@ -2,15 +2,17 @@
 import Foundation
 
 public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifiable {
-    case insee, ecb, eurostat, bis, oecd, newYorkFed, worldBank
+    case insee, ecb, eurostat, bis, oecd, newYorkFed, worldBank, fred
     public var id: String { rawValue }
     /// Sources de niche pour un conseiller : proposées dans les réglages, inactives à la première ouverture.
-    public static let inactiveByDefault: Set<String> = [StatisticalSource.bis, .oecd, .newYorkFed, .worldBank].reduce(into: []) { $0.insert($1.rawValue) }
+    public static let inactiveByDefault: Set<String> = [StatisticalSource.bis, .oecd, .newYorkFed, .worldBank, .fred].reduce(into: []) { $0.insert($1.rawValue) }
     public var title: String {
         switch self { case .insee: "Insee"; case .ecb: "BCE"; case .eurostat: "Eurostat"
-        case .bis: "BRI"; case .oecd: "OCDE"; case .newYorkFed: "Fed de New York"; case .worldBank: "Banque mondiale" }
+        case .bis: "BRI"; case .oecd: "OCDE"; case .newYorkFed: "Fed de New York"; case .worldBank: "Banque mondiale"; case .fred: "FRED" }
     }
-    public var isSDMX: Bool { ![.newYorkFed, .worldBank].contains(self) }
+    public var isSDMX: Bool { ![.newYorkFed, .worldBank, .fred].contains(self) }
+    /// FRED needs a free personal key, kept in the Keychain and sent only to its host.
+    public var requiresKey: Bool { self == .fred }
     public var baseURL: String {
         switch self {
         case .insee: "https://bdm.insee.fr/series/sdmx"
@@ -20,6 +22,7 @@ public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifi
         case .oecd: "https://sdmx.oecd.org/public/rest/v1"
         case .newYorkFed: "https://markets.newyorkfed.org/api/rates"
         case .worldBank: "https://api.worldbank.org/v2"
+        case .fred: "https://api.stlouisfed.org/fred"
         }
     }
     public var website: URL {
@@ -31,6 +34,7 @@ public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifi
         case .oecd: "https://data-explorer.oecd.org"
         case .newYorkFed: "https://www.newyorkfed.org/markets/reference-rates"
         case .worldBank: "https://data.worldbank.org"
+        case .fred: "https://fred.stlouisfed.org"
         }
         return URL(string: address)!
     }
@@ -43,6 +47,7 @@ public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifi
         case .oecd: "https://www.oecd.org/en/about/terms-conditions.html"
         case .newYorkFed: "https://www.newyorkfed.org/privacy/termsofuse.html"
         case .worldBank: "https://data.worldbank.org/summary-terms-of-use"
+        case .fred: "https://fred.stlouisfed.org/legal/"
         }
         return URL(string: address)!
     }
@@ -50,6 +55,7 @@ public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifi
         switch self {
         case .newYorkFed: "Taux de référence, moyennes, indices, percentiles et volumes publiés. Les opérations de marché ne sont pas des séries de taux et ne sont pas intégrées ici."
         case .worldBank: "Catalogue des indicateurs publics · choix du pays ou de l’agrégat."
+        case .fred: "Publications de la Fed de Saint-Louis · choisissez une publication puis une série. Clé personnelle gratuite."
         default: "Catalogue publié par la source · choisissez un jeu puis une combinaison de dimensions."
         }
     }
@@ -61,6 +67,7 @@ public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifi
         case .bis: "Source : BRI. L’inclusion de ces statistiques dans un produit ne doit pas entraîner de supplément facturé à l’utilisateur."
         case .oecd: "Source : OCDE. Vérifier les restrictions propres au jeu et aux données de tiers."
         case .worldBank: "Source : Banque mondiale. CC BY 4.0, sauf restrictions indiquées pour les données de tiers."
+        case .fred: "Source : FRED, Federal Reserve Bank of St. Louis. Certaines séries restent la propriété de leur producteur et demandent une citation (par exemple le VIX, © Cboe)."
         case .newYorkFed: "The reference rate data is subject to the Terms of Use posted at newyorkfed.org. The New York Fed is not responsible for publication of the reference rate data by Sema, does not endorse any particular republication, and has no liability for your use. Sema is not affiliated with the New York Fed. The New York Fed does not sanction, endorse, or recommend any products or services offered by Sema."
         }
     }

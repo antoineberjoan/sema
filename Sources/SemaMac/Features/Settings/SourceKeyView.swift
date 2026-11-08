@@ -8,12 +8,14 @@ struct SourceKeyView: View {
     let source: String
     var didConnect: () -> Void = {}
 
+    private static let fredSignupURL = URL(string: "https://fredaccount.stlouisfed.org/apikeys")!
     private var provider: MarketProvider? { MarketProvider(rawValue: source) }
-    private var title: String { provider?.title ?? "Webstat" }
-    private var signupURL: URL { provider?.signupURL ?? WebstatClient.loginURL }
-    private var connected: Bool { provider.map { store.connectedMarkets.contains($0) } ?? store.hasWebstatKey }
-    private var connecting: Bool { provider.map { store.connectingMarkets.contains($0) } ?? store.isLoading }
-    private var error: String? { provider.map { store.marketErrors[$0] } ?? store.webstatError }
+    private var isFRED: Bool { source == StatisticalSource.fred.rawValue }
+    private var title: String { isFRED ? StatisticalSource.fred.title : provider?.title ?? "Webstat" }
+    private var signupURL: URL { isFRED ? Self.fredSignupURL : provider?.signupURL ?? WebstatClient.loginURL }
+    private var connected: Bool { isFRED ? store.hasFREDKey : provider.map { store.connectedMarkets.contains($0) } ?? store.hasWebstatKey }
+    private var connecting: Bool { isFRED ? store.isConnectingFRED : provider.map { store.connectingMarkets.contains($0) } ?? store.isLoading }
+    private var error: String? { isFRED ? store.fredError : provider.map { store.marketErrors[$0] } ?? store.webstatError }
     private var enabled: Bool { store.isSourceEnabled(source) }
     private var canConnect: Bool { !connecting && enabled && !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
@@ -39,6 +41,10 @@ struct SourceKeyView: View {
                 }
             }.typeRole(.small).buttonStyle(.link)
             if let provider { Text(provider.quota).typeRole(.micro).foregroundStyle(.secondary) }
+            if isFRED {
+                Text("Gratuite · VIX, taux américains quotidiens, dollar et calendrier des publications.")
+                    .typeRole(.micro).foregroundStyle(.secondary)
+            }
             if !enabled {
                 Text("Activez \(title) dans les catalogues.").typeRole(.small).foregroundStyle(.secondary)
             }
@@ -54,13 +60,15 @@ struct SourceKeyView: View {
     private func connect() {
         guard canConnect else { return }
         Task {
-            let success = if let provider { await store.connectMarket(provider, key: key) }
+            let success = if isFRED { await store.connectFRED(key: key) }
+                else if let provider { await store.connectMarket(provider, key: key) }
                 else { await store.connectWebstat(apiKey: key) }
             if success { key = ""; didConnect() }
         }
     }
 
     private func remove() async {
-        if let provider { await store.removeMarketKey(provider) } else { await store.removeWebstatKey() }
+        if isFRED { await store.removeFREDKey() }
+        else if let provider { await store.removeMarketKey(provider) } else { await store.removeWebstatKey() }
     }
 }

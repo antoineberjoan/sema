@@ -49,6 +49,8 @@ public struct StatisticalSeriesDescriptor: Codable, Equatable, Sendable {
     public var variation: VariationConvention {
         if unit == .percent && multiplier == 0 { return .points }
         if dataset.source == .ecb && dataset.code == "EXR" && multiplier == 0 && [.usd, .jpy, .chf, .gbp].contains(unit) { return .relativePercent }
+        // FRED market series (VIX, dollar index, prices) are compared in percent, like any quoted level.
+        if dataset.source == .fred && multiplier == 0 && unit != .unknown { return .relativePercent }
         return .unavailable
     }
     public func usesSameMeasurement(as other: StatisticalSeriesDescriptor) -> Bool {

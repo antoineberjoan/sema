@@ -12,6 +12,7 @@ struct SourceSettingsView: View {
             ForEach(MarketProvider.allCases) { provider in
                 Section(provider.title) { SourceKeyView(source: provider.rawValue) }
             }
+            Section("FRED · Fed de Saint-Louis") { SourceKeyView(source: StatisticalSource.fred.rawValue) }
             Section("Catalogues") {
                 sourceRow(id: "webstat", title: "Banque de France · Webstat")
                 ForEach(MarketProvider.allCases) { provider in

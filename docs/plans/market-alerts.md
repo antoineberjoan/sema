@@ -44,7 +44,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 5. Cœur : mouvement inhabituel, sensibilité, tests.
 - [x] 6. Actualisation après clôture, tests de `RefreshPolicy`.
 - [x] 7. App : cloche, permission au premier clic, notification groupée, vue Alertes, réglage de sensibilité.
-- [ ] 8. Source FRED : client, clé, Réglages, suggestions (VIXCLS, DGS10, DTWEXBGS), tests.
+- [x] 8. Source FRED : client, clé, Réglages, suggestions (VIXCLS, DGS10, DTWEXBGS), tests.
 - [ ] 9. Lecteur XML partagé, flux Fed et BCE, tests sur fichiers d’exemple.
 - [ ] 10. Titres GDELT et Alpha Vantage News, tests.
 - [ ] 11. Contexte du jour et inspecteur « Faits ».
@@ -64,6 +64,7 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 - Étape 5 (8 novembre) : `UnusualMove` (variation de la séance divisée par l’écart-type des 20 variations précédentes, en points pour les taux, en % sinon ; refus si historique court, convention inconnue ou écart-type nul), `MoveSensitivity` (3×, 2×, 1,5×), condition `unusualMove`, `AlertRule.unusualMove`, `AlertEvent.ratio`, `moveSensitivityID` optionnel. `AlertEvaluator.newEvents` réutilise le point de contrôle. Quatre tests dans `UnusualMoveTests`.
 - Étape 6 (8 novembre) : `RefreshPolicy` connaît les clôtures des jours ouvrés (Paris 17 h 50, New York 16 h 20, heure locale de chaque place) ; une série surveillée devient à jour dès qu’une clôture est passée depuis sa synchronisation, et le minuteur se cale sur la prochaine clôture. `AppStore.followsCloses` relie ce rythme aux seules séries surveillées. Tests sur le jeudi 5 novembre et le week-end. Limite : si le fournisseur publie la clôture en retard, la séance est vue au contrôle suivant.
 - Étape 7 (8 novembre) : `WatchButton` (cloche « Me prévenir », clic = surveillance, menu « Ajouter un seuil… ») dans Focus, les aperçus et la vue Alertes ; entrée équivalente dans le menu contextuel de la sidebar. Le premier clic demande l’autorisation des notifications. « Surveiller vos N favoris ? » active tout en un clic. `evaluateAlerts` évalue seuils et mouvements et envoie une seule notification groupée (fil `sema.alerts`), une ligne par repère. `MoveBadge` colore l’écart en cinq zones de la sarcelle. Réglages → Général → Alertes : notifications et sensibilité (Discrète, Normale, Attentive) avec la fréquence théorique.
+- Étape 8 (8 novembre) : `StatisticalSource.fred` (clé obligatoire, inactive au départ). Catalogue = publications FRED, structure = séries de la publication par popularité, observations + fiche de la série ; unités converties (Percent → PC en points, Index → IX en %, milliards de dollars → USD × 10^9), valeurs manquantes « . » ignorées. La clé n’entre dans l’URL qu’à l’envoi (`api_key`), jamais dans les requêtes construites ; refus 400 → « clé refusée ». Clé dans le Trousseau, validée avant enregistrement, section FRED dans Réglages → Sources. Suggestions : VIXCLS, DGS10, DGS2, DTWEXBGS, DEXUSEU (identifiants de publication à vérifier avec une vraie clé). Quatre tests dans `FREDClientTests`.
 
 ## Limites connues
 
@@ -74,4 +75,4 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 ## Prochaine action
 
-Étape 8 : source FRED.
+Étape 9 : lecteur XML partagé et flux Fed/BCE.
