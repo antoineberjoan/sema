@@ -4,9 +4,8 @@ import Charts
 import MarketCore
 
 struct RibbonCard: View {
-    private static let contentSpacing: CGFloat = 9
-    private static let headingSpacing: CGFloat = 10
-    private static let valueTracking: CGFloat = -0.9
+    private static let contentSpacing = Spacing.s8
+    private static let headingSpacing = Spacing.s10
     private static let valueMinimumScale: CGFloat = 0.7
     private static let unitLines = 2
     private static let headingLines = 2
@@ -37,7 +36,7 @@ struct RibbonCard: View {
         }
         .buttonStyle(PressStyle())
         .onHover { hovered = $0 }
-        .animation(reduceMotion ? nil : .easeOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
+        .animation(reduceMotion ? nil : .easeInOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
         .help(MarketFormat.name(series) + " · Ouvrir le détail dans sema")
         .accessibilityLabel(accessibilityDescription)
     }
@@ -51,7 +50,7 @@ struct RibbonCard: View {
     private var value: some View {
         HStack(alignment: .firstTextBaseline, spacing: Theme.minorSpacing) {
             Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
-                .font(MenuRibbonLayout.valueFont).tracking(Self.valueTracking).monospacedDigit()
+                .typeRole(.figure)
                 .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
             Text(MarketFormat.unit(series)).typeRole(.caption).foregroundStyle(.secondary).lineLimit(Self.unitLines)
             Spacer(minLength: 0)

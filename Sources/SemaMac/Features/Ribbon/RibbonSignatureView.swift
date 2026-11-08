@@ -9,12 +9,14 @@ import SwiftUI
 // 1850 ms  « Gardez vos repères. » se pose avec un ressort amorti, sur 800 ms.
 // Réduire les animations : le cartouche est immédiatement dans son état final.
 private enum SignatureMotion {
-    static let drawDelay = 300
-    static let contextDelay = 1_250
-    static let missionDelay = 1_850
-    static let drawDuration = 1.8
-    static let textDuration = 0.8
-    static let textOffset: CGFloat = 4
+    // Mouvement 1.1: the line draws in 550 ms (seen at each opening, so kept short), then the point and the
+    // context fade in together, the mission follows after a 50 ms stagger. The whole sequence ends under 900 ms.
+    static let drawDelay = 100
+    static let drawDuration = Motion.explain
+    static let contextDelay = drawDelay + Int(drawDuration * 1_000)
+    static let missionDelay = contextDelay + Int(Motion.stagger * 1_000)
+    static let textDuration = Motion.standard
+    static let textOffset = Motion.shift
     static let markSize: CGFloat = 72
     static let lineWidth = SignalPath.stroke * markSize / SignalPath.viewBox
     static let drawStage = 1
@@ -23,15 +25,13 @@ private enum SignatureMotion {
 }
 
 struct RibbonSignatureView: View {
-    private static let titleFont = Font.system(size: 18, weight: .medium)
-    private static let titleTracking: CGFloat = -0.5
-    private static let titleTopPadding: CGFloat = 3
+    private static let titleTopPadding = Spacing.s4
     private static let markAreaHeight: CGFloat = 48
     private static let contextOpacity = 0.85
-    private static let feedbackPadding: CGFloat = 10
+    private static let feedbackPadding = Spacing.s10
     private static let feedbackHeight: CGFloat = 26
     private static let feedbackFillOpacity = 0.12
-    private static let feedbackTopPadding: CGFloat = 18
+    private static let feedbackTopPadding = Spacing.s16
     private static let backgroundTopOpacity = 0.85
     private static let backgroundBottomOpacity = 0.65
     private static let edgeTopOpacity = 0.22
@@ -50,21 +50,21 @@ struct RibbonSignatureView: View {
                 // The teal point settles once the line has arrived.
                 SignalDot().fill(Palette.brand.controlAccent)
                     .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
-                    .animation(reduceMotion ? nil : .easeOut(duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
+                    .animation(reduceMotion ? nil : Motion.easeOut(SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             }
                 .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
                 .frame(height: Self.markAreaHeight).accessibilityHidden(true)
-                .animation(reduceMotion ? nil : .easeInOut(duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
+                .animation(reduceMotion ? nil : Motion.easeInOut(SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
             Spacer(minLength: Theme.minorSpacing)
             Text("L’économie bouge.")
                 .typeRole(.small).foregroundStyle(.white.opacity(Self.contextOpacity))
                 .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
-                .animation(reduceMotion ? nil : .easeOut(duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
+                .animation(reduceMotion ? nil : Motion.easeOut(SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             Text("Gardez vos repères.")
-                .font(Self.titleFont).tracking(Self.titleTracking).padding(.top, Self.titleTopPadding)
+                .typeRole(.section).padding(.top, Self.titleTopPadding)
                 .opacity(stage >= SignatureMotion.missionStage ? 1 : 0)
                 .offset(y: stage >= SignatureMotion.missionStage || reduceMotion ? 0 : SignatureMotion.textOffset)
-                .animation(reduceMotion ? nil : .spring(response: SignatureMotion.textDuration, dampingFraction: 1), value: stage >= SignatureMotion.missionStage)
+                .animation(reduceMotion ? nil : Motion.easeOut(SignatureMotion.textDuration), value: stage >= SignatureMotion.missionStage)
             Button(action: openFeedback) {
                 Label("Une idée ou un bug ?", systemImage: "bubble.left")
                     .typeRole(.overline).padding(.horizontal, Self.feedbackPadding)

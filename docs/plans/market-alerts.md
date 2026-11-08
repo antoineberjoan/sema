@@ -36,7 +36,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 2b. Logo « repère » : fichiers source dans `Resources/Brand/`, géométrie unique dans `SignalPath.swift`, icône d’app (`scripts/render-icon.swift`), barre des menus, signature, DMG.
 - [x] 3a. Alignement : Workspace et sidebar.
 - [x] 3b. Alignement : Overview et Focus.
-- [ ] 3c. Alignement : bandeau et signature.
+- [x] 3c. Alignement : bandeau et signature.
 - [ ] 3d. Alignement : Favoris et Alertes.
 - [ ] 3e. Alignement : Explorer.
 - [ ] 3f. Alignement : Réglages et accueil.

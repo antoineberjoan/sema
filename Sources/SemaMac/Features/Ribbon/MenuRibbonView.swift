@@ -14,8 +14,8 @@ struct MenuRibbonView: View {
     private static let pickerWidth: CGFloat = 350
     private static let pickerHorizontalPadding: CGFloat = 10
     private static let pickerVerticalPadding: CGFloat = 3
-    private static let emptySpacing: CGFloat = 10
-    private static let emptyButtonTopPadding: CGFloat = 4
+    private static let emptySpacing = Spacing.s10
+    private static let emptyButtonTopPadding = Spacing.s4
     @Environment(AppStore.self) private var store
     let presentationID: UUID?
     let openWorkspace: () -> Void
