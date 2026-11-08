@@ -41,7 +41,7 @@ struct RibbonGlassSettingsView: View {
             }))
             .disabled(opaque)
 
-            Text(explanation).font(.callout).foregroundStyle(.secondary)
+            Text(explanation).typeRole(.small).foregroundStyle(.secondary)
             Button("Réinitialiser le verre") { store.setRibbonGlass(.standard) }
                 .disabled(store.ribbonGlass == .standard)
         }
@@ -62,7 +62,7 @@ struct RibbonGlassSettingsView: View {
                 .accessibilityLabel(title)
                 .accessibilityValue("\(Int((value.wrappedValue * 100).rounded())) %")
             Text(value.wrappedValue, format: .percent.precision(.fractionLength(0)))
-                .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+                .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
                 .frame(width: Self.valueWidth, alignment: .trailing).accessibilityHidden(true)
         }
     }

@@ -29,7 +29,7 @@ private struct IndicatorTile: View {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: compact ? Self.compactSpacing : Self.spacing) {
                     HStack(spacing: Self.titleSpacing) {
-                        Text(MarketFormat.name(displayed)).font(.body.weight(.medium)).lineLimit(1)
+                        Text(MarketFormat.name(displayed)).typeRole(.heading).lineLimit(1)
                         if !store.isSourceEnabled(for: series.id) { Image(systemName: "pause.circle").foregroundStyle(.secondary).help("Source désactivée · historique conservé") }
                     }
                     .padding(.trailing, series.exchangeRatePair == nil ? Self.singleActionInset : Self.doubleActionInset)
@@ -39,7 +39,7 @@ private struct IndicatorTile: View {
                             .tracking(Self.valueTracking).monospacedDigit().lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
                         Spacer(minLength: Self.valueSpacing)
                         Text(MarketFormat.change(displayed, period: .month))
-                            .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+                            .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
                             .lineLimit(1)
                     }
                 }

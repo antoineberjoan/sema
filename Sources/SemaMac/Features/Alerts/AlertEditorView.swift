@@ -16,7 +16,7 @@ struct AlertEditorView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Self.inset) {
-            Text("Créer une alerte").font(.title2.weight(.semibold))
+            Text("Créer une alerte").typeRole(.section)
             Grid(alignment: .leading, horizontalSpacing: Self.rowSpacing, verticalSpacing: Self.rowSpacing) {
                 GridRow {
                     Text("Repère").gridColumnAlignment(.trailing)
@@ -42,7 +42,7 @@ struct AlertEditorView: View {
             }
             if threshold == nil {
                 Text("Saisissez un nombre valide, par exemple 3,5.")
-                    .font(.callout).foregroundStyle(.red)
+                    .typeRole(.small).foregroundStyle(.red)
             }
             if let item {
                 VStack(alignment: .leading, spacing: Theme.minorSpacing) {
@@ -52,7 +52,7 @@ struct AlertEditorView: View {
                         Text(MarketFormat.value(item)).monospacedDigit()
                     }
                     Text("Vérification à l’actualisation des repères.")
-                        .font(.callout).foregroundStyle(.secondary)
+                        .typeRole(.small).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                         .help("Aucun contrôle quand sema est quittée ou le Mac en veille. La règle suit les nouvelles observations publiées.")
                 }

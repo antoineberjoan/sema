@@ -154,8 +154,8 @@ struct MenuRibbonView: View {
     private var emptyState: some View {
         VStack(spacing: Self.emptySpacing) {
             Image(systemName: "star").font(MenuRibbonLayout.emptySymbolFont).foregroundStyle(store.palette.accent)
-            Text("Vos repères, en un coup d’œil.").font(.title2.weight(.medium))
-            Text("Épinglez les repères à retrouver dans ce bandeau.").font(.callout).foregroundStyle(.secondary)
+            Text("Vos repères, en un coup d’œil.").typeRole(.section)
+            Text("Épinglez les repères à retrouver dans ce bandeau.").typeRole(.small).foregroundStyle(.secondary)
             Button("Choisir mes favoris") { store.section = .overview; openWorkspace() }
                 .buttonStyle(.borderedProminent).controlSize(.small).padding(.top, Self.emptyButtonTopPadding)
         }

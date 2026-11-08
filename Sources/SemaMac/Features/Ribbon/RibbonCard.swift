@@ -44,7 +44,7 @@ struct RibbonCard: View {
 
     private var heading: some View {
         HStack(spacing: Self.headingSpacing) {
-            Text(MarketFormat.name(series)).font(.body.weight(.medium)).lineLimit(Self.headingLines)
+            Text(MarketFormat.name(series)).typeRole(.heading).lineLimit(Self.headingLines)
             Spacer(minLength: 0)
         }
     }
@@ -53,7 +53,7 @@ struct RibbonCard: View {
             Text(series.latest.map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
                 .font(MenuRibbonLayout.valueFont).tracking(Self.valueTracking).monospacedDigit()
                 .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
-            Text(MarketFormat.unit(series)).font(.subheadline).foregroundStyle(.secondary).lineLimit(Self.unitLines)
+            Text(MarketFormat.unit(series)).typeRole(.caption).foregroundStyle(.secondary).lineLimit(Self.unitLines)
             Spacer(minLength: 0)
         }
     }
@@ -69,7 +69,7 @@ struct RibbonCard: View {
             .frame(height: Self.sparklineHeight).accessibilityHidden(true)
         } else {
             Text(points.isEmpty ? "Historique indisponible" : "Une observation disponible")
-                .font(.subheadline).foregroundStyle(.tertiary).frame(height: Self.sparklineHeight)
+                .typeRole(.caption).foregroundStyle(.tertiary).frame(height: Self.sparklineHeight)
         }
     }
     private var publication: some View {
@@ -78,7 +78,7 @@ struct RibbonCard: View {
             Spacer(minLength: 0)
             Text(series.latest.map { MarketFormat.date($0.date) } ?? "Aucune publication").lineLimit(1)
         }
-        .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+        .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
     }
     private var accessibilityDescription: String {
         let name = MarketFormat.name(series)

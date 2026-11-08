@@ -23,7 +23,7 @@ struct CatalogueSearchField: View {
                     .buttonStyle(.plain).accessibilityLabel("Effacer la recherche").help("Effacer la recherche")
             }
         }
-        .font(.title3).padding(Theme.rowPadding)
+        .typeRole(.subheading).padding(Theme.rowPadding)
         .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
         .onAppear { focused = true }
     }

@@ -34,8 +34,8 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 1. Canevas v2 : trois palettes, cinq logos, trois alternatives de période, écrans réalignés avec la palette recommandée.
 - [x] 2. Jetons du design system (espace, rayons, élévation, rôles typographiques, mouvement), palette d’Antoine par défaut, garde-fou typographique, tests de préférences.
 - [x] 2b. Logo « repère » : fichiers source dans `Resources/Brand/`, géométrie unique dans `SignalPath.swift`, icône d’app (`scripts/render-icon.swift`), barre des menus, signature, DMG.
-- [ ] 3a. Alignement : Workspace et sidebar.
-- [ ] 3b. Alignement : Overview et Focus.
+- [x] 3a. Alignement : Workspace et sidebar.
+- [x] 3b. Alignement : Overview et Focus.
 - [ ] 3c. Alignement : bandeau et signature.
 - [ ] 3d. Alignement : Favoris et Alertes.
 - [ ] 3e. Alignement : Explorer.

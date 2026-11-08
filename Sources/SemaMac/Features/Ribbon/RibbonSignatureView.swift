@@ -57,7 +57,7 @@ struct RibbonSignatureView: View {
                 .animation(reduceMotion ? nil : .easeInOut(duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
             Spacer(minLength: Theme.minorSpacing)
             Text("L’économie bouge.")
-                .font(.callout).foregroundStyle(.white.opacity(Self.contextOpacity))
+                .typeRole(.small).foregroundStyle(.white.opacity(Self.contextOpacity))
                 .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
                 .animation(reduceMotion ? nil : .easeOut(duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             Text("Gardez vos repères.")
@@ -67,7 +67,7 @@ struct RibbonSignatureView: View {
                 .animation(reduceMotion ? nil : .spring(response: SignatureMotion.textDuration, dampingFraction: 1), value: stage >= SignatureMotion.missionStage)
             Button(action: openFeedback) {
                 Label("Une idée ou un bug ?", systemImage: "bubble.left")
-                    .font(.subheadline.weight(.medium)).padding(.horizontal, Self.feedbackPadding)
+                    .typeRole(.overline).padding(.horizontal, Self.feedbackPadding)
                     .frame(height: Self.feedbackHeight).background(.white.opacity(Self.feedbackFillOpacity), in: Capsule())
             }
             .buttonStyle(PressStyle()).padding(.top, Self.feedbackTopPadding)

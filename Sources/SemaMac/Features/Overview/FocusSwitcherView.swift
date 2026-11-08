@@ -4,20 +4,18 @@ import MarketCore
 
 struct FocusSwitcherView: View {
     private static let panelMaxWidth: CGFloat = 700
-    private static let panelInset: CGFloat = 40
-    private static let panelSpacing: CGFloat = 12
-    private static let tilesPadding: CGFloat = 12
+    private static let panelInset = Spacing.s48
+    private static let panelSpacing = Spacing.s12
+    private static let tilesPadding = Spacing.s12
     private static let strokeOpacity = 0.08
     private static let contrastStrokeOpacity = 0.6
     private static let selectedStrokeOpacity = 0.6
     private static let tileWidth: CGFloat = 166
-    private static let tilePadding: CGFloat = 16
-    private static let tileSpacing: CGFloat = 14
+    private static let tilePadding = Spacing.s16
+    private static let tileSpacing = Spacing.s16
     private static let nameLines = 2
     private static let nameHeight: CGFloat = 32
-    private static let valueTracking: CGFloat = -0.6
     private static let valueMinimumScale: CGFloat = 0.75
-    private static let valueFont = Font.system(size: 24)
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -63,12 +61,12 @@ struct FocusSwitcherView: View {
         let selected = item.id == selection
         return Button { choose(item) } label: {
             VStack(alignment: .leading, spacing: Self.tileSpacing) {
-                Text(MarketFormat.name(displayed)).font(.callout.weight(.medium))
+                Text(MarketFormat.name(displayed)).typeRole(.label)
                     .lineLimit(Self.nameLines).multilineTextAlignment(.leading).frame(height: Self.nameHeight, alignment: .topLeading)
-                Text(MarketFormat.value(displayed)).font(Self.valueFont)
-                    .tracking(Self.valueTracking).monospacedDigit().lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
+                Text(MarketFormat.value(displayed)).typeRole(.figure)
+                    .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
                 Text(MarketFormat.change(displayed, period: store.period))
-                    .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+                    .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
             .foregroundStyle(.primary).frame(width: Self.tileWidth, alignment: .leading).padding(Self.tilePadding)
             .background(selected ? store.palette.accent.opacity(Theme.selectionOpacity) : .clear,

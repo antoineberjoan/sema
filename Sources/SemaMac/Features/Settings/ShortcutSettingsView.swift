@@ -16,7 +16,7 @@ struct ShortcutSettingsView: View {
                 shortcutRow(.ribbon, title: "Bandeau")
                 shortcutRow(.workspace, title: "Hub")
                 if let error = store.shortcutError {
-                    Text(error).font(.callout).foregroundStyle(.red)
+                    Text(error).typeRole(.small).foregroundStyle(.red)
                         .accessibilityLabel("Raccourci indisponible : " + error)
                 }
             }
@@ -35,7 +35,7 @@ struct ShortcutSettingsView: View {
             Text(title)
             Spacer()
             Button { store.setShortcut(ShortcutPreferences.standard[action], for: action) } label: {
-                Image(systemName: "arrow.counterclockwise").font(.subheadline)
+                Image(systemName: "arrow.counterclockwise").typeRole(.caption)
             }
             .buttonStyle(.borderless).help("Rétablir le raccourci du " + title.lowercased())
             .accessibilityLabel("Rétablir le raccourci du " + title.lowercased())

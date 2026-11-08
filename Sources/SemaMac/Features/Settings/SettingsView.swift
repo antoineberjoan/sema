@@ -94,7 +94,7 @@ struct SettingsView: View {
                             .buttonStyle(.plain).accessibilityLabel("Effacer la recherche de réglages")
                     }
                 }
-                .font(.body).padding(Self.searchPadding)
+                .typeRole(.body).padding(Self.searchPadding)
                 .background(Self.searchFill, in: RoundedRectangle(cornerRadius: Self.fieldCorner))
                 .padding(Self.searchInsets)
 
@@ -103,7 +103,7 @@ struct SettingsView: View {
                 })) {
                     ForEach(matches.filter { $0 != .profile }, id: \.self) { tab in
                         Label(tab.title, systemImage: tab.symbol)
-                            .font(.body.weight(.medium))
+                            .typeRole(.heading)
                             .padding(.vertical, Self.tabPadding).tag(tab)
                     }
                 }
@@ -111,14 +111,14 @@ struct SettingsView: View {
                 .scrollContentBackground(.hidden)
                 .overlay {
                     if matches.isEmpty {
-                        Text("Aucun réglage trouvé").font(.callout).foregroundStyle(.secondary)
+                        Text("Aucun réglage trouvé").typeRole(.small).foregroundStyle(.secondary)
                     }
                 }
 
                 Button { store.settingsTab = .profile; searchFocused = false } label: {
                     HStack(spacing: Self.profileSpacing) {
                         ProfileAvatar(profile: store.profile, size: Self.profileAvatarSize)
-                        Text("Mon espace").font(.body.weight(.medium))
+                        Text("Mon espace").typeRole(.heading)
                         Spacer()
                     }
                     .padding(Self.profilePadding)
@@ -174,7 +174,7 @@ struct SettingsView: View {
                         .buttonStyle(.borderless)
                 }
                 if let error = store.loginItem.error {
-                    Text(error).font(.callout).foregroundStyle(.secondary)
+                    Text(error).typeRole(.small).foregroundStyle(.secondary)
                 }
             }
             Section {
@@ -213,7 +213,7 @@ struct SettingsView: View {
                                 .padding(Self.swatchPadding).frame(height: Self.swatchHeight)
                                 .overlay(RoundedRectangle(cornerRadius: Self.swatchCorner).strokeBorder(
                                     store.palette == palette ? store.palette.accent : .clear, lineWidth: Self.selectedStroke))
-                                Text(palette.title).font(.subheadline).lineLimit(Self.paletteTitleLines)
+                                Text(palette.title).typeRole(.caption).lineLimit(Self.paletteTitleLines)
                                     .frame(maxWidth: .infinity, minHeight: Self.paletteTitleHeight, alignment: .top)
                             }.contentShape(Rectangle())
                         }
@@ -246,7 +246,7 @@ struct SettingsView: View {
                         Text("sema").font(Self.nameFont)
                         Text("Gardez vos repères.").foregroundStyle(.secondary)
                         Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")")
-                            .font(.subheadline).foregroundStyle(.secondary)
+                            .typeRole(.caption).foregroundStyle(.secondary)
                     }
                 }.padding(.vertical, Self.aboutPadding)
             }
@@ -286,7 +286,7 @@ private struct SettingsChoice: View {
                     .frame(maxWidth: .infinity).frame(height: Self.tileHeight)
                     .background(selected ? accent.opacity(Theme.selectionOpacity) : Self.restingFill, in: RoundedRectangle(cornerRadius: Self.corner))
                     .overlay(RoundedRectangle(cornerRadius: Self.corner).strokeBorder(selected ? accent : .clear, lineWidth: Self.selectedStroke))
-                Text(title).font(.subheadline).lineLimit(1)
+                Text(title).typeRole(.caption).lineLimit(1)
             }
             .frame(width: Self.width).contentShape(Rectangle())
         }

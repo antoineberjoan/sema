@@ -9,7 +9,7 @@ struct AlertsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Self.sectionSpacing) {
             Label("Vérification à chaque actualisation des repères. Aucun contrôle quand l’app est quittée ou le Mac en veille.", systemImage: "info.circle")
-                .font(.callout).foregroundStyle(.secondary)
+                .typeRole(.small).foregroundStyle(.secondary)
             if store.macroAlerts.isEmpty {
                 ContentUnavailableView {
                     Label("Un signal au bon seuil.", systemImage: "bell")
@@ -55,10 +55,10 @@ private struct AlertRow: View {
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text(item.map(MarketFormat.name) ?? "Repère indisponible").font(Self.titleFont)
                 Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "").")
-                    .font(.callout).foregroundStyle(.secondary)
+                    .typeRole(.small).foregroundStyle(.secondary)
                 if let event = lastEvent, let value = event.observedValue {
                     Text("Dernier signal : \(MarketFormat.number(value, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "") · \(MarketFormat.date(event.observedAt))")
-                        .font(.subheadline).foregroundStyle(.secondary)
+                        .typeRole(.caption).foregroundStyle(.secondary)
                 }
                 HStack(spacing: Self.actionSpacing) {
                     Button("Tester la notification") { store.simulate(rule) }.disabled(!store.isSourceEnabled(for: rule.seriesID))
@@ -67,11 +67,11 @@ private struct AlertRow: View {
                     Button(role: .destructive) { store.deleteAlert(rule.id) } label: { Image(systemName: "trash") }
                         .help("Supprimer cette alerte").accessibilityLabel("Supprimer l’alerte sur \(item.map(MarketFormat.name) ?? "ce repère")")
                 }
-                .buttonStyle(.borderless).font(.subheadline)
+                .buttonStyle(.borderless).typeRole(.caption)
             }
             Spacer(minLength: 0)
             Text(!store.isFollowing(rule.seriesID) ? "Repère retiré · en pause" : !store.isSourceEnabled(for: rule.seriesID) ? "Source désactivée · en pause" : !rule.isEnabled ? "En pause" : item?.canAlert == false ? "Unité à vérifier" : "À l’actualisation")
-                .font(.subheadline).foregroundStyle(.secondary)
+                .typeRole(.caption).foregroundStyle(.secondary)
         }
         .padding(.vertical, Self.verticalPadding)
     }

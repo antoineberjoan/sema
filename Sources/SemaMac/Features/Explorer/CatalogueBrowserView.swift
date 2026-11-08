@@ -75,7 +75,7 @@ struct CatalogueBrowserView: View {
                                 Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
                             }.buttonStyle(.plain).help("Retirer les filtres").padding(.top, Self.clearButtonTopPadding)
                         }
-                    }.font(.callout)
+                    }.typeRole(.small)
                 }
                 HStack(alignment: .top, spacing: Self.columnSpacing) {
                     results.frame(minWidth: compact ? Self.compactResultsMinWidth : Self.resultsMinWidth, maxWidth: store.previewDescriptor == nil ? .infinity : Self.resultsMaxWidth)
@@ -103,7 +103,7 @@ struct CatalogueBrowserView: View {
     private func previewPane(_ descriptor: WebstatSeriesDescriptor) -> some View {
         VStack(alignment: .leading, spacing: Self.previewSpacing) {
             HStack {
-                Text("Aperçu").font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+                Text("Aperçu").typeRole(.overline).foregroundStyle(.secondary)
                 if store.isLoadingPreview { ProgressView().controlSize(.mini) }
                 Spacer()
                 Button { store.closePreview() } label: { Image(systemName: "xmark") }
@@ -114,7 +114,7 @@ struct CatalogueBrowserView: View {
                     if store.isLoadingPreview && store.previewSeries == nil {
                         VStack(alignment: .leading, spacing: Self.previewContentSpacing) {
                             Text(descriptor.title).font(Self.titleFont)
-                            Text(descriptor.definition).font(.callout).foregroundStyle(.secondary)
+                            Text(descriptor.definition).typeRole(.small).foregroundStyle(.secondary)
                             ProgressView("Chargement de l’historique…").controlSize(.small)
                         }.frame(maxWidth: .infinity, minHeight: Self.loadingMinHeight, alignment: .topLeading).padding(Self.loadingPadding)
                     } else {
@@ -122,7 +122,7 @@ struct CatalogueBrowserView: View {
                     }
                     if let error = store.previewError {
                         Label(error, systemImage: "exclamationmark.triangle")
-                            .font(.subheadline).foregroundStyle(.secondary)
+                            .typeRole(.caption).foregroundStyle(.secondary)
                         if store.previewRequiresRefresh {
                             Button("Actualiser mes repères") { Task { await store.refreshSeries() } }
                                 .buttonStyle(.borderless).disabled(store.isLoading)
@@ -152,7 +152,7 @@ struct CatalogueBrowserView: View {
                     }.buttonStyle(.borderedProminent).disabled(isAdding || store.isLoadingPreview || store.previewSeries == nil)
                     Spacer(minLength: 0)
                 }
-            }.font(.callout).padding(.horizontal, Self.textInset)
+            }.typeRole(.small).padding(.horizontal, Self.textInset)
         }
     }
 
@@ -163,17 +163,17 @@ struct CatalogueBrowserView: View {
                     HStack {
                         Text(store.isSearchingCatalogue && store.catalogueResults.isEmpty ? "Recherche…" : "\(store.catalogueTotal.formatted()) \(store.catalogueTotal == 1 ? "série" : "séries")")
                         Spacer()
-                    }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding).padding(.bottom, Theme.minorSpacing)
+                    }.typeRole(.micro).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding).padding(.bottom, Theme.minorSpacing)
                     ForEach(store.catalogueResults) { item in
                         Button { selectedID = item.id; store.openPreview(item) } label: {
                             VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
                                 HStack(alignment: .top, spacing: Theme.minorSpacing) {
-                                    Text(MarketFormat.name(item.series(observations: []))).font(.callout.weight(.medium)).lineLimit(Theme.rowTitleLines)
+                                    Text(MarketFormat.name(item.series(observations: []))).typeRole(.label).lineLimit(Theme.rowTitleLines)
                                     Spacer(minLength: 0)
                                     if store.followedMatch(for: item.series(observations: [])) != nil { Image(systemName: "checkmark").foregroundStyle(accent).accessibilityLabel("Déjà suivi") }
                                 }
                                 Text([item.area, item.frequencyTitle, item.displayUnit].compactMap { $0 }.joined(separator: " · "))
-                                    .font(.caption).foregroundStyle(.secondary).lineLimit(Self.detailLines)
+                                    .typeRole(.micro).foregroundStyle(.secondary).lineLimit(Self.detailLines)
                             }
                             .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
                             .background(selectedID == item.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
@@ -184,7 +184,7 @@ struct CatalogueBrowserView: View {
                         .animation(reduceMotion ? nil : .easeOut(duration: selectionDuration), value: selectedID == item.id)
                     }
                     if let error = store.catalogueError {
-                        Label(error, systemImage: "exclamationmark.triangle").font(.callout).foregroundStyle(.secondary).padding(Self.messagePadding)
+                        Label(error, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(.secondary).padding(Self.messagePadding)
                         Button("Réessayer") { store.searchCatalogue() }.buttonStyle(.borderless).padding(.horizontal, Self.messagePadding)
                     } else if !store.isSearchingCatalogue && store.catalogueResults.isEmpty {
                         ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass")

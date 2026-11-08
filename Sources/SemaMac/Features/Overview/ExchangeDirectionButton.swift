@@ -13,7 +13,7 @@ struct ExchangeDirectionButton: View {
             let target = inverted ? pair.publishedDescription : pair.inverseDescription
             Button { store.toggleExchangeRateDirection(series) } label: {
                 Image(systemName: "arrow.left.arrow.right")
-                    .font(.callout).foregroundStyle(inverted ? accent : Color.secondary)
+                    .typeRole(.small).foregroundStyle(inverted ? accent : Color.secondary)
                     .frame(width: Theme.iconButtonSize, height: Theme.iconButtonSize).contentShape(Rectangle())
             }
             .buttonStyle(.plain)

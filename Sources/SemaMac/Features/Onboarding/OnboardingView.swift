@@ -151,7 +151,7 @@ struct OnboardingView: View {
                 VStack(alignment: .leading, spacing: WelcomeLayout.titleSpacing) {
                     Text(title).font(WelcomeLayout.titleFont).tracking(WelcomeLayout.titleTracking)
                         .accessibilityAddTraits(.isHeader)
-                    Text(detail).font(.body).foregroundStyle(.secondary)
+                    Text(detail).typeRole(.body).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.bottom, Theme.majorSpacing)
@@ -170,11 +170,11 @@ struct OnboardingView: View {
 
             if let selectionError {
                 HStack(alignment: .top, spacing: WelcomeLayout.errorSpacing) {
-                    Text(selectionError).font(.subheadline).foregroundStyle(.red)
+                    Text(selectionError).typeRole(.caption).foregroundStyle(.red)
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 0)
                     Button("Fermer") { store.isOnboardingPresented = false }
-                        .buttonStyle(.borderless).font(.subheadline)
+                        .buttonStyle(.borderless).typeRole(.caption)
                         .help("Fermer l’accueil sans le marquer comme terminé")
                 }
                 .padding(.top, WelcomeLayout.errorTopPadding)
@@ -217,7 +217,7 @@ struct OnboardingView: View {
             VStack(spacing: WelcomeLayout.titleSpacing) {
                 Text("Bienvenue dans sema.").font(WelcomeLayout.titleFont).tracking(WelcomeLayout.titleTracking)
                     .accessibilityAddTraits(.isHeader)
-                Text("L’économie bouge. Gardez vos repères.").font(.body).foregroundStyle(.secondary)
+                Text("L’économie bouge. Gardez vos repères.").typeRole(.body).foregroundStyle(.secondary)
             }
             VStack(alignment: .leading, spacing: WelcomeLayout.featureSpacing) {
                 ForEach(WelcomeFeature.all) { feature in
@@ -225,8 +225,8 @@ struct OnboardingView: View {
                         Image(systemName: feature.symbol).font(WelcomeLayout.featureSymbolFont).foregroundStyle(accent)
                             .frame(width: WelcomeLayout.featureSymbolWidth).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: WelcomeLayout.featureTextSpacing) {
-                            Text(feature.title).font(.headline)
-                            Text(feature.detail).font(.subheadline).foregroundStyle(.secondary)
+                            Text(feature.title).typeRole(.heading)
+                            Text(feature.detail).typeRole(.caption).foregroundStyle(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -245,7 +245,7 @@ struct OnboardingView: View {
             }
             VStack(alignment: .leading, spacing: WelcomeLayout.previewSpacing) {
                 Text("Aperçu du bandeau, avec des exemples fictifs.")
-                    .font(.subheadline).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(.secondary)
                 preview
             }
         }
@@ -260,7 +260,7 @@ struct OnboardingView: View {
             }
             if previewSeries.isEmpty {
                 Text("Choisissez un thème pour composer votre bandeau.")
-                    .font(.subheadline).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner))
             }
@@ -291,7 +291,7 @@ struct OnboardingView: View {
                     .frame(width: WelcomeLayout.featureSymbolWidth).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: WelcomeLayout.tileTextSpacing) {
                     Text(collection.title).font(WelcomeLayout.tileTitleFont)
-                    Text(collection.subtitle).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                    Text(collection.subtitle).typeRole(.caption).foregroundStyle(.secondary).lineLimit(1)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: selected ? "checkmark.circle.fill" : "circle").font(WelcomeLayout.tileCheckFont)

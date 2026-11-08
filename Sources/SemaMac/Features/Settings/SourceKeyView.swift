@@ -37,13 +37,13 @@ struct SourceKeyView: View {
                     Button("Retirer la clé", role: .destructive) { Task { await remove() } }
                         .disabled(connecting || store.isLoading)
                 }
-            }.font(.callout).buttonStyle(.link)
-            if let provider { Text(provider.quota).font(.caption).foregroundStyle(.secondary) }
+            }.typeRole(.small).buttonStyle(.link)
+            if let provider { Text(provider.quota).typeRole(.micro).foregroundStyle(.secondary) }
             if !enabled {
-                Text("Activez \(title) dans les catalogues.").font(.callout).foregroundStyle(.secondary)
+                Text("Activez \(title) dans les catalogues.").typeRole(.small).foregroundStyle(.secondary)
             }
             if let error {
-                Text(error).font(.callout).foregroundStyle(.red).textSelection(.enabled)
+                Text(error).typeRole(.small).foregroundStyle(.red).textSelection(.enabled)
             }
         }
         .padding(.vertical, Theme.minorSpacing)

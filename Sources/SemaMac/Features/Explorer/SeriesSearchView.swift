@@ -48,7 +48,7 @@ struct SeriesSearchView: View {
                     .onSubmit(openSelected)
                     .onKeyPress(.downArrow) { moveSelection(by: 1); return .handled }
                     .onKeyPress(.upArrow) { moveSelection(by: -1); return .handled }
-                Text("⌘K").font(.callout).foregroundStyle(.secondary)
+                Text("⌘K").typeRole(.small).foregroundStyle(.secondary)
             }
             .padding(.horizontal, Theme.rowPadding).padding(.top, Self.searchTopPadding)
             ScrollViewReader { proxy in
@@ -60,14 +60,14 @@ struct SeriesSearchView: View {
                                     Image(systemName: store.isFavorite(item.id) ? "star.fill" : "chart.xyaxis.line")
                                         .foregroundStyle(accent).frame(width: Self.iconWidth)
                                     VStack(alignment: .leading, spacing: Self.textSpacing) {
-                                        Text(MarketFormat.name(item)).font(.body.weight(.medium))
-                                        Text(item.subtitle).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
+                                        Text(MarketFormat.name(item)).typeRole(.heading)
+                                        Text(item.subtitle).typeRole(.caption).foregroundStyle(.secondary).lineLimit(1)
                                     }
                                     Spacer(minLength: Theme.minorSpacing)
                                     VStack(alignment: .trailing, spacing: Self.textSpacing) {
-                                        Text(MarketFormat.value(item)).font(.body).monospacedDigit()
+                                        Text(MarketFormat.value(item)).typeRole(.body).monospacedDigit()
                                         Text(context(for: item))
-                                            .font(.subheadline).foregroundStyle(.secondary)
+                                            .typeRole(.caption).foregroundStyle(.secondary)
                                     }
                                 }
                                 .padding(Theme.rowPadding).foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading)
@@ -87,7 +87,7 @@ struct SeriesSearchView: View {
                 .onChange(of: selectedID) { _, id in if let id { proxy.scrollTo(id) } }
             }
             HStack {
-                Text("↑ ↓ choisir · ↩ ouvrir").font(.subheadline).foregroundStyle(.secondary)
+                Text("↑ ↓ choisir · ↩ ouvrir").typeRole(.caption).foregroundStyle(.secondary)
                 Spacer()
                 Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction)
                 Button("Ouvrir", action: openSelected).keyboardShortcut(.defaultAction)

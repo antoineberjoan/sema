@@ -47,7 +47,7 @@ struct MarketExplorerView: View {
                     if catalogueLoading {
                         ProgressView("Chargement du catalogue…").controlSize(.small)
                     } else if let catalogueError {
-                        Text(catalogueError).font(.callout).foregroundStyle(.secondary)
+                        Text(catalogueError).typeRole(.small).foregroundStyle(.secondary)
                         Button("Réessayer") { retry = UUID() }
                     }
                     List(selection: $selectedID) {
@@ -59,10 +59,10 @@ struct MarketExplorerView: View {
                         }
                     }.listStyle(.plain)
                     if let catalogue {
-                        Text("\(results.count) instrument\(results.count == 1 ? "" : "s")").font(.caption).foregroundStyle(.secondary)
-                        Text(catalogue.scope).font(.caption).foregroundStyle(.secondary)
+                        Text("\(results.count) instrument\(results.count == 1 ? "" : "s")").typeRole(.micro).foregroundStyle(.secondary)
+                        Text(catalogue.scope).typeRole(.micro).foregroundStyle(.secondary)
                     }
-                    Text(provider.quota).font(.caption).foregroundStyle(.secondary)
+                    Text(provider.quota).typeRole(.micro).foregroundStyle(.secondary)
                 }.frame(width: Self.listWidth)
                 ScrollView {
                     VStack(alignment: .leading, spacing: Theme.majorSpacing) {
@@ -73,7 +73,7 @@ struct MarketExplorerView: View {
                             }.pickerStyle(.segmented)
                             if provider == .alphaVantage, !weekly {
                                 Text("Gratuit : 100 dernières séances. Pour un historique long, choisissez Hebdomadaire.")
-                                    .font(.caption).foregroundStyle(.secondary)
+                                    .typeRole(.micro).foregroundStyle(.secondary)
                             }
                             if let preview {
                                 SeriesDetailView(series: preview, preview: true)
@@ -83,13 +83,13 @@ struct MarketExplorerView: View {
                                     Button("Ajouter à mes repères") { add(preview) }.buttonStyle(.borderedProminent)
                                         .disabled(loading || error != nil)
                                 }
-                            } else if !loading { Text(selected.name).font(.title2) }
+                            } else if !loading { Text(selected.name).typeRole(.section) }
                         } else if catalogue != nil {
                             ContentUnavailableView(results.isEmpty ? "Aucun instrument" : "Choisir un instrument",
                                                    systemImage: "chart.xyaxis.line")
                         }
                         if loading { ProgressView().controlSize(.small) }
-                        if let error { Text(error).font(.callout).foregroundStyle(.secondary).textSelection(.enabled) }
+                        if let error { Text(error).typeRole(.small).foregroundStyle(.secondary).textSelection(.enabled) }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
             }.task(id: catalogueID) { await loadCatalogue() }
@@ -119,7 +119,7 @@ struct MarketExplorerView: View {
         ForEach(items) { item in
             VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
                 Text(item.name)
-                Text(item.summary).font(.caption).foregroundStyle(.secondary)
+                Text(item.summary).typeRole(.micro).foregroundStyle(.secondary)
             }.tag(item.id).padding(.vertical, Theme.rowPadding)
         }
     }

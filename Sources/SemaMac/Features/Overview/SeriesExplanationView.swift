@@ -4,7 +4,7 @@ import MarketCore
 
 struct SeriesExplanationView: View {
     private static let definitionLines = 4
-    private static let leadingInset: CGFloat = 18
+    private static let leadingInset = Spacing.s16
     let explanation: SeriesExplanation
 
     var body: some View {
@@ -15,10 +15,10 @@ struct SeriesExplanationView: View {
                 Text(implication).foregroundStyle(.secondary)
             }
             if let url = explanation.referenceURL {
-                Link("Source", destination: url).font(.caption)
+                Link("Source", destination: url).typeRole(.micro)
             }
         }
-        .font(.callout).textSelection(.enabled)
+        .typeRole(.small).textSelection(.enabled)
         .fixedSize(horizontal: false, vertical: true)
         .padding(.leading, Self.leadingInset).padding(.top, Theme.minorSpacing)
     }
