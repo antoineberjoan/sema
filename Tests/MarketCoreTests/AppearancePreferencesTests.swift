@@ -39,4 +39,12 @@ struct AppearancePreferencesTests {
         #expect(value.appearanceID == "light")
         #expect(value.themeID == "mint")
     }
+
+    @Test func newProfileStartsWithTheBrandPaletteAndKeepsSavedChoices() throws {
+        #expect(AppPreferences().themeID == "brand")
+        let saved = Data("""
+        {"schemaVersion":2,"favoriteIDs":[],"followedSeriesIDs":[],"alerts":[],"notificationsEnabled":false,"themeID":"graphite"}
+        """.utf8)
+        #expect(try JSONDecoder().decode(AppPreferences.self, from: saved).themeID == "graphite")
+    }
 }

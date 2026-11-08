@@ -3,7 +3,7 @@ import AppKit
 import MarketCore
 
 extension AppStore {
-    var palette: Palette { Palette(rawValue: preferences.themeID ?? "") ?? .graphite }
+    var palette: Palette { Palette(rawValue: preferences.themeID ?? "") ?? .standard }
 
     var appearance: Appearance { Appearance(rawValue: preferences.appearanceID ?? "") ?? .system }
 

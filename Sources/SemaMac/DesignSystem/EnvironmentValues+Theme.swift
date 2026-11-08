@@ -3,7 +3,7 @@ import SwiftUI
 import MarketCore
 
 private struct AccentKey: EnvironmentKey {
-    static let defaultValue: Color = Palette.graphite.accent
+    static let defaultValue: Color = Palette.standard.accent
 }
 
 private struct GlassTintKey: EnvironmentKey {

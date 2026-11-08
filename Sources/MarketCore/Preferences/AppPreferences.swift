@@ -20,7 +20,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var shortcuts: ShortcutPreferences?
 
     public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
-                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "graphite", appearanceID: String? = nil,
+                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "brand", appearanceID: String? = nil,
                 followedSeriesIDs: [String] = [], onboardingCompleted: Bool? = nil,
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = StatisticalSource.inactiveByDefault,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
