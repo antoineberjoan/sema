@@ -29,11 +29,11 @@ Source : le 5 novembre 2026, Antoine apprend la chute des marchés (S&P 500 −4
 
 ## Étapes
 
-Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, un commit, un push et une CI verte.
+Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, un commit et un push. Le 8 novembre, Antoine demande d’avancer sans attendre la CI : la compilation et les tests Swift se vérifient à sa passe finale.
 
 - [x] 1. Canevas v2 : trois palettes, cinq logos, trois alternatives de période, écrans réalignés avec la palette recommandée.
 - [x] 2. Jetons du design system (espace, rayons, élévation, rôles typographiques, mouvement), palette d’Antoine par défaut, garde-fou typographique, tests de préférences.
-- [ ] 2b. Logo « repère » : fichiers source dans `Resources/Brand/`, géométrie unique dans `SignalPath.swift`, icône d’app (`scripts/render-icon.swift`), barre des menus, signature, DMG.
+- [x] 2b. Logo « repère » : fichiers source dans `Resources/Brand/`, géométrie unique dans `SignalPath.swift`, icône d’app (`scripts/render-icon.swift`), barre des menus, signature, DMG.
 - [ ] 3a. Alignement : Workspace et sidebar.
 - [ ] 3b. Alignement : Overview et Focus.
 - [ ] 3c. Alignement : bandeau et signature.
@@ -58,6 +58,7 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 - Étape 1 (8 novembre) : page « Refonte » du [canevas](https://claude.ai/artifact/SA5fmyp8tMwNTA1CQ3g5KK). Trois palettes et cinq logos, remplacés le 8 novembre par l’identité fournie par Antoine ; trois alternatives de période (onglets retenus), Focus, Alertes, Réglages, bandeau sans rail et brief réalignés. Rendu non contrôlé visuellement par l’agent.
 - Étape 2 (8 novembre, commit `082f8ae`) : `Spacing`, `Radius`, `TypeRole` et `Motion` dans `DesignSystem` ; `Theme` lit ces jetons (rangées 10, cartes et surfaces 16, groupes 24, page 32, filet 1, élévations 1 à 3) ; `PressStyle` suit Mouvement 1.1 ; palette « sema » par défaut des nouveaux profils, test `newProfileStartsWithTheBrandPaletteAndKeepsSavedChoices`. Garde-fous, 42 tests Python et [CI macOS](https://github.com/antoineberjoan/sema/actions/runs/42429502672) au vert. `.system(size:)` reste toléré hors `TypeRole` jusqu’à la fin de l’étape 3.
+- Étape 2b (8 novembre, commit `62107c2`) : logo repère dans `SignalPath` (géométrie unique, carré de 320) et `SignalDot` (point et écart) ; `Symbol`, signature du bandeau, accueil, `render-icon.swift` (icône d’après `sema-app-icon.svg`) et fond du DMG. Fichiers d’Antoine dans `Resources/Brand/`. Garde-fous au vert ; rendu non vérifié.
 
 ## Limites connues
 
@@ -68,4 +69,4 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 ## Prochaine action
 
-Étape 2b : vérifier la CI du logo repère, puis étape 3a.
+Étape 3a : alignement de Workspace et de la sidebar.

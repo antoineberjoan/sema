@@ -5,26 +5,27 @@ import SwiftUI
 import MarketCore
 
 struct WorkspaceView: View {
-    private static let searchCorner: CGFloat = 9
+    private static let searchCorner = Radius.control
     private static let minimumWidth: CGFloat = 980
     private static let minimumHeight: CGFloat = 680
-    private static let focusHorizontalMargin: CGFloat = 48
-    private static let statusPadding: CGFloat = 14
-    static let statusSpacing: CGFloat = 12
+    private static let focusHorizontalMargin = Spacing.s48
+    private static let statusPadding = Spacing.s14
+    static let statusSpacing = Spacing.s12
     static let statusLines = 2
-    private static let previewInset: CGFloat = 10
-    private static let previewVerticalInset: CGFloat = 6
+    private static let previewInset = Spacing.s10
+    private static let previewVerticalInset = Spacing.s6
     private static let switcherScrim = Color.black.opacity(0.035)
-    private static let sidebarSpacing: CGFloat = 18
-    private static let sidebarMargin: CGFloat = 22
-    private static let searchSpacing: CGFloat = 9
-    private static let searchPadding: CGFloat = 11
-    private static let searchInset: CGFloat = 14
-    private static let itemSpacing: CGFloat = 2
-    private static let itemsInset: CGFloat = 10
-    private static let rowInsets = EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10)
-    private static let profileSpacing: CGFloat = 10
-    private static let profileTextSpacing: CGFloat = 3
+    // Every sidebar text starts on one edge: an 8 pt block inset plus an 8 pt inner padding equals the 16 pt margin.
+    private static let sidebarSpacing = Spacing.s16
+    private static let sidebarMargin = Spacing.s16
+    private static let searchSpacing = Spacing.s8
+    private static let searchPadding = Spacing.s8
+    private static let searchInset = Spacing.s8
+    private static let itemSpacing = Spacing.s2
+    private static let itemsInset = Spacing.s8
+    private static let rowInsets = EdgeInsets(top: Spacing.s2, leading: Spacing.s8, bottom: Spacing.s2, trailing: Spacing.s8)
+    private static let profileSpacing = Spacing.s8
+    private static let profileTextSpacing = Spacing.s2
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -257,9 +258,9 @@ struct WorkspaceView: View {
                     Image(systemName: "magnifyingglass")
                     Text("Rechercher")
                     Spacer()
-                    Text("⌘K").font(.subheadline).foregroundStyle(Theme.sidebarSecondaryText)
+                    Text("⌘K").typeRole(.tag).foregroundStyle(Theme.sidebarSecondaryText)
                 }
-                .font(.callout).foregroundStyle(.primary)
+                .typeRole(.small).foregroundStyle(.primary)
                 .padding(Self.searchPadding).background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Self.searchCorner))
                 .contentShape(Rectangle())
             }
@@ -273,7 +274,7 @@ struct WorkspaceView: View {
 
             VStack(spacing: Theme.minorSpacing) {
                 HStack {
-                    Text("Mes repères").font(.subheadline.weight(.medium)).foregroundStyle(Theme.sidebarSecondaryText)
+                    Text("Mes repères").typeRole(.overline).foregroundStyle(Theme.sidebarSecondaryText)
                     Spacer()
                     Button { store.section = .explorer } label: { Image(systemName: "plus") }
                         .buttonStyle(.borderless).help("Ajouter un repère")
@@ -312,13 +313,13 @@ struct WorkspaceView: View {
                 ProfileAvatar(profile: store.profile)
                 VStack(alignment: .leading, spacing: Self.profileTextSpacing) {
                     if !store.profile.displayName.isEmpty {
-                        Text(store.profile.displayName).font(.callout.weight(.medium))
+                        Text(store.profile.displayName).typeRole(.label)
                             .foregroundStyle(.primary).lineLimit(1)
                     }
-                    Text("Mon espace").font(store.profile.displayName.isEmpty ? .body : .subheadline)
+                    Text("Mon espace").typeRole(.small)
                 }
                 Spacer(minLength: 0)
-                Image(systemName: "gearshape").font(.callout)
+                Image(systemName: "gearshape").typeRole(.small)
             }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
         }
         .buttonStyle(.plain).foregroundStyle(.primary)
@@ -351,7 +352,7 @@ struct WorkspaceView: View {
                     Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
                 }
             }
-            .font(.subheadline).foregroundStyle(.secondary)
+            .typeRole(.caption).foregroundStyle(.secondary)
         }
     }
 
@@ -360,7 +361,7 @@ struct WorkspaceView: View {
     }
 
     private struct SidebarSeriesRow: View {
-    private static let textSpacing: CGFloat = 6
+    private static let textSpacing = Spacing.s2
     private static let nameLines = 2
     @Environment(AppStore.self) private var store
     let series: MarketSeries
@@ -370,14 +371,14 @@ struct WorkspaceView: View {
         let displayed = store.displayedSeries(series)
         Button { store.show(series); store.section = .overview } label: {
             VStack(alignment: .leading, spacing: Self.textSpacing) {
-                Text(MarketFormat.name(displayed)).font(.callout.weight(selected ? .medium : .regular))
+                Text(MarketFormat.name(displayed)).typeRole(.small).fontWeight(selected ? .semibold : .regular)
                     .foregroundStyle(.primary).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
                 if displayed.latest != nil {
-                    Text(MarketFormat.value(displayed)).font(.subheadline).monospacedDigit().foregroundStyle(Theme.sidebarSecondaryText)
+                    Text(MarketFormat.value(displayed)).typeRole(.caption).monospacedDigit().foregroundStyle(Theme.sidebarSecondaryText)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
-            .background(selected ? Theme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
+            .frame(maxWidth: .infinity, alignment: .leading).padding(Spacing.s8)
+            .background(selected ? Theme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: Radius.control))
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
@@ -387,10 +388,11 @@ struct WorkspaceView: View {
 }
 
 private struct SidebarItem: View {
-    private static let iconSpacing: CGFloat = 10
-    private static let iconWidth: CGFloat = 17
-    private static let countSpacing: CGFloat = 4
-    private static let verticalPadding: CGFloat = 10
+    private static let iconSpacing = Spacing.s8
+    /// Interface icon size from Espace et forme 1.1.
+    private static let iconWidth: CGFloat = 16
+    private static let countSpacing = Spacing.s4
+    private static let verticalPadding = Spacing.s8
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
@@ -408,17 +410,17 @@ private struct SidebarItem: View {
                     Text("\(store.macroAlerts.count)").foregroundStyle(Theme.sidebarSecondaryText)
                 }
             }
-            .font(.body.weight(selected ? .medium : .regular))
+            .typeRole(.small).fontWeight(selected ? .semibold : .regular)
             .foregroundStyle(.primary)
-            .padding(.horizontal, Theme.rowPadding).padding(.vertical, Self.verticalPadding)
+            .padding(.horizontal, Spacing.s8).padding(.vertical, Self.verticalPadding)
             .background(selected ? Theme.sidebarSelection : (isHovered ? Theme.hoverFill : .clear),
-                        in: RoundedRectangle(cornerRadius: Theme.rowCorner, style: .continuous))
+                        in: RoundedRectangle(cornerRadius: Radius.control, style: .continuous))
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
         .accessibilityAddTraits(selected ? [.isSelected] : [])
         .onHover { isHovered = $0 }
-        .animation(reduceMotion ? nil : .easeOut(duration: Theme.hoverDuration), value: isHovered)
+        .animation(reduceMotion ? nil : .easeInOut(duration: Theme.hoverDuration), value: isHovered)
     }
 }
 
@@ -430,8 +432,8 @@ private enum SidebarHoverZone { case control, panel }
 private enum FocusMotion {
     static let sidebarMinWidth: CGFloat = 220
     static let sidebarMaxWidth: CGFloat = 280
-    static let sidebarWidth: CGFloat = 232
-    static let sidebar = Animation.snappy(duration: 0.24, extraBounce: 0)
+    static let sidebarWidth: CGFloat = 240
+    static let sidebar = Motion.drawer(Motion.wide)
     static let hoverExitDelay: Duration = .milliseconds(220)
 }
 }
