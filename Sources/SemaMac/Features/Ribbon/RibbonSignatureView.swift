@@ -15,8 +15,8 @@ private enum SignatureMotion {
     static let drawDuration = 1.8
     static let textDuration = 0.8
     static let textOffset: CGFloat = 4
-    static let lineWidth: CGFloat = 1.5
     static let markSize: CGFloat = 72
+    static let lineWidth = SignalPath.stroke * markSize / SignalPath.viewBox
     static let drawStage = 1
     static let contextStage = 2
     static let missionStage = 3
@@ -44,8 +44,14 @@ struct RibbonSignatureView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SignalPath().trim(from: 0, to: stage >= SignatureMotion.drawStage ? 1 : 0)
-                .stroke(.white, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
+            ZStack {
+                SignalPath().trim(from: 0, to: stage >= SignatureMotion.drawStage ? 1 : 0)
+                    .stroke(.white, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
+                // The teal point settles once the line has arrived.
+                SignalDot().fill(Palette.brand.controlAccent)
+                    .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
+                    .animation(reduceMotion ? nil : .easeOut(duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
+            }
                 .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
                 .frame(height: Self.markAreaHeight).accessibilityHidden(true)
                 .animation(reduceMotion ? nil : .easeInOut(duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)

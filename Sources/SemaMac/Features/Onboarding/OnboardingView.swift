@@ -53,8 +53,8 @@ private enum WelcomeLayout {
     static let tileSymbolFont = Font.system(size: 20)
     static let tileTitleFont = Font.system(size: 14, weight: .semibold)
     static let tileCheckFont = Font.system(size: 18)
-    static let signalWidth: CGFloat = 2.3
-    static let heroSignalWidth: CGFloat = 3.6
+    static let signalWidth = SignalPath.stroke * signalSize / SignalPath.viewBox
+    static let heroSignalWidth = SignalPath.stroke * heroSignalSize / SignalPath.viewBox
 }
 
 private struct WelcomeFeature: Identifiable {
@@ -376,8 +376,11 @@ private struct WelcomeSignal: View {
     let progress: CGFloat
     let lineWidth: CGFloat
     var body: some View {
-        SignalPath().trim(from: 0, to: progress)
-            .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-            .accessibilityHidden(true)
+        ZStack {
+            SignalPath().trim(from: 0, to: progress)
+                .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+            SignalDot().fill(Palette.brand.controlAccent).opacity(progress >= 1 ? 1 : 0)
+        }
+        .accessibilityHidden(true)
     }
 }
