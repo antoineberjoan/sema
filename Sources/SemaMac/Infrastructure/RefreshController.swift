@@ -1,4 +1,4 @@
-// Planifie l’actualisation quotidienne, et après chaque clôture pour les repères surveillés, même sans fenêtre ouverte.
+// Planifie l’actualisation quotidienne, après chaque clôture pour les repères surveillés, et le brief du matin, même sans fenêtre ouverte.
 import AppKit
 import MarketCore
 
@@ -37,7 +37,8 @@ final class RefreshController {
         check()
     }
 
-    private func check() {
+    /// Also called when the brief settings change, so a new time is honoured without waiting for the next refresh.
+    func check() {
         guard isStarted, !isSleeping, task == nil else { return }
         timer?.invalidate(); timer = nil
         task = Task { [weak self] in
@@ -54,6 +55,8 @@ final class RefreshController {
                 RefreshPolicy.isDue(syncedAt: $0.syncedAt, now: now, followsCloses: store.followsCloses($0))
             }.map(\.id))
             if !due.isEmpty { await store.refreshSeries(only: due) }
+            // After the refresh, so the brief reads the latest session.
+            await store.sendBriefIfDue()
             task = nil
             // Une série en erreur garde son cache ; le prochain essai automatique est le lendemain.
             let completedAt = Date.now
@@ -61,8 +64,9 @@ final class RefreshController {
             let dates = series.map { item in
                 RefreshPolicy.isDue(syncedAt: item.syncedAt, now: completedAt) ? completedAt : item.syncedAt
             }
-            schedule(after: RefreshPolicy.nextDelay(syncedDates: dates, now: completedAt,
-                                                    followsCloses: series.contains(where: store.followsCloses)))
+            let refreshDelay = RefreshPolicy.nextDelay(syncedDates: dates, now: completedAt,
+                                                       followsCloses: series.contains(where: store.followsCloses))
+            schedule(after: min(refreshDelay, store.nextBriefDelay(now: completedAt) ?? refreshDelay))
         }
     }
 

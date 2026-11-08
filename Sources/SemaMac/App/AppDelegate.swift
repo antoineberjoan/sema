@@ -25,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         shortcuts = store.globalShortcuts
         let refresh = RefreshController(store: store)
         refreshController = refresh
+        store.rescheduleRefresh = { [weak refresh] in refresh?.check() }
         refresh.start()
     }
 

@@ -49,7 +49,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 10. Titres GDELT et Alpha Vantage News, tests.
 - [x] 11. Contexte du jour et inspecteur « Faits ».
 - [x] 12. Synthèse : garde-fou testé, deux rédacteurs, Réglages, onglet « Synthèse ».
-- [ ] 13. Brief du matin : composition, programmation, notification, rubrique.
+- [x] 13. Brief du matin : composition, programmation, notification, rubrique.
 - [ ] 14. Documentation, état Notion, description et checklist de la PR.
 
 Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier séparé.
@@ -69,6 +69,7 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 - Étape 10 (8 novembre) : `Headline`, `HeadlineSource` (GDELT par défaut, Alpha Vantage News, aucune) et `headlineSourceID` optionnel. `GDELTClient` interroge la fenêtre de la séance en anglais, sans clé ; `MarketDataClient.news` réutilise la clé, l’espacement et les erreurs d’Alpha Vantage. Liens https seulement. Choix dans Réglages → Sources. Trois tests dans `HeadlineTests`. Conditions d’usage de GDELT non vérifiées.
 - Étape 11 (8 novembre) : `DayContext` (repères liés via `PeerMove`, calendrier FRED `releases/dates`, communiqués, titres, parties indisponibles nommées), fenêtre UTC de la séance. `AppStore.dayContext` charge chaque partie indépendamment et garde le résultat en mémoire pour la session. Focus : bouton « Pourquoi ? » et inspecteur natif `MoveContextView`. Trois tests dans `DayContextTests`.
 - Étape 12 (8 novembre) : `ContextFact` numérote les faits de la séance (mouvement du repère, repères liés, agenda, communiqués, titres). `SummaryCheck` ne garde une phrase que si elle cite des faits existants, si chaque chiffre s’y retrouve (arrondi permis, date de séance exclue, chiffres des noms tolérés), si ses mots de hausse ou de baisse correspondent au sens d’un fait cité et si elle n’affirme aucune cause ; trois phrases au plus, phrases masquées comptées. `SummaryPrompt` est commun aux deux rédacteurs. `ClaudeClient` : un appel Messages en JSON contraint, modèle `claude-opus-5-5`, effort bas, repli serveur `fallbacks: "default"`, clé dans l’en-tête seulement, validée par la liste des modèles. `AppleSummaryWriter` : `FoundationModels` derrière `canImport` et macOS 26. `summaryWriterID` optionnel (désactivé par défaut) ; Réglages → Sources → Synthèse rédigée ; onglets « Faits / Synthèse » dans l’inspecteur, rédaction à la demande, résultat en mémoire par séance et rédacteur. Dix tests dans `SummaryTests`. Non vérifié : compilation Swift, appel réel à Claude, chemin Apple Intelligence, adresse de création de clé Anthropic.
+- Étape 13 (8 novembre) : `MorningBrief` réunit les mouvements inhabituels de la dernière séance (4 jours au plus, sensibilité choisie), les seuils en niveau proches et non franchis (2 % du seuil, 0,10 point pour les taux), l’agenda FRED du jour et les communiqués des dernières 24 h. `BriefPreferences` (désactivé, 8 h 00, jours ouvrés) dit quand le brief est dû : une fois par jour après l’heure, au réveil si le Mac dormait. `RefreshController` l’envoie après l’actualisation et se réveille à l’heure du brief ; un changement de réglage replanifie le minuteur. Notification groupée « Brief du matin », rubrique Brief (⌘5) avec proposition d’activation, Réglages → Général → Brief du matin. Quatre tests dans `MorningBriefTests`. Non vérifié : compilation, rendu, délivrance réelle à 8 h.
 
 ## Limites connues
 
@@ -79,4 +80,4 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 ## Prochaine action
 
-Étape 13 : brief du matin (composition, programmation, notification, rubrique).
+Étape 14 : documentation, état Notion, description et checklist de la PR.

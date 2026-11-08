@@ -26,7 +26,7 @@ private extension SettingsTab {
     }
     var searchTerms: String {
         switch self {
-        case .general: "notifications alertes seuils mouvements inhabituels sensibilité démarrage session lancement automatique arrière-plan"
+        case .general: "notifications alertes seuils mouvements inhabituels sensibilité brief matin heure démarrage session lancement automatique arrière-plan"
         case .appearance: "thème palette couleurs système clair sombre position bandeau verre transparence teinte grain"
         case .shortcuts: "clavier touches hub navigation"
         case .sources: "connexion clé api webstat banque france insee bce eurostat bis ocde fed banque mondiale fred titres communiqués synthèse claude apple intelligence"
@@ -192,7 +192,26 @@ struct SettingsView: View {
                 .pickerStyle(.segmented)
             } header: { Text("Alertes") }
             .help("Actualisation quotidienne tant que sema tourne, même avec le hub fermé. Aucun suivi quand sema est quittée ou le Mac en veille.")
+            Section {
+                Toggle("Recevoir le brief", isOn: Binding(
+                    get: { store.brief.isEnabled }, set: { value in Task { await store.setBriefEnabled(value) } }
+                )).toggleStyle(.switch)
+                DatePicker("Heure", selection: Binding(get: { briefTime }, set: { date in
+                    let parts = Calendar.current.dateComponents([.hour, .minute], from: date)
+                    store.setBrief { $0.hour = parts.hour ?? BriefPreferences.defaultHour; $0.minute = parts.minute ?? BriefPreferences.defaultMinute }
+                }), displayedComponents: .hourAndMinute)
+                .disabled(!store.brief.isEnabled)
+                Toggle("Jours ouvrés seulement", isOn: Binding(get: { store.brief.weekdaysOnly }, set: { value in store.setBrief { $0.weekdaysOnly = value } }))
+                    .disabled(!store.brief.isEnabled)
+            } header: { Text("Brief du matin") } footer: {
+                Text("Mouvements inhabituels de la dernière séance, seuils proches et agenda du jour. Envoyé au réveil si le Mac dormait à l’heure prévue.")
+                    .typeRole(.caption).foregroundStyle(.secondary)
+            }
         }.formStyle(.grouped).onAppear { store.loginItem.refresh() }
+    }
+
+    private var briefTime: Date {
+        Calendar.current.date(bySettingHour: store.brief.hour, minute: store.brief.minute, second: 0, of: .now) ?? .now
     }
 
     private var sensitivityDescription: String {

@@ -24,12 +24,12 @@ extension AppStore {
         return context
     }
 
-    private func economicReleases(on day: Date) async -> [EconomicRelease]? {
+    func economicReleases(on day: Date) async -> [EconomicRelease]? {
         guard hasFREDKey, isSourceEnabled(StatisticalSource.fred.rawValue) else { return nil }
         return try? await statisticalClient().releaseDates(on: day)
     }
 
-    private func pressReleases(from start: Date, to end: Date) async -> [PressRelease]? {
+    func pressReleases(from start: Date, to end: Date) async -> [PressRelease]? {
         let feeds = CentralBankFeed.allCases.filter { isSourceEnabled($0.rawValue) }
         var result: [PressRelease] = []
         var failed = false

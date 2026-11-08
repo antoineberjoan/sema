@@ -78,6 +78,8 @@ final class AppStore {
     var historyTask: Task<Void, Never>?
     var historyGeneration = UUID()
     var sourceGenerations: [String: UUID] = [:]
+    /// Set by the app delegate: asks the refresh timer to plan again after a schedule setting changes.
+    @ObservationIgnored var rescheduleRefresh: () -> Void = {}
     @ObservationIgnored var invertedExchangeRates: [String: (source: MarketSeries, display: MarketSeries)] = [:]
 
     init(storage: LocalStorage = .applicationDefault()) {

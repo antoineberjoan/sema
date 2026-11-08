@@ -25,6 +25,7 @@
   "Sources/SemaMac/Features/Overview/": "Panorama et Focus : détail d’une série et ses actions de lecture.",
   "Sources/SemaMac/Features/Favorites/": "Rubrique Favoris et ses tuiles.",
   "Sources/SemaMac/Features/Alerts/": "Règles de seuil, éditeur et notification de test.",
+  "Sources/SemaMac/Features/Brief/": "Rubrique Brief : dernière séance, seuils proches et agenda du jour.",
   "Sources/SemaMac/Features/Explorer/": "Catalogues, recherche ⌘K et aperçu avant ajout.",
   "Sources/SemaMac/Features/Ribbon/": "Bandeau des favoris, ses cartes et sa signature.",
   "Sources/SemaMac/Features/Settings/": "Fenêtre de réglages et ses onglets.",
