@@ -56,6 +56,9 @@ final class AppStore {
     var hasFREDKey = false
     var isConnectingFRED = false
     var fredError: String?
+    /// Facts of a session, kept in memory for the session only; never written to disk.
+    var dayContexts: [String: DayContext] = [:]
+    var isContextPresented = false
     var connectingMarkets: Set<MarketProvider> = []
     var marketErrors: [MarketProvider: String] = [:]
     var didCheckMarketKeys = false

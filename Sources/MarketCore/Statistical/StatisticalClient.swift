@@ -334,6 +334,21 @@ public struct StatisticalClient: Sendable {
 
     // MARK: FRED
 
+    static func fredReleaseDatesRequest(on day: Date) -> URLRequest {
+        let text = Self.day(day)
+        return request(source: .fred, path: "/releases/dates?realtime_start=\(text)&realtime_end=\(text)&include_release_dates_with_no_data=true&file_type=json&limit=\(fredPageLimit)")
+    }
+    /// Economic publications scheduled on a day, from the FRED calendar.
+    public func releaseDates(on day: Date) async throws -> [EconomicRelease] {
+        try Self.fredReleaseDates(try await download(Self.fredReleaseDatesRequest(on: day)))
+    }
+    static func fredReleaseDates(_ data: Data) throws -> [EconomicRelease] {
+        try fredRows(data, key: "release_dates").compactMap { row in
+            guard let id = row["release_id"]?.text, let name = row["release_name"]?.text,
+                  let text = row["date"]?.text, let period = SDMXParser.period(text) else { return nil }
+            return EconomicRelease(releaseID: id, name: name, date: period.start)
+        }
+    }
     static func fredReleaseSeriesRequest(_ dataset: StatisticalDataset) -> URLRequest {
         request(source: .fred, path: "/release/series?release_id=\(component(dataset.code))&file_type=json&limit=\(fredPageLimit)&order_by=popularity&sort_order=desc")
     }

@@ -10,6 +10,9 @@ struct SeriesDetailView: View {
     private static let valueMinimumScale: CGFloat = 0.55
     private static let valueSpacing = Spacing.s8
     private static let actionSpacing = Spacing.s12
+    private static let inspectorMinWidth: CGFloat = 280
+    private static let inspectorIdealWidth: CGFloat = 320
+    private static let inspectorMaxWidth: CGFloat = 420
     private static let previewChartHeight: CGFloat = 170
     private static let chartHeight: CGFloat = 235
     private static let sourceSpacing = Spacing.s10
@@ -160,6 +163,10 @@ struct SeriesDetailView: View {
         }
         .modifier(SeriesDetailSurface(focus: focus))
         .disclosureGroupStyle(RowDisclosureStyle())
+        .inspector(isPresented: contextBinding) {
+            MoveContextView(series: series)
+                .inspectorColumnWidth(min: Self.inspectorMinWidth, ideal: Self.inspectorIdealWidth, max: Self.inspectorMaxWidth)
+        }
         .onChange(of: series.id, initial: true) { _, _ in
             localPeriod = series.supports(.year) ? .year : .all
             showsExplanation = false
@@ -193,7 +200,21 @@ struct SeriesDetailView: View {
     }
 
     @ViewBuilder private var alertButton: some View {
-        if store.isFollowing(series.id) { WatchButton(series: series) }
+        if store.isFollowing(series.id) {
+            HStack(spacing: Spacing.s8) {
+                WatchButton(series: series)
+                if focus {
+                    Button { store.isContextPresented.toggle() } label: { Label("Pourquoi ?", systemImage: "text.magnifyingglass") }
+                        .buttonStyle(.bordered).controlSize(.small)
+                        .help("Faits datés de la séance : vos autres repères, l’agenda, les communiqués et les titres.")
+                }
+            }
+        }
+    }
+
+    /// Only Focus opens the inspector; previews in the catalogue stay compact.
+    private var contextBinding: Binding<Bool> {
+        Binding(get: { focus && store.isContextPresented }, set: { store.isContextPresented = $0 })
     }
 
     private func focusValue(_ displayed: MarketSeries) -> some View {

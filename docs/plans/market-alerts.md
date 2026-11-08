@@ -47,7 +47,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 8. Source FRED : client, clé, Réglages, suggestions (VIXCLS, DGS10, DTWEXBGS), tests.
 - [x] 9. Lecteur XML partagé, flux Fed et BCE, tests sur fichiers d’exemple.
 - [x] 10. Titres GDELT et Alpha Vantage News, tests.
-- [ ] 11. Contexte du jour et inspecteur « Faits ».
+- [x] 11. Contexte du jour et inspecteur « Faits ».
 - [ ] 12. Synthèse : garde-fou testé, deux rédacteurs, Réglages, onglet « Synthèse ».
 - [ ] 13. Brief du matin : composition, programmation, notification, rubrique.
 - [ ] 14. Documentation, état Notion, description et checklist de la PR.
@@ -67,6 +67,7 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 - Étape 8 (8 novembre) : `StatisticalSource.fred` (clé obligatoire, inactive au départ). Catalogue = publications FRED, structure = séries de la publication par popularité, observations + fiche de la série ; unités converties (Percent → PC en points, Index → IX en %, milliards de dollars → USD × 10^9), valeurs manquantes « . » ignorées. La clé n’entre dans l’URL qu’à l’envoi (`api_key`), jamais dans les requêtes construites ; refus 400 → « clé refusée ». Clé dans le Trousseau, validée avant enregistrement, section FRED dans Réglages → Sources. Suggestions : VIXCLS, DGS10, DGS2, DTWEXBGS, DEXUSEU (identifiants de publication à vérifier avec une vraie clé). Quatre tests dans `FREDClientTests`.
 - Étape 9 (8 novembre) : le lecteur XML privé du décodeur SDMX devient `XMLTree`, partagé (entités refusées, CDATA lu). `PressReleaseClient` lit les flux RSS ou Atom de la Fed et de la BCE (`CentralBankFeed`), garde les entrées datées avec un lien https et les trie. Interrupteurs dans Réglages → Sources, via `disabledSourceIDs`. Trois tests dans `PressReleaseClientTests`. Adresses des flux non appelées ici.
 - Étape 10 (8 novembre) : `Headline`, `HeadlineSource` (GDELT par défaut, Alpha Vantage News, aucune) et `headlineSourceID` optionnel. `GDELTClient` interroge la fenêtre de la séance en anglais, sans clé ; `MarketDataClient.news` réutilise la clé, l’espacement et les erreurs d’Alpha Vantage. Liens https seulement. Choix dans Réglages → Sources. Trois tests dans `HeadlineTests`. Conditions d’usage de GDELT non vérifiées.
+- Étape 11 (8 novembre) : `DayContext` (repères liés via `PeerMove`, calendrier FRED `releases/dates`, communiqués, titres, parties indisponibles nommées), fenêtre UTC de la séance. `AppStore.dayContext` charge chaque partie indépendamment et garde le résultat en mémoire pour la session. Focus : bouton « Pourquoi ? » et inspecteur natif `MoveContextView`. Trois tests dans `DayContextTests`.
 
 ## Limites connues
 
@@ -77,4 +78,4 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 ## Prochaine action
 
-Étape 11 : contexte du jour et inspecteur « Faits ».
+Étape 12 : synthèse vérifiée et ses deux rédacteurs.
