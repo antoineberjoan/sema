@@ -3,7 +3,7 @@ import SwiftUI
 import MarketCore
 
 struct AlertsView: View {
-    private static let sectionSpacing: CGFloat = 20
+    private static let sectionSpacing = Spacing.s24
     private static let emptyMinHeight: CGFloat = 350
     @Environment(AppStore.self) private var store
     var body: some View {
@@ -36,12 +36,11 @@ struct AlertsView: View {
 }
 
 private struct AlertRow: View {
-    private static let titleFont = Font.system(size: 14, weight: .medium)
-    private static let iconSpacing: CGFloat = 14
+    private static let iconSpacing = Spacing.s14
     private static let iconSize: CGFloat = 30
-    private static let textSpacing: CGFloat = 9
-    private static let actionSpacing: CGFloat = 16
-    private static let verticalPadding: CGFloat = 18
+    private static let textSpacing = Spacing.s8
+    private static let actionSpacing = Spacing.s16
+    private static let verticalPadding = Spacing.s16
     @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
     let rule: AlertRule
@@ -53,7 +52,7 @@ private struct AlertRow: View {
             Image(systemName: rule.isEnabled ? "bell" : "bell.slash").foregroundStyle(accent)
                 .frame(width: Self.iconSize, height: Self.iconSize)
             VStack(alignment: .leading, spacing: Self.textSpacing) {
-                Text(item.map(MarketFormat.name) ?? "Repère indisponible").font(Self.titleFont)
+                Text(item.map(MarketFormat.name) ?? "Repère indisponible").typeRole(.label)
                 Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "").")
                     .typeRole(.small).foregroundStyle(.secondary)
                 if let event = lastEvent, let value = event.observedValue {

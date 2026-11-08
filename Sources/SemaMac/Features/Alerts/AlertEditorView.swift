@@ -4,8 +4,8 @@ import MarketCore
 
 struct AlertEditorView: View {
     private static let sheetWidth: CGFloat = 480
-    private static let inset: CGFloat = 24
-    private static let rowSpacing: CGFloat = 16
+    private static let inset = Spacing.s24
+    private static let rowSpacing = Spacing.s16
     @Environment(AppStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var seriesID = ""
