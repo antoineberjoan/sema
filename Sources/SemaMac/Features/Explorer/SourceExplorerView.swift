@@ -98,7 +98,7 @@ private struct StatisticalExplorerView: View {
     private static let seriesMinWidth: CGFloat = 350
     private static let advancedLabelMaxWidth: CGFloat = 140
     private static let advancedMaxHeight: CGFloat = 250
-    private static let formSpacing: CGFloat = 12
+    private static let formSpacing = Spacing.s12
     private static let seriesTitleLines = 4
     private static let valueLines = 2
     @Environment(AppStore.self) private var store

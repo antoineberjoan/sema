@@ -2,7 +2,7 @@
 import SwiftUI
 
 struct CatalogueSearchField: View {
-    private static let spacing: CGFloat = 10
+    private static let spacing = Spacing.s10
     @Binding var query: String
     let prompt: String
     var isSearching = false

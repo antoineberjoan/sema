@@ -38,7 +38,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 3b. Alignement : Overview et Focus.
 - [x] 3c. Alignement : bandeau et signature.
 - [x] 3d. Alignement : Favoris et Alertes.
-- [ ] 3e. Alignement : Explorer.
+- [x] 3e. Alignement : Explorer.
 - [ ] 3f. Alignement : Réglages et accueil.
 - [ ] 4. Période partagée et persistée, onglets du hub, bandeau sans rail.
 - [ ] 5. Cœur : mouvement inhabituel, sensibilité, tests.

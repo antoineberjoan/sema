@@ -5,18 +5,17 @@ import MarketCore
 struct SeriesSearchView: View {
     private static let sheetWidth: CGFloat = 880
     private static let sheetHeight: CGFloat = 560
-    private static let sheetPadding: CGFloat = 18
-    private static let sectionSpacing: CGFloat = 18
+    private static let sheetPadding = Spacing.s16
+    private static let sectionSpacing = Spacing.s16
     private static let modePickerWidth: CGFloat = 300
     private static let catalogueHeight: CGFloat = 420
     private static let resultsHeight: CGFloat = 320
-    private static let searchSpacing: CGFloat = 12
-    private static let searchTopPadding: CGFloat = 6
-    private static let iconSpacing: CGFloat = 12
-    private static let iconWidth: CGFloat = 20
-    private static let textSpacing: CGFloat = 5
-    private static let emptyTopPadding: CGFloat = 35
-    private static let searchFont = Font.system(size: 18)
+    private static let searchSpacing = Spacing.s12
+    private static let searchTopPadding = Spacing.s6
+    private static let iconSpacing = Spacing.s12
+    private static let iconWidth: CGFloat = 16
+    private static let textSpacing = Spacing.s4
+    private static let emptyTopPadding = Spacing.s32
     @Environment(AppStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @Environment(\.semaAccent) private var accent
@@ -43,7 +42,7 @@ struct SeriesSearchView: View {
             HStack(spacing: Self.searchSpacing) {
                 Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
                 TextField("Rechercher un repère…", text: $query)
-                    .textFieldStyle(.plain).font(Self.searchFont).focused($isSearchFocused)
+                    .textFieldStyle(.plain).typeRole(.subheading).focused($isSearchFocused)
                     .accessibilityLabel("Rechercher un repère")
                     .onSubmit(openSelected)
                     .onKeyPress(.downArrow) { moveSelection(by: 1); return .handled }
