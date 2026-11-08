@@ -23,4 +23,23 @@ struct RefreshPolicyTests {
         #expect(RefreshPolicy.nextDelay(syncedDates: [nil], now: now) == 0)
         #expect(RefreshPolicy.nextDelay(syncedDates: [], now: now) == 86_400)
     }
+
+    private func utc(_ text: String) -> Date { ISO8601DateFormatter().date(from: text)! }
+
+    @Test func watchedMarketsAreDueOnceACloseHasPassed() {
+        // Thursday 5 November 2026: New York closes at 16:20 EST, 21:20 UTC.
+        let beforeClose = utc("2026-11-05T20:00:00Z")
+        let afterClose = utc("2026-11-05T22:00:00Z")
+        #expect(RefreshPolicy.isDue(syncedAt: beforeClose, now: afterClose, followsCloses: true))
+        #expect(!RefreshPolicy.isDue(syncedAt: beforeClose, now: afterClose))
+        #expect(!RefreshPolicy.isDue(syncedAt: utc("2026-11-05T21:30:00Z"), now: afterClose, followsCloses: true))
+        #expect(RefreshPolicy.lastClose(before: afterClose) == utc("2026-11-05T21:20:00Z"))
+    }
+
+    @Test func weekendsHaveNoCloseAndTheNextOneIsMonday() {
+        let saturday = utc("2026-11-07T12:00:00Z")
+        #expect(RefreshPolicy.lastClose(before: saturday) == utc("2026-11-06T21:20:00Z"))
+        #expect(RefreshPolicy.nextClose(after: saturday) == utc("2026-11-09T16:50:00Z"))
+        #expect(RefreshPolicy.nextDelay(syncedDates: [saturday], now: saturday, followsCloses: true) == RefreshPolicy.interval)
+    }
 }

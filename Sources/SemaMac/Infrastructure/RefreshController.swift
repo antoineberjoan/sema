@@ -1,4 +1,4 @@
-// Planifie l’actualisation quotidienne pendant la vie de l’app, même sans fenêtre ouverte.
+// Planifie l’actualisation quotidienne, et après chaque clôture pour les repères surveillés, même sans fenêtre ouverte.
 import AppKit
 import MarketCore
 
@@ -51,16 +51,18 @@ final class RefreshController {
             }
             let now = Date.now
             let due = Set(store.automaticRefreshSeries.filter {
-                RefreshPolicy.isDue(syncedAt: $0.syncedAt, now: now)
+                RefreshPolicy.isDue(syncedAt: $0.syncedAt, now: now, followsCloses: store.followsCloses($0))
             }.map(\.id))
             if !due.isEmpty { await store.refreshSeries(only: due) }
             task = nil
             // Une série en erreur garde son cache ; le prochain essai automatique est le lendemain.
             let completedAt = Date.now
-            let dates = store.automaticRefreshSeries.map { item in
+            let series = store.automaticRefreshSeries
+            let dates = series.map { item in
                 RefreshPolicy.isDue(syncedAt: item.syncedAt, now: completedAt) ? completedAt : item.syncedAt
             }
-            schedule(after: RefreshPolicy.nextDelay(syncedDates: dates, now: completedAt))
+            schedule(after: RefreshPolicy.nextDelay(syncedDates: dates, now: completedAt,
+                                                    followsCloses: series.contains(where: store.followsCloses)))
         }
     }
 

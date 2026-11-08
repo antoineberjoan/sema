@@ -42,7 +42,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 3f. Alignement : Réglages et accueil.
 - [x] 4. Période partagée et persistée, onglets du hub, bandeau sans rail.
 - [x] 5. Cœur : mouvement inhabituel, sensibilité, tests.
-- [ ] 6. Actualisation après clôture, tests de `RefreshPolicy`.
+- [x] 6. Actualisation après clôture, tests de `RefreshPolicy`.
 - [ ] 7. App : cloche, permission au premier clic, notification groupée, vue Alertes, réglage de sensibilité.
 - [ ] 8. Source FRED : client, clé, Réglages, suggestions (VIXCLS, DGS10, DTWEXBGS), tests.
 - [ ] 9. Lecteur XML partagé, flux Fed et BCE, tests sur fichiers d’exemple.
@@ -62,6 +62,7 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 - Étape 3 (8 novembre) : styles natifs remplacés par les rôles de Typographie 1.1 dans toute l’app ; écarts, rayons et durées ramenés aux jetons dossier par dossier (sidebar sur un bord commun de 16 pt, Focus en rôle hero, badges en rôle tag, bandeau 200/120 ms, signature sous 900 ms, accueil et réglages). Le garde-fou refuse désormais toute taille de texte écrite en chiffres hors de `TypeRole.swift` (test `test_text_size_lives_in_type_roles`). Garde-fous et 42 tests Python au vert ; un contrôle local des symboles `Self.x` et des jetons ne signale rien. Compilation non vérifiée ici.
 - Étape 4 (8 novembre) : `periodID` optionnel dans `AppPreferences` ; `AppStore.period` lu depuis les préférences, `setPeriod` et `period(for:)` (une série trop courte affiche tout, sans changer le choix) ; `PeriodTabs` « 3M 1A 3A 5A Max » dans Focus ; le bandeau supprime le rail et `RibbonPeriodPicker`, suit le hub, garde l’accès aux réglages sur la signature. Test `sharedPeriodPersistsAndOlderFilesKeepOneYear`.
 - Étape 5 (8 novembre) : `UnusualMove` (variation de la séance divisée par l’écart-type des 20 variations précédentes, en points pour les taux, en % sinon ; refus si historique court, convention inconnue ou écart-type nul), `MoveSensitivity` (3×, 2×, 1,5×), condition `unusualMove`, `AlertRule.unusualMove`, `AlertEvent.ratio`, `moveSensitivityID` optionnel. `AlertEvaluator.newEvents` réutilise le point de contrôle. Quatre tests dans `UnusualMoveTests`.
+- Étape 6 (8 novembre) : `RefreshPolicy` connaît les clôtures des jours ouvrés (Paris 17 h 50, New York 16 h 20, heure locale de chaque place) ; une série surveillée devient à jour dès qu’une clôture est passée depuis sa synchronisation, et le minuteur se cale sur la prochaine clôture. `AppStore.followsCloses` relie ce rythme aux seules séries surveillées. Tests sur le jeudi 5 novembre et le week-end. Limite : si le fournisseur publie la clôture en retard, la séance est vue au contrôle suivant.
 
 ## Limites connues
 
@@ -72,4 +73,4 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 ## Prochaine action
 
-Étape 6 : actualisation après clôture.
+Étape 7 : cloche, notification groupée et vue Alertes.
