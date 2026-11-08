@@ -15,7 +15,7 @@ Source : le 5 novembre 2026, Antoine apprend la chute des marchés (S&P 500 −4
 7. **Sources.** FRED avec une clé gratuite. La clé passe dans l’URL (`api_key`), seule méthode offerte : même exception qu’Alpha Vantage.
 8. **Période.** Onglets texte dans le hub. Le bandeau perd son rail et suit la période du hub. La maquette présente les alternatives.
 9. **Design.** Les spécifications *Espace et forme 1.1*, *Mouvement 1.1* et *Typographie 1.1* du 5 novembre remplacent rayons, espacements, tailles et durées. `.system(size:)` est autorisé seulement dans le fichier des rôles typographiques.
-10. **Palette et logo.** Une nouvelle palette devient la valeur par défaut ; les six thèmes restent et les choix enregistrés sont conservés. Cinq logos sont proposés ; le tracé actuel reste jusqu’au choix d’Antoine.
+10. **Palette et logo.** Le 8 novembre, Antoine fournit l’identité déjà refaite : logo « repère » (une courbe qui se pose sur un point sarcelle), icône d’app claire et sombre, mot-symbole, et cinq couleurs : Encre `#141414`, Graphite `#474747`, Papier `#FAFAFA`, Brume `#E3E5E2`, Sarcelle profonde `#1F6F73`. Elle remplace les trois palettes et les cinq logos proposés dans le canevas. Cette palette devient la valeur par défaut ; les six thèmes restent et les choix enregistrés sont conservés. Le nouveau logo remplace Palier — Référence dans l’app, l’icône, le DMG et le kit de marque.
 
 ## Critères observables
 
@@ -32,7 +32,8 @@ Source : le 5 novembre 2026, Antoine apprend la chute des marchés (S&P 500 −4
 Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, un commit, un push et une CI verte.
 
 - [x] 1. Canevas v2 : trois palettes, cinq logos, trois alternatives de période, écrans réalignés avec la palette recommandée.
-- [ ] 2. Jetons du design system (espace, rayons, élévation, rôles typographiques, mouvement), nouvelle palette par défaut, garde-fou typographique, tests de préférences.
+- [ ] 2. Jetons du design system (espace, rayons, élévation, rôles typographiques, mouvement), palette d’Antoine par défaut, garde-fou typographique, tests de préférences.
+- [ ] 2b. Logo « repère » : fichiers source dans `Resources/Brand/`, géométrie unique dans `SignalPath.swift`, icône d’app (`scripts/render-icon.swift`), barre des menus, signature, DMG.
 - [ ] 3a. Alignement : Workspace et sidebar.
 - [ ] 3b. Alignement : Overview et Focus.
 - [ ] 3c. Alignement : bandeau et signature.
@@ -51,11 +52,11 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [ ] 13. Brief du matin : composition, programmation, notification, rubrique.
 - [ ] 14. Documentation, état Notion, description et checklist de la PR.
 
-Après la boucle : Antoine choisit le logo, puis la géométrie retenue remplace l’actuelle partout (`SignalPath.swift`, `scripts/render-icon.swift`, `Resources/Brand/`, `Resources/DMG/`, `site/dist/`). Le site suivra dans un chantier séparé.
+Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier séparé.
 
 ## Preuves
 
-- Étape 1 (8 novembre) : page « Refonte » du [canevas](https://claude.ai/artifact/SA5fmyp8tMwNTA1CQ3g5KK). Trois palettes (Encre & Laiton recommandée, Lagune, Nuit d’hiver), cinq logos (Palier, Sigma, Borne, Horizon, Écart), trois alternatives de période (onglets retenus), Focus, Alertes, Réglages, bandeau sans rail et brief réalignés. Rendu non contrôlé visuellement par l’agent.
+- Étape 1 (8 novembre) : page « Refonte » du [canevas](https://claude.ai/artifact/SA5fmyp8tMwNTA1CQ3g5KK). Trois palettes et cinq logos, remplacés le 8 novembre par l’identité fournie par Antoine ; trois alternatives de période (onglets retenus), Focus, Alertes, Réglages, bandeau sans rail et brief réalignés. Rendu non contrôlé visuellement par l’agent.
 
 ## Limites connues
 
@@ -66,4 +67,4 @@ Après la boucle : Antoine choisit le logo, puis la géométrie retenue remplace
 
 ## Prochaine action
 
-Étape 2 : jetons du design system et palette Encre & Laiton.
+Étape 2 : jetons du design system et palette d’Antoine.
