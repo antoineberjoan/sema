@@ -28,6 +28,14 @@ struct SourceSettingsView: View {
             } header: { Text("Communiqués des banques centrales") } footer: {
                 Text("Flux publics, sans clé. Ils servent au contexte d’un mouvement et au brief du matin.").typeRole(.caption).foregroundStyle(.secondary)
             }
+            Section {
+                Picker("Source des titres", selection: Binding(get: { store.headlineSource }, set: { store.setHeadlineSource($0) })) {
+                    ForEach(HeadlineSource.allCases) { Text($0.title).tag($0) }
+                }
+            } header: { Text("Titres d’actualité") } footer: {
+                Text("Les titres restent des liens vers leurs éditeurs. Alpha Vantage utilise la clé déjà connectée et un appel de son quota quotidien. Conditions d’usage de GDELT à vérifier avant une diffusion large.")
+                    .typeRole(.caption).foregroundStyle(.secondary)
+            }
         }
         .formStyle(.grouped)
         .task { await store.checkMarketKeys() }

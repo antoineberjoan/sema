@@ -11,6 +11,7 @@ public actor MarketDataClient {
     private let provider: MarketProvider
     private let session: URLSession
     private static let alphaSpacing: TimeInterval = 1.1
+    static let newsLimit = 10
     private var nextAlphaRequest = Date.distantPast
     private var catalogueCache: MarketCatalogue?
     private var catalogueGeneration = UUID()
@@ -139,6 +140,35 @@ public actor MarketDataClient {
                         completionHandler: @escaping @Sendable (URLRequest?) -> Void) {
             completionHandler(nil)
         }
+    }
+
+    /// Market news of a day from Alpha Vantage, with the key already kept for prices; one call of the daily quota.
+    public func news(from start: Date, to end: Date, key: String) async throws -> [Headline] {
+        guard provider == .alphaVantage else { throw MarketDataError.unavailable }
+        let body = try await requestBody("query", parameters: [
+            "function": "NEWS_SENTIMENT", "topics": "financial_markets", "sort": "RELEVANCE", "limit": String(Self.newsLimit),
+            "time_from": Self.newsStamp(start), "time_to": Self.newsStamp(end)], key: key)
+        if let data = try? JSONSerialization.jsonObject(with: body) as? [String: Any] { try Self.checkError(data.filter { $0.key != "feed" }) }
+        return try Self.news(body)
+    }
+
+    static func news(_ body: Data) throws -> [Headline] {
+        guard let root = try? JSONDecoder().decode([String: WebstatValue].self, from: body) else { throw MarketDataError.invalidData }
+        guard case .array(let feed) = root["feed"] else { return [] }
+        return feed.compactMap { value -> Headline? in
+            guard case .object(let item) = value, let title = item["title"]?.text, !title.isEmpty,
+                  let link = item["url"]?.text.flatMap(URL.init(string:)), link.scheme == "https",
+                  let date = item["time_published"]?.text.flatMap(Headline.compactDate) else { return nil }
+            return Headline(title: title, link: link, publisher: item["source"]?.text ?? link.host ?? "", publishedAt: date)
+        }
+    }
+
+    private static func newsStamp(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = .posix
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyyMMdd'T'HHmm"
+        return formatter.string(from: date)
     }
 
     private func request(_ endpoint: String, parameters: [String: String], key: String) async throws -> [String: Any] {

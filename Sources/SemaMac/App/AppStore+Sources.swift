@@ -1,8 +1,11 @@
-// Active les sources de données et charge les catalogues des producteurs statistiques.
+// Active les sources de données, choisit la source des titres et charge les catalogues des producteurs statistiques.
 import Foundation
 import MarketCore
 
 extension AppStore {
+    var headlineSource: HeadlineSource { HeadlineSource(rawValue: preferences.headlineSourceID ?? "") ?? .standard }
+    func setHeadlineSource(_ source: HeadlineSource) { mutatePreferences { $0.headlineSourceID = source.rawValue } }
+
     func statisticalDatasets(source: StatisticalSource, reload: Bool = false) async throws -> [StatisticalDataset] {
         guard isSourceEnabled(source.rawValue) else { throw CancellationError() }
         let generation = sourceGenerations[source.rawValue]
