@@ -31,7 +31,7 @@ Source : le 5 novembre 2026, Antoine apprend la chute des marchés (S&P 500 −4
 
 Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, un commit, un push et une CI verte.
 
-- [ ] 1. Canevas v2 : trois palettes, cinq logos, trois alternatives de période, écrans réalignés avec la palette recommandée.
+- [x] 1. Canevas v2 : trois palettes, cinq logos, trois alternatives de période, écrans réalignés avec la palette recommandée.
 - [ ] 2. Jetons du design system (espace, rayons, élévation, rôles typographiques, mouvement), nouvelle palette par défaut, garde-fou typographique, tests de préférences.
 - [ ] 3a. Alignement : Workspace et sidebar.
 - [ ] 3b. Alignement : Overview et Focus.
@@ -55,7 +55,7 @@ Après la boucle : Antoine choisit le logo, puis la géométrie retenue remplace
 
 ## Preuves
 
-Aucune pour l’instant.
+- Étape 1 (8 novembre) : page « Refonte » du [canevas](https://claude.ai/artifact/SA5fmyp8tMwNTA1CQ3g5KK). Trois palettes (Encre & Laiton recommandée, Lagune, Nuit d’hiver), cinq logos (Palier, Sigma, Borne, Horizon, Écart), trois alternatives de période (onglets retenus), Focus, Alertes, Réglages, bandeau sans rail et brief réalignés. Rendu non contrôlé visuellement par l’agent.
 
 ## Limites connues
 
@@ -66,4 +66,4 @@ Aucune pour l’instant.
 
 ## Prochaine action
 
-Étape 1 : canevas v2.
+Étape 2 : jetons du design system et palette Encre & Laiton.
