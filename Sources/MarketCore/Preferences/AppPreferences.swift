@@ -18,6 +18,8 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var invertedCurrencyPairs: Set<String>?
     public var ribbonGlass: RibbonGlassPreferences?
     public var shortcuts: ShortcutPreferences?
+    /// History period shared by the hub and the ribbon; absent means one year.
+    public var periodID: String?
 
     public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
                 alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "brand", appearanceID: String? = nil,
@@ -42,7 +44,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case schemaVersion, favoriteIDs, followedSeriesIDs, alerts, notificationsEnabled, themeID, appearanceID, onboardingCompleted, ribbonPositionID
-        case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass, shortcuts
+        case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass, shortcuts, periodID
     }
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -60,6 +62,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         invertedCurrencyPairs = try values.decodeIfPresent(Set<String>.self, forKey: .invertedCurrencyPairs)
         ribbonGlass = try values.decodeIfPresent(RibbonGlassPreferences.self, forKey: .ribbonGlass)
         shortcuts = try values.decodeIfPresent(ShortcutPreferences.self, forKey: .shortcuts)
+        periodID = try values.decodeIfPresent(String.self, forKey: .periodID)
         // Empty is a valid v2 selection; absence only means legacy v1.
         if schemaVersion > 1 { followedSeriesIDs = try values.decode([String].self, forKey: .followedSeriesIDs) }
         else { followedSeriesIDs = WebstatClient.starterIDs }

@@ -21,9 +21,6 @@ enum MenuRibbonLayout {
     static let minimumCardWidth: CGFloat = 208
     static let preferredVisibleCards = 4
     static let cardHeight: CGFloat = 216
-    static let controlColumnWidth: CGFloat = 84
-    static let periodRowHeight: CGFloat = 24
-    static let controlColumnPadding = Spacing.s8
     static let revealDuration = Motion.standard
     static let dismissDuration = Motion.standard * Motion.exitRatio
     static let hoverDuration = Motion.fast

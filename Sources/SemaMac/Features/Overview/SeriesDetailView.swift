@@ -7,7 +7,6 @@ struct SeriesDetailView: View {
     private static let sectionSpacing = Spacing.s24
     private static let headerSpacing = Spacing.s12
     private static let titleSpacing = Spacing.s4
-    private static let periodPickerWidth: CGFloat = 320
     private static let valueMinimumScale: CGFloat = 0.55
     private static let valueSpacing = Spacing.s8
     private static let actionSpacing = Spacing.s12
@@ -21,8 +20,11 @@ struct SeriesDetailView: View {
     let series: MarketSeries
     var preview = false
     var focus = false
-    @State private var period: HistoryPeriod = .year
+    /// Previews outside Focus keep their own period; Focus shares the hub and ribbon choice.
+    @State private var localPeriod: HistoryPeriod = .year
     @State private var showsExplanation = false
+
+    private var period: HistoryPeriod { focus ? store.period(for: series) : localPeriod }
 
     var body: some View {
         if series.observations.isEmpty { noData } else { populated }
@@ -77,7 +79,7 @@ struct SeriesDetailView: View {
                 }
                 Spacer(minLength: 0)
                 if focus {
-                    periodPicker.frame(maxWidth: Self.periodPickerWidth)
+                    PeriodTabs(periods: availablePeriods, selection: period) { store.setPeriod($0) }
                 } else {
                     ExchangeDirectionButton(series: series)
                     OriginBadge(series: series)
@@ -159,7 +161,7 @@ struct SeriesDetailView: View {
         .modifier(SeriesDetailSurface(focus: focus))
         .disclosureGroupStyle(RowDisclosureStyle())
         .onChange(of: series.id, initial: true) { _, _ in
-            period = series.supports(.year) ? .year : .all
+            localPeriod = series.supports(.year) ? .year : .all
             showsExplanation = false
         }
     }
@@ -307,9 +309,11 @@ struct SeriesDetailView: View {
         return "Période du " + MarketFormat.date(first) + " au " + MarketFormat.date(last)
     }
 
+    private var availablePeriods: [HistoryPeriod] { HistoryPeriod.visible.filter { $0 == .all || series.supports($0) } }
+
     private var periodPicker: some View {
-        Picker("Période de l’historique", selection: $period) {
-            ForEach(HistoryPeriod.visible.filter { $0 == .all || series.supports($0) }) { Text($0.title).tag($0) }
+        Picker("Période de l’historique", selection: $localPeriod) {
+            ForEach(availablePeriods) { Text($0.title).tag($0) }
         }
         .pickerStyle(.segmented).labelsHidden()
     }

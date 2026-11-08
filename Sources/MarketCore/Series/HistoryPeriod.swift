@@ -14,6 +14,10 @@ public enum HistoryPeriod: String, CaseIterable, Identifiable, Sendable {
     public var months: Int {
         switch self { case .month: 1; case .quarter: 3; case .halfYear: 6; case .year: 12; case .threeYears: 36; case .fiveYears: 60; case .all: 0 }
     }
+    /// Compact label of the hub tabs; `title` stays the accessible name.
+    public var shortTitle: String {
+        switch self { case .month: "1M"; case .quarter: "3M"; case .halfYear: "6M"; case .year: "1A"; case .threeYears: "3A"; case .fiveYears: "5A"; case .all: "Max" }
+    }
     public var title: String {
         switch self { case .month: "1 mois"; case .quarter: "3 mois"; case .halfYear: "6 mois"; case .year: "1 an"; case .threeYears: "3 ans"; case .fiveYears: "5 ans"; case .all: "Tout" }
     }

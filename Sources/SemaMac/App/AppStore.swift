@@ -12,7 +12,6 @@ final class AppStore {
     var settingsTab: SettingsTab = .general
     var category: SeriesCategory = .markets
     var selectedSeriesID = WebstatClient.canonicalID("eurusd")
-    var period: HistoryPeriod = .year
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -198,7 +197,6 @@ final class AppStore {
     func show(_ item: MarketSeries) {
         if let historyLoadingID, historyLoadingID != item.id { cancelHistory() }
         selectedSeriesID = followedMatch(for: item)?.id ?? item.id; category = item.category
-        if !item.supports(period) { period = .all }
     }
 
     func reconcileSelection() {

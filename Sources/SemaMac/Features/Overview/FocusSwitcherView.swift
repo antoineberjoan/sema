@@ -65,7 +65,7 @@ struct FocusSwitcherView: View {
                     .lineLimit(Self.nameLines).multilineTextAlignment(.leading).frame(height: Self.nameHeight, alignment: .topLeading)
                 Text(MarketFormat.value(displayed)).typeRole(.figure)
                     .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
-                Text(MarketFormat.change(displayed, period: store.period))
+                Text(MarketFormat.change(displayed, period: store.period(for: item)))
                     .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
             .foregroundStyle(.primary).frame(width: Self.tileWidth, alignment: .leading).padding(Self.tilePadding)
