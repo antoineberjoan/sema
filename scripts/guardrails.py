@@ -38,7 +38,9 @@ TOP_TYPE = re.compile(r"^(?:@\w+(?:\([^)\n]*\))?\s+)*(?P<access>(?:public|intern
 # Une adresse, une locale ou un fuseau se nomme une fois ; une durée d’un jour reste `.day` ; une taille native reste un style.
 CONFIG_LITERAL = re.compile(r'\b(?:URL|URLComponents)\(string:\s*"|\b(?:Locale|TimeZone)\(identifier:\s*"')
 DAY_SECONDS = re.compile(r"(?<![\w.])86_?400(?![\w.])")
-NATIVE_TEXT_SIZE = re.compile(r"\.system\(size:\s*(?:10|11|12|13|15|17|22|26)\s*[,)]")
+# Typographie 1.1 : une taille de texte écrite en chiffres vit seulement dans les rôles de `TypeRole`.
+NATIVE_TEXT_SIZE = re.compile(r"\.system\(size:\s*\d")
+TYPE_ROLES = "Sources/SemaMac/DesignSystem/TypeRole.swift"
 # Noms antérieurs à la règle « pas de préfixe Sema » ; aucun nouveau type ne s’y ajoute.
 LEGACY_SEMA_TYPES = {"SemaAppDelegate", "SemaAppearance", "SemaCommands", "SemaElevation", "SemaFeedback", "SemaMacApp", "SemaMark",
                      "SemaPalette", "SemaPressStyle", "SemaSettingsTab", "SemaSettingsView", "SemaSignalPath", "SemaSupport", "SemaSymbol", "SemaTheme"}
@@ -168,8 +170,9 @@ def hardcoded(path, source):
     depth = 0  # Une constante nommée peut s’étendre sur plusieurs lignes jusqu’à la fermeture de ses délimiteurs.
     raw_lines = source.splitlines()
     for number, line in enumerate(swift_code(source).splitlines(), 1):
-        if path.startswith("Sources/SemaMac/") and NATIVE_TEXT_SIZE.search(line):
-            errors.append(f"{path}:{number} : taille de texte native en dur ; utiliser le style `.body`, `.callout`, `.subheadline`…")
+        if path.startswith("Sources/SemaMac/") and path != TYPE_ROLES and NATIVE_TEXT_SIZE.search(line):
+            errors.append(f"{path}:{number} : taille de texte en dur ; utiliser un rôle `.typeRole(…)` de Typographie 1.1.")
+            continue  # Une seule erreur par ligne : le rôle remplace la taille entière.
         if depth > 0 or NAMED_CONSTANT.match(line):
             depth = max(0, depth + sum(line.count(c) for c in "([{") - sum(line.count(c) for c in ")]}"))
             continue

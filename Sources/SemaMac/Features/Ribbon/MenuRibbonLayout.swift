@@ -27,7 +27,6 @@ enum MenuRibbonLayout {
     static let revealDuration = Motion.standard
     static let dismissDuration = Motion.standard * Motion.exitRatio
     static let hoverDuration = Motion.fast
-    static let emptySymbolFont = Font.system(size: 24, weight: .light)
     static let sparklineWidth: CGFloat = 1.8
     static let revealOffset = Motion.shift
 }

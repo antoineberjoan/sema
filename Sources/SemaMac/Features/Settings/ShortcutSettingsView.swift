@@ -5,7 +5,7 @@ import SwiftUI
 import MarketCore
 
 struct ShortcutSettingsView: View {
-    private static let rowSpacing: CGFloat = 14
+    private static let rowSpacing = Spacing.s14
     private static let recorderWidth: CGFloat = 142
     private static let recorderHeight: CGFloat = 30
     @Environment(AppStore.self) private var store

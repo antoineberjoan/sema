@@ -3,7 +3,7 @@ import SwiftUI
 import MarketCore
 
 struct SourceSettingsView: View {
-    private static let rowPadding: CGFloat = 4
+    private static let rowPadding = Spacing.s4
     @Environment(AppStore.self) private var store
 
     var body: some View {

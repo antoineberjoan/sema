@@ -3,7 +3,7 @@ import SwiftUI
 import MarketCore
 
 struct RibbonGlassSettingsView: View {
-    private static let sliderSpacing: CGFloat = 16
+    private static let sliderSpacing = Spacing.s16
     private static let labelWidth: CGFloat = 136
     private static let valueWidth: CGFloat = 38
     @Environment(AppStore.self) private var store

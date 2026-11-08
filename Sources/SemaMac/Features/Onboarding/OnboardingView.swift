@@ -9,50 +9,42 @@ import MarketCore
 // 180 ms  Un thème change de teinte et l’aperçu du bandeau suit, sans déplacer les tuiles.
 
 private enum WelcomeMotion {
-    static let drawDuration = 0.36
-    static let stepDuration = 0.22
-    static let contentOffset: CGFloat = 6
-    static let selectionDuration = 0.18
-    static let previewScale: CGFloat = 0.96
+    static let drawDuration = Motion.explain
+    static let stepDuration = Motion.standard
+    static let contentOffset = Motion.shift
+    static let selectionDuration = Motion.fast
+    static let previewScale = Motion.scaleFrom
 }
 
 private enum WelcomeLayout {
     static let windowWidth: CGFloat = 640
     static let windowHeight: CGFloat = 700
-    static let windowPadding: CGFloat = 36
+    static let windowPadding = Spacing.s32
     static let signalSize: CGFloat = 44
     static let heroSignalSize: CGFloat = 88
-    static let heroSpacing: CGFloat = 28
-    static let wordmarkTracking: CGFloat = -0.5
+    static let heroSpacing = Spacing.s32
     static let dotSize: CGFloat = 6
     static let activeDotWidth: CGFloat = 18
-    static let dotSpacing: CGFloat = 6
+    static let dotSpacing = Spacing.s6
     static let dotOpacity = 0.2
-    static let titleSpacing: CGFloat = 10
-    static let titleTracking: CGFloat = -0.9
-    static let errorSpacing: CGFloat = 12
-    static let errorTopPadding: CGFloat = 12
-    static let stepSpacing: CGFloat = 20
-    static let gridSpacing: CGFloat = 12
+    static let titleSpacing = Spacing.s10
+    static let errorSpacing = Spacing.s12
+    static let errorTopPadding = Spacing.s12
+    static let stepSpacing = Spacing.s24
+    static let gridSpacing = Spacing.s12
     static let featureColumnWidth: CGFloat = 420
-    static let featureSpacing: CGFloat = 20
-    static let featureRowSpacing: CGFloat = 16
-    static let featureTextSpacing: CGFloat = 3
+    static let featureSpacing = Spacing.s24
+    static let featureRowSpacing = Spacing.s16
+    static let featureTextSpacing = Spacing.s4
     static let featureSymbolWidth: CGFloat = 32
-    static let tileSpacing: CGFloat = 12
-    static let tileTextSpacing: CGFloat = 3
-    static let tilePadding: CGFloat = 16
+    static let tileSpacing = Spacing.s12
+    static let tileTextSpacing = Spacing.s4
+    static let tilePadding = Spacing.s16
     static let tileMinHeight: CGFloat = 64
     static let tileBorder: CGFloat = 1.5
-    static let previewSpacing: CGFloat = 12
+    static let previewSpacing = Spacing.s12
     static let previewCardWidth: CGFloat = 176
-    static let footerSpacing: CGFloat = 12
-    static let wordmarkFont = Font.system(size: 16, weight: .semibold)
-    static let titleFont = Font.system(size: 30, weight: .semibold)
-    static let featureSymbolFont = Font.system(size: 20)
-    static let tileSymbolFont = Font.system(size: 20)
-    static let tileTitleFont = Font.system(size: 14, weight: .semibold)
-    static let tileCheckFont = Font.system(size: 18)
+    static let footerSpacing = Spacing.s12
     static let signalWidth = SignalPath.stroke * signalSize / SignalPath.viewBox
     static let heroSignalWidth = SignalPath.stroke * heroSignalSize / SignalPath.viewBox
 }
@@ -149,7 +141,7 @@ struct OnboardingView: View {
 
             if step > 0 {
                 VStack(alignment: .leading, spacing: WelcomeLayout.titleSpacing) {
-                    Text(title).font(WelcomeLayout.titleFont).tracking(WelcomeLayout.titleTracking)
+                    Text(title).typeRole(.title)
                         .accessibilityAddTraits(.isHeader)
                     Text(detail).typeRole(.body).foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -186,7 +178,7 @@ struct OnboardingView: View {
         .interactiveDismissDisabled()
         .task {
             await store.checkWebstatKey()
-            withAnimation(reduceMotion ? nil : .easeOut(duration: WelcomeMotion.drawDuration)) { drawProgress = 1 }
+            withAnimation(reduceMotion ? nil : Motion.easeOut(WelcomeMotion.drawDuration)) { drawProgress = 1 }
         }
     }
 
@@ -195,7 +187,7 @@ struct OnboardingView: View {
             HStack(spacing: Theme.minorSpacing) {
                 WelcomeSignal(progress: reduceMotion ? 1 : drawProgress, lineWidth: WelcomeLayout.signalWidth)
                     .foregroundStyle(accent).frame(width: WelcomeLayout.signalSize, height: WelcomeLayout.signalSize)
-                Text("sema").font(WelcomeLayout.wordmarkFont).tracking(WelcomeLayout.wordmarkTracking)
+                Text("sema").typeRole(.wordmark)
             }
             .opacity(step == 0 ? 0 : 1).accessibilityHidden(step == 0)
             Spacer()
@@ -215,14 +207,14 @@ struct OnboardingView: View {
             WelcomeSignal(progress: reduceMotion ? 1 : drawProgress, lineWidth: WelcomeLayout.heroSignalWidth)
                 .foregroundStyle(accent).frame(width: WelcomeLayout.heroSignalSize, height: WelcomeLayout.heroSignalSize)
             VStack(spacing: WelcomeLayout.titleSpacing) {
-                Text("Bienvenue dans sema.").font(WelcomeLayout.titleFont).tracking(WelcomeLayout.titleTracking)
+                Text("Bienvenue dans sema.").typeRole(.title)
                     .accessibilityAddTraits(.isHeader)
                 Text("L’économie bouge. Gardez vos repères.").typeRole(.body).foregroundStyle(.secondary)
             }
             VStack(alignment: .leading, spacing: WelcomeLayout.featureSpacing) {
                 ForEach(WelcomeFeature.all) { feature in
                     HStack(alignment: .top, spacing: WelcomeLayout.featureRowSpacing) {
-                        Image(systemName: feature.symbol).font(WelcomeLayout.featureSymbolFont).foregroundStyle(accent)
+                        Image(systemName: feature.symbol).typeRole(.section).foregroundStyle(accent)
                             .frame(width: WelcomeLayout.featureSymbolWidth).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: WelcomeLayout.featureTextSpacing) {
                             Text(feature.title).typeRole(.heading)
@@ -268,7 +260,7 @@ struct OnboardingView: View {
         .frame(maxWidth: .infinity, minHeight: MenuRibbonLayout.cardHeight, maxHeight: MenuRibbonLayout.cardHeight, alignment: .leading)
         .environment(\.semaGlassTint, store.palette.glassTint)
         .environment(\.semaGlassSettings, store.ribbonGlass)
-        .animation(reduceMotion ? nil : .easeOut(duration: WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
+        .animation(reduceMotion ? nil : Motion.easeOut(WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
         .allowsHitTesting(false).accessibilityHidden(true)
     }
 
@@ -277,7 +269,7 @@ struct OnboardingView: View {
     }
 
     private func toggle(_ collection: WelcomeCollection) {
-        withAnimation(reduceMotion ? nil : .easeOut(duration: WelcomeMotion.selectionDuration)) {
+        withAnimation(reduceMotion ? nil : Motion.easeOut(WelcomeMotion.selectionDuration)) {
             if isSelected(collection) { selection.subtract(collection.seriesIDs) }
             else { selection.formUnion(collection.seriesIDs) }
         }
@@ -287,14 +279,14 @@ struct OnboardingView: View {
         let selected = isSelected(collection)
         return Button { toggle(collection) } label: {
             HStack(spacing: WelcomeLayout.tileSpacing) {
-                Image(systemName: collection.symbol).font(WelcomeLayout.tileSymbolFont).foregroundStyle(accent)
+                Image(systemName: collection.symbol).typeRole(.section).foregroundStyle(accent)
                     .frame(width: WelcomeLayout.featureSymbolWidth).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: WelcomeLayout.tileTextSpacing) {
-                    Text(collection.title).font(WelcomeLayout.tileTitleFont)
+                    Text(collection.title).typeRole(.label)
                     Text(collection.subtitle).typeRole(.caption).foregroundStyle(.secondary).lineLimit(1)
                 }
                 Spacer(minLength: 0)
-                Image(systemName: selected ? "checkmark.circle.fill" : "circle").font(WelcomeLayout.tileCheckFont)
+                Image(systemName: selected ? "checkmark.circle.fill" : "circle").typeRole(.section)
                     .foregroundStyle(selected ? accent : Color.secondary.opacity(WelcomeLayout.dotOpacity))
                     .accessibilityHidden(true)
             }
@@ -322,7 +314,7 @@ struct OnboardingView: View {
     }
 
     private func go(to next: Int) {
-        withAnimation(reduceMotion ? nil : .easeInOut(duration: WelcomeMotion.stepDuration)) { step = next }
+        withAnimation(reduceMotion ? nil : Motion.easeInOut(WelcomeMotion.stepDuration)) { step = next }
     }
 
     private var footer: some View {

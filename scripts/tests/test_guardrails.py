@@ -311,11 +311,13 @@ class GuardrailsTests(unittest.TestCase):
                    "// Locale(identifier: \"fr_FR\") reste un commentaire\n")
         self.assertEqual(self.errors(), [])
 
-    def test_native_text_size_is_a_style(self):
-        self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nstatic let title = Font.system(size: 13, weight: .medium)\n")
-        self.assertTrue(any("style" in error for error in self.errors()))
+    def test_text_size_lives_in_type_roles(self):
         self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nstatic let title = Font.system(size: 14, weight: .medium)\n")
+        self.assertTrue(any("typeRole" in error for error in self.errors()))
+        self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nlet title = Font.system(size: side * scale)\n")
         self.assertEqual(self.errors(), [])
+        self.write("Sources/SemaMac/DesignSystem/TypeRole.swift", "// Décrit les rôles.\nstatic let title = Font.system(size: 28, weight: .medium)\n")
+        self.assertFalse(any("typeRole" in error for error in self.errors()))
 
     def test_new_type_does_not_repeat_project_name(self):
         self.write("Sources/MarketCore/SemaClock.swift", "// Décrit une horloge.\npublic struct SemaClock {}\nlet clock = SemaClock()\n")

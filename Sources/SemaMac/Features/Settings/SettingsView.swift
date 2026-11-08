@@ -37,38 +37,36 @@ private extension SettingsTab {
 
 struct SettingsView: View {
     private static let sidebarWidth: CGFloat = 230
-    private static let searchSpacing: CGFloat = 8
-    private static let searchPadding: CGFloat = 10
+    private static let searchSpacing = Spacing.s8
+    private static let searchPadding = Spacing.s10
     private static let searchFill = Color.primary.opacity(0.06)
-    private static let fieldCorner: CGFloat = 10
+    private static let fieldCorner = Radius.block
     private static let searchInsets = EdgeInsets(top: 18, leading: 14, bottom: 12, trailing: 14)
-    private static let tabPadding: CGFloat = 7
-    private static let profileSpacing: CGFloat = 10
+    private static let tabPadding = Spacing.s8
+    private static let profileSpacing = Spacing.s10
     private static let profileAvatarSize: CGFloat = 28
-    private static let profilePadding: CGFloat = 10
-    private static let profileInset: CGFloat = 12
-    private static let titleFont = Font.system(size: 25, weight: .semibold)
+    private static let profilePadding = Spacing.s10
+    private static let profileInset = Spacing.s12
     private static let titleInsets = EdgeInsets(top: 26, leading: 28, bottom: 10, trailing: 28)
     private static let minimumWidth: CGFloat = 880
     private static let idealWidth: CGFloat = 980
     private static let minimumHeight: CGFloat = 660
     private static let idealHeight: CGFloat = 740
-    private static let choiceLabelTop: CGFloat = 17
-    private static let modeSpacing: CGFloat = 20
-    private static let positionSpacing: CGFloat = 16
-    private static let swatchCorner: CGFloat = 8
-    private static let innerSwatchCorner: CGFloat = 5
-    private static let innerSwatchInset: CGFloat = 12
-    private static let swatchPadding: CGFloat = 4
+    private static let choiceLabelTop = Spacing.s16
+    private static let modeSpacing = Spacing.s24
+    private static let positionSpacing = Spacing.s16
+    private static let swatchCorner = Radius.block
+    private static let innerSwatchCorner = Radius.mark
+    private static let innerSwatchInset = Spacing.s12
+    private static let swatchPadding = Spacing.s4
     private static let swatchHeight: CGFloat = 58
     private static let selectedStroke: CGFloat = 2
     private static let paletteTitleLines = 2
     private static let paletteTitleHeight: CGFloat = 28
-    private static let aboutSpacing: CGFloat = 18
+    private static let aboutSpacing = Spacing.s16
     private static let markSize: CGFloat = 48
-    private static let aboutTextSpacing: CGFloat = 5
-    private static let nameFont = Font.system(size: 24, weight: .medium)
-    private static let aboutPadding: CGFloat = 12
+    private static let aboutTextSpacing = Spacing.s6
+    private static let aboutPadding = Spacing.s12
     @Environment(AppStore.self) private var store
     @State private var search = ""
     @FocusState private var searchFocused: Bool
@@ -133,7 +131,7 @@ struct SettingsView: View {
             .background(Theme.surface)
             Divider()
             VStack(alignment: .leading, spacing: 0) {
-                Text(store.settingsTab.title).font(Self.titleFont)
+                Text(store.settingsTab.title).typeRole(.title)
                     .padding(Self.titleInsets)
                     .accessibilityAddTraits(.isHeader)
                 settingsContent
@@ -243,7 +241,7 @@ struct SettingsView: View {
                 HStack(spacing: Self.aboutSpacing) {
                     Symbol().frame(width: Self.markSize, height: Self.markSize)
                     VStack(alignment: .leading, spacing: Self.aboutTextSpacing) {
-                        Text("sema").font(Self.nameFont)
+                        Text("sema").typeRole(.title)
                         Text("Gardez vos repères.").foregroundStyle(.secondary)
                         Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")")
                             .typeRole(.caption).foregroundStyle(.secondary)
@@ -266,11 +264,10 @@ struct SettingsView: View {
 }
 
 private struct SettingsChoice: View {
-    private static let spacing: CGFloat = 7
-    private static let symbolFont = Font.system(size: 18)
+    private static let spacing = Spacing.s8
     private static let tileHeight: CGFloat = 48
     private static let restingFill = Color.primary.opacity(0.06)
-    private static let corner: CGFloat = 8
+    private static let corner = Radius.block
     private static let selectedStroke: CGFloat = 2
     private static let width: CGFloat = 76
     @Environment(\.semaAccent) private var accent
@@ -282,7 +279,7 @@ private struct SettingsChoice: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: Self.spacing) {
-                Image(systemName: symbol).font(Self.symbolFont)
+                Image(systemName: symbol).typeRole(.section)
                     .frame(maxWidth: .infinity).frame(height: Self.tileHeight)
                     .background(selected ? accent.opacity(Theme.selectionOpacity) : Self.restingFill, in: RoundedRectangle(cornerRadius: Self.corner))
                     .overlay(RoundedRectangle(cornerRadius: Self.corner).strokeBorder(selected ? accent : .clear, lineWidth: Self.selectedStroke))

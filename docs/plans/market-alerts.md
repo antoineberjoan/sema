@@ -39,7 +39,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 3c. Alignement : bandeau et signature.
 - [x] 3d. Alignement : Favoris et Alertes.
 - [x] 3e. Alignement : Explorer.
-- [ ] 3f. Alignement : Réglages et accueil.
+- [x] 3f. Alignement : Réglages et accueil.
 - [ ] 4. Période partagée et persistée, onglets du hub, bandeau sans rail.
 - [ ] 5. Cœur : mouvement inhabituel, sensibilité, tests.
 - [ ] 6. Actualisation après clôture, tests de `RefreshPolicy`.
@@ -59,6 +59,7 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 - Étape 1 (8 novembre) : page « Refonte » du [canevas](https://claude.ai/artifact/SA5fmyp8tMwNTA1CQ3g5KK). Trois palettes et cinq logos, remplacés le 8 novembre par l’identité fournie par Antoine ; trois alternatives de période (onglets retenus), Focus, Alertes, Réglages, bandeau sans rail et brief réalignés. Rendu non contrôlé visuellement par l’agent.
 - Étape 2 (8 novembre, commit `082f8ae`) : `Spacing`, `Radius`, `TypeRole` et `Motion` dans `DesignSystem` ; `Theme` lit ces jetons (rangées 10, cartes et surfaces 16, groupes 24, page 32, filet 1, élévations 1 à 3) ; `PressStyle` suit Mouvement 1.1 ; palette « sema » par défaut des nouveaux profils, test `newProfileStartsWithTheBrandPaletteAndKeepsSavedChoices`. Garde-fous, 42 tests Python et [CI macOS](https://github.com/antoineberjoan/sema/actions/runs/42429502672) au vert. `.system(size:)` reste toléré hors `TypeRole` jusqu’à la fin de l’étape 3.
 - Étape 2b (8 novembre, commit `62107c2`) : logo repère dans `SignalPath` (géométrie unique, carré de 320) et `SignalDot` (point et écart) ; `Symbol`, signature du bandeau, accueil, `render-icon.swift` (icône d’après `sema-app-icon.svg`) et fond du DMG. Fichiers d’Antoine dans `Resources/Brand/`. Garde-fous au vert ; rendu non vérifié.
+- Étape 3 (8 novembre) : styles natifs remplacés par les rôles de Typographie 1.1 dans toute l’app ; écarts, rayons et durées ramenés aux jetons dossier par dossier (sidebar sur un bord commun de 16 pt, Focus en rôle hero, badges en rôle tag, bandeau 200/120 ms, signature sous 900 ms, accueil et réglages). Le garde-fou refuse désormais toute taille de texte écrite en chiffres hors de `TypeRole.swift` (test `test_text_size_lives_in_type_roles`). Garde-fous et 42 tests Python au vert ; un contrôle local des symboles `Self.x` et des jetons ne signale rien. Compilation non vérifiée ici.
 
 ## Limites connues
 
@@ -69,4 +70,4 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 ## Prochaine action
 
-Étape 3a : alignement de Workspace et de la sidebar.
+Étape 4 : période partagée, onglets du hub et bandeau sans rail.
