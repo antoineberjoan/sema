@@ -19,5 +19,12 @@ Référence de nommage, pas registre de toutes les variables. Ajouter un terme s
 | Préférences | `preferences`, `AppPreferences` | Choix persistés localement |
 | État partagé de l’app | `store`, `AppStore` | Orchestration commune au hub et au bandeau |
 | Série publiée / affichée | `publishedSeries` / `displayedSeries` | Cotation source / projection d’affichage |
+| Mouvement inhabituel | `ratio` | Variation de la séance rapportée à l’écart-type des 20 précédentes (type UnusualMove) |
+| Surveillance | `moveWatches` | Règles `unusualMove` d’un repère, activées par la cloche |
+| Sensibilité | `multiplier` | Multiple de l’habituel qui déclenche une alerte, global (type MoveSensitivity) |
+| Contexte d’une séance | `peers`, `releases`, `headlines` | Faits datés du même jour, réunis par DayContext |
+| Fait numéroté | `ContextFact` | Fait transmis à un rédacteur, seul matériau citable |
+| Synthèse | `SummaryCheck`, `kept`, `hiddenCount` | Phrases vérifiées contre les faits ; rédacteur choisi dans Réglages (SummaryWriter) |
+| Brief du matin | `brief`, `BriefPreferences` | Résumé quotidien (MorningBrief) et son horaire |
 
 Dans un objet `Identifiable`, la propriété native reste `id` ; une référence externe à une série reste `seriesID`. Les clés JSON déjà publiées ne sont pas renommées pour satisfaire une convention stylistique. Un nouveau contrat JavaScript utilise le même vocabulaire quand il représente le même concept, sans ajouter aujourd’hui une couche TypeScript au site statique.
