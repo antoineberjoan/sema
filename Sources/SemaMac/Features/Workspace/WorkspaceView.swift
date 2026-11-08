@@ -286,6 +286,9 @@ struct WorkspaceView: View {
                             .listRowSeparator(.hidden).listRowBackground(Color.clear)
                             .contextMenu {
                                 Button(store.isFavorite(item.id) ? "Retirer des favoris" : "Ajouter aux favoris") { store.toggleFavorite(item.id) }
+                                Button(store.isWatched(item.id) ? "Ne plus surveiller les mouvements" : "Me prévenir des mouvements inhabituels") {
+                                    Task { await store.toggleWatch(item) }
+                                }.disabled(!store.canWatch(item))
                                 Divider()
                                 Button("Monter") { store.moveFollowed(item.id, by: -1) }
                                 Button("Descendre") { store.moveFollowed(item.id, by: 1) }
@@ -406,8 +409,8 @@ private struct SidebarItem: View {
                 Text(section.title)
                 Spacer(minLength: Self.countSpacing)
                 if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(Theme.sidebarSecondaryText) }
-                if section == .alerts && !store.macroAlerts.isEmpty {
-                    Text("\(store.macroAlerts.count)").foregroundStyle(Theme.sidebarSecondaryText)
+                if section == .alerts && !(store.macroAlerts.isEmpty && store.moveWatches.isEmpty) {
+                    Text("\(store.macroAlerts.count + store.moveWatches.count)").foregroundStyle(Theme.sidebarSecondaryText)
                 }
             }
             .typeRole(.small).fontWeight(selected ? .semibold : .regular)

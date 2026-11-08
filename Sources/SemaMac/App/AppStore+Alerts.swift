@@ -1,10 +1,39 @@
-// Crée, suspend, supprime et évalue les règles de seuil, et pilote les notifications.
+// Crée, suspend, supprime et évalue les seuils et la surveillance des mouvements, et regroupe les notifications.
 import Foundation
 import MarketCore
 
 extension AppStore {
     static let recentAlertLimit = 20
     var macroAlerts: [AlertRule] { preferences.alerts.filter { $0.effectiveCondition == .level } }
+    var moveWatches: [AlertRule] { preferences.alerts.filter { $0.effectiveCondition == .unusualMove } }
+    var moveSensitivity: MoveSensitivity { MoveSensitivity(rawValue: preferences.moveSensitivityID ?? "") ?? .standard }
+    func setMoveSensitivity(_ sensitivity: MoveSensitivity) { mutatePreferences { $0.moveSensitivityID = sensitivity.rawValue } }
+
+    func isWatched(_ seriesID: String) -> Bool { moveWatches.contains { $0.seriesID == seriesID && $0.isEnabled } }
+    func canWatch(_ item: MarketSeries) -> Bool { isFollowing(item.id) && item.canAlert && isSourceEnabled(for: item.id) }
+
+    /// One click: starts or stops watching unusual moves. The first watch asks macOS for notifications,
+    /// which counts as the explicit activation the contract requires.
+    func toggleWatch(_ item: MarketSeries) async {
+        if moveWatches.contains(where: { $0.seriesID == item.id }) {
+            mutatePreferences { $0.alerts.removeAll { $0.seriesID == item.id && $0.effectiveCondition == .unusualMove } }
+            return
+        }
+        await watch([item])
+    }
+
+    /// Watches every favourite that can be watched, in one click.
+    func watchFavorites() async { await watch(favorites.filter { canWatch($0) && !isWatched($0.id) }) }
+
+    private func watch(_ items: [MarketSeries]) async {
+        let watchable = items.filter(canWatch)
+        guard !watchable.isEmpty else { return }
+        if !preferences.notificationsEnabled { await setNotificationsEnabled(true) }
+        mutatePreferences { value in
+            value.alerts.removeAll { rule in rule.effectiveCondition == .unusualMove && watchable.contains { $0.id == rule.seriesID } }
+            value.alerts += watchable.map { AlertRule.unusualMove(seriesID: $0.id, lastEvaluatedAt: $0.latest?.date) }
+        }
+    }
 
     func addAlert(seriesID: String, direction: AlertDirection, threshold: Decimal) -> Bool {
         guard let item = macroSeries.first(where: { $0.id == seriesID }), item.canAlert, isSourceEnabled(for: seriesID) else { return false }
@@ -44,8 +73,8 @@ extension AppStore {
         Task {
             guard isSourceEnabled(for: rule.seriesID) else { return }
             do {
-                try await notifications.send(title: item.name,
-                    body: "Test de notification : seuil de \(MarketFormat.number(rule.threshold, digits: item.fractionDigits)) \(item.displayUnit) franchi · observation du \(MarketFormat.date(event.observedAt)).")
+                try await notifications.send(title: MarketFormat.name(item), subtitle: "Test de notification",
+                    body: "Seuil de \(MarketFormat.number(rule.threshold, digits: item.fractionDigits)) \(item.displayUnit) franchi · observation du \(MarketFormat.date(event.observedAt)).")
             } catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
         }
     }
@@ -54,7 +83,7 @@ extension AppStore {
         var events: [AlertEvent] = []; var next = preferences; var advanced = false
         for index in next.alerts.indices {
             let rule = next.alerts[index]
-            guard rule.isEnabled, rule.effectiveCondition == .level,
+            guard rule.isEnabled, rule.effectiveCondition != .relativeChange,
                   isSourceEnabled(for: rule.seriesID),
                   let item = values.first(where: { $0.id == rule.seriesID }), item.canAlert,
                   let latest = item.latest else { continue }
@@ -64,21 +93,35 @@ extension AppStore {
                 continue
             }
             guard rule.lastEvaluatedAt.map({ latest.date > $0 }) ?? true else { continue }
-            events += AlertEvaluator.newEvents(rule, series: item)
+            events += AlertEvaluator.newEvents(rule, series: item, sensitivity: moveSensitivity)
             next.alerts[index].lastEvaluatedAt = latest.date; advanced = true
         }
         guard advanced, commit(next) else { return }
         recentAlertEvents = Array((recentAlertEvents + events).suffix(Self.recentAlertLimit))
         guard preferences.notificationsEnabled, !events.isEmpty else { return }
-        Task {
-            for event in events {
-                guard isSourceEnabled(for: event.seriesID) else { continue }
-                guard let item = values.first(where: { $0.id == event.seriesID }), let value = event.observedValue else { continue }
-                do { try await notifications.send(title: item.name,
-                    body: "Seuil franchi : \(MarketFormat.number(value, digits: item.fractionDigits)) \(item.displayUnit) · observation du \(MarketFormat.date(event.observedAt)).") }
-                catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
-            }
+        let entries = events.compactMap { event -> (name: String, line: String)? in
+            guard isSourceEnabled(for: event.seriesID), let item = values.first(where: { $0.id == event.seriesID }) else { return nil }
+            return (MarketFormat.name(item), Self.notificationLine(for: event, series: item))
         }
+        guard let first = entries.first else { return }
+        let lines = entries.map(\.line)
+        let moves = events.filter { $0.ratio != nil }.count
+        let title = entries.count == 1 ? first.name : "\(entries.count) repères"
+        let subtitle = moves == events.count ? "Mouvement inhabituel" : moves == 0 ? "Seuil franchi" : "Alertes"
+        Task {
+            do { try await notifications.send(title: title, subtitle: subtitle, body: lines.joined(separator: "\n")) }
+            catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
+        }
+    }
+
+    /// One line per event, grouped in a single notification: « S&P 500 · −4,40 % · 4,0× l’habituel ».
+    private static func notificationLine(for event: AlertEvent, series: MarketSeries) -> String {
+        let name = MarketFormat.name(series)
+        if let ratio = event.ratio {
+            return "\(name) · \(MarketFormat.sessionChange(event.changePercent, series: series)) · \(MarketFormat.ratio(ratio)) l’habituel"
+        }
+        let value = event.observedValue.map { MarketFormat.number($0, digits: series.fractionDigits) } ?? "—"
+        return "\(name) · seuil franchi : \(value) \(MarketFormat.unit(series)) · \(MarketFormat.date(event.observedAt))"
     }
 
     func setNotificationsEnabled(_ enabled: Bool) async {

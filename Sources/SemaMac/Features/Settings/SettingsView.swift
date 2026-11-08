@@ -1,5 +1,6 @@
 // Organise les réglages en rubriques recherchables, avec un contenu natif et un profil fixé en bas.
 import SwiftUI
+import MarketCore
 
 private extension SettingsTab {
     static let ordered: [Self] = [.general, .appearance, .shortcuts, .sources, .about, .profile]
@@ -25,7 +26,7 @@ private extension SettingsTab {
     }
     var searchTerms: String {
         switch self {
-        case .general: "notifications seuils démarrage session lancement automatique arrière-plan"
+        case .general: "notifications alertes seuils mouvements inhabituels sensibilité démarrage session lancement automatique arrière-plan"
         case .appearance: "thème palette couleurs système clair sombre position bandeau verre transparence teinte grain"
         case .shortcuts: "clavier touches hub navigation"
         case .sources: "connexion clé api webstat banque france insee bce eurostat bis ocde fed banque mondiale"
@@ -176,13 +177,32 @@ struct SettingsView: View {
                 }
             }
             Section {
-                Toggle("Notifications de seuil", isOn: Binding(
+                Toggle("Notifications des alertes", isOn: Binding(
                     get: { store.preferences.notificationsEnabled },
                     set: { value in Task { await store.setNotificationsEnabled(value) } }
                 )).toggleStyle(.switch)
-            } header: { Text("Notifications") }
+                Picker(selection: Binding(get: { store.moveSensitivity }, set: { store.setMoveSensitivity($0) })) {
+                    ForEach(MoveSensitivity.allCases) { Text($0.title).tag($0) }
+                } label: {
+                    VStack(alignment: .leading, spacing: Spacing.s2) {
+                        Text("Mouvements inhabituels")
+                        Text(sensitivityDescription).typeRole(.caption).foregroundStyle(.secondary)
+                    }
+                }
+                .pickerStyle(.segmented)
+            } header: { Text("Alertes") }
             .help("Actualisation quotidienne tant que sema tourne, même avec le hub fermé. Aucun suivi quand sema est quittée ou le Mac en veille.")
         }.formStyle(.grouped).onAppear { store.loginItem.refresh() }
+    }
+
+    private var sensitivityDescription: String {
+        let sensitivity = store.moveSensitivity
+        let perMonth = sensitivity.expectedAlertsPerYear / 12
+        let monthly = Int(perMonth.rounded())
+        let frequency = perMonth >= 1 ? "environ \(monthly) alerte\(monthly > 1 ? "s" : "") par mois et par repère"
+            : sensitivity.expectedAlertsPerYear >= 1 ? "environ \(Int(sensitivity.expectedAlertsPerYear.rounded())) alertes par an et par repère"
+            : "moins d’une alerte par an et par repère"
+        return MarketFormat.ratio(sensitivity.multiplier) + " l’habituel · " + frequency + " en théorie"
     }
 
     private var appearanceSettings: some View {

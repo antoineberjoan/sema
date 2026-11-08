@@ -43,7 +43,7 @@ Chaque étape se termine par `python3 scripts/guardrails.py`, les tests Python, 
 - [x] 4. Période partagée et persistée, onglets du hub, bandeau sans rail.
 - [x] 5. Cœur : mouvement inhabituel, sensibilité, tests.
 - [x] 6. Actualisation après clôture, tests de `RefreshPolicy`.
-- [ ] 7. App : cloche, permission au premier clic, notification groupée, vue Alertes, réglage de sensibilité.
+- [x] 7. App : cloche, permission au premier clic, notification groupée, vue Alertes, réglage de sensibilité.
 - [ ] 8. Source FRED : client, clé, Réglages, suggestions (VIXCLS, DGS10, DTWEXBGS), tests.
 - [ ] 9. Lecteur XML partagé, flux Fed et BCE, tests sur fichiers d’exemple.
 - [ ] 10. Titres GDELT et Alpha Vantage News, tests.
@@ -63,6 +63,7 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 - Étape 4 (8 novembre) : `periodID` optionnel dans `AppPreferences` ; `AppStore.period` lu depuis les préférences, `setPeriod` et `period(for:)` (une série trop courte affiche tout, sans changer le choix) ; `PeriodTabs` « 3M 1A 3A 5A Max » dans Focus ; le bandeau supprime le rail et `RibbonPeriodPicker`, suit le hub, garde l’accès aux réglages sur la signature. Test `sharedPeriodPersistsAndOlderFilesKeepOneYear`.
 - Étape 5 (8 novembre) : `UnusualMove` (variation de la séance divisée par l’écart-type des 20 variations précédentes, en points pour les taux, en % sinon ; refus si historique court, convention inconnue ou écart-type nul), `MoveSensitivity` (3×, 2×, 1,5×), condition `unusualMove`, `AlertRule.unusualMove`, `AlertEvent.ratio`, `moveSensitivityID` optionnel. `AlertEvaluator.newEvents` réutilise le point de contrôle. Quatre tests dans `UnusualMoveTests`.
 - Étape 6 (8 novembre) : `RefreshPolicy` connaît les clôtures des jours ouvrés (Paris 17 h 50, New York 16 h 20, heure locale de chaque place) ; une série surveillée devient à jour dès qu’une clôture est passée depuis sa synchronisation, et le minuteur se cale sur la prochaine clôture. `AppStore.followsCloses` relie ce rythme aux seules séries surveillées. Tests sur le jeudi 5 novembre et le week-end. Limite : si le fournisseur publie la clôture en retard, la séance est vue au contrôle suivant.
+- Étape 7 (8 novembre) : `WatchButton` (cloche « Me prévenir », clic = surveillance, menu « Ajouter un seuil… ») dans Focus, les aperçus et la vue Alertes ; entrée équivalente dans le menu contextuel de la sidebar. Le premier clic demande l’autorisation des notifications. « Surveiller vos N favoris ? » active tout en un clic. `evaluateAlerts` évalue seuils et mouvements et envoie une seule notification groupée (fil `sema.alerts`), une ligne par repère. `MoveBadge` colore l’écart en cinq zones de la sarcelle. Réglages → Général → Alertes : notifications et sensibilité (Discrète, Normale, Attentive) avec la fréquence théorique.
 
 ## Limites connues
 
@@ -73,4 +74,4 @@ Le site (`site/dist/`, kit de marque et favicon) suivra dans un chantier sépar�
 
 ## Prochaine action
 
-Étape 7 : cloche, notification groupée et vue Alertes.
+Étape 8 : source FRED.

@@ -193,15 +193,7 @@ struct SeriesDetailView: View {
     }
 
     @ViewBuilder private var alertButton: some View {
-        if store.isFollowing(series.id) {
-            Button {
-                store.prepareAlert(for: series)
-            } label: { Label("Créer une alerte", systemImage: "bell.badge") }
-            .buttonStyle(.bordered).controlSize(.small)
-            .buttonBorderShape(.capsule)
-            .typeRole(.small).tint(store.palette.accent)
-            .disabled(!series.canAlert || !store.isSourceEnabled(for: series.id))
-        }
+        if store.isFollowing(series.id) { WatchButton(series: series) }
     }
 
     private func focusValue(_ displayed: MarketSeries) -> some View {

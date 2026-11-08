@@ -1,4 +1,4 @@
-// Liste les règles de seuil avec leurs actions de pause, suppression et test.
+// Réunit les repères surveillés pour leurs mouvements inhabituels et les seuils, avec leurs actions.
 import SwiftUI
 import MarketCore
 
@@ -6,32 +6,95 @@ struct AlertsView: View {
     private static let sectionSpacing = Spacing.s24
     private static let emptyMinHeight: CGFloat = 350
     @Environment(AppStore.self) private var store
+    @Environment(\.openSettings) private var openSettings
+
+    private var watched: [MarketSeries] { store.followedSeries.filter { item in store.moveWatches.contains { $0.seriesID == item.id } } }
+    private var unwatchedFavorites: [MarketSeries] { store.favorites.filter { store.canWatch($0) && !store.isWatched($0.id) } }
+
     var body: some View {
         VStack(alignment: .leading, spacing: Self.sectionSpacing) {
-            Label("Vérification à chaque actualisation des repères. Aucun contrôle quand l’app est quittée ou le Mac en veille.", systemImage: "info.circle")
-                .typeRole(.small).foregroundStyle(.secondary)
-            if store.macroAlerts.isEmpty {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Vérification après chaque clôture et à chaque actualisation, tant que sema tourne.")
+                    .typeRole(.small).foregroundStyle(.secondary)
+                Spacer(minLength: Spacing.s8)
+                Button("Sensibilité \(store.moveSensitivity.title.lowercased()) · \(MarketFormat.ratio(store.moveSensitivity.multiplier))") {
+                    store.settingsTab = .general; openSettings()
+                }
+                .buttonStyle(.borderless).typeRole(.small)
+            }
+            if !unwatchedFavorites.isEmpty { favoritesOffer }
+            if watched.isEmpty && store.macroAlerts.isEmpty {
                 ContentUnavailableView {
-                    Label("Un signal au bon seuil.", systemImage: "bell")
+                    Label("Être prévenu au bon moment.", systemImage: "bell")
                 } description: {
-                    Text("Suivez le franchissement d’un seuil sur les taux, l’inflation ou les devises.")
+                    Text("Cliquez sur « Me prévenir » dans un repère : sema signale les séances qui sortent de l’habituel.")
                 } actions: {
-                    if store.alertableSeries.isEmpty {
+                    if store.followedSeries.isEmpty {
                         Button("Explorer les repères") { store.section = .explorer }.buttonStyle(.borderedProminent)
-                    } else {
-                        Button("Créer une alerte") { store.isAlertSheetPresented = true }.buttonStyle(.borderedProminent)
                     }
                 }
                 .frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight)
             } else {
-                VStack(spacing: 0) {
-                    ForEach(store.macroAlerts) { rule in
-                        AlertRow(rule: rule)
-                        if rule.id != store.macroAlerts.last?.id { Divider() }
+                if !watched.isEmpty {
+                    section("Mouvements inhabituels") {
+                        ForEach(watched) { item in
+                            WatchRow(series: item)
+                            if item.id != watched.last?.id { Divider() }
+                        }
+                    }
+                }
+                if !store.macroAlerts.isEmpty {
+                    section("Seuils") {
+                        ForEach(store.macroAlerts) { rule in
+                            AlertRow(rule: rule)
+                            if rule.id != store.macroAlerts.last?.id { Divider() }
+                        }
                     }
                 }
             }
         }
+    }
+
+    private var favoritesOffer: some View {
+        HStack(spacing: Spacing.s16) {
+            VStack(alignment: .leading, spacing: Spacing.s2) {
+                Text(unwatchedFavorites.count == 1 ? "Surveiller votre favori ?" : "Surveiller vos \(unwatchedFavorites.count) favoris ?").typeRole(.heading)
+                Text("sema vous prévient quand l’un d’eux bouge plus que d’habitude.").typeRole(.small).foregroundStyle(.secondary)
+            }
+            Spacer(minLength: Spacing.s8)
+            Button("Activer") { Task { await store.watchFavorites() } }.buttonStyle(.borderedProminent)
+        }
+        .padding(Spacing.s16)
+        .background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Radius.block))
+    }
+
+    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(title).typeRole(.heading).padding(.bottom, Spacing.s8)
+            Divider()
+            content()
+        }
+    }
+}
+
+private struct WatchRow: View {
+    private static let nameWidth: CGFloat = 220
+    @Environment(AppStore.self) private var store
+    let series: MarketSeries
+
+    var body: some View {
+        let displayed = store.displayedSeries(series)
+        let move = UnusualMove(series: series)
+        HStack(spacing: Spacing.s16) {
+            Text(MarketFormat.name(displayed)).typeRole(.small).lineLimit(1).frame(width: Self.nameWidth, alignment: .leading)
+            Text(move.map { MarketFormat.sessionChange($0.change, series: series) } ?? "Historique insuffisant")
+                .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
+            if let move { MoveBadge(ratio: move.ratio) }
+            Spacer(minLength: Spacing.s8)
+            Text(MarketFormat.date(series.latest?.date)).typeRole(.caption).foregroundStyle(.secondary)
+            WatchButton(series: series)
+        }
+        .padding(.vertical, Spacing.s10)
     }
 }
 
