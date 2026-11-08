@@ -27,7 +27,8 @@ extension AppStore {
     func sourceSeriesCount(_ id: String) -> Int { storedFollowedSeries.filter { sourceID(for: $0.id) == id }.count }
 
     func setSourceEnabled(_ id: String, enabled: Bool) {
-        guard id == "webstat" || StatisticalSource(rawValue: id) != nil || MarketProvider(rawValue: id) != nil, enabled != isSourceEnabled(id) else { return }
+        guard id == "webstat" || StatisticalSource(rawValue: id) != nil || MarketProvider(rawValue: id) != nil || CentralBankFeed(rawValue: id) != nil,
+              enabled != isSourceEnabled(id) else { return }
         guard mutatePreferences({ value in
             var disabled = value.disabledSourceIDs ?? []
             if enabled { disabled.remove(id) } else { disabled.insert(id) }

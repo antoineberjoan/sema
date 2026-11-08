@@ -1,54 +1,9 @@
 // Décode les structures et observations SDMX en conservant leurs métadonnées officielles.
 import Foundation
 
-/// The same XML reader handles SDMX 2.1 generic and structure-specific messages.
-/// Annotations are not needed for navigation; entity declarations are rejected.
-private final class StatisticalXMLNode {
-    let name: String
-    let attributes: [String: String]
-    var text = ""
-    var children: [StatisticalXMLNode] = []
-    init(name: String, attributes: [String: String] = [:]) { self.name = name; self.attributes = attributes }
-    func descendants(_ name: String) -> [StatisticalXMLNode] {
-        children.flatMap { ($0.name == name ? [$0] : []) + $0.descendants(name) }
-    }
-    func child(_ name: String) -> StatisticalXMLNode? { children.first { $0.name == name } }
-    var label: String {
-        let names = children.filter { $0.name == "Name" }
-        return (names.first { $0.attributes["xml:lang"] == "fr" } ?? names.first { $0.attributes["xml:lang"] == "en" } ?? names.first)?.text.trimmingCharacters(in: .whitespacesAndNewlines) ?? attributes["id"] ?? ""
-    }
-}
-
-private final class StatisticalXMLReader: NSObject, XMLParserDelegate {
-    let root = StatisticalXMLNode(name: "root")
-    private var stack: [StatisticalXMLNode] = []
-    private var ignoredDepth = 0
-    var rejectedEntity = false
-    override init() { super.init(); stack = [root] }
-    static func read(_ data: Data) throws -> StatisticalXMLNode {
-        let reader = StatisticalXMLReader(); let parser = XMLParser(data: data)
-        parser.shouldResolveExternalEntities = false; parser.delegate = reader
-        guard parser.parse(), !reader.rejectedEntity else { throw StatisticalClient.ClientError.invalidData }
-        guard reader.root.descendants("Error").isEmpty, reader.root.descendants("Fault").isEmpty else { throw StatisticalClient.ClientError.invalidData }
-        return reader.root
-    }
-    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes: [String: String]) {
-        let name = String(elementName.split(separator: ":").last ?? "")
-        if ignoredDepth > 0 || name == "Annotations" { ignoredDepth += 1; return }
-        let node = StatisticalXMLNode(name: name, attributes: attributes)
-        stack.last?.children.append(node); stack.append(node)
-    }
-    func parser(_ parser: XMLParser, foundCharacters string: String) { if ignoredDepth == 0 { stack.last?.text += string } }
-    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        if ignoredDepth > 0 { ignoredDepth -= 1 } else { _ = stack.popLast() }
-    }
-    func parser(_ parser: XMLParser, foundInternalEntityDeclarationWithName name: String, value: String?) { rejectedEntity = true; parser.abortParsing() }
-    func parser(_ parser: XMLParser, foundExternalEntityDeclarationWithName name: String, publicID: String?, systemID: String?) { rejectedEntity = true; parser.abortParsing() }
-}
-
 public enum SDMXParser {
     public static func datasets(_ data: Data, source: StatisticalSource) throws -> [StatisticalDataset] {
-        let root = try StatisticalXMLReader.read(data)
+        let root = try XMLTree.read(data)
         let flows = root.descendants("Dataflow").compactMap { flow -> StatisticalDataset? in
             guard let code = flow.attributes["id"], let agency = flow.attributes["agencyID"] else { return nil }
             let detail = flow.children.first { $0.name == "Description" && $0.attributes["xml:lang"] == "fr" }
@@ -61,13 +16,13 @@ public enum SDMXParser {
     }
 
     public static func structure(_ data: Data, dataset: StatisticalDataset, additionalCodelists: [Data] = []) throws -> StatisticalStructure {
-        let root = try StatisticalXMLReader.read(data)
+        let root = try XMLTree.read(data)
         let flow = root.descendants("Dataflow").first { $0.attributes["id"] == dataset.code && $0.attributes["agencyID"] == dataset.agency }
         let dsdID = flow?.descendants("Ref").first { $0.attributes["class"] == "DataStructure" }?.attributes["id"]
         let dsd = root.descendants("DataStructure").first { dsdID == nil || $0.attributes["id"] == dsdID }
         guard let dsd, let components = dsd.child("DataStructureComponents"), let list = components.child("DimensionList") else { throw StatisticalClient.ClientError.invalidData }
         var codelists: [StatisticalCodelistReference: [String: String]] = [:]
-        let extraNodes = try additionalCodelists.flatMap { try StatisticalXMLReader.read($0).descendants("Codelist") }
+        let extraNodes = try additionalCodelists.flatMap { try XMLTree.read($0).descendants("Codelist") }
         for list in root.descendants("Codelist") + extraNodes {
             guard let id = list.attributes["id"] else { continue }
             let key = StatisticalCodelistReference(agency: list.attributes["agencyID"] ?? "", code: id, version: list.attributes["version"] ?? "latest")
@@ -91,7 +46,7 @@ public enum SDMXParser {
             }
         }
         var missing: Set<StatisticalCodelistReference> = []
-        func codes(_ component: StatisticalXMLNode) -> [String: String] {
+        func codes(_ component: XMLTree) -> [String: String] {
             guard let reference = component.descendants("Ref").first(where: { $0.attributes["class"] == "Codelist" }), let id = reference.attributes["id"] else { return [:] }
             let agency = reference.attributes["agencyID"] ?? dataset.agency
             let version = reference.attributes["version"] ?? "latest"
@@ -119,7 +74,7 @@ public enum SDMXParser {
     }
 
     public static func catalogue(_ data: Data, dataset: StatisticalDataset, structure: StatisticalStructure) throws -> [StatisticalSeriesDescriptor] {
-        let root = try StatisticalXMLReader.read(data)
+        let root = try XMLTree.read(data)
         guard root.descendants("Footer").isEmpty else { throw StatisticalClient.ClientError.invalidData }
         var items: [String: StatisticalSeriesDescriptor] = [:]
         for set in root.descendants("DataSet") {
@@ -156,7 +111,7 @@ public enum SDMXParser {
 
     public static func series(_ data: Data, dataset: StatisticalDataset, structure: StatisticalStructure,
                               fullHistory: Bool = false, now: Date = .now) throws -> MarketSeries {
-        let root = try StatisticalXMLReader.read(data)
+        let root = try XMLTree.read(data)
         guard root.descendants("Footer").isEmpty else { throw StatisticalClient.ClientError.invalidData }
         var result: [MarketSeries] = []
         for set in root.descendants("DataSet") {
@@ -186,7 +141,7 @@ public enum SDMXParser {
         return series
     }
 
-    private static func fields(_ node: StatisticalXMLNode) -> [String: String] {
+    private static func fields(_ node: XMLTree) -> [String: String] {
         var values = Dictionary(node.attributes.map { ($0.key.uppercased(), $0.value) }, uniquingKeysWith: { _, new in new })
         for container in node.children where ["SeriesKey", "Attributes"].contains(container.name) {
             for value in container.children where value.name == "Value" {

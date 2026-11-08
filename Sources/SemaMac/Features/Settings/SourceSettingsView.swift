@@ -23,6 +23,11 @@ struct SourceSettingsView: View {
                 }
             }
             .help("Désactiver une source met ses alertes en pause et conserve ses historiques.")
+            Section {
+                ForEach(CentralBankFeed.allCases) { feed in sourceRow(id: feed.rawValue, title: feed.title) }
+            } header: { Text("Communiqués des banques centrales") } footer: {
+                Text("Flux publics, sans clé. Ils servent au contexte d’un mouvement et au brief du matin.").typeRole(.caption).foregroundStyle(.secondary)
+            }
         }
         .formStyle(.grouped)
         .task { await store.checkMarketKeys() }
