@@ -36,15 +36,18 @@
 .marketing-footer a { white-space: nowrap; }
 .marketing-footer .author { color: var(--text-soft); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: var(--underline-offset); }
 .marketing-footer nav { display: flex; align-items: center; gap: var(--space-6); }
+.brand-mark circle { fill: var(--sarcelle-light); stroke: var(--page); stroke-width: var(--mark-point-ring); }
 @media (prefers-reduced-motion: no-preference) {
   .brand-mark path { stroke-dasharray: 1; animation: write-brand var(--logo-write-duration) var(--motion-write) var(--logo-write-delay) both; }
+  .brand-mark circle { animation: reveal-brand-point var(--motion-selection) var(--motion-write) calc(var(--logo-write-delay) + var(--logo-write-duration)) both; }
 }
 @keyframes write-brand { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes reveal-brand-point { from { opacity: 0; } to { opacity: 1; } }
 @media (max-width: 700px) {
   .marketing-footer { align-items: flex-start; flex-direction: column; gap: var(--space-4); }
   .marketing-footer nav { flex-wrap: wrap; gap: var(--space-4); }
 }
 @media (prefers-reduced-motion: reduce) {
   .marketing-header, .marketing-header .header-download { transition: none; }
-  .brand-mark path { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+  .brand-mark path, .brand-mark circle { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
 }

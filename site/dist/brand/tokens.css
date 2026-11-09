@@ -7,7 +7,10 @@
   --secondary-light: #5C5C5C;
   --surface: #262626;
   --graphite: #474747;
-  --signal: #D6D6D6;
+  --brume: #E3E5E2;
+  --sarcelle: #1F6F73;
+  --sarcelle-light: #7CC2C0;
+  --signal: #7CC2C0;
   --radius-control: 8px;
   --radius-surface: 16px;
   --shadow-panel: 0 2px 4px #0003, 0 12px 26px #0002;
@@ -113,6 +116,7 @@
   --shadow-button: 0 4px 16px #0002;
   --motion-write: cubic-bezier(.35, 0, .2, 1);
   --logo-write-delay: 160ms;
+  --mark-point-ring: 14;
   --logo-write-duration: 2400ms;
 
   /* Scènes de présentation de la landing : une seule fois, à l’entrée dans l’écran ; les tons viennent des thèmes sema (Bleu ciel, Lavande, Menthe, Sarcelle) */
@@ -139,7 +143,7 @@
   --scene-loop: 13000ms;
   --scene-dot-delay: 1000ms;
   --scene-tint: 22%;
-  --tone-sky: #89cff3;
+  --tone-accent: #7CC2C0;
   --tone-lavender: #d0a2f7;
   --tone-mint: #9ed5c5;
   --tone-teal: #2d9596;
