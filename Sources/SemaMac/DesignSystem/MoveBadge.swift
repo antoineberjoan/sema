@@ -1,5 +1,6 @@
 // Pastille de l’écart à l’habituel : sa teinte s’intensifie avec le multiple, sans jamais coder hausse ou baisse.
 import SwiftUI
+import AppKit
 import MarketCore
 
 struct MoveBadge: View {
@@ -14,7 +15,7 @@ struct MoveBadge: View {
     var body: some View {
         Text(MarketFormat.ratio(ratio) + suffix)
             .typeRole(.tag).fontWeight(zone >= 2 ? .medium : .regular).monospacedDigit()
-            .foregroundStyle(zone >= 3 ? Color.white : Color.primary)
+            .foregroundStyle(zone >= 3 ? Color(nsColor: .textBackgroundColor) : Color.primary)
             .padding(.horizontal, Spacing.s6).padding(.vertical, Spacing.s2)
             .background(background, in: RoundedRectangle(cornerRadius: Radius.mark))
             .accessibilityLabel(MarketFormat.ratio(ratio) + " la variation habituelle")
