@@ -24,10 +24,20 @@ public enum AlertEvaluator {
 
     /// Checks every new pair since the persisted checkpoint, including intermediate crossings.
     /// Revisions of an already processed date do not emit a second notification.
-    public static func newEvents(_ rule: AlertRule, series: MarketSeries) -> [AlertEvent] {
-        guard rule.isEnabled, rule.isValid, rule.effectiveCondition == .level,
+    public static func newEvents(_ rule: AlertRule, series: MarketSeries,
+                                 sensitivity: MoveSensitivity = .standard) -> [AlertEvent] {
+        guard rule.isEnabled, rule.isValid, rule.effectiveCondition != .relativeChange,
               rule.seriesID == series.id, series.canAlert, series.category != .funds,
               let checkpoint = rule.lastEvaluatedAt else { return [] }
+        if rule.effectiveCondition == .unusualMove {
+            return series.observations.indices.compactMap { index in
+                guard series.observations[index].date > checkpoint,
+                      let move = UnusualMove(series: series, at: index),
+                      move.ratio >= sensitivity.multiplier else { return nil }
+                return AlertEvent(ruleID: rule.id, seriesID: series.id, observedAt: move.observation.date,
+                                  changePercent: move.change, observedValue: move.observation.value, ratio: move.ratio)
+            }
+        }
         return zip(series.observations, series.observations.dropFirst()).compactMap { previous, latest in
             guard latest.date > checkpoint else { return nil }
             return crossing(rule, previous: previous, latest: latest)

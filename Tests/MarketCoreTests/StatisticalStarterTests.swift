@@ -5,12 +5,20 @@ import Testing
 
 struct StatisticalStarterTests {
     @Test func everyPublicSourceHasTwentyUniqueCatalogReferences() {
-        for source in StatisticalSource.allCases {
+        for source in StatisticalSource.allCases where source != .fred {
             let values = StatisticalStarter.recommendations(for: source)
             #expect(values.count == 20)
             #expect(Set(values.map(\.id)).count == 20)
             #expect(values.allSatisfy { $0.source == source && !$0.datasetCode.isEmpty && !$0.key.isEmpty && !$0.title.isEmpty })
         }
+    }
+
+    @Test func fredKeepsFiveCuratedReferencesUntilItsReleasesAreVerified() {
+        let values = StatisticalStarter.recommendations(for: .fred)
+        #expect(Set(values.map(\.id)).count == 5)
+        #expect(values.allSatisfy { $0.source == .fred })
+        #expect(values.contains { $0.key == "VIXCLS" })
+        #expect(values.contains { $0.key == "DGS10" })
     }
 
     @Test func referencesKeepProviderDatasetAndSeriesIdentity() throws {

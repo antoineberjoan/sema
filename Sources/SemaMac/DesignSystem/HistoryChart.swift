@@ -87,7 +87,7 @@ struct HistoryChart: View {
                                 Text(MarketFormat.number(hovered.value, digits: series.fractionDigits) + " " + series.displayUnit)
                                     .fontWeight(.medium).monospacedDigit()
                             }
-                            .font(.subheadline)
+                            .typeRole(.caption)
                             .padding(.horizontal, Self.readingHorizontalPadding).padding(.vertical, Self.readingVerticalPadding)
                             .background(Theme.surface, in: RoundedRectangle(cornerRadius: Self.tooltipCorner))
                             .modifier(Elevation())
@@ -127,7 +127,7 @@ struct HistoryChart: View {
                     Text(MarketFormat.number(value, digits: series.fractionDigits) + " " + series.displayUnit).monospacedDigit()
                 }
             }
-            .font(.subheadline).foregroundStyle(.secondary)
+            .typeRole(.caption).foregroundStyle(.secondary)
             }
         }
         .onChange(of: series.id) { _, _ in hoveredDate = nil }

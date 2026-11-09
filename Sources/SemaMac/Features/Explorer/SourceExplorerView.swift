@@ -19,7 +19,7 @@ struct SourceExplorerView: View {
         VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             HStack {
                 if sourceID.isEmpty {
-                    Text("Sources").font(.title2.weight(.semibold))
+                    Text("Sources").typeRole(.section)
                 } else {
                     Button { sourceID = "" } label: { Label("Sources", systemImage: "chevron.left") }
                         .buttonStyle(.borderless)
@@ -49,11 +49,11 @@ struct SourceExplorerView: View {
                             Button { sourceID = id } label: {
                                 VStack(alignment: .leading, spacing: Theme.minorSpacing) {
                                     HStack {
-                                        Text(store.sourceName(id)).font(.headline)
+                                        Text(store.sourceName(id)).typeRole(.heading)
                                         Spacer(minLength: Theme.rowPadding)
-                                        Image(systemName: "chevron.right").font(.caption).foregroundStyle(.secondary)
+                                        Image(systemName: "chevron.right").typeRole(.micro).foregroundStyle(.secondary)
                                     }
-                                    Text(sourceTopics(id)).font(.callout).foregroundStyle(.secondary)
+                                    Text(sourceTopics(id)).typeRole(.small).foregroundStyle(.secondary)
                                         .lineLimit(Self.topicLines).multilineTextAlignment(.leading)
                                 }
                                 .frame(maxWidth: .infinity, minHeight: Self.cardMinHeight, alignment: .leading)
@@ -86,6 +86,7 @@ struct SourceExplorerView: View {
         case .oecd: return "Économies et comparaisons internationales"
         case .newYorkFed: return "Taux de référence américains"
         case .worldBank: return "Indicateurs et économies du monde"
+        case .fred: return "Marchés et taux américains, VIX, dollar"
         }
     }
 }
@@ -98,7 +99,7 @@ private struct StatisticalExplorerView: View {
     private static let seriesMinWidth: CGFloat = 350
     private static let advancedLabelMaxWidth: CGFloat = 140
     private static let advancedMaxHeight: CGFloat = 250
-    private static let formSpacing: CGFloat = 12
+    private static let formSpacing = Spacing.s12
     private static let seriesTitleLines = 4
     private static let valueLines = 2
     @Environment(AppStore.self) private var store
@@ -182,24 +183,24 @@ private struct StatisticalExplorerView: View {
                     Spacer()
                     Button { Task { await loadCatalogue(reload: true) } } label: { Image(systemName: "arrow.clockwise") }
                         .buttonStyle(.borderless).help("Actualiser le catalogue de la source")
-                }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
+                }.typeRole(.micro).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
             }
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: Theme.rowSpacing) {
                         if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !availableStarters.isEmpty {
-                            Text("Pour commencer").font(.caption.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
+                            Text("Pour commencer").typeRole(.tag).fontWeight(.semibold).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
                             ForEach(availableStarters) { starter in
                                 starterRow(starter)
                             }
                             Divider().padding(.horizontal, Theme.rowPadding)
                         }
-                        Text("Catalogue").font(.caption.weight(.semibold)).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
+                        Text("Catalogue").typeRole(.tag).fontWeight(.semibold).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
                         ForEach(Array(matches.prefix(visibleCount))) { dataset in
                             Button { pendingStarter = nil; starterError = nil; keyboardID = dataset.id; selectedID = dataset.id } label: {
                                 VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
-                                    Text(dataset.title).font(.body.weight(.medium)).lineLimit(Theme.rowTitleLines)
-                                    Text(dataset.code).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                                    Text(dataset.title).typeRole(.heading).lineLimit(Theme.rowTitleLines)
+                                    Text(dataset.code).typeRole(.micro).foregroundStyle(.secondary).lineLimit(1)
                                 }.foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
                                     .background(keyboardID == dataset.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
                                     .contentShape(Rectangle())
@@ -212,7 +213,7 @@ private struct StatisticalExplorerView: View {
                 }.onChange(of: keyboardID) { _, id in if let id { proxy.scrollTo(id) } }
             }
             if let error {
-                Text(error).font(.callout).foregroundStyle(.secondary)
+                Text(error).typeRole(.small).foregroundStyle(.secondary)
                 Button("Réessayer") { Task { await loadCatalogue() } }.buttonStyle(.borderless)
             }
         }
@@ -220,14 +221,14 @@ private struct StatisticalExplorerView: View {
 
     private func seriesList(_ dataset: StatisticalDataset) -> some View {
         VStack(alignment: .leading, spacing: Theme.majorSpacing) {
-            Text(dataset.title).font(.headline).textSelection(.enabled)
+            Text(dataset.title).typeRole(.heading).textSelection(.enabled)
             if let starterError {
-                Label(starterError, systemImage: "exclamationmark.triangle").font(.callout).foregroundStyle(.secondary)
+                Label(starterError, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(.secondary)
             }
             CatalogueSearchField(query: $seriesQuery, prompt: "Rechercher une série…", isSearching: loadingStructure,
                 submit: { if let key = keyboardSeriesKey ?? seriesMatches.first?.key { openSeries(key) } }, move: moveSeriesSelection)
             if !loadingStructure && seriesError == nil {
-                Text("\(seriesMatches.count.formatted()) \(seriesMatches.count == 1 ? "série" : "séries")").font(.caption).foregroundStyle(.secondary)
+                Text("\(seriesMatches.count.formatted()) \(seriesMatches.count == 1 ? "série" : "séries")").typeRole(.micro).foregroundStyle(.secondary)
             }
             ScrollViewReader { proxy in
                 ScrollView {
@@ -235,9 +236,9 @@ private struct StatisticalExplorerView: View {
                         ForEach(Array(seriesMatches.prefix(visibleSeriesCount)), id: \.id) { item in
                             Button { openSeries(item.key) } label: {
                                 VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
-                                    Text(item.title).font(.body.weight(.medium)).lineLimit(Self.seriesTitleLines)
+                                    Text(item.title).typeRole(.heading).lineLimit(Self.seriesTitleLines)
                                     let context = [item.frequency == .unknown ? nil : item.frequency.title, item.unitCode == nil ? nil : item.displayUnit].compactMap { $0 }.joined(separator: " · ")
-                                    if !context.isEmpty { Text(context).font(.caption).foregroundStyle(.secondary) }
+                                    if !context.isEmpty { Text(context).typeRole(.micro).foregroundStyle(.secondary) }
                                 }
                                 .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
                                 .background(keyboardSeriesKey == item.key ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
@@ -251,7 +252,7 @@ private struct StatisticalExplorerView: View {
                 }.onChange(of: keyboardSeriesKey) { _, key in if let key { proxy.scrollTo(key) } }
             }
             if let seriesError {
-                Text(seriesError).font(.callout).foregroundStyle(.secondary)
+                Text(seriesError).typeRole(.small).foregroundStyle(.secondary)
                 Button("Réessayer") { Task { await loadSeriesCatalogue() } }.buttonStyle(.borderless)
             }
             if let structure {
@@ -270,7 +271,7 @@ private struct StatisticalExplorerView: View {
                                         Button { choosingDimension = dimension } label: {
                                             HStack(spacing: Theme.minorSpacing) {
                                                 Text(dimension.codes.first { $0.id == values[dimension.id] }?.title ?? "Choisir…").lineLimit(Self.valueLines).multilineTextAlignment(.trailing)
-                                                Image(systemName: "chevron.up.chevron.down").font(.caption2)
+                                                Image(systemName: "chevron.up.chevron.down").typeRole(.micro)
                                             }
                                         }.buttonStyle(.borderless).accessibilityLabel("\(dimension.title) : \(values[dimension.id] ?? "à choisir")")
                                     }
@@ -279,10 +280,10 @@ private struct StatisticalExplorerView: View {
                             TextField(source == .newYorkFed ? "Nom de la mesure" : source == .worldBank ? "Code du pays" : "Clé SDMX", text: $exactKey)
                                 .textFieldStyle(.roundedBorder).font(.system(.callout, design: .monospaced)).accessibilityLabel("Clé exacte du repère")
                             Button("Afficher le repère") { openSeries(key) }.buttonStyle(.bordered).disabled(!canPreview)
-                            if !dataset.detail.isEmpty { Text(dataset.detail).font(.caption).foregroundStyle(.secondary).textSelection(.enabled) }
+                            if !dataset.detail.isEmpty { Text(dataset.detail).typeRole(.micro).foregroundStyle(.secondary).textSelection(.enabled) }
                         }.padding(.top, Self.formSpacing)
                     }.frame(maxHeight: Self.advancedMaxHeight)
-                }.font(.callout).disclosureGroupStyle(RowDisclosureStyle())
+                }.typeRole(.small).disclosureGroupStyle(RowDisclosureStyle())
             }
         }
     }
@@ -297,7 +298,7 @@ private struct StatisticalExplorerView: View {
                         SeriesDetailView(series: value, preview: true)
                         HStack {
                             if let existing = store.followedMatch(for: value) {
-                                Label("Déjà suivi via \(existing.originBadge)", systemImage: "checkmark").font(.caption).foregroundStyle(.secondary)
+                                Label("Déjà suivi via \(existing.originBadge)", systemImage: "checkmark").typeRole(.micro).foregroundStyle(.secondary)
                                 Spacer()
                                 if existing.id != value.id { Button("Utiliser cette source") { _ = store.usePreviewSource() }.buttonStyle(.borderless) }
                                 Button("Ouvrir") { store.show(existing); store.section = .overview; store.closePreview(); close?() }
@@ -309,7 +310,7 @@ private struct StatisticalExplorerView: View {
                         }
                     }
                     if let error = store.previewError {
-                        Label(error, systemImage: "exclamationmark.triangle").font(.callout).foregroundStyle(.secondary)
+                        Label(error, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(.secondary)
                         if store.previewRequiresRefresh {
                             Button("Actualiser mes repères") { Task { await store.refreshSeries() } }.buttonStyle(.borderless).disabled(store.isLoading)
                         } else if let key = selectedSeriesKey { Button("Réessayer") { openSeries(key) }.buttonStyle(.borderless) }
@@ -322,9 +323,9 @@ private struct StatisticalExplorerView: View {
     private func starterRow(_ starter: StatisticalStarter) -> some View {
         Button { chooseStarter(starter) } label: {
             VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
-                Text(starter.title).font(.body.weight(.medium)).lineLimit(Theme.rowTitleLines)
+                Text(starter.title).typeRole(.heading).lineLimit(Theme.rowTitleLines)
                 Text(datasets.first(where: starter.matches)?.title ?? starter.datasetCode)
-                    .font(.caption).foregroundStyle(.secondary).lineLimit(Theme.rowTitleLines)
+                    .typeRole(.micro).foregroundStyle(.secondary).lineLimit(Theme.rowTitleLines)
             }.foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
                 .contentShape(Rectangle())
         }.buttonStyle(PressStyle()).accessibilityLabel("\(starter.title), \(source.title)")
@@ -368,7 +369,7 @@ private struct StatisticalExplorerView: View {
         let id = selected.id; loadingStructure = true
         defer { if selectedID == id { loadingStructure = false } }
         do {
-            let client = StatisticalClient()
+            let client = await store.statisticalClient()
             let value = try await client.structure(dataset: selected)
             try Task.checkCancellation(); guard selectedID == id else { return }
             structure = value
@@ -413,19 +414,19 @@ private struct StatisticalCodePicker: View {
     private var codes: [StatisticalCode] { dimension.codes.filter { query.isEmpty || ($0.title + " " + $0.id).localizedStandardContains(query) } }
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.majorSpacing) {
-            Text(dimension.title).font(.headline)
+            Text(dimension.title).typeRole(.heading)
             TextField("Rechercher une valeur ou un code…", text: $query).textFieldStyle(.roundedBorder).focused($searchFocused)
                 .onSubmit { if codes.count == 1, let code = codes.first { choose(code.id); dismiss() } }
             List(codes) { code in
                 Button { choose(code.id); dismiss() } label: {
                     HStack {
-                        VStack(alignment: .leading, spacing: Theme.rowSpacing) { Text(code.title); Text(code.id).font(.caption).foregroundStyle(.secondary) }
+                        VStack(alignment: .leading, spacing: Theme.rowSpacing) { Text(code.title); Text(code.id).typeRole(.micro).foregroundStyle(.secondary) }
                         Spacer()
                         if selected == code.id { Image(systemName: "checkmark") }
                     }.contentShape(Rectangle())
                 }.buttonStyle(.plain).padding(.vertical, Theme.rowSpacing)
             }.listStyle(.plain)
-            HStack { Text("\(codes.count.formatted()) \(codes.count == 1 ? "valeur" : "valeurs")").font(.caption).foregroundStyle(.secondary); Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
+            HStack { Text("\(codes.count.formatted()) \(codes.count == 1 ? "valeur" : "valeurs")").typeRole(.micro).foregroundStyle(.secondary); Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
         }.padding(Theme.majorSpacing).frame(width: Self.size.width, height: Self.size.height).onAppear { searchFocused = true }
     }
 }

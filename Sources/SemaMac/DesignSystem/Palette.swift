@@ -1,9 +1,11 @@
-// Six palettes et leurs accents adaptés au mode clair ou sombre.
+// Palette de marque par défaut, six palettes au choix, et leurs accents adaptés au mode clair ou sombre.
 import AppKit
 import SwiftUI
 
 enum Palette: String, CaseIterable, Identifiable, Sendable {
-    case graphite, teal, mint, lavender, sky, polar
+    case brand, graphite, teal, mint, lavender, sky, polar
+    /// Brand palette chosen by Antoine on 8 November 2026: ink, graphite, paper, mist and deep teal.
+    static let standard = Palette.brand
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -13,6 +15,7 @@ enum Palette: String, CaseIterable, Identifiable, Sendable {
         case .sky: "Bleu ciel"
         case .polar: "Bleu polaire"
         case .graphite: "Graphite"
+        case .brand: "sema"
         }
     }
     var swatches: [UInt32] {
@@ -23,6 +26,7 @@ enum Palette: String, CaseIterable, Identifiable, Sendable {
         case .sky: [0x00A9FF, 0x89CFF3, 0xA0E9FF, 0xCDF5FD]
         case .polar: [0x053F56, 0x21A5EC, 0x90D2F5, 0xF2F3F7]
         case .graphite: [0x333333, 0x707070, 0xD6D6D6, 0xFAFAFA]
+        case .brand: [0x141414, 0x1F6F73, 0xE3E5E2, 0xFAFAFA]
         }
     }
     private var lightAccent: UInt32 {
@@ -33,6 +37,7 @@ enum Palette: String, CaseIterable, Identifiable, Sendable {
         case .sky: 0x007AB8
         case .polar: 0x097BAF
         case .graphite: 0x474747
+        case .brand: 0x1F6F73
         }
     }
     private var darkAccent: UInt32 {
@@ -43,6 +48,7 @@ enum Palette: String, CaseIterable, Identifiable, Sendable {
         case .sky: 0x89CFF3
         case .polar: 0x90D2F5
         case .graphite: 0xD6D6D6
+        case .brand: 0x7CC2C0
         }
     }
     var accent: Color {
@@ -62,6 +68,7 @@ enum Palette: String, CaseIterable, Identifiable, Sendable {
         case .lavender: Self.swatch(0xD0A2F7)
         case .sky: Self.swatch(0x00A9FF)
         case .polar: Self.swatch(0x21A5EC)
+        case .brand: Self.swatch(0x1F6F73)
         }
     }
     static func swatch(_ hex: UInt32) -> Color { Color(nsColor: nsColor(hex)) }

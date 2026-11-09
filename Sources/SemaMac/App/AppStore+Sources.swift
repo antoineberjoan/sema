@@ -1,13 +1,16 @@
-// Active les sources de données et charge les catalogues des producteurs statistiques.
+// Active les sources de données, choisit la source des titres et charge les catalogues des producteurs statistiques.
 import Foundation
 import MarketCore
 
 extension AppStore {
+    var headlineSource: HeadlineSource { HeadlineSource(rawValue: preferences.headlineSourceID ?? "") ?? .standard }
+    func setHeadlineSource(_ source: HeadlineSource) { mutatePreferences { $0.headlineSourceID = source.rawValue } }
+
     func statisticalDatasets(source: StatisticalSource, reload: Bool = false) async throws -> [StatisticalDataset] {
         guard isSourceEnabled(source.rawValue) else { throw CancellationError() }
         let generation = sourceGenerations[source.rawValue]
         if !reload, let cached = statisticalCatalogues[source.rawValue] { return cached }
-        let datasets = try await StatisticalClient().datasets(source: source)
+        let datasets = try await statisticalClient().datasets(source: source)
         try Task.checkCancellation()
         guard isSourceEnabled(source.rawValue), generation == sourceGenerations[source.rawValue] else { throw CancellationError() }
         statisticalCatalogues[source.rawValue] = datasets
@@ -27,7 +30,8 @@ extension AppStore {
     func sourceSeriesCount(_ id: String) -> Int { storedFollowedSeries.filter { sourceID(for: $0.id) == id }.count }
 
     func setSourceEnabled(_ id: String, enabled: Bool) {
-        guard id == "webstat" || StatisticalSource(rawValue: id) != nil || MarketProvider(rawValue: id) != nil, enabled != isSourceEnabled(id) else { return }
+        guard id == "webstat" || StatisticalSource(rawValue: id) != nil || MarketProvider(rawValue: id) != nil || CentralBankFeed(rawValue: id) != nil,
+              enabled != isSourceEnabled(id) else { return }
         guard mutatePreferences({ value in
             var disabled = value.disabledSourceIDs ?? []
             if enabled { disabled.remove(id) } else { disabled.insert(id) }

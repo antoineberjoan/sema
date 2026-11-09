@@ -39,4 +39,24 @@ struct AppearancePreferencesTests {
         #expect(value.appearanceID == "light")
         #expect(value.themeID == "mint")
     }
+
+    @Test func newProfileStartsWithTheBrandPaletteAndKeepsSavedChoices() throws {
+        #expect(AppPreferences().themeID == "brand")
+        let saved = Data("""
+        {"schemaVersion":2,"favoriteIDs":[],"followedSeriesIDs":[],"alerts":[],"notificationsEnabled":false,"themeID":"graphite"}
+        """.utf8)
+        #expect(try JSONDecoder().decode(AppPreferences.self, from: saved).themeID == "graphite")
+    }
+
+    @Test func sharedPeriodPersistsAndOlderFilesKeepOneYear() throws {
+        let legacy = Data("""
+        {"schemaVersion":2,"favoriteIDs":[],"followedSeriesIDs":[],"alerts":[],"notificationsEnabled":false}
+        """.utf8)
+        var value = try JSONDecoder().decode(AppPreferences.self, from: legacy)
+        #expect(value.periodID == nil)
+        value.periodID = HistoryPeriod.threeYears.rawValue
+        let restored = try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(value))
+        #expect(HistoryPeriod(rawValue: restored.periodID ?? "") == .threeYears)
+        #expect(HistoryPeriod.visible.map(\.shortTitle) == ["3M", "1A", "3A", "5A", "Max"])
+    }
 }

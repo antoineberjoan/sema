@@ -1,9 +1,9 @@
-// Applique palette, apparence, position et verre du bandeau, et le sens d’affichage des parités.
+// Applique palette, apparence, période partagée, position et verre du bandeau, et le sens d’affichage des parités.
 import AppKit
 import MarketCore
 
 extension AppStore {
-    var palette: Palette { Palette(rawValue: preferences.themeID ?? "") ?? .graphite }
+    var palette: Palette { Palette(rawValue: preferences.themeID ?? "") ?? .standard }
 
     var appearance: Appearance { Appearance(rawValue: preferences.appearanceID ?? "") ?? .system }
 
@@ -19,6 +19,11 @@ extension AppStore {
     }
 
     func setRibbonPosition(_ position: MenuRibbonPosition) { mutatePreferences { $0.ribbonPositionID = position.rawValue } }
+    /// One period for the hub and the ribbon, kept across launches.
+    var period: HistoryPeriod { HistoryPeriod(rawValue: preferences.periodID ?? "") ?? .year }
+    func setPeriod(_ period: HistoryPeriod) { mutatePreferences { $0.periodID = period.rawValue } }
+    /// A series too short for the chosen period shows all its history, without changing the shared choice.
+    func period(for series: MarketSeries) -> HistoryPeriod { series.supports(period) ? period : .all }
 
     func setRibbonGlass(_ glass: RibbonGlassPreferences) {
         guard glass != ribbonGlass else { return }

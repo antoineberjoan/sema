@@ -12,7 +12,6 @@ final class AppStore {
     var settingsTab: SettingsTab = .general
     var category: SeriesCategory = .markets
     var selectedSeriesID = WebstatClient.canonicalID("eurusd")
-    var period: HistoryPeriod = .year
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -23,6 +22,8 @@ final class AppStore {
     var recentAlertEvents: [AlertEvent] = []
     var isAlertSheetPresented = false
     var isSearchPresented = false
+    /// Text carried from the search panel to the catalogues tab of the search sheet; read once.
+    var catalogueSeed: String?
     var isOnboardingPresented = false
     var shortcutError: String?
     let globalShortcuts = GlobalShortcuts()
@@ -53,6 +54,23 @@ final class AppStore {
     let marketClients = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, MarketDataClient(provider: $0)) })
     let marketKeychains = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, SourceKeychain(sourceID: $0.rawValue, title: $0.title)) })
     var connectedMarkets: Set<MarketProvider> = []
+    let fredKeychain = SourceKeychain(sourceID: StatisticalSource.fred.rawValue, title: StatisticalSource.fred.title)
+    var hasFREDKey = false
+    var isConnectingFRED = false
+    var fredError: String?
+    let claudeKeychain = SourceKeychain(sourceID: AppStore.claudeSourceID, title: "Claude")
+    var hasClaudeKey = false
+    var isConnectingClaude = false
+    var claudeError: String?
+    /// Verified summaries of a session, kept in memory only, keyed by session and writer.
+    var summaries: [String: SummaryCheck] = [:]
+    /// Facts of a session, kept in memory for the session only; never written to disk.
+    var dayContexts: [String: DayContext] = [:]
+    var isContextPresented = false
+    /// Agendas already loaded, by day (noon UTC); kept in memory only.
+    var agendas: [Date: DayAgenda] = [:]
+    /// Day chosen in the ribbon, waiting for the agenda of the hub to open on it.
+    var agendaDay: Date?
     var connectingMarkets: Set<MarketProvider> = []
     var marketErrors: [MarketProvider: String] = [:]
     var didCheckMarketKeys = false
@@ -66,6 +84,8 @@ final class AppStore {
     var historyTask: Task<Void, Never>?
     var historyGeneration = UUID()
     var sourceGenerations: [String: UUID] = [:]
+    /// Set by the app delegate: asks the refresh timer to plan again after a schedule setting changes.
+    @ObservationIgnored var rescheduleRefresh: () -> Void = {}
     @ObservationIgnored var invertedExchangeRates: [String: (source: MarketSeries, display: MarketSeries)] = [:]
 
     init(storage: LocalStorage = .applicationDefault()) {
@@ -198,7 +218,6 @@ final class AppStore {
     func show(_ item: MarketSeries) {
         if let historyLoadingID, historyLoadingID != item.id { cancelHistory() }
         selectedSeriesID = followedMatch(for: item)?.id ?? item.id; category = item.category
-        if !item.supports(period) { period = .all }
     }
 
     func reconcileSelection() {

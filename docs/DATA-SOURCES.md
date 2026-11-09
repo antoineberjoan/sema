@@ -102,3 +102,19 @@ Antoine lève le 18 octobre l’exclusion des cotations individuelles (décision
 Liens officiels : [Twelve Data](https://twelvedata.com/account/api-keys), [clé Alpha Vantage](https://www.alphavantage.co/support/#api-key), [documentation Twelve Data](https://twelvedata.com/docs), [documentation Alpha Vantage](https://www.alphavantage.co/documentation/).
 
 Une clé personnelle ne garantit ni l’accès à tous les instruments ni les droits d’affichage dans une application tierce. Les accès refusés ne sont pas contournés. Les indices premium, les fondamentaux et les autres API ne sont pas annoncés comme gratuits. Tiingo n’est pas intégré : les [conditions Starter](https://app.tiingo.com/tos/) interdisent le stockage durable de données.
+
+## Contexte d’une séance — 8 novembre 2026
+
+Sources ajoutées par le chantier « alertes de marché et refonte », décision d’Antoine du 7 novembre ; [plan et preuves](plans/market-alerts.md). Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
+
+| Source | Usage | Accès | Limites |
+| --- | --- | --- | --- |
+| FRED (Fed de Saint-Louis) | VIX, taux américains, dollar, calendrier des publications (`releases/dates`) | Clé personnelle gratuite, dans l’URL `api_key` à l’envoi | VIXCLS sous © Cboe ; identifiants de publication des suggestions à vérifier |
+| Fed, communiqués | Flux `https://www.federalreserve.gov/feeds/press_all.xml` | Public, sans clé | Adresse non appelée depuis le conteneur de développement |
+| BCE, communiqués | Flux `https://www.ecb.europa.eu/rss/press.html` | Public, sans clé | Même limite |
+| GDELT DOC 2.0 | Titres anglophones de la séance (`artlist`, 10 résultats) | Public, sans clé | Conditions d’usage à vérifier avant diffusion large |
+| Alpha Vantage News | Titres de la séance (`NEWS_SENTIMENT`) | Clé Alpha Vantage déjà connectée | Un appel du quota quotidien |
+| API Claude (Anthropic) | Synthèse facultative de trois phrases au plus | Clé personnelle payante, dans l’en-tête `x-api-key` | Reçoit seulement les faits numérotés de la séance ; repli serveur `fallbacks: "default"` |
+| Apple Intelligence | Même synthèse, sur le Mac | `FoundationModels`, macOS 26 et Mac compatible | Aucun réseau ; non compilé en CI |
+
+Aucune source quotidienne gratuite et officielle n’a été trouvée pour le CAC 40 et l’Euro Stoxx 50 (la BCE publie l’Euro Stoxx 50 en mensuel). Le S&P 500, le Nasdaq 100 et le Russell 2000 passent par les ETF SPY, QQQ et IWM des fournisseurs de cours ; l’accès d’IWM dans le forfait gratuit Twelve Data n’est pas vérifié.

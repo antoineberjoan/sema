@@ -2,10 +2,10 @@
 import SwiftUI
 
 struct OverviewView: View {
-    private static let sectionSpacing: CGFloat = 32
-    private static let switcherSpacing: CGFloat = 28
-    private static let switcherBottomPadding: CGFloat = 10
-    private static let switcherInset: CGFloat = 2
+    private static let sectionSpacing = Spacing.s32
+    private static let switcherSpacing = Spacing.s24
+    private static let switcherBottomPadding = Spacing.s10
+    private static let switcherInset = Spacing.s2
     private static let emptyMinHeight: CGFloat = 450
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
@@ -22,7 +22,7 @@ struct OverviewView: View {
                                 let current = item.id == selected.id
                                 Button { store.show(item) } label: {
                                     Text(MarketFormat.name(store.displayedSeries(item)))
-                                        .font(.callout).foregroundStyle(current ? .primary : .secondary)
+                                        .typeRole(.small).foregroundStyle(current ? .primary : .secondary)
                                         .padding(.bottom, Self.switcherBottomPadding)
                                         .overlay(alignment: .bottom) {
                                             if current { Rectangle().frame(height: 1).foregroundStyle(.primary) }

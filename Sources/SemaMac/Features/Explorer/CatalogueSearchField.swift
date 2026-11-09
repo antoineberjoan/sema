@@ -2,7 +2,7 @@
 import SwiftUI
 
 struct CatalogueSearchField: View {
-    private static let spacing: CGFloat = 10
+    private static let spacing = Spacing.s10
     @Binding var query: String
     let prompt: String
     var isSearching = false
@@ -23,7 +23,7 @@ struct CatalogueSearchField: View {
                     .buttonStyle(.plain).accessibilityLabel("Effacer la recherche").help("Effacer la recherche")
             }
         }
-        .font(.title3).padding(Theme.rowPadding)
+        .typeRole(.subheading).padding(Theme.rowPadding)
         .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
         .onAppear { focused = true }
     }

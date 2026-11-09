@@ -50,4 +50,19 @@ struct ShortcutPreferencesTests {
         #expect(ShortcutPreferences(ribbon: ribbon, workspace: custom).migrated().workspace == custom)
         #expect(ShortcutPreferences(ribbon: nil, workspace: nil).migrated().workspace == nil)
     }
+
+    @Test func globalSearchIsOffByDefaultAndKeepsItsChoice() throws {
+        #expect(ShortcutPreferences.standard.search == nil)
+        #expect(ShortcutPreferences.standard[.search] == nil)
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-shortcuts-" + UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = PreferencesStore(fileURL: directory.appendingPathComponent("preferences.json"))
+        let chosen = AppShortcut(keyCode: 49, modifiers: [.option], key: "espace")
+        let expected = AppPreferences(shortcuts: ShortcutPreferences(ribbon: nil, workspace: nil, search: chosen))
+        try store.save(expected)
+        let loaded = try store.load()
+        #expect(loaded.shortcuts?[.search] == chosen)
+        #expect(loaded.shortcuts?[.ribbon] == nil)
+        #expect(loaded.shortcuts?.migrated().search == chosen)
+    }
 }

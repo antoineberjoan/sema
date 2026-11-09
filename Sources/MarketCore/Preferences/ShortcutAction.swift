@@ -2,6 +2,7 @@
 import Foundation
 
 public enum ShortcutAction: String, CaseIterable, Sendable, Identifiable {
-    case ribbon, workspace
+    // L’ordre fixe l’identifiant de chaque raccourci : toute nouvelle action s’ajoute à la fin.
+    case ribbon, workspace, search
     public var id: String { rawValue }
 }

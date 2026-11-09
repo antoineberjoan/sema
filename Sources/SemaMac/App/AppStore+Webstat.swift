@@ -63,8 +63,7 @@ extension AppStore {
                 if let instrument = old?.marketInstrument {
                     value = try await fetchMarket(instrument)
                 } else if let descriptor = old?.statisticalDescriptor ?? statisticalDescriptors[id] {
-                    let structure = try await StatisticalClient().structure(dataset: descriptor.dataset)
-                    value = try await StatisticalClient().fetch(dataset: descriptor.dataset, structure: structure, key: descriptor.key)
+                    value = try await statisticalClient().observations(for: descriptor)
                     measurementChanged = value.statisticalDescriptor.map { !descriptor.usesSameMeasurement(as: $0) } ?? true
                 } else {
                     guard let key else { throw WebstatClient.ClientError.missingKey }

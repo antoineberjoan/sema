@@ -20,7 +20,7 @@ struct ProfileSettingsView: View {
                     .accessibilityLabel("Modifier la photo")
                     VStack(alignment: .leading, spacing: Theme.minorSpacing) {
                         if !store.profile.displayName.isEmpty {
-                            Text(store.profile.displayName).font(.title3.weight(.medium))
+                            Text(store.profile.displayName).typeRole(.subheading)
                         }
                         Button(isImporting ? "Importation…" : store.profile.avatarJPEG == nil ? "Ajouter une photo…" : "Modifier la photo…") {
                             showsImporter = true

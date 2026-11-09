@@ -31,7 +31,8 @@ Les sept nouveaux accès sont publics et n’utilisent pas de clé Webstat. Les 
 - Une période non interprétée, une réponse tronquée ou plusieurs séries dans une réponse ne deviennent pas une courbe présentée comme complète.
 - L’exploration révèle les listes de codes de la source. Lorsque celle-ci ne publie pas toutes les contraintes entre dimensions, une combinaison proposée peut ne pas exister ; l’utilisateur peut aussi saisir une clé exacte.
 - Les séries numériques à unité non interprétée restent consultables. Une alerte exige une unité et une échelle explicites. Les indices et montants ne reçoivent pas de variation relative inventée.
-- Les sources à inscription ou à contrat supplémentaire (BEA, EIA, FRED, FMI, etc.) ne sont pas présentées comme connectées. Aucune clé, aucun compte et aucun accord supplémentaire ne sont créés par cet incrément.
+- Les sources à inscription ou à contrat supplémentaire (BEA, EIA, FMI, etc.) ne sont pas présentées comme connectées. Aucune clé, aucun compte et aucun accord supplémentaire ne sont créés par cet incrément.
+- Mise à jour du 8 novembre : FRED est connecté avec une clé personnelle gratuite, inactif tant qu’elle manque. Catalogue = publications FRED, structure = séries de la publication par popularité ; unités converties (Percent en points, Index en %), valeurs « . » ignorées. La clé passe dans l’URL `api_key`, seule méthode offerte, uniquement à l’envoi. Suggestions : VIXCLS (© Cboe, citation obligatoire), DGS10, DGS2, DTWEXBGS, DEXUSEU ; identifiants de publication à vérifier avec une vraie clé. [Plan et preuves](plans/market-alerts.md).
 - Pas de cotations d’actions ni de VL ou de collecte d’un fonds individuel. Les flux agrégés d’OPC sont déjà une famille de données Webstat ; une variation d’encours n’est pas une collecte.
 
 ## Persistance, historique et alertes
@@ -69,5 +70,6 @@ La comparaison a porté sur le catalogue et les métadonnées publics déjà con
 - [OCDE : API](https://www.oecd.org/en/data/insights/data-explainers/2024/09/api.html), [quota](https://www.oecd.org/en/data/insights/data-explainers/2024/11/Api-best-practices-and-recommendations.html), [conditions](https://www.oecd.org/en/about/terms-conditions.html).
 - [New York Fed : API](https://markets.newyorkfed.org/static/docs/markets-api.html), [mentions obligatoires](https://www.newyorkfed.org/privacy/termsofuse.html).
 - [Banque mondiale : API](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392), [conditions](https://data.worldbank.org/summary-terms-of-use).
+- [FRED : API](https://fred.stlouisfed.org/docs/api/fred/), [conditions](https://fred.stlouisfed.org/docs/api/terms_of_use.html), [VIXCLS](https://fred.stlouisfed.org/series/VIXCLS).
 
 Ces conditions n’équivalent pas à une autorisation universelle de redistribuer commercialement toutes les données de tiers présentes dans tous les catalogues. La fiche de chaque repère renvoie vers sa source et les conditions correspondantes.

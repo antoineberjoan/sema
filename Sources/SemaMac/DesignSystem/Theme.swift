@@ -26,27 +26,28 @@ enum Theme {
     static let quietFill = Color.primary.opacity(0.035)
     static let background = Color(nsColor: .windowBackgroundColor)
     static let separator = Color(nsColor: .separatorColor).opacity(0.5)
-    // One radius per role: selectable rows, cards inside a view, surfaces and floating panels.
-    static let rowCorner: CGFloat = 12
-    static let cardCorner: CGFloat = 16
-    static let surfaceCorner: CGFloat = 22
+    // One radius per role (Espace et forme 1.1): selectable rows, cards inside a view, surfaces and floating panels.
+    static let rowCorner = Radius.block
+    static let cardCorner = Radius.card
+    static let surfaceCorner = Radius.card
     // Selectable rows share their inset, gap, text rhythm and title length.
-    static let rowPadding: CGFloat = 12
-    static let rowSpacing: CGFloat = 4
-    static let rowTextSpacing: CGFloat = 7
+    static let rowPadding = Spacing.s12
+    static let rowSpacing = Spacing.s4
+    static let rowTextSpacing = Spacing.s8
     static let rowTitleLines = 3
-    static let settingsRowPadding: CGFloat = 5
-    static let settingsTextSpacing: CGFloat = 4
+    static let settingsRowPadding = Spacing.s6
+    static let settingsTextSpacing = Spacing.s4
     static let iconButtonSize: CGFloat = 26
     // Inset of content from the edge of a surface or of the window.
-    static let contentPadding: CGFloat = 26
+    static let contentPadding = Spacing.s32
     // Vertical rhythm: the minor unit separates related items, the major unit separates groups.
-    static let minorSpacing: CGFloat = 8
-    static let majorSpacing: CGFloat = 16
-    static let badgeVerticalInset: CGFloat = 6
+    static let minorSpacing = Spacing.s8
+    static let majorSpacing = Spacing.s24
+    static let badgeVerticalInset = Spacing.s6
     static let badgeFillOpacity = 0.12
-    static let hairline: CGFloat = 0.5
-    static let hoverDuration = 0.14
+    // One-pixel rule; the shadow, not the stroke, tells the height.
+    static let hairline: CGFloat = 1
+    static let hoverDuration = Motion.fast
 
     static let menuBarIcon: NSImage = {
         let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(.black).frame(width: 18, height: 18))
@@ -65,14 +66,16 @@ extension Theme {
         var x: CGFloat = 0
         let y: CGFloat
 
-        static let contact = Shadow(opacity: 0.04, radius: 2, y: 1)
-        static let contactDark = Shadow(opacity: 0.16, radius: 2, y: 1)
-        static let plane = Shadow(opacity: 0.06, radius: 16, y: 6)
-        static let planeDark = Shadow(opacity: 0.20, radius: 16, y: 6)
-        static let cardResting = Shadow(opacity: 0.055, radius: 5, y: 3)
-        static let card = Shadow(opacity: 0.12, radius: 10, y: 3)
-        static let sidebar = Shadow(opacity: 0.12, radius: 14, x: 4, y: 6)
-        static let switcher = Shadow(opacity: 0.18, radius: 28, y: 12)
+        // Espace et forme 1.1: level 1 rests (0 1 2), level 2 floats (0 8 24), level 3 is a window (0 24 64).
+        // A SwiftUI radius is about half a CSS blur.
+        static let contact = Shadow(opacity: 0.04, radius: 1, y: 1)
+        static let contactDark = Shadow(opacity: 0.16, radius: 1, y: 1)
+        static let plane = Shadow(opacity: 0.06, radius: 12, y: 8)
+        static let planeDark = Shadow(opacity: 0.20, radius: 12, y: 8)
+        static let cardResting = Shadow(opacity: 0.08, radius: 1, y: 1)
+        static let card = Shadow(opacity: 0.12, radius: 12, y: 8)
+        static let sidebar = Shadow(opacity: 0.12, radius: 12, y: 8)
+        static let switcher = Shadow(opacity: 0.18, radius: 32, y: 24)
     }
 }
 

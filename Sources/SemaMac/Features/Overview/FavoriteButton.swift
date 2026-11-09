@@ -9,7 +9,7 @@ struct FavoriteButton: View {
     var body: some View {
         Button { store.toggleFavorite(seriesID) } label: {
             Image(systemName: store.isFavorite(seriesID) ? "star.fill" : "star")
-                .font(.callout).foregroundStyle(store.isFavorite(seriesID) ? accent : Color.secondary)
+                .typeRole(.small).foregroundStyle(store.isFavorite(seriesID) ? accent : Color.secondary)
                 .frame(width: Theme.iconButtonSize, height: Theme.iconButtonSize).contentShape(Rectangle())
         }
         .buttonStyle(.plain)

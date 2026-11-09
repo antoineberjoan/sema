@@ -18,9 +18,19 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var invertedCurrencyPairs: Set<String>?
     public var ribbonGlass: RibbonGlassPreferences?
     public var shortcuts: ShortcutPreferences?
+    /// History period shared by the hub and the ribbon; absent means one year.
+    public var periodID: String?
+    /// Global sensitivity of unusual-move alerts; absent means normal (2×).
+    public var moveSensitivityID: String?
+    /// Source of the headlines of the day; absent means GDELT.
+    public var headlineSourceID: String?
+    /// Writer of the summary of a session; absent means off.
+    public var summaryWriterID: String?
+    /// Morning brief settings; absent means off at 8:00 on weekdays.
+    public var brief: BriefPreferences?
 
     public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
-                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "graphite", appearanceID: String? = nil,
+                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "brand", appearanceID: String? = nil,
                 followedSeriesIDs: [String] = [], onboardingCompleted: Bool? = nil,
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = StatisticalSource.inactiveByDefault,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
@@ -42,7 +52,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case schemaVersion, favoriteIDs, followedSeriesIDs, alerts, notificationsEnabled, themeID, appearanceID, onboardingCompleted, ribbonPositionID
-        case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass, shortcuts
+        case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass, shortcuts, periodID, moveSensitivityID, headlineSourceID, summaryWriterID, brief
     }
     public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -60,6 +70,11 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         invertedCurrencyPairs = try values.decodeIfPresent(Set<String>.self, forKey: .invertedCurrencyPairs)
         ribbonGlass = try values.decodeIfPresent(RibbonGlassPreferences.self, forKey: .ribbonGlass)
         shortcuts = try values.decodeIfPresent(ShortcutPreferences.self, forKey: .shortcuts)
+        periodID = try values.decodeIfPresent(String.self, forKey: .periodID)
+        moveSensitivityID = try values.decodeIfPresent(String.self, forKey: .moveSensitivityID)
+        headlineSourceID = try values.decodeIfPresent(String.self, forKey: .headlineSourceID)
+        summaryWriterID = try values.decodeIfPresent(String.self, forKey: .summaryWriterID)
+        brief = try values.decodeIfPresent(BriefPreferences.self, forKey: .brief)
         // Empty is a valid v2 selection; absence only means legacy v1.
         if schemaVersion > 1 { followedSeriesIDs = try values.decode([String].self, forKey: .followedSeriesIDs) }
         else { followedSeriesIDs = WebstatClient.starterIDs }

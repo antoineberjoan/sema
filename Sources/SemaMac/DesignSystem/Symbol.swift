@@ -1,28 +1,25 @@
-// Trace le signe Palier avec une épaisseur optique adaptée à sa taille.
+// Trace le logo repère : la ligne, l’écart qui la détache du point, puis le point sarcelle.
 import SwiftUI
 
-/// Palier — Référence: Antoine’s original curve, with optical weights for small sizes.
+/// Antoine’s mark (8 November 2026). In the menu bar the point follows the template colour.
 struct Symbol: View {
-    // Strokes in curve units: 2 pt at 18 pt in the menu bar, then heavier optical weights for small sizes.
-    private static let menuBarStroke = SignalPath.viewBox / 9
-    private static let smallSide: CGFloat = 28
-    private static let mediumSide: CGFloat = 96
-    private static let smallStroke: CGFloat = 2.89
-    private static let mediumStroke: CGFloat = 2.04
-    private static let largeStroke: CGFloat = 1.224
     var isMenuBarIcon = false
 
     var body: some View {
         GeometryReader { geometry in
-            let side = min(geometry.size.width, geometry.size.height)
-            let scale = side / SignalPath.viewBox
-            // The 18 pt menu-bar symbol uses a 2 pt stroke.
-            let lineWidth = isMenuBarIcon ? Self.menuBarStroke : (side < Self.smallSide ? Self.smallStroke : side < Self.mediumSide ? Self.mediumStroke : Self.largeStroke)
-            SignalPath()
-                .stroke(style: StrokeStyle(lineWidth: lineWidth * scale,
-                                          lineCap: .round, lineJoin: .round))
-            .frame(width: side, height: side)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            let rect = CGRect(origin: .zero, size: geometry.size)
+            let scale = min(rect.width, rect.height) / SignalPath.viewBox
+            ZStack {
+                SignalPath()
+                    .stroke(style: StrokeStyle(lineWidth: SignalPath.stroke * scale, lineCap: .round, lineJoin: .round))
+                SignalDot(radius: SignalPath.gapRadius).blendMode(.destinationOut)
+                if isMenuBarIcon {
+                    SignalDot()
+                } else {
+                    SignalDot().fill(Palette.brand.controlAccent)
+                }
+            }
+            .compositingGroup()
         }
         .aspectRatio(1, contentMode: .fit)
         .accessibilityHidden(true)

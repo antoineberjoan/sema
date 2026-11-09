@@ -1,18 +1,31 @@
-// Géométrie de la courbe Palier, dessin original d’Antoine.
+// Géométrie de la courbe du logo repère d’Antoine : une ligne qui monte et se pose sur un palier.
 import SwiftUI
 
 struct SignalPath: Shape {
-    /// Side of the square in which the original curve is drawn.
-    static let viewBox: CGFloat = 64
+    /// Side of the square in which the mark is drawn, centred from the 512 pt app icon.
+    static let viewBox: CGFloat = 320
+    /// Stroke of the line, in mark units.
+    static let stroke: CGFloat = 36
+    /// Centre of the teal point where the line settles.
+    static let dotCenter = CGPoint(x: 216, y: 91)
+    /// Visible radius of the point, and radius of the gap that separates it from the line.
+    static let dotRadius: CGFloat = 27
+    static let gapRadius: CGFloat = 41
+
     func path(in rect: CGRect) -> Path {
-        let scale = min(rect.width, rect.height) / Self.viewBox
         var path = Path()
-        path.move(to: CGPoint(x: 43, y: 166.683))
-        path.addCurve(to: CGPoint(x: 118.362, y: 76.0449), control1: CGPoint(x: 92.9018, y: 166.683), control2: CGPoint(x: 111.233, y: 118.818))
-        path.addCurve(to: CGPoint(x: 90.865, y: 86.229), control1: CGPoint(x: 122.436, y: 49.5664), control2: CGPoint(x: 94.9387, y: 55.6768))
-        path.addCurve(to: CGPoint(x: 159.098, y: 96.413), control1: CGPoint(x: 84.7546, y: 136.131), control2: CGPoint(x: 140.767, y: 111.689))
-        path.addCurve(to: CGPoint(x: 209, y: 94.3762), control1: CGPoint(x: 180.485, y: 79.1001), control2: CGPoint(x: 196.779, y: 95.3946))
-        return path.applying(CGAffineTransform(a: 0.34 * scale, b: 0, c: 0,
-                                             d: 0.34 * scale, tx: -10.84 * scale, ty: -6.41998 * scale))
+        path.move(to: CGPoint(x: 24, y: 245))
+        path.addCurve(to: Self.dotCenter, control1: CGPoint(x: 114, y: 245), control2: CGPoint(x: 136, y: 91))
+        path.addLine(to: CGPoint(x: 296, y: 91))
+        return path.applying(Self.transform(in: rect))
     }
+
+    /// Scales mark units into the largest centred square of the rectangle.
+    static func transform(in rect: CGRect) -> CGAffineTransform {
+        let side = min(rect.width, rect.height)
+        let scale = side / viewBox
+        return CGAffineTransform(a: scale, b: 0, c: 0, d: scale,
+                                 tx: rect.midX - side / 2, ty: rect.midY - side / 2)
+    }
+
 }

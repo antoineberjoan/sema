@@ -1,6 +1,5 @@
 // Place et ferme le panneau macOS des favoris en coordonnant écrans, événements et transitions.
 import AppKit
-import Carbon
 import SwiftUI
 import QuartzCore
 
@@ -12,12 +11,16 @@ final class MenuRibbonController: NSObject {
     private let openWorkspace: () -> Void
     private let openSettings: () -> Void
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-    private var localMonitor: Any?
-    private var globalMonitor: Any?
-    private var workspaceObservers: [NSObjectProtocol] = []
     private var screenObserver: NSObjectProtocol?
     private var isPresented = false
     private var transition = UUID()
+    /// A click elsewhere, Escape or another app closes the ribbon; ⌘K opens the search from it.
+    private lazy var dismissal = PanelDismissal(panel: panel, ignoring: { [weak self] in [self?.statusItem.button?.window] },
+        dismiss: { [weak self] in self?.dismiss() }, handleKey: { [weak self] event in
+            guard let self, event.modifierFlags.contains(.command), event.charactersIgnoringModifiers == "k" else { return false }
+            self.showWorkspace(); self.store.isSearchPresented = true
+            return true
+        })
     private lazy var hostedContent = NSHostingView(rootView: ribbonContent(presentationID: nil))
 
     private func ribbonContent(presentationID: UUID?) -> AnyView {
@@ -26,16 +29,8 @@ final class MenuRibbonController: NSObject {
             openSettings: { [weak self] in self?.showSettings() }).environment(store))
     }
 
-    private lazy var panel: RibbonPanel = {
-        let panel = RibbonPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel],
-                                backing: .buffered, defer: true)
-        panel.title = "Vos favoris · sema"
-        panel.identifier = NSUserInterfaceItemIdentifier("sema-favorites-ribbon")
-        panel.isOpaque = false; panel.backgroundColor = .clear
-        panel.hasShadow = false; panel.hidesOnDeactivate = false
-        panel.level = .floating
-        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient, .ignoresCycle]
-        panel.isReleasedWhenClosed = false
+    private lazy var panel: FloatingPanel = {
+        let panel = FloatingPanel.make(title: "Vos favoris · sema", identifier: "sema-favorites-ribbon")
         // Each card owns its glass. The panel and the gaps remain transparent.
         let container = NSView()
         hostedContent.translatesAutoresizingMaskIntoConstraints = false
@@ -96,8 +91,7 @@ final class MenuRibbonController: NSObject {
         if store.isOnboardingPresented || store.isSearchPresented || store.isAlertSheetPresented {
             openWorkspace(); return
         }
-        let screen = NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) }
-            ?? statusItem.button?.window?.screen ?? NSScreen.main
+        let screen = FloatingPanel.screenUnderPointer ?? statusItem.button?.window?.screen ?? NSScreen.main
         guard let screen else { return }
         let target = store.ribbonPosition.frame(in: screen)
         let offset = store.ribbonPosition.revealOffset
@@ -109,7 +103,7 @@ final class MenuRibbonController: NSObject {
         }
         panel.makeKeyAndOrderFront(nil)
         statusItem.button?.highlight(true)
-        installMonitors()
+        dismissal.start()
         if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
             panel.setFrame(target, display: true); panel.alphaValue = 1
         } else {
@@ -126,7 +120,7 @@ final class MenuRibbonController: NSObject {
         guard isPresented else { return }
         isPresented = false; transition = UUID()
         let generation = transition
-        removeMonitors(); statusItem.button?.highlight(false)
+        dismissal.stop(); statusItem.button?.highlight(false)
         if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
             panel.orderOut(nil)
             hostedContent.rootView = ribbonContent(presentationID: nil)
@@ -150,57 +144,12 @@ final class MenuRibbonController: NSObject {
         NSWorkspace.shared.open(Self.releasesURL)
     }
 
-    private func installMonitors() {
-        removeMonitors()
-        globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
-            Task { @MainActor in self?.dismiss() }
-        }
-        localMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown, .keyDown]) { [weak self] event in
-            let consumed = MainActor.assumeIsolated {
-                guard let self else { return false }
-                if event.type == .keyDown {
-                    if Int(event.keyCode) == kVK_Escape { self.dismiss(); return true }
-                    if event.modifierFlags.contains(.command), event.charactersIgnoringModifiers == "k" {
-                        self.showWorkspace(); self.store.isSearchPresented = true; return true
-                    }
-                } else if event.window !== self.panel, event.window !== self.statusItem.button?.window {
-                    self.dismiss()
-                }
-                return false
-            }
-            return consumed ? nil : event
-        }
-        for name in [NSWorkspace.activeSpaceDidChangeNotification, NSWorkspace.didActivateApplicationNotification] {
-            workspaceObservers.append(NSWorkspace.shared.notificationCenter.addObserver(
-                forName: name, object: nil, queue: .main) { [weak self] notification in
-                    let activatedPID = (notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.processIdentifier
-                    MainActor.assumeIsolated {
-                        if activatedPID == ProcessInfo.processInfo.processIdentifier { return }
-                        self?.dismiss()
-                    }
-                })
-        }
-    }
-
-    private func removeMonitors() {
-        if let localMonitor { NSEvent.removeMonitor(localMonitor) }; localMonitor = nil
-        if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }; globalMonitor = nil
-        workspaceObservers.forEach { NSWorkspace.shared.notificationCenter.removeObserver($0) }
-        workspaceObservers = []
-    }
-
     func tearDown() {
         transition = UUID(); isPresented = false
-        removeMonitors()
+        dismissal.stop()
         if let screenObserver { NotificationCenter.default.removeObserver(screenObserver) }
         screenObserver = nil
         panel.orderOut(nil)
         NSStatusBar.system.removeStatusItem(statusItem)
     }
-}
-
-@MainActor
-private final class RibbonPanel: NSPanel {
-    override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { false }
 }

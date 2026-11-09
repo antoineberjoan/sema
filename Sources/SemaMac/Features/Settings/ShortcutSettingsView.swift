@@ -1,11 +1,11 @@
-// Présente les deux accès globaux modifiables et rappelle la navigation clavier du hub.
+// Présente les trois accès globaux modifiables et rappelle la navigation clavier du hub.
 import AppKit
 import Carbon
 import SwiftUI
 import MarketCore
 
 struct ShortcutSettingsView: View {
-    private static let rowSpacing: CGFloat = 14
+    private static let rowSpacing = Spacing.s14
     private static let recorderWidth: CGFloat = 142
     private static let recorderHeight: CGFloat = 30
     @Environment(AppStore.self) private var store
@@ -15,8 +15,9 @@ struct ShortcutSettingsView: View {
             Section("Accès globaux") {
                 shortcutRow(.ribbon, title: "Bandeau")
                 shortcutRow(.workspace, title: "Hub")
+                shortcutRow(.search, title: "Recherche")
                 if let error = store.shortcutError {
-                    Text(error).font(.callout).foregroundStyle(.red)
+                    Text(error).typeRole(.small).foregroundStyle(.red)
                         .accessibilityLabel("Raccourci indisponible : " + error)
                 }
             }
@@ -35,7 +36,7 @@ struct ShortcutSettingsView: View {
             Text(title)
             Spacer()
             Button { store.setShortcut(ShortcutPreferences.standard[action], for: action) } label: {
-                Image(systemName: "arrow.counterclockwise").font(.subheadline)
+                Image(systemName: "arrow.counterclockwise").typeRole(.caption)
             }
             .buttonStyle(.borderless).help("Rétablir le raccourci du " + title.lowercased())
             .accessibilityLabel("Rétablir le raccourci du " + title.lowercased())

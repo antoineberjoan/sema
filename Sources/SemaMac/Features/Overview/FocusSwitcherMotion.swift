@@ -6,6 +6,6 @@ import SwiftUI
 // 180 ms  Le défilement centre la sélection avec un ressort sans rebond.
 // Relâcher ⌘ / Entrée → ouverture ; Échap / sortie de fenêtre → annulation.
 enum FocusSwitcherMotion {
-    static let selection = Animation.snappy(duration: 0.18, extraBounce: 0)
-    static let presentation = Animation.snappy(duration: 0.20, extraBounce: 0)
+    static let selection = Motion.easeOut(Motion.standard)
+    static let presentation = Motion.easeOut(Motion.standard)
 }

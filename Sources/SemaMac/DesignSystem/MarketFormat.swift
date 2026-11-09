@@ -35,6 +35,14 @@ enum MarketFormat {
         return number(delta, digits: Self.changeDigits, signed: true) + (series.unit == .percent ? " pt" : " %")
     }
 
+    /// Change of one session: points for rates, percent otherwise.
+    static func sessionChange(_ change: Decimal, series: MarketSeries) -> String {
+        number(change, digits: Self.changeDigits, signed: true) + (series.unit == .percent ? " pt" : " %")
+    }
+
+    /// Multiple of the usual variation, for example « 4,0× ».
+    static func ratio(_ ratio: Double) -> String { number(Decimal(ratio), digits: 1) + "×" }
+
     static func date(_ date: Date?) -> String {
         guard let date else { return "Date inconnue" }
         return date.formatted(.dateTime.day().month(.abbreviated).year().locale(.french))

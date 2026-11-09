@@ -7,7 +7,7 @@ struct OriginBadge: View {
     let series: MarketSeries
     var body: some View {
         Text(series.originBadge)
-            .font(.subheadline.weight(.medium))
+            .typeRole(.overline)
             .foregroundStyle(accent)
     }
 }

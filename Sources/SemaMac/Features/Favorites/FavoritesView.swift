@@ -3,17 +3,15 @@ import SwiftUI
 import MarketCore
 
 private struct IndicatorTile: View {
-    private static let compactValueFont = Font.system(size: 24)
-    private static let compactSpacing: CGFloat = 14
-    private static let spacing: CGFloat = 10
-    private static let titleSpacing: CGFloat = 6
-    private static let singleActionInset: CGFloat = 22
-    private static let doubleActionInset: CGFloat = 48
-    private static let valueTracking: CGFloat = -0.6
+    private static let compactSpacing = Spacing.s16
+    private static let spacing = Spacing.s10
+    private static let titleSpacing = Spacing.s6
+    private static let singleActionInset = Spacing.s24
+    private static let doubleActionInset = Spacing.s48
     private static let valueMinimumScale: CGFloat = 0.85
-    private static let valueSpacing: CGFloat = 6
-    private static let compactPadding: CGFloat = 16
-    private static let padding: CGFloat = 14
+    private static let valueSpacing = Spacing.s6
+    private static let compactPadding = Spacing.s16
+    private static let padding = Spacing.s16
     @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -29,17 +27,17 @@ private struct IndicatorTile: View {
             Button(action: action) {
                 VStack(alignment: .leading, spacing: compact ? Self.compactSpacing : Self.spacing) {
                     HStack(spacing: Self.titleSpacing) {
-                        Text(MarketFormat.name(displayed)).font(.body.weight(.medium)).lineLimit(1)
+                        Text(MarketFormat.name(displayed)).typeRole(.heading).lineLimit(1)
                         if !store.isSourceEnabled(for: series.id) { Image(systemName: "pause.circle").foregroundStyle(.secondary).help("Source désactivée · historique conservé") }
                     }
                     .padding(.trailing, series.exchangeRatePair == nil ? Self.singleActionInset : Self.doubleActionInset)
                     HStack(alignment: .firstTextBaseline) {
                         Text(MarketFormat.value(displayed))
-                            .font(compact ? Self.compactValueFont : .title)
-                            .tracking(Self.valueTracking).monospacedDigit().lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
+                            .typeRole(.figure)
+                            .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
                         Spacer(minLength: Self.valueSpacing)
                         Text(MarketFormat.change(displayed, period: .month))
-                            .font(.subheadline).monospacedDigit().foregroundStyle(.secondary)
+                            .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
                             .lineLimit(1)
                     }
                 }
@@ -58,7 +56,7 @@ private struct IndicatorTile: View {
             }.padding(Theme.minorSpacing)
         }
         .onHover { isHovered = $0 }
-        .animation(reduceMotion ? nil : .easeOut(duration: Theme.hoverDuration), value: isHovered)
+        .animation(reduceMotion ? nil : .easeInOut(duration: Theme.hoverDuration), value: isHovered)
     }
 
     private var fill: Color {
@@ -71,7 +69,7 @@ private struct IndicatorTile: View {
 struct FavoritesView: View {
     private static let emptyMinHeight: CGFloat = 380
     private static let tileMinWidth: CGFloat = 250
-    private static let gridSpacing: CGFloat = 16
+    private static let gridSpacing = Spacing.s16
     @Environment(AppStore.self) private var store
     var body: some View {
         if store.favorites.isEmpty {
