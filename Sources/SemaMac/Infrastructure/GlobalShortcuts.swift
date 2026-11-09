@@ -1,4 +1,4 @@
-// Enregistre uniquement les deux combinaisons globales choisies et préserve les réglages en cas de conflit.
+// Enregistre uniquement les combinaisons globales choisies (bandeau, hub, recherche) et préserve les réglages en cas de conflit.
 import AppKit
 import Carbon
 import MarketCore
@@ -27,7 +27,7 @@ final class GlobalShortcuts {
         let actions = ShortcutAction.allCases
         let shortcuts = actions.compactMap { preferences[$0] }
         guard shortcuts.allSatisfy(\.isValid) else { throw RegistrationError.invalid }
-        if let first = preferences.ribbon, let second = preferences.workspace, first.matches(second) {
+        for (index, shortcut) in shortcuts.enumerated() where shortcuts.dropFirst(index + 1).contains(where: shortcut.matches) {
             throw RegistrationError.duplicate
         }
         for shortcut in shortcuts where isReserved(shortcut) { throw RegistrationError.reserved }

@@ -41,11 +41,7 @@ struct MenuRibbonView: View {
         .padding(.horizontal, MenuRibbonLayout.padding)
         .padding(.top, MenuRibbonLayout.topPadding)
         .padding(.bottom, MenuRibbonLayout.bottomPadding)
-        .environment(\.semaAccent, store.palette.accent).tint(store.palette.controlAccent)
-        .environment(\.semaGlassTint, store.palette.glassTint)
-        .environment(\.semaGlassSettings, store.ribbonGlass)
-        .preferredColorScheme(store.appearance.colorScheme)
-        .environment(\.locale, .french)
+        .modifier(RibbonEnvironment(store: store))
         .task { await store.checkWebstatKey() }
     }
 

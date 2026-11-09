@@ -22,6 +22,8 @@ final class AppStore {
     var recentAlertEvents: [AlertEvent] = []
     var isAlertSheetPresented = false
     var isSearchPresented = false
+    /// Text carried from the search panel to the catalogues tab of the search sheet; read once.
+    var catalogueSeed: String?
     var isOnboardingPresented = false
     var shortcutError: String?
     let globalShortcuts = GlobalShortcuts()

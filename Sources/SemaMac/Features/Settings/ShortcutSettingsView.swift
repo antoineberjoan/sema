@@ -1,4 +1,4 @@
-// Présente les deux accès globaux modifiables et rappelle la navigation clavier du hub.
+// Présente les trois accès globaux modifiables et rappelle la navigation clavier du hub.
 import AppKit
 import Carbon
 import SwiftUI
@@ -15,6 +15,7 @@ struct ShortcutSettingsView: View {
             Section("Accès globaux") {
                 shortcutRow(.ribbon, title: "Bandeau")
                 shortcutRow(.workspace, title: "Hub")
+                shortcutRow(.search, title: "Recherche")
                 if let error = store.shortcutError {
                     Text(error).typeRole(.small).foregroundStyle(.red)
                         .accessibilityLabel("Raccourci indisponible : " + error)

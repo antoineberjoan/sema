@@ -5,6 +5,7 @@ import UserNotifications
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     private var menuRibbon: MenuRibbonController?
+    private var searchPanel: SearchPanelController?
     private var refreshController: RefreshController?
     private weak var store: AppStore?
     private var openWorkspace: () -> Void = {}
@@ -13,6 +14,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         guard menuRibbon == nil else { return }
         self.store = store; self.openWorkspace = openWorkspace
         menuRibbon = MenuRibbonController(store: store, openWorkspace: openWorkspace, openSettings: openSettings)
+        searchPanel = SearchPanelController(store: store, openWorkspace: openWorkspace)
         store.globalShortcuts.perform = { [weak self, weak store] action in
             guard let self, let store else { return }
             switch action {
@@ -22,6 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
                     store.section = .overview
                 }
                 self.menuRibbon?.showWorkspace()
+            case .search: self.searchPanel?.toggle()
             }
         }
         store.activateShortcuts()
@@ -52,7 +55,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
 
     func applicationWillTerminate(_ notification: Notification) {
         refreshController?.stop()
-        shortcuts?.tearDown(); menuRibbon?.tearDown()
+        shortcuts?.tearDown(); menuRibbon?.tearDown(); searchPanel?.tearDown()
     }
 
     /// A click opens sema on what the notification is about: the series and its context, or a section.
