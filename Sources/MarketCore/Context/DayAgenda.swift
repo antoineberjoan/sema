@@ -49,6 +49,17 @@ public struct DayAgenda: Equatable, Sendable {
         }
     }
 
+    /// The working day after `day`, at noon UTC: Friday leads to Monday.
+    public static func nextDay(after day: Date) -> Date {
+        var utc = Calendar(identifier: .gregorian)
+        utc.timeZone = TimeZone(secondsFromGMT: 0)!
+        var next = utc.date(byAdding: .day, value: 1, to: day) ?? day
+        // Weekday 1 is Sunday and 7 is Saturday on the Gregorian calendar.
+        while [1, 7].contains(utc.component(.weekday, from: next)) { next = utc.date(byAdding: .day, value: 1, to: next) ?? next }
+        let parts = utc.dateComponents([.year, .month, .day], from: next)
+        return utc.date(from: DateComponents(year: parts.year, month: parts.month, day: parts.day, hour: noon)) ?? next
+    }
+
     /// The day opened first: today, or the last working day on a weekend.
     public static func currentDay(now: Date, calendar: Calendar = Calendar(identifier: .iso8601)) -> Date? {
         let days = week(containing: now, calendar: calendar)

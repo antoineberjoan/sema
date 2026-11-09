@@ -38,7 +38,7 @@ public struct UnusualMove: Equatable, Sendable {
         self.init(series: series, at: series.observations.count - 1)
     }
 
-    private static func change(from previous: Decimal, to value: Decimal, points: Bool) -> Decimal? {
+    static func change(from previous: Decimal, to value: Decimal, points: Bool) -> Decimal? {
         if points { return value - previous }
         guard previous > 0 else { return nil }
         return (value - previous) / previous * 100

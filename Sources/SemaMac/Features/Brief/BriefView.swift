@@ -1,20 +1,37 @@
-// Rubrique Brief : l’agenda de la semaine, l’essentiel de la dernière séance et les seuils proches, comme la notification du matin les résume.
+// Rubrique Aujourd’hui : une phrase sur la séance, les repères sortis de l’habituel avec leurs chiffres, les faits du jour et ce qui est publié à l’avance.
 import SwiftUI
 import MarketCore
 
 struct BriefView: View {
-    private static let nameWidth: CGFloat = 220
+    private static let maximumWidth: CGFloat = 640
+    private static let upcomingLimit = 3
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     @State private var brief: MorningBrief?
+    @State private var sameDay: DayAgenda?
+    @State private var upcoming: DayAgenda?
+    private var sessionDay: Date { store.followedSeries.compactMap(\.latest?.date).max() ?? .now }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.s24) {
+        VStack(alignment: .leading, spacing: Spacing.s32) {
             if store.brief.isEnabled { schedule } else { offer }
-            AgendaView()
-            if let brief { content(brief) } else { ProgressView().controlSize(.small) }
+            if let brief {
+                header(brief)
+                moves(brief)
+                if !brief.nearThresholds.isEmpty { thresholds(brief) }
+                facts
+                coming
+            } else { ProgressView().controlSize(.small) }
+            DisclosureGroup("Agenda de la semaine") { AgendaView().padding(.top, Spacing.s8) }
+                .typeRole(.small).foregroundStyle(.secondary)
         }
-        .task(id: store.followedSeries.compactMap(\.latest?.date).max()) { brief = await store.morningBrief() }
+        .frame(maxWidth: Self.maximumWidth, alignment: .leading)
+        .task(id: sessionDay) {
+            let value = await store.morningBrief()
+            brief = value
+            sameDay = await store.agenda(on: sessionDay)
+            upcoming = await store.agenda(on: DayAgenda.nextDay(after: sessionDay))
+        }
     }
 
     private var schedule: some View {
@@ -29,7 +46,7 @@ struct BriefView: View {
     private var offer: some View {
         HStack(spacing: Spacing.s16) {
             VStack(alignment: .leading, spacing: Spacing.s2) {
-                Text("Recevoir ce brief chaque matin ?").typeRole(.heading)
+                Text("Recevoir ce résumé chaque matin ?").typeRole(.heading)
                 Text("Une notification à \(Self.time(store.brief)) les jours ouvrés, ou au réveil du Mac.").typeRole(.small).foregroundStyle(.secondary)
             }
             Spacer(minLength: Spacing.s8)
@@ -39,44 +56,122 @@ struct BriefView: View {
         .background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Radius.block))
     }
 
-    @ViewBuilder private func content(_ brief: MorningBrief) -> some View {
-        section("Dernière séance") {
-            if brief.moves.isEmpty { empty("Aucun mouvement inhabituel à la sensibilité \(store.moveSensitivity.title.lowercased()).") }
-            ForEach(brief.moves) { move in
-                HStack(spacing: Spacing.s16) {
-                    Text(MarketFormat.name(store.displayedSeries(move.series))).typeRole(.small).lineLimit(1)
-                        .frame(width: Self.nameWidth, alignment: .leading)
-                    Text(MarketFormat.sessionChange(move.change, series: move.series)).typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
-                    if let ratio = move.ratio { MoveBadge(ratio: ratio) }
-                    Spacer(minLength: Spacing.s8)
-                    Button("Voir") { store.show(move.series); store.section = .overview }.buttonStyle(.borderless).typeRole(.small)
+    private func header(_ brief: MorningBrief) -> some View {
+        VStack(alignment: .leading, spacing: Spacing.s16) {
+            Text(Self.text(sessionDay, "EEEE d MMMM").capitalized).typeRole(.title)
+            Text(SessionSentence.text(moves: brief.moves) { MarketFormat.name(store.displayedSeries($0)) }).typeRole(.lede)
+            Text("Phrase construite à partir de vos repères, sans modèle de langage. Aucune cause n’est affirmée.")
+                .typeRole(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder private func moves(_ brief: MorningBrief) -> some View {
+        if !brief.moves.isEmpty {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(brief.moves) { move in
+                    Button { store.show(move.series); store.section = .overview } label: {
+                        VStack(alignment: .leading, spacing: Spacing.s2) {
+                            HStack(spacing: Spacing.s16) {
+                                Text(MarketFormat.name(store.displayedSeries(move.series))).typeRole(.body)
+                                Spacer(minLength: Spacing.s8)
+                                Text(MarketFormat.sessionChange(move.change, series: move.series)).foregroundStyle(.secondary)
+                                if let ratio = move.ratio { Text(MarketFormat.ratio(ratio)).foregroundStyle(.tertiary) }
+                            }
+                            .monospacedDigit()
+                            if let rank = SessionRank(series: move.series) { Text(rank.text).typeRole(.caption).foregroundStyle(.tertiary) }
+                        }
+                        .padding(.vertical, Spacing.s12)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    Divider()
                 }
-                .padding(.vertical, Spacing.s10)
             }
         }
-        if !brief.nearThresholds.isEmpty {
-            section("Seuils proches") {
-                ForEach(brief.nearThresholds) { near in
-                    HStack(spacing: Spacing.s16) {
-                        Text(MarketFormat.name(store.displayedSeries(near.series))).typeRole(.small).lineLimit(1)
-                            .frame(width: Self.nameWidth, alignment: .leading)
-                        Text(AppStore.nearText(near)).typeRole(.caption).foregroundStyle(.secondary)
+    }
+
+    private func thresholds(_ brief: MorningBrief) -> some View {
+        section("seuils proches") {
+            ForEach(brief.nearThresholds) { near in
+                Text("\(MarketFormat.name(store.displayedSeries(near.series))) · \(AppStore.nearText(near))").typeRole(.body)
+            }
+        }
+    }
+
+    @ViewBuilder private var facts: some View {
+        let lines = (sameDay?.items ?? []).filter(Self.isSameDayFact)
+        let feedsOn = CentralBankFeed.allCases.contains { store.isSourceEnabled($0.rawValue) }
+        let hasPress = lines.contains { if case .pressRelease = $0 { return true } else { return false } }
+        if !lines.isEmpty || (feedsOn && sameDay != nil) {
+            section("le même jour") {
+                ForEach(lines) { item in
+                    switch item {
+                    case .pressRelease(let release): link(release.title, detail: release.feed.title, url: release.link)
+                    case .headline(let headline): link(headline.title, detail: headline.publisher, url: headline.link)
+                    default: EmptyView()
                     }
-                    .padding(.vertical, Spacing.s10)
+                }
+                if feedsOn, !hasPress { Text("Aucun communiqué de la Fed ni de la BCE.").typeRole(.body).foregroundStyle(.secondary) }
+            }
+        }
+    }
+
+    @ViewBuilder private var coming: some View {
+        if let upcoming {
+            let releases = Self.releases(in: upcoming)
+            section("à venir · calendrier publié à l’avance") {
+                if releases.isEmpty {
+                    Text(store.hasFREDKey ? "Rien n’est inscrit au calendrier pour \(Self.text(upcoming.day, "EEEE").lowercased())."
+                         : "Connectez FRED dans Réglages, Sources, pour voir le calendrier.")
+                        .typeRole(.body).foregroundStyle(.secondary)
+                }
+                ForEach(releases.prefix(Self.upcomingLimit)) { release in
+                    Text(Self.text(upcoming.day, "EEEE").capitalized + " · " + release.name).typeRole(.body)
                 }
             }
+        }
+    }
+
+    /// Press releases and headlines of the session day; moves and releases are shown elsewhere on the page.
+    private static func isSameDayFact(_ item: AgendaItem) -> Bool {
+        switch item {
+        case .pressRelease, .headline: true
+        case .move, .release: false
+        }
+    }
+
+    private static func releases(in agenda: DayAgenda) -> [EconomicRelease] {
+        agenda.items.compactMap { item in
+            guard case .release(let release) = item else { return nil }
+            return release
         }
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(title).typeRole(.heading).padding(.bottom, Spacing.s8)
-            Divider()
+        VStack(alignment: .leading, spacing: Spacing.s8) {
+            Text(title).typeRole(.small).foregroundStyle(.secondary)
             content()
         }
     }
 
-    private func empty(_ text: String) -> some View { Text(text).typeRole(.small).foregroundStyle(.secondary).padding(.vertical, Spacing.s10) }
+    private func link(_ title: String, detail: String, url: URL) -> some View {
+        Link(destination: url) {
+            VStack(alignment: .leading, spacing: Spacing.s2) {
+                Text(title).typeRole(.body).multilineTextAlignment(.leading).foregroundStyle(.primary)
+                Text(detail).typeRole(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .buttonStyle(.plain).help(url.absoluteString)
+    }
 
     static func time(_ brief: BriefPreferences) -> String { "\(brief.hour) h " + String(format: "%02d", brief.minute) }
+
+    /// French text of a day, read on the UTC calendar the sessions are dated on.
+    private static func text(_ date: Date, _ format: String) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = .french
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = format
+        return formatter.string(from: date)
+    }
 }

@@ -4,7 +4,7 @@ enum WorkspaceSection: String, CaseIterable, Identifiable {
     case overview, brief, favorites, alerts, explorer
     var id: String { rawValue }
     var title: String {
-        switch self { case .overview: "Panorama"; case .brief: "Brief"; case .favorites: "Favoris"; case .alerts: "Alertes"; case .explorer: "Explorer" }
+        switch self { case .overview: "Panorama"; case .brief: "Aujourd’hui"; case .favorites: "Favoris"; case .alerts: "Alertes"; case .explorer: "Explorer" }
     }
     var symbol: String {
         switch self { case .overview: "square.grid.2x2"; case .brief: "sunrise"; case .favorites: "star"; case .alerts: "bell"; case .explorer: "globe.europe.africa" }
