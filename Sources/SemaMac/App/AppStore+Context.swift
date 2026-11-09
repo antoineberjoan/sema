@@ -40,7 +40,7 @@ extension AppStore {
         return failed && result.isEmpty ? nil : result.sorted { $0.publishedAt > $1.publishedAt }
     }
 
-    private func headlines(from start: Date, to end: Date) async -> [Headline]? {
+    func headlines(from start: Date, to end: Date) async -> [Headline]? {
         switch headlineSource {
         case .none: return []
         case .gdelt: return try? await GDELTClient().headlines(from: start, to: end)

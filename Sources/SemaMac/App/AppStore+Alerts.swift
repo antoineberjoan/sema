@@ -108,8 +108,9 @@ extension AppStore {
         let moves = events.filter { $0.ratio != nil }.count
         let title = entries.count == 1 ? first.name : "\(entries.count) repères"
         let subtitle = moves == events.count ? "Mouvement inhabituel" : moves == 0 ? "Seuil franchi" : "Alertes"
+        let target: NotificationTarget = entries.count == 1 ? .series(events[0].seriesID) : .section(.alerts)
         Task {
-            do { try await notifications.send(title: title, subtitle: subtitle, body: lines.joined(separator: "\n")) }
+            do { try await notifications.send(title: title, subtitle: subtitle, body: lines.joined(separator: "\n"), target: target) }
             catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
         }
     }

@@ -26,6 +26,10 @@ extension AppStore {
         var value = MorningBrief(series: alertableSeries, alerts: preferences.alerts, sensitivity: moveSensitivity, now: now)
         value.agenda = await economicReleases(on: now) ?? []
         value.pressReleases = await pressReleases(from: now.addingTimeInterval(-Self.briefPressWindow), to: now) ?? []
+        if let day = value.sessionDay {
+            let window = DayContext.window(for: day)
+            value.setHeadlines(await headlines(from: window.start, to: window.end) ?? [])
+        }
         return value
     }
 
@@ -34,7 +38,7 @@ extension AppStore {
         // Recorded first: a failed delivery is not retried every minute.
         setBrief { $0.lastSentAt = now }
         let value = await morningBrief(now: now)
-        do { try await notifications.send(title: "Brief du matin", subtitle: MarketFormat.date(now), body: Self.briefLines(value).joined(separator: "\n")) }
+        do { try await notifications.send(title: "Brief du matin", subtitle: MarketFormat.date(now), body: Self.briefLines(value).joined(separator: "\n"), target: .section(.brief)) }
         catch { errorMessage = "Le brief n’a pas pu être envoyé : \(error.localizedDescription)" }
     }
 

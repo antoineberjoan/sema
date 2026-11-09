@@ -10,6 +10,7 @@ struct RibbonCard: View {
     private static let unitLines = 2
     private static let headingLines = 2
     private static let sparklineHeight: CGFloat = 45
+    @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hovered = false
@@ -37,6 +38,11 @@ struct RibbonCard: View {
         .buttonStyle(PressStyle())
         .onHover { hovered = $0 }
         .animation(reduceMotion ? nil : .easeInOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
+        .contextMenu {
+            Button(store.isWatched(series.id) ? "Ne plus surveiller les mouvements" : "Me prévenir des mouvements inhabituels") {
+                Task { await store.toggleWatch(series) }
+            }.disabled(!store.canWatch(series))
+        }
         .help(MarketFormat.name(series) + " · Ouvrir le détail dans sema")
         .accessibilityLabel(accessibilityDescription)
     }
