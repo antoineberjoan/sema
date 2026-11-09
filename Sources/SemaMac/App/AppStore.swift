@@ -67,6 +67,8 @@ final class AppStore {
     var isContextPresented = false
     /// Agendas already loaded, by day (noon UTC); kept in memory only.
     var agendas: [Date: DayAgenda] = [:]
+    /// Day chosen in the ribbon, waiting for the agenda of the hub to open on it.
+    var agendaDay: Date?
     var connectingMarkets: Set<MarketProvider> = []
     var marketErrors: [MarketProvider: String] = [:]
     var didCheckMarketKeys = false

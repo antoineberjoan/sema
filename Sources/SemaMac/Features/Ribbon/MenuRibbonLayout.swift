@@ -20,6 +20,8 @@ enum MenuRibbonLayout {
     static let spacing = Spacing.s12
     static let minimumCardWidth: CGFloat = 208
     static let preferredVisibleCards = 4
+    /// Cards outside the scroll view: the agenda and the signature.
+    static let fixedCards = 2
     static let cardHeight: CGFloat = 216
     static let revealDuration = Motion.standard
     static let dismissDuration = Motion.standard * Motion.exitRatio

@@ -27,6 +27,7 @@ struct MenuRibbonView: View {
                                 RibbonCard(series: store.displayedSeries(item), period: store.period(for: item)) { open(item) }
                                     .frame(height: MenuRibbonLayout.cardHeight)
                             }
+                            AgendaCard(openWorkspace: openWorkspace).frame(height: MenuRibbonLayout.cardHeight)
                         }.padding(.vertical, Self.cardsVerticalPadding)
                     }.scrollIndicators(.automatic).scrollClipDisabled()
                 }
@@ -50,12 +51,12 @@ struct MenuRibbonView: View {
 
     private var horizontalFavorites: some View {
         GeometryReader { geometry in
-            // Reserve a slot outside the scroll view so feedback is always visible.
+            // Two slots stay outside the scroll view: the agenda and the signature, always visible.
             let capacity = max(1, Int((geometry.size.width + MenuRibbonLayout.spacing)
-                                     / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)) - 1)
+                                     / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)) - MenuRibbonLayout.fixedCards)
             let visibleCount = max(1, min(items.count, capacity, MenuRibbonLayout.preferredVisibleCards))
-            let cardWidth = (geometry.size.width - CGFloat(visibleCount) * MenuRibbonLayout.spacing)
-                / CGFloat(visibleCount + 1)
+            let cardWidth = (geometry.size.width - CGFloat(visibleCount + MenuRibbonLayout.fixedCards - 1) * MenuRibbonLayout.spacing)
+                / CGFloat(visibleCount + MenuRibbonLayout.fixedCards)
             HStack(spacing: MenuRibbonLayout.spacing) {
                 if items.isEmpty {
                     emptyState.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -73,6 +74,7 @@ struct MenuRibbonView: View {
                     .scrollTargetBehavior(.viewAligned)
                     .frame(width: CGFloat(visibleCount) * cardWidth + CGFloat(visibleCount - 1) * MenuRibbonLayout.spacing)
                 }
+                AgendaCard(openWorkspace: openWorkspace).frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
                 RibbonSignatureView(presentationID: presentationID)
                     .frame(width: cardWidth, height: MenuRibbonLayout.signatureHeight)
                     .overlay(alignment: .topTrailing) { settingsButton.padding(Spacing.s8) }

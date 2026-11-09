@@ -17,6 +17,12 @@ extension AppStore {
         return value
     }
 
+    /// Opens the agenda of the hub on a day chosen in the ribbon.
+    func openAgenda(on day: Date) {
+        agendaDay = day
+        section = .brief
+    }
+
     func hasUnusualMove(on day: Date) -> Bool {
         DayAgenda.hasUnusualMove(on: day, series: followedSeries, sensitivity: moveSensitivity)
     }

@@ -10,6 +10,7 @@ struct BriefView: View {
     @State private var brief: MorningBrief?
     @State private var sameDay: DayAgenda?
     @State private var upcoming: DayAgenda?
+    @State private var isAgendaOpen = false
     private var sessionDay: Date { store.followedSeries.compactMap(\.latest?.date).max() ?? .now }
 
     var body: some View {
@@ -22,10 +23,14 @@ struct BriefView: View {
                 facts
                 coming
             } else { ProgressView().controlSize(.small) }
-            DisclosureGroup("Agenda de la semaine") { AgendaView().padding(.top, Spacing.s8) }
+            DisclosureGroup("Agenda de la semaine", isExpanded: $isAgendaOpen) { AgendaView().padding(.top, Spacing.s8) }
                 .typeRole(.small).foregroundStyle(.secondary)
         }
         .frame(maxWidth: Self.maximumWidth, alignment: .leading)
+        // A day chosen in the ribbon unfolds the agenda; it reads and clears the request.
+        .onChange(of: store.agendaDay, initial: true) { _, requested in
+            if requested != nil { isAgendaOpen = true }
+        }
         .task(id: sessionDay) {
             let value = await store.morningBrief()
             brief = value

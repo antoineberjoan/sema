@@ -4,12 +4,7 @@ import MarketCore
 
 struct AgendaView: View {
     private static let maximumWidth: CGFloat = 520
-    private static let barWidth: CGFloat = 3
-    private static let tintOpacity = 0.08
-    private static let quietTintOpacity = 0.04
-    private static let quietBar = Color.secondary.opacity(0.5)
     private static let titleLines = 2
-    private static let releaseURL = "https://fred.stlouisfed.org/release?rid="
     @Environment(AppStore.self) private var store
     @Environment(\.semaAccent) private var accent
     @State private var day = DayAgenda.currentDay(now: .now) ?? .now
@@ -30,17 +25,23 @@ struct AgendaView: View {
             showsAll = false
             agenda = await store.agenda(on: day)
         }
+        // A day chosen in the ribbon opens here; the request is consumed once read.
+        .onChange(of: store.agendaDay, initial: true) { _, requested in
+            guard let requested else { return }
+            day = requested
+            store.agendaDay = nil
+        }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: Spacing.s2) {
-            Text(Self.text(day, "EEEE").capitalized).typeRole(.title)
+            Text(AgendaDay.text(day, "EEEE").capitalized).typeRole(.title)
             Text(subtitle).typeRole(.caption).foregroundStyle(.secondary)
         }
     }
 
     private var subtitle: String {
-        let date = Self.text(day, "d MMMM")
+        let date = AgendaDay.text(day, "d MMMM")
         guard let agenda else { return date }
         let total = agenda.items.count
         if total == 0 { return date + " · rien à signaler" }
@@ -51,11 +52,11 @@ struct AgendaView: View {
     private var strip: some View {
         HStack(spacing: Spacing.s4) {
             ForEach(week, id: \.self) { value in
-                let selected = Calendar.utc.isDate(value, inSameDayAs: day)
+                let selected = AgendaDay.isSame(value, day)
                 Button { day = value } label: {
                     VStack(spacing: Spacing.s2) {
-                        Text(Self.text(value, "EEE").capitalized).typeRole(.caption).foregroundStyle(.secondary)
-                        Text(Self.text(value, "d")).typeRole(.subheading).monospacedDigit()
+                        Text(AgendaDay.text(value, "EEE").capitalized).typeRole(.caption).foregroundStyle(.secondary)
+                        Text(AgendaDay.text(value, "d")).typeRole(.subheading).monospacedDigit()
                         Circle().fill(store.hasUnusualMove(on: value) ? accent : Color.clear).frame(width: Spacing.s6, height: Spacing.s6)
                     }
                     .frame(maxWidth: .infinity).padding(.vertical, Spacing.s8)
@@ -63,7 +64,7 @@ struct AgendaView: View {
                     .contentShape(RoundedRectangle(cornerRadius: Radius.block))
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(Self.text(value, "EEEE d MMMM") + (store.hasUnusualMove(on: value) ? ", mouvement inhabituel" : ""))
+                .accessibilityLabel(AgendaDay.text(value, "EEEE d MMMM") + (store.hasUnusualMove(on: value) ? ", mouvement inhabituel" : ""))
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
         }
@@ -74,11 +75,10 @@ struct AgendaView: View {
         if let agenda {
             VStack(alignment: .leading, spacing: Spacing.s8) {
                 if agenda.items.isEmpty {
-                    Text(store.hasFREDKey ? "Aucun mouvement inhabituel, publication ni communiqué ce jour."
-                         : "Aucun mouvement inhabituel ni communiqué ce jour. Connectez FRED dans Réglages, Sources, pour voir les publications.")
+                    Text(AgendaLine.emptyText(hasFREDKey: store.hasFREDKey))
                         .typeRole(.small).foregroundStyle(.secondary)
                 }
-                ForEach(showsAll ? agenda.items : agenda.shown) { line($0) }
+                ForEach((showsAll ? agenda.items : agenda.shown).map { AgendaLine($0, store: store) }) { line($0) }
                 if agenda.hiddenCount > 0 {
                     Button(showsAll ? "Réduire" : "Tout voir · \(agenda.hiddenCount) autre\(agenda.hiddenCount > 1 ? "s" : "")") { showsAll.toggle() }
                         .buttonStyle(.borderless).typeRole(.small)
@@ -89,67 +89,30 @@ struct AgendaView: View {
         }
     }
 
-    @ViewBuilder private func line(_ item: AgendaItem) -> some View {
-        switch item {
-        case .move(let move):
-            let name = MarketFormat.name(store.displayedSeries(move.series))
-            row(kind: "Mouvement inhabituel", title: name + " · " + MarketFormat.sessionChange(move.change, series: move.series),
-                detail: (move.ratio.map { MarketFormat.ratio($0) + " l’habituel" } ?? ""), bar: accent, tint: accent.opacity(Self.tintOpacity),
-                action: "Voir") { store.show(move.series); store.section = .overview }
-        case .release(let release):
-            link(kind: "Publication", title: release.name, detail: "Calendrier FRED", bar: Color.secondary,
-                 url: URL(string: Self.releaseURL + release.releaseID))
-        case .pressRelease(let release):
-            link(kind: "Communiqué · " + release.feed.title, title: release.title, detail: "", bar: Self.quietBar, url: release.link)
-        case .headline(let headline):
-            link(kind: "Titre", title: headline.title, detail: headline.publisher, bar: Self.quietBar, url: headline.link)
+    @ViewBuilder private func line(_ line: AgendaLine) -> some View {
+        switch line.destination {
+        case .series(let series):
+            Button { store.show(series); store.section = .overview } label: { rowBody(line, action: "Voir") }.buttonStyle(.plain)
+        case .link(let url):
+            Link(destination: url) { rowBody(line, action: "Ouvrir") }.buttonStyle(.plain).help(url.absoluteString)
+        case nil:
+            EmptyView()
         }
     }
 
-    @ViewBuilder private func link(kind: String, title: String, detail: String, bar: Color, url: URL?) -> some View {
-        if let url {
-            Link(destination: url) {
-                rowBody(kind: kind, title: title, detail: detail, bar: bar, tint: Color.primary.opacity(Self.quietTintOpacity), action: "Ouvrir")
-            }
-            .buttonStyle(.plain).help(url.absoluteString)
-        }
-    }
-
-    private func row(kind: String, title: String, detail: String, bar: Color, tint: Color, action: String, perform: @escaping () -> Void) -> some View {
-        Button(action: perform) { rowBody(kind: kind, title: title, detail: detail, bar: bar, tint: tint, action: action) }
-            .buttonStyle(.plain)
-    }
-
-    private func rowBody(kind: String, title: String, detail: String, bar: Color, tint: Color, action: String) -> some View {
+    private func rowBody(_ line: AgendaLine, action: String) -> some View {
         HStack(spacing: Spacing.s12) {
-            Rectangle().fill(bar).frame(width: Self.barWidth)
+            Rectangle().fill(line.bar(accent: accent)).frame(width: AgendaLine.barWidth)
             VStack(alignment: .leading, spacing: Spacing.s2) {
-                Text(kind).typeRole(.overline).foregroundStyle(.secondary)
-                Text(title).typeRole(.label).multilineTextAlignment(.leading).lineLimit(Self.titleLines)
-                if !detail.isEmpty { Text(detail).typeRole(.caption).foregroundStyle(.secondary) }
+                Text(line.kind).typeRole(.overline).foregroundStyle(.secondary)
+                Text(line.title).typeRole(.label).multilineTextAlignment(.leading).lineLimit(Self.titleLines)
+                if !line.detail.isEmpty { Text(line.detail).typeRole(.caption).foregroundStyle(.secondary) }
             }
             Spacer(minLength: Spacing.s8)
             Text(action).typeRole(.small).foregroundStyle(accent)
         }
         .padding(.trailing, Spacing.s12)
-        .background(tint, in: RoundedRectangle(cornerRadius: Radius.block))
+        .background(line.tint(accent: accent), in: RoundedRectangle(cornerRadius: Radius.block))
         .clipShape(RoundedRectangle(cornerRadius: Radius.block))
-    }
-
-    /// French text of a day, read on the UTC calendar the agenda days are built on.
-    private static func text(_ date: Date, _ format: String) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = .french
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        formatter.dateFormat = format
-        return formatter.string(from: date)
-    }
-}
-
-private extension Calendar {
-    static var utc: Calendar {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        return calendar
     }
 }
