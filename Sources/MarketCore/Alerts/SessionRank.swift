@@ -29,14 +29,14 @@ public struct SessionRank: Equatable, Sendable {
         let rising = latest > 0
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        func months(from start: Date) -> Int { calendar.dateComponents([.month], from: start, to: observations[index].date).month ?? 0 }
+        func monthsSince(_ start: Date) -> Int { calendar.dateComponents([.month], from: start, to: observations[index].date).month ?? 0 }
         var earlier: Int?
         for position in stride(from: index - 1, through: 1, by: -1) {
             guard let value = change(position), (value > 0) == rising, abs(value) >= abs(latest) else { continue }
-            earlier = months(from: observations[position].date); break
+            earlier = monthsSince(observations[position].date); break
         }
         direction = rising ? .rise : .fall
-        historyMonths = months(from: observations[0].date)
+        historyMonths = monthsSince(observations[0].date)
         if let earlier {
             guard earlier >= Self.minimumMonths else { return nil }
             months = earlier
