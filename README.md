@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Resources/Brand/sema-logo.svg" alt="Logo de sema" width="96">
+</p>
+
 # sema
 
 **Vos repères, à portée de main.** Une application macOS native pour consulter des séries économiques, retrouver ses favoris et suivre des seuils sur les taux, l’inflation et les devises.
