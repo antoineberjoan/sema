@@ -20,16 +20,6 @@ public struct MorningBrief: Equatable, Sendable {
     public let nearThresholds: [NearThreshold]
     public var agenda: [EconomicRelease] = []
     public var pressReleases: [PressRelease] = []
-    /// Headlines of the session of the biggest move, newest first, at most `headlineLimit`.
-    public private(set) var headlines: [Headline] = []
-    public static let headlineLimit = 3
-
-    /// Day of the session whose related facts the brief shows: the one of its biggest move.
-    public var sessionDay: Date? { moves.first?.series.latest?.date }
-
-    public mutating func setHeadlines(_ values: [Headline]) {
-        headlines = Array(values.sorted { $0.publishedAt > $1.publishedAt }.prefix(Self.headlineLimit))
-    }
 
     public var isQuiet: Bool { moves.isEmpty && nearThresholds.isEmpty }
 

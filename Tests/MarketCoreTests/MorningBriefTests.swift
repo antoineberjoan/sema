@@ -69,19 +69,6 @@ struct MorningBriefTests {
         #expect(stale.isQuiet)
     }
 
-    @Test func briefKeepsTheThreeNewestHeadlinesOfTheSession() throws {
-        let day = Date(timeIntervalSince1970: 1_792_022_400)
-        func headline(_ index: Int) -> Headline {
-            Headline(title: "Titre \(index)", link: URL(string: "https://example.com/\(index)")!, publisher: "example.com",
-                     publishedAt: day.addingTimeInterval(Double(index) * 60))
-        }
-        var brief = MorningBrief(series: [], alerts: [], sensitivity: .normal, now: day)
-        brief.setHeadlines((1...5).map(headline))
-        #expect(brief.headlines.map(\.title) == ["Titre 5", "Titre 4", "Titre 3"])
-        #expect(brief.headlines.count == MorningBrief.headlineLimit)
-        #expect(brief.sessionDay == nil)
-    }
-
     @Test func briefIsOffByDefault() {
         #expect(AppPreferences().brief == nil)
         #expect(BriefPreferences().hour == 8 && BriefPreferences().weekdaysOnly)

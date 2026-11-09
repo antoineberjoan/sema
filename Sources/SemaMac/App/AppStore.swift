@@ -65,6 +65,8 @@ final class AppStore {
     /// Facts of a session, kept in memory for the session only; never written to disk.
     var dayContexts: [String: DayContext] = [:]
     var isContextPresented = false
+    /// Agendas already loaded, by day (noon UTC); kept in memory only.
+    var agendas: [Date: DayAgenda] = [:]
     var connectingMarkets: Set<MarketProvider> = []
     var marketErrors: [MarketProvider: String] = [:]
     var didCheckMarketKeys = false

@@ -1,4 +1,4 @@
-// Rubrique Brief : l’essentiel de la dernière séance, les seuils proches et l’agenda du jour, tel que la notification du matin le résume.
+// Rubrique Brief : l’agenda de la semaine, l’essentiel de la dernière séance et les seuils proches, comme la notification du matin les résume.
 import SwiftUI
 import MarketCore
 
@@ -11,6 +11,7 @@ struct BriefView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.s24) {
             if store.brief.isEnabled { schedule } else { offer }
+            AgendaView()
             if let brief { content(brief) } else { ProgressView().controlSize(.small) }
         }
         .task(id: store.followedSeries.compactMap(\.latest?.date).max()) { brief = await store.morningBrief() }
@@ -62,36 +63,6 @@ struct BriefView: View {
                         Text(AppStore.nearText(near)).typeRole(.caption).foregroundStyle(.secondary)
                     }
                     .padding(.vertical, Spacing.s10)
-                }
-            }
-        }
-        section("Agenda du jour") {
-            if brief.agenda.isEmpty { empty(store.hasFREDKey ? "Aucune publication inscrite aujourd’hui." : "Connectez FRED dans Réglages, Sources, pour voir l’agenda.") }
-            ForEach(brief.agenda) { Text($0.name).typeRole(.small).padding(.vertical, Spacing.s6) }
-        }
-        if !brief.headlines.isEmpty {
-            section("Titres de la séance") {
-                ForEach(brief.headlines) { headline in
-                    Link(destination: headline.link) {
-                        VStack(alignment: .leading, spacing: Spacing.s2) {
-                            Text(headline.title).typeRole(.small).multilineTextAlignment(.leading).foregroundStyle(.primary)
-                            Text(headline.publisher).typeRole(.caption).foregroundStyle(.secondary)
-                        }
-                    }
-                    .buttonStyle(.plain).padding(.vertical, Spacing.s6).help(headline.link.absoluteString)
-                }
-            }
-        }
-        if !brief.pressReleases.isEmpty {
-            section("Banques centrales") {
-                ForEach(brief.pressReleases.prefix(4)) { release in
-                    Link(destination: release.link) {
-                        VStack(alignment: .leading, spacing: Spacing.s2) {
-                            Text(release.title).typeRole(.small).multilineTextAlignment(.leading).foregroundStyle(.primary)
-                            Text(release.feed.title).typeRole(.caption).foregroundStyle(.secondary)
-                        }
-                    }
-                    .buttonStyle(.plain).padding(.vertical, Spacing.s6).help(release.link.absoluteString)
                 }
             }
         }

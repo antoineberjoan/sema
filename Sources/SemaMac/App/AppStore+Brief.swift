@@ -26,10 +26,6 @@ extension AppStore {
         var value = MorningBrief(series: alertableSeries, alerts: preferences.alerts, sensitivity: moveSensitivity, now: now)
         value.agenda = await economicReleases(on: now) ?? []
         value.pressReleases = await pressReleases(from: now.addingTimeInterval(-Self.briefPressWindow), to: now) ?? []
-        if let day = value.sessionDay {
-            let window = DayContext.window(for: day)
-            value.setHeadlines(await headlines(from: window.start, to: window.end) ?? [])
-        }
         return value
     }
 
