@@ -5,7 +5,7 @@
 - Le circuit de publication courant est GitHub `main` vers Vercel, décrit dans `README.md`. Une fusion ou un push vers `main` publie le site et exige une autorisation couvrant cette action.
 - Conserver l’identité `.openai/hosting.json` et l’audience du projet Sites historique. Suivre la skill Sites uniquement pour une publication explicitement demandée sur ce projet Sites ; ne pas la déclencher pour publier sur Vercel.
 - Appliquer Interface Craft aux choix de design et de mouvement via `sema-design` ; lire aussi le guide `dist/brand/` avant une modification visuelle.
-- Graphite est l’identité par défaut. Les six palettes restent proposées dans le guide. Marque, icônes et surfaces fixes sont monochromes.
+- La charte du 8 novembre est l’identité du site : Encre, Graphite, Papier, Brume et Sarcelle profonde, avec le logo « repère » (une ligne qui se pose sur un point sarcelle). Le site reste sombre ; son accent est la Sarcelle claire. Les six palettes personnelles restent proposées dans le guide. Décision d’Antoine du 9 novembre : seuls le logo et la charte changent, ni textes ni mise en page.
 - Hiérarchie nette, espaces cohérents, ombres discrètes et typographie système. Les animations ont des constantes nommées, restent interruptibles et respectent Réduire les animations.
 - Garder les noms financiers précis, avec source et fréquence. L’OAT française à dix ans (emprunt phare, publié mensuellement) est distincte du TEC 10. Dans l’app, les exemples fictifs restent identifiés ; la landing n’affiche aucune légende « illustration » (décision d’Antoine, 18 octobre 2026).
 - Vérifier au clavier et dans le navigateur lorsque l’accès est disponible ; ne pas présenter un contrôle bloqué comme réalisé.
