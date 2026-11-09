@@ -25,7 +25,7 @@ Référence de nommage, pas registre de toutes les variables. Ajouter un terme s
 | Contexte d’une séance | `peers`, `releases`, `headlines` | Faits datés du même jour, réunis par DayContext |
 | Fait numéroté | `ContextFact` | Fait transmis à un rédacteur, seul matériau citable |
 | Synthèse | `SummaryCheck`, `kept`, `hiddenCount` | Phrases vérifiées contre les faits ; rédacteur choisi dans Réglages (SummaryWriter) |
-| Rang d’une séance | `months`, `text` | Depuis quand une séance aussi forte ne s’était pas produite (SessionRank) |
+| Rang d’une séance | `months` | Depuis quand une séance aussi forte ne s’était pas produite (SessionRank) |
 | Agenda d’un jour | `items`, `shown` | Lignes classées d’un jour, trois d’abord (DayAgenda, AgendaItem) |
 | Brief du matin | `brief`, `BriefPreferences` | Résumé quotidien (MorningBrief) et son horaire |
 
