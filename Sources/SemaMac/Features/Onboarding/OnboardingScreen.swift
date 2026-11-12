@@ -85,7 +85,7 @@ private struct WelcomeCollection: Identifiable {
     ]
 }
 
-struct OnboardingView: View {
+struct OnboardingScreen: View {
     private static let stepCount = 3
     private static let previewCardCount = 3
     private static let minimumPreviewObservations = 1

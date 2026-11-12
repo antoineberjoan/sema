@@ -73,9 +73,9 @@ struct WorkspaceView: View {
                         Group {
                             switch store.section {
                             case .overview: EmptyView()
-                            case .brief: BriefView()
+                            case .brief: BriefScreen()
                             case .favorites: FavoritesScreen()
-                            case .alerts: AlertsView()
+                            case .alerts: AlertsScreen()
                             case .explorer: EmptyView()
                             }
                         }

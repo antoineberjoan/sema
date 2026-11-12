@@ -3,7 +3,7 @@ import SemaDesign
 import SwiftUI
 import MarketCore
 
-struct BriefView: View {
+struct BriefScreen: View {
     private static let maximumWidth: CGFloat = 640
     private static let upcomingLimit = 3
     @Environment(AppStore.self) private var store

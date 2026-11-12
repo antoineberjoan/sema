@@ -25,4 +25,4 @@ structure:
     depot-de-donnees: [Sources/MarketCore/Preferences, Sources/SemaMac/Infrastructure/Storage]
     connecteur: [Sources/MarketCore/Webstat, Sources/MarketCore/Statistical, Sources/MarketCore/Markets, Sources/MarketCore/ECB, Sources/MarketCore/Claude, Sources/MarketCore/Gdelt, Sources/MarketCore/CentralBankFeeds, Sources/SemaMac/Infrastructure/Keychain, Sources/SemaMac/Infrastructure/Notifications, Sources/SemaMac/Infrastructure/LoginItem, Sources/SemaMac/Infrastructure/GlobalShortcuts, Sources/SemaMac/Infrastructure/AppleIntelligence, Sources/SemaMac/Infrastructure/Feedback]
     module-ecran: [Sources/SemaMac/Features/*]
-  cliquet: 49
+  cliquet: 38
