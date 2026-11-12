@@ -1,0 +1,1027 @@
+/* fabriqué depuis tokens.json par sophos/outils/jetons.mjs ; ne pas modifier à la main (patron 1.1.0). */
+:root {
+  color-scheme: light dark;
+  /* primitive.color.ink : Encre et Graphite : texte en clair, fond et surfaces en sombre. */
+  --primitive-color-ink-50: #eeeeee;
+  --primitive-color-ink-100: #dedede;
+  --primitive-color-ink-200: #bebebe;
+  --primitive-color-ink-300: #9e9e9e;
+  --primitive-color-ink-400: #808080;
+  --primitive-color-ink-500: #636363;
+  --primitive-color-ink-600: #474747;
+  --primitive-color-ink-700: #2e2e2e;
+  --primitive-color-ink-750: #222222;
+  --primitive-color-ink-800: #141414;
+  --primitive-color-ink-900: #030303;
+  /* primitive.color.paper : Papier et Brume : fond et surfaces en clair, texte en sombre. */
+  --primitive-color-paper-0: #fafafa;
+  --primitive-color-paper-50: #eeeeee;
+  --primitive-color-paper-100: #e3e5e2;
+  --primitive-color-paper-200: #bebebe;
+  --primitive-color-paper-300: #9e9e9e;
+  --primitive-color-paper-400: #808080;
+  --primitive-color-paper-500: #636363;
+  --primitive-color-paper-600: #484848;
+  --primitive-color-paper-700: #2e2e2e;
+  --primitive-color-paper-800: #161616;
+  --primitive-color-paper-900: #030303;
+  /* primitive.color.red : Rouge : l'erreur et la suppression ; jamais une décoration. */
+  --primitive-color-red-50: #ffe9e6;
+  --primitive-color-red-100: #ffd2cc;
+  --primitive-color-red-150: #ffbab1;
+  --primitive-color-red-200: #ffa096;
+  --primitive-color-red-300: #f66d62;
+  --primitive-color-red-400: #d34d45;
+  --primitive-color-red-450: #c13c36;
+  --primitive-color-red-500: #b02a27;
+  --primitive-color-red-600: #8b000b;
+  --primitive-color-red-700: #5d0005;
+  --primitive-color-red-800: #320001;
+  --primitive-color-red-900: #0d0000;
+  /* primitive.color.green : Vert : la réussite confirmée ; jamais une décoration. */
+  --primitive-color-green-50: #c7ffd1;
+  --primitive-color-green-100: #a3f5b3;
+  --primitive-color-green-200: #82d494;
+  --primitive-color-green-300: #63b375;
+  --primitive-color-green-400: #439458;
+  --primitive-color-green-450: #33854a;
+  --primitive-color-green-500: #21763c;
+  --primitive-color-green-600: #005724;
+  --primitive-color-green-650: #00481c;
+  --primitive-color-green-700: #003915;
+  --primitive-color-green-800: #001d07;
+  --primitive-color-green-900: #000501;
+  /* primitive.color.amber : Ambre : l'avertissement ; jamais une décoration. */
+  --primitive-color-amber-50: #ffebd5;
+  --primitive-color-amber-100: #ffd6a8;
+  --primitive-color-amber-200: #efb063;
+  --primitive-color-amber-300: #cd9043;
+  --primitive-color-amber-400: #ad721e;
+  --primitive-color-amber-450: #9d6300;
+  --primitive-color-amber-500: #8a5600;
+  --primitive-color-amber-600: #653e00;
+  --primitive-color-amber-700: #422700;
+  --primitive-color-amber-800: #221200;
+  --primitive-color-amber-900: #070200;
+  /* primitive.color.blue : Bleu : l'information neutre ; jamais l'accent de la marque. */
+  --primitive-color-blue-50: #e4f0ff;
+  --primitive-color-blue-100: #c9e0ff;
+  --primitive-color-blue-200: #91c1ff;
+  --primitive-color-blue-300: #64a1ed;
+  --primitive-color-blue-400: #4682cc;
+  --primitive-color-blue-450: #3772bb;
+  --primitive-color-blue-500: #2863ab;
+  --primitive-color-blue-600: #03468b;
+  --primitive-color-blue-700: #002c5e;
+  --primitive-color-blue-800: #001533;
+  --primitive-color-blue-900: #00030d;
+  /* primitive.color.accent : L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200. */
+  --primitive-color-accent-50: #bdfcff;
+  --primitive-color-accent-100: #a2eef1;
+  --primitive-color-accent-200: #7cc2c0;
+  --primitive-color-accent-300: #62adb1;
+  --primitive-color-accent-400: #438e92;
+  --primitive-color-accent-500: #1f6f73;
+  --primitive-color-accent-600: #005256;
+  --primitive-color-accent-700: #003538;
+  --primitive-color-accent-800: #001b1c;
+  --primitive-color-accent-900: #000405;
+  /* primitive.color.accent-ink : L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1. */
+  --primitive-color-accent-ink-50: #bdfcff;
+  --primitive-color-accent-ink-100: #a2eef1;
+  --primitive-color-accent-ink-200: #82cdd1;
+  --primitive-color-accent-ink-300: #62adb1;
+  --primitive-color-accent-ink-400: #438e92;
+  --primitive-color-accent-ink-500: #207074;
+  --primitive-color-accent-ink-600: #1f6f73;
+  --primitive-color-accent-ink-700: #003538;
+  --primitive-color-accent-ink-800: #001b1c;
+  --primitive-color-accent-ink-900: #000405;
+  /* primitive.color.palette-preview : Les quatre nuances qui montrent une palette dans le sélecteur, du plus foncé au plus clair. */
+  --primitive-color-palette-preview-50: #eeeeee;
+  --primitive-color-palette-preview-100: #fafafa;
+  --primitive-color-palette-preview-200: #bebebe;
+  --primitive-color-palette-preview-300: #e3e5e2;
+  --primitive-color-palette-preview-400: #808080;
+  --primitive-color-palette-preview-500: #1f6f73;
+  --primitive-color-palette-preview-600: #484848;
+  --primitive-color-palette-preview-700: #141414;
+  --primitive-color-palette-preview-800: #161616;
+  --primitive-color-palette-preview-900: #030303;
+  /* primitive.color.glass : La teinte du verre du bandeau, selon la palette choisie. */
+  --primitive-color-glass-50: #bdfcff;
+  --primitive-color-glass-100: #a2eef1;
+  --primitive-color-glass-200: #82cdd1;
+  --primitive-color-glass-300: #62adb1;
+  --primitive-color-glass-400: #438e92;
+  --primitive-color-glass-500: #1f6f73;
+  --primitive-color-glass-600: #005256;
+  --primitive-color-glass-700: #003538;
+  --primitive-color-glass-800: #001b1c;
+  --primitive-color-glass-900: #000405;
+  /* L'échelle d'espace d'interface : pas de 2 px jusqu'à 16, puis des pas plus larges. */
+  --primitive-space-2: 2px;
+  --primitive-space-4: 4px;
+  --primitive-space-6: 6px;
+  --primitive-space-8: 8px;
+  --primitive-space-10: 10px;
+  --primitive-space-12: 12px;
+  --primitive-space-14: 14px;
+  --primitive-space-16: 16px;
+  --primitive-space-24: 24px;
+  --primitive-space-32: 32px;
+  --primitive-space-48: 48px;
+  --primitive-space-64: 64px;
+  /* L'échelle des rayons : peu de pas, les mêmes partout. */
+  --primitive-radius-4: 4px;
+  --primitive-radius-6: 6px;
+  --primitive-radius-10: 10px;
+  --primitive-radius-14: 14px;
+  --primitive-radius-16: 16px;
+  /* Les tailles de texte, en rem : toute l'échelle suit la taille choisie par le lecteur. */
+  --primitive-font-12: 0.75rem;
+  --primitive-font-13: 0.8125rem;
+  --primitive-font-14: 0.875rem;
+  --primitive-font-15: 0.9375rem;
+  --primitive-font-16: 1rem;
+  --primitive-font-17: 1.0625rem;
+  --primitive-font-19: 1.1875rem;
+  --primitive-font-24: 1.5rem;
+  --primitive-font-26: 1.625rem;
+  --primitive-font-28: 1.75rem;
+  --primitive-font-44: 2.75rem;
+  --primitive-font-11-52: 0.72rem;
+  /* Les interlignes d'interface, en rem, serrés et fixes. */
+  --primitive-leading-14: 0.875rem;
+  --primitive-leading-16: 1rem;
+  --primitive-leading-18: 1.125rem;
+  --primitive-leading-20: 1.25rem;
+  --primitive-leading-24: 1.5rem;
+  --primitive-leading-28: 1.75rem;
+  --primitive-leading-34: 2.125rem;
+  --primitive-leading-46: 2.875rem;
+  /* L'interligne de lecture, un rapport : il suit la taille du texte. */
+  --primitive-leading-reading: 1.75;
+  /* Les graisses : lecture, titres, chiffres et emphase. */
+  --primitive-weight-400: 400;
+  --primitive-weight-500: 500;
+  --primitive-weight-600: 600;
+  /* L'approche, en em : négative quand le texte grandit, un peu positive sur le plus petit texte. */
+  --primitive-tracking-tightest: -0.03em;
+  --primitive-tracking-tighter: -0.02em;
+  --primitive-tracking-tight: -0.01em;
+  --primitive-tracking-normal: 0em;
+  --primitive-tracking-wide: 0.01em;
+  --primitive-tracking-wider: 0.05em;
+  /* Les familles par défaut : la police du système d'abord (tailles optiques sur Apple), puis Inter. */
+  --primitive-family-system: -apple-system, BlinkMacSystemFont, system-ui, Inter, "Segoe UI", sans-serif;
+  --primitive-family-mono: "Roboto Mono", SFMono-Regular, Consolas, monospace;
+  /* Les durées : courtes en interface, plus longues pour une grande surface ou une explication. */
+  --primitive-duration-0: 0ms;
+  --primitive-duration-120: 120ms;
+  --primitive-duration-150: 150ms;
+  --primitive-duration-200: 200ms;
+  --primitive-duration-300: 300ms;
+  --primitive-duration-550: 550ms;
+  /* Les courbes (Emil Kowalski, licence MIT) : jamais d'accélération seule sur l'interface. */
+  --primitive-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --primitive-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --primitive-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --primitive-ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --primitive-ease-linear: cubic-bezier(0, 0, 1, 1);
+  /* Fond de la fenêtre ou de la page ; pas pour une carte posée dessus (surface-raised). */
+  --color-background: var(--primitive-color-paper-0);
+  /* Zone posée sur le fond : barre latérale, panneau, champ ; pas pour une carte qui flotte. */
+  --color-surface: var(--primitive-color-paper-100);
+  /* Carte, menu, fenêtre qui se détache du fond ; pas comme fond de page. */
+  --color-surface-raised: var(--primitive-color-paper-0);
+  /* Texte principal et icône porteuse de sens ; pas sur un aplat d'accent (on-accent). */
+  --color-text: var(--primitive-color-ink-800);
+  /* Texte d'appoint, légende, icône discrète ; jamais une information indispensable seule. */
+  --color-text-muted: var(--primitive-color-ink-500);
+  /* Filet de séparation, contour discret ; décoratif, sans seuil de contraste. Pas pour le contour d'un champ qui doit se voir seul. */
+  --color-rule: var(--primitive-color-paper-100);
+  /* Filet au survol ; pas au repos. */
+  --color-rule-hover: var(--primitive-color-paper-200);
+  /* Fond d'une ligne ou d'un contrôle au survol ; pas pour la sélection. */
+  --color-hover: var(--primitive-color-paper-50);
+  /* Fond d'un élément sélectionné, accent très léger ; pas pour le survol. */
+  --color-selection: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  /* La seule couleur d'accent : action principale, sélection, repère. Pas pour décorer. */
+  --color-accent: var(--primitive-color-accent-500);
+  /* L'accent quand il est un texte ou une petite icône (lien) : la nuance de l'accent qui atteint 4,5:1 sur le fond. */
+  --color-accent-text: var(--primitive-color-accent-ink-600);
+  /* Texte et icône posés sur un aplat d'accent ; jamais ailleurs. */
+  --color-on-accent: var(--primitive-color-paper-0);
+  /* L'anneau de focus au clavier : 3:1 au moins sur le fond ; jamais retiré. */
+  --color-focus: var(--color-accent);
+  /* L'erreur et la suppression, en texte, icône ou aplat ; jamais une décoration. */
+  --color-danger: var(--primitive-color-red-500);
+  /* Texte posé sur un aplat danger. */
+  --color-on-danger: var(--primitive-color-paper-0);
+  /* La réussite confirmée, en texte, icône ou aplat ; jamais une décoration. */
+  --color-success: var(--primitive-color-green-600);
+  /* Texte posé sur un aplat success. */
+  --color-on-success: var(--primitive-color-paper-0);
+  /* L'avertissement, en texte, icône ou aplat ; jamais une décoration. */
+  --color-warning: var(--primitive-color-amber-500);
+  /* Texte posé sur un aplat warning. */
+  --color-on-warning: var(--primitive-color-paper-0);
+  /* L'information neutre, en texte, icône ou aplat ; pas l'accent de la marque. */
+  --color-info: var(--primitive-color-blue-500);
+  /* Texte posé sur un aplat info. */
+  --color-on-info: var(--primitive-color-paper-0);
+  /* Ombre proche : nette et plus dense, elle pose l'objet ; lue par les élévations seulement. */
+  --color-shadow-near: color-mix(in srgb, var(--primitive-color-ink-900) 12%, transparent);
+  /* Ombre lointaine : diffuse et légère, elle dit la hauteur ; lue par les élévations seulement. */
+  --color-shadow-far: color-mix(in srgb, var(--primitive-color-ink-900) 8%, transparent);
+  /* Voile derrière une fenêtre modale ; pas derrière un panneau parallèle. */
+  --color-scrim: color-mix(in srgb, var(--primitive-color-ink-900) 32%, transparent);
+  /* L'accent d'un contrôle natif (interrupteur, case) dont le libellé est blanc : toujours la nuance claire, même en sombre. Pas pour du texte. */
+  --color-accent-control: var(--primitive-color-accent-500);
+  /* La teinte du verre du bandeau ; l'opacité se règle à l'usage. Pas pour un aplat d'interface. */
+  --color-glass-tint: var(--primitive-color-glass-500);
+  /* La nuance 1 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface. */
+  --color-palette-preview-1: var(--primitive-color-palette-preview-700);
+  /* La nuance 2 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface. */
+  --color-palette-preview-2: var(--primitive-color-palette-preview-500);
+  /* La nuance 3 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface. */
+  --color-palette-preview-3: var(--primitive-color-palette-preview-300);
+  /* La nuance 4 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface. */
+  --color-palette-preview-4: var(--primitive-color-palette-preview-100);
+  /* Entre deux lignes d'une liste serrée ; pas entre deux groupes. */
+  --space-list-gap-dense: var(--primitive-space-2);
+  /* Marge intérieure d'une pastille ou d'un tag. */
+  --space-mark-inset: var(--primitive-space-4);
+  /* Entre un titre et sa valeur ou son sous-titre. */
+  --space-title-gap: var(--primitive-space-4);
+  /* Marge latérale d'une pastille ou d'un tag. */
+  --space-mark-inset-inline: var(--primitive-space-8);
+  /* Marge verticale d'un petit bouton ou d'un contrôle compact. */
+  --space-control-inset-dense: var(--primitive-space-6);
+  /* Marge intérieure d'une ligne de liste. */
+  --space-row-inset: var(--primitive-space-8);
+  /* Marge d'un cadre autour d'une carte. */
+  --space-frame-inset: var(--primitive-space-10);
+  /* Marge intérieure d'un menu. */
+  --space-menu-inset: var(--primitive-space-12);
+  /* Entre deux champs ou deux contrôles d'un même bloc. */
+  --space-field-gap: var(--primitive-space-12);
+  /* Marge latérale d'un bloc de propriétés. */
+  --space-panel-inset-inline: var(--primitive-space-14);
+  /* Marge intérieure d'une carte. */
+  --space-card-inset: var(--primitive-space-16);
+  /* Entre deux éléments répétés d'une liste ou d'une grille. */
+  --space-item-gap: var(--primitive-space-16);
+  /* Entre deux groupes d'une même section. */
+  --space-group-gap: var(--primitive-space-24);
+  /* Marge d'une page étroite. */
+  --space-page-inset-narrow: var(--primitive-space-32);
+  /* Entre deux sections. */
+  --space-section-gap: var(--primitive-space-48);
+  /* Marge d'une page large. */
+  --space-page-inset-wide: var(--primitive-space-64);
+  /* Entre deux paragraphes. */
+  --rhythm-paragraph: 0.9rem;
+  /* Au-dessus d'un titre. */
+  --rhythm-before-heading: 3rem;
+  /* Sous un titre de section. */
+  --rhythm-after-section: 1rem;
+  /* Sous un sous-titre. */
+  --rhythm-after-subheading: 0.75rem;
+  /* Retrait d'une citation. */
+  --rhythm-indent: 1.5rem;
+  /* Tag, surlignage, pastille. */
+  --radius-mark: var(--primitive-radius-4);
+  /* Champ, bouton, icône cliquable. */
+  --radius-control: var(--primitive-radius-6);
+  /* Ligne de liste, onglet, callout, image, menu, petite carte. */
+  --radius-block: var(--primitive-radius-10);
+  /* Fenêtre, invite. */
+  --radius-window: var(--primitive-radius-14);
+  /* Grande carte, panneau. */
+  --radius-card: var(--primitive-radius-16);
+  /* Tout filet : séparation, contour de fenêtre, de callout, de tag. */
+  --border-width: 1px;
+  /* Épaisseur de l'anneau de focus au clavier ; jamais retiré. */
+  --focus-width: 2px;
+  /* Écart entre l'anneau de focus et le contrôle, pour qu'il se lise sur tous les fonds. */
+  --focus-offset: 2px;
+  /* Niveau 1, posé : une carte qu'on peut déplacer (kanban) ; pas une carte de lecture. */
+  --elevation-raised: 0px 1px 2px 0px var(--color-shadow-near);
+  /* Niveau 2, flottant : menu, popover, infobulle. Valeur de départ, à régler sur un vrai écran. */
+  --elevation-floating: 0px 1px 2px 0px var(--color-shadow-near), 0px 8px 24px 0px var(--color-shadow-far);
+  /* Niveau 3, fenêtre : fenêtre modale, invite, avec le voile scrim. Valeur de départ, à régler sur un vrai écran. */
+  --elevation-window: 0px 2px 8px 0px var(--color-shadow-near), 0px 24px 64px 0px var(--color-shadow-far);
+  /* Opacité d'un contrôle désactivé ; pas pour un texte secondaire (text-muted). */
+  --opacity-disabled: 0.5;
+  /* Le fond d'un élément au repos posé sur le verre (un badge, un champ) : la couleur du texte à cette opacité. Pas pour un fond plein. */
+  --opacity-glass-rest: 0.035;
+  /* Le fond d'un élément survolé posé sur le verre : la couleur du texte à cette opacité. Pas pour un fond plein. */
+  --opacity-glass-hover: 0.04;
+  /* Barre ou en-tête collé au défilement. */
+  --layer-sticky: 10;
+  /* Menu, liste déroulante, popover. */
+  --layer-menu: 20;
+  /* Voile d'une fenêtre modale. */
+  --layer-overlay: 30;
+  /* Fenêtre modale, invite. */
+  --layer-modal: 40;
+  /* Notification passagère, au-dessus de tout. */
+  --layer-toast: 50;
+  /* Taille d'une icône d'interface. */
+  --icon-size: 16px;
+  /* Épaisseur du trait d'une icône (Lucide). */
+  --icon-stroke: 1.75px;
+  /* Écart entre une icône et son libellé. */
+  --icon-gap: var(--primitive-space-8);
+  /* Côté d'un bouton d'icône d'une fenêtre Mac au pointeur : app Mac au pointeur, cible au toucher non applicable. Une vue qui accepte le toucher lit target.min. */
+  --icon-button-size: 26px;
+  /* Côté minimal d'une cible au toucher (fonder) ; un contrôle plus petit agrandit sa zone de toucher. */
+  --target-min: 44px;
+  /* Largeur maximale d'une colonne de lecture, en caractères. */
+  --measure-reading: 65ch;
+  /* Écran étroit : sous ce seuil, le titre rétrécit. Seul seuil de largeur du patron. */
+  --breakpoint-narrow: 40rem;
+  /* Famille de l'interface ; le projet y met sa police. */
+  --font-sans: var(--primitive-family-system);
+  /* Famille du code et des valeurs à aligner chiffre par chiffre. */
+  --font-mono: var(--primitive-family-mono);
+  /* Le chiffre principal de l'écran ; au plus un par écran. Taille. */
+  --type-hero-size: var(--primitive-font-44);
+  /* Le chiffre principal de l'écran ; au plus un par écran. Interligne. */
+  --type-hero-leading: var(--primitive-leading-46);
+  /* Le chiffre principal de l'écran ; au plus un par écran. Graisse. */
+  --type-hero-weight: var(--primitive-weight-600);
+  /* Le chiffre principal de l'écran ; au plus un par écran. Approche. */
+  --type-hero-tracking: var(--primitive-tracking-tightest);
+  /* Titre de la page ; un par écran. Taille. */
+  --type-title-size: var(--primitive-font-28);
+  /* Titre de la page ; un par écran. Interligne. */
+  --type-title-leading: var(--primitive-leading-34);
+  /* Titre de la page ; un par écran. Graisse. */
+  --type-title-weight: var(--primitive-weight-500);
+  /* Titre de la page ; un par écran. Approche. */
+  --type-title-tracking: var(--primitive-tracking-tighter);
+  /* Chiffre d'une tuile. Taille. */
+  --type-figure-size: var(--primitive-font-24);
+  /* Chiffre d'une tuile. Interligne. */
+  --type-figure-leading: var(--primitive-leading-28);
+  /* Chiffre d'une tuile. Graisse. */
+  --type-figure-weight: var(--primitive-weight-600);
+  /* Chiffre d'une tuile. Approche. */
+  --type-figure-tracking: var(--primitive-tracking-tighter);
+  /* Titre d'un groupe de contenus, d'une section ou d'un dialogue. Taille. */
+  --type-section-size: var(--primitive-font-19);
+  /* Titre d'un groupe de contenus, d'une section ou d'un dialogue. Interligne. */
+  --type-section-leading: var(--primitive-leading-24);
+  /* Titre d'un groupe de contenus, d'une section ou d'un dialogue. Graisse. */
+  --type-section-weight: var(--primitive-weight-500);
+  /* Titre d'un groupe de contenus, d'une section ou d'un dialogue. Approche. */
+  --type-section-tracking: var(--primitive-tracking-tight);
+  /* Le nom compact du projet ; jamais un titre de page. Taille. */
+  --type-wordmark-size: var(--primitive-font-17);
+  /* Le nom compact du projet ; jamais un titre de page. Interligne. */
+  --type-wordmark-leading: var(--primitive-leading-20);
+  /* Le nom compact du projet ; jamais un titre de page. Graisse. */
+  --type-wordmark-weight: var(--primitive-weight-600);
+  /* Le nom compact du projet ; jamais un titre de page. Approche. */
+  --type-wordmark-tracking: var(--primitive-tracking-tightest);
+  /* Courte introduction éditoriale ; pas un texte d'interface permanent. Taille. */
+  --type-lede-size: var(--primitive-font-17);
+  /* Courte introduction éditoriale ; pas un texte d'interface permanent. Interligne. */
+  --type-lede-leading: var(--primitive-leading-28);
+  /* Courte introduction éditoriale ; pas un texte d'interface permanent. Graisse. */
+  --type-lede-weight: var(--primitive-weight-400);
+  /* Courte introduction éditoriale ; pas un texte d'interface permanent. Approche. */
+  --type-lede-tracking: var(--primitive-tracking-tight);
+  /* Un niveau à l'intérieur d'une section ; pas un nom de carte. Taille. */
+  --type-subheading-size: var(--primitive-font-16);
+  /* Un niveau à l'intérieur d'une section ; pas un nom de carte. Interligne. */
+  --type-subheading-leading: var(--primitive-leading-24);
+  /* Un niveau à l'intérieur d'une section ; pas un nom de carte. Graisse. */
+  --type-subheading-weight: var(--primitive-weight-500);
+  /* Un niveau à l'intérieur d'une section ; pas un nom de carte. Approche. */
+  --type-subheading-tracking: var(--primitive-tracking-tight);
+  /* Titre d'une carte ou d'un élément de liste. Taille. */
+  --type-heading-size: var(--primitive-font-15);
+  /* Titre d'une carte ou d'un élément de liste. Interligne. */
+  --type-heading-leading: var(--primitive-leading-20);
+  /* Titre d'une carte ou d'un élément de liste. Graisse. */
+  --type-heading-weight: var(--primitive-weight-500);
+  /* Titre d'une carte ou d'un élément de liste. Approche. */
+  --type-heading-tracking: var(--primitive-tracking-normal);
+  /* Texte courant. Taille. */
+  --type-body-size: var(--primitive-font-15);
+  /* Texte courant. Interligne. */
+  --type-body-leading: var(--primitive-leading-reading);
+  /* Texte courant. Graisse. */
+  --type-body-weight: var(--primitive-weight-400);
+  /* Texte courant. Approche. */
+  --type-body-tracking: var(--primitive-tracking-normal);
+  /* Bouton, onglet, libellé ou champ. Taille. */
+  --type-label-size: var(--primitive-font-14);
+  /* Bouton, onglet, libellé ou champ. Interligne. */
+  --type-label-leading: var(--primitive-leading-20);
+  /* Bouton, onglet, libellé ou champ. Graisse. */
+  --type-label-weight: var(--primitive-weight-500);
+  /* Bouton, onglet, libellé ou champ. Approche. */
+  --type-label-tracking: var(--primitive-tracking-tight);
+  /* Détail sous un titre. Taille. */
+  --type-small-size: var(--primitive-font-13);
+  /* Détail sous un titre. Interligne. */
+  --type-small-leading: var(--primitive-leading-18);
+  /* Détail sous un titre. Graisse. */
+  --type-small-weight: var(--primitive-weight-400);
+  /* Détail sous un titre. Approche. */
+  --type-small-tracking: var(--primitive-tracking-normal);
+  /* Unité, date, axe ou aide sous un champ. Taille. */
+  --type-caption-size: var(--primitive-font-13);
+  /* Unité, date, axe ou aide sous un champ. Interligne. */
+  --type-caption-leading: var(--primitive-leading-18);
+  /* Unité, date, axe ou aide sous un champ. Graisse. */
+  --type-caption-weight: var(--primitive-weight-400);
+  /* Unité, date, axe ou aide sous un champ. Approche. */
+  --type-caption-tracking: var(--primitive-tracking-wide);
+  /* Code, avec la famille monospace. Taille. */
+  --type-code-size: var(--primitive-font-13);
+  /* Code, avec la famille monospace. Interligne. */
+  --type-code-leading: var(--primitive-leading-20);
+  /* Code, avec la famille monospace. Graisse. */
+  --type-code-weight: var(--primitive-weight-400);
+  /* Code, avec la famille monospace. Approche. */
+  --type-code-tracking: var(--primitive-tracking-normal);
+  /* Surtitre discret, en casse de phrase. Taille. */
+  --type-overline-size: var(--primitive-font-12);
+  /* Surtitre discret, en casse de phrase. Interligne. */
+  --type-overline-leading: var(--primitive-leading-18);
+  /* Surtitre discret, en casse de phrase. Graisse. */
+  --type-overline-weight: var(--primitive-weight-500);
+  /* Surtitre discret, en casse de phrase. Approche. */
+  --type-overline-tracking: var(--primitive-tracking-wider);
+  /* Mot court dans une pastille ; jamais une phrase. Taille. */
+  --type-tag-size: var(--primitive-font-12);
+  /* Mot court dans une pastille ; jamais une phrase. Interligne. */
+  --type-tag-leading: var(--primitive-leading-16);
+  /* Mot court dans une pastille ; jamais une phrase. Graisse. */
+  --type-tag-weight: var(--primitive-weight-400);
+  /* Mot court dans une pastille ; jamais une phrase. Approche. */
+  --type-tag-tracking: var(--primitive-tracking-normal);
+  /* Métadonnée compacte ; jamais une phrase. Taille. */
+  --type-micro-size: var(--primitive-font-11-52);
+  /* Métadonnée compacte ; jamais une phrase. Interligne. */
+  --type-micro-leading: var(--primitive-leading-14);
+  /* Métadonnée compacte ; jamais une phrase. Graisse. */
+  --type-micro-weight: var(--primitive-weight-400);
+  /* Métadonnée compacte ; jamais une phrase. Approche. */
+  --type-micro-tracking: var(--primitive-tracking-wide);
+  /* Emphase dans le texte ; ne pas mettre tous les titres en gras. */
+  --type-emphasis-weight: var(--primitive-weight-600);
+  /* Texte d'un champ au toucher : 16 px évitent le zoom d'iOS pendant la saisie. */
+  --type-field-touch-size: var(--primitive-font-16);
+  /* Action fréquente ou au clavier : pas d'animation. */
+  --duration-instant: var(--primitive-duration-0);
+  /* Retour de pression d'un bouton. */
+  --duration-press: var(--primitive-duration-120);
+  /* Survol, changement de couleur, infobulle. */
+  --duration-fast: var(--primitive-duration-150);
+  /* Menu, liste déroulante. */
+  --duration-standard: var(--primitive-duration-200);
+  /* Fenêtre, tiroir, panneau. */
+  --duration-wide: var(--primitive-duration-300);
+  /* Explication, accueil, page vue une fois ; jamais sur une interface fréquente. */
+  --duration-explain: var(--primitive-duration-550);
+  /* Entrée et sortie ; le choix par défaut. */
+  --ease-out: var(--primitive-ease-out);
+  /* Déplacement ou transformation à l'écran. */
+  --ease-in-out: var(--primitive-ease-in-out);
+  /* Tiroir, à la façon d'iOS. */
+  --ease-drawer: var(--primitive-ease-drawer);
+  /* Changement de couleur au survol. */
+  --ease-hover: var(--primitive-ease-standard);
+  /* Mouvement continu : progression, défilement. */
+  --ease-linear: var(--primitive-ease-linear);
+  /* Échelle de départ d'une entrée, avec un fondu ; jamais 0. */
+  --motion-scale-from: 0.96;
+  /* Échelle d'un bouton pendant l'appui. */
+  --motion-press-scale: 0.97;
+  /* Petit déplacement d'une entrée (un menu qui descend). */
+  --motion-shift: 4px;
+  /* Décalage entre deux éléments, seulement quand l'ordre a un sens. */
+  --motion-stagger: 50ms;
+  /* Une sortie dure cette part de son entrée. */
+  --motion-exit-ratio: 0.6;
+}
+
+/* Palette graphite : les pas d'échelle qui diffèrent de brand. */
+:root[data-palette="graphite"] {
+  --primitive-color-accent-50: #eeeeee;
+  --primitive-color-accent-100: #dedede;
+  --primitive-color-accent-200: #d6d6d6;
+  --primitive-color-accent-300: #9e9e9e;
+  --primitive-color-accent-400: #808080;
+  --primitive-color-accent-500: #474747;
+  --primitive-color-accent-600: #484848;
+  --primitive-color-accent-700: #2e2e2e;
+  --primitive-color-accent-800: #161616;
+  --primitive-color-accent-900: #030303;
+  --primitive-color-accent-ink-50: #eeeeee;
+  --primitive-color-accent-ink-100: #dedede;
+  --primitive-color-accent-ink-200: #bebebe;
+  --primitive-color-accent-ink-300: #9e9e9e;
+  --primitive-color-accent-ink-400: #808080;
+  --primitive-color-accent-ink-500: #636363;
+  --primitive-color-accent-ink-600: #474747;
+  --primitive-color-accent-ink-700: #2e2e2e;
+  --primitive-color-accent-ink-800: #161616;
+  --primitive-color-accent-ink-900: #030303;
+  --primitive-color-palette-preview-300: #d6d6d6;
+  --primitive-color-palette-preview-500: #707070;
+  --primitive-color-palette-preview-700: #333333;
+  --primitive-color-glass-50: #eeeeee;
+  --primitive-color-glass-100: #dedede;
+  --primitive-color-glass-200: #bebebe;
+  --primitive-color-glass-300: #9e9e9e;
+  --primitive-color-glass-400: #808080;
+  --primitive-color-glass-500: #707070;
+  --primitive-color-glass-600: #484848;
+  --primitive-color-glass-700: #2e2e2e;
+  --primitive-color-glass-800: #161616;
+  --primitive-color-glass-900: #030303;
+}
+
+/* Palette teal : les pas d'échelle qui diffèrent de brand. */
+:root[data-palette="teal"] {
+  --primitive-color-accent-200: #9ad0c2;
+  --primitive-color-palette-preview-50: #e1f1ff;
+  --primitive-color-palette-preview-100: #ecf4d6;
+  --primitive-color-palette-preview-200: #96c3ec;
+  --primitive-color-palette-preview-300: #9ad0c2;
+  --primitive-color-palette-preview-400: #5a85ab;
+  --primitive-color-palette-preview-500: #2d9596;
+  --primitive-color-palette-preview-600: #214b6e;
+  --primitive-color-palette-preview-700: #265073;
+  --primitive-color-palette-preview-800: #00172c;
+  --primitive-color-palette-preview-900: #00040a;
+  --primitive-color-glass-50: #b2ffff;
+  --primitive-color-glass-100: #90f1f2;
+  --primitive-color-glass-200: #6fd0d1;
+  --primitive-color-glass-300: #4db0b1;
+  --primitive-color-glass-400: #279192;
+  --primitive-color-glass-500: #2d9596;
+  --primitive-color-glass-600: #005354;
+  --primitive-color-glass-700: #003636;
+  --primitive-color-glass-800: #001b1b;
+}
+
+/* Palette mint : les pas d'échelle qui diffèrent de brand. */
+:root[data-palette="mint"] {
+  --primitive-color-accent-50: #bfffe5;
+  --primitive-color-accent-100: #abefd4;
+  --primitive-color-accent-200: #9ed5c5;
+  --primitive-color-accent-300: #6cae95;
+  --primitive-color-accent-400: #4d8f77;
+  --primitive-color-accent-500: #32755e;
+  --primitive-color-accent-600: #07553f;
+  --primitive-color-accent-700: #003728;
+  --primitive-color-accent-800: #001c12;
+  --primitive-color-accent-900: #000503;
+  --primitive-color-accent-ink-50: #bfffe5;
+  --primitive-color-accent-ink-100: #abefd4;
+  --primitive-color-accent-ink-200: #8bceb4;
+  --primitive-color-accent-ink-300: #6cae95;
+  --primitive-color-accent-ink-400: #4d8f77;
+  --primitive-color-accent-ink-500: #2e715a;
+  --primitive-color-accent-ink-600: #2f725b;
+  --primitive-color-accent-ink-700: #003728;
+  --primitive-color-accent-ink-800: #001c12;
+  --primitive-color-accent-ink-900: #000503;
+  --primitive-color-palette-preview-50: #c6fde9;
+  --primitive-color-palette-preview-100: #def5e5;
+  --primitive-color-palette-preview-200: #96cbb8;
+  --primitive-color-palette-preview-300: #bcead5;
+  --primitive-color-palette-preview-400: #598c7b;
+  --primitive-color-palette-preview-500: #9ed5c5;
+  --primitive-color-palette-preview-600: #1e5243;
+  --primitive-color-palette-preview-700: #8ec3b0;
+  --primitive-color-palette-preview-800: #001c13;
+  --primitive-color-palette-preview-900: #000503;
+  --primitive-color-glass-50: #c6fde9;
+  --primitive-color-glass-100: #b6ecd8;
+  --primitive-color-glass-200: #96cbb8;
+  --primitive-color-glass-300: #77ab99;
+  --primitive-color-glass-400: #598c7b;
+  --primitive-color-glass-500: #8ec3b0;
+  --primitive-color-glass-600: #1e5243;
+  --primitive-color-glass-700: #003729;
+  --primitive-color-glass-800: #001c13;
+  --primitive-color-glass-900: #000503;
+}
+
+/* Palette lavender : les pas d'échelle qui diffèrent de brand. */
+:root[data-palette="lavender"] {
+  --primitive-color-accent-50: #f4e9ff;
+  --primitive-color-accent-100: #e9d4ff;
+  --primitive-color-accent-200: #d0a2f7;
+  --primitive-color-accent-300: #b686e0;
+  --primitive-color-accent-400: #9767bf;
+  --primitive-color-accent-500: #78499e;
+  --primitive-color-accent-600: #5c2c7f;
+  --primitive-color-accent-700: #410c61;
+  --primitive-color-accent-800: #230038;
+  --primitive-color-accent-900: #070010;
+  --primitive-color-accent-ink-50: #f4e9ff;
+  --primitive-color-accent-ink-100: #e9d4ff;
+  --primitive-color-accent-ink-200: #d5a6ff;
+  --primitive-color-accent-ink-300: #b686e0;
+  --primitive-color-accent-ink-400: #9767bf;
+  --primitive-color-accent-ink-500: #794a9f;
+  --primitive-color-accent-ink-600: #78499e;
+  --primitive-color-accent-ink-700: #410c61;
+  --primitive-color-accent-ink-800: #230038;
+  --primitive-color-accent-ink-900: #070010;
+  --primitive-color-palette-preview-50: #f4e9ff;
+  --primitive-color-palette-preview-100: #f1eaff;
+  --primitive-color-palette-preview-200: #d5a7fc;
+  --primitive-color-palette-preview-300: #e5d4ff;
+  --primitive-color-palette-preview-400: #9669ba;
+  --primitive-color-palette-preview-500: #dcbfff;
+  --primitive-color-palette-preview-600: #5b2f7b;
+  --primitive-color-palette-preview-700: #d0a2f7;
+  --primitive-color-palette-preview-800: #230038;
+  --primitive-color-palette-preview-900: #07000f;
+  --primitive-color-glass-50: #f4e9ff;
+  --primitive-color-glass-100: #ead3ff;
+  --primitive-color-glass-200: #d5a7fc;
+  --primitive-color-glass-300: #b588db;
+  --primitive-color-glass-400: #9669ba;
+  --primitive-color-glass-500: #d0a2f7;
+  --primitive-color-glass-600: #5b2f7b;
+  --primitive-color-glass-700: #40115d;
+  --primitive-color-glass-800: #230038;
+  --primitive-color-glass-900: #07000f;
+}
+
+/* Palette sky : les pas d'échelle qui diffèrent de brand. */
+:root[data-palette="sky"] {
+  --primitive-color-accent-50: #e0f1ff;
+  --primitive-color-accent-100: #bfe3ff;
+  --primitive-color-accent-200: #89cff3;
+  --primitive-color-accent-300: #4aa7e6;
+  --primitive-color-accent-400: #2488c5;
+  --primitive-color-accent-500: #097ab6;
+  --primitive-color-accent-600: #004c75;
+  --primitive-color-accent-700: #00314e;
+  --primitive-color-accent-800: #001829;
+  --primitive-color-accent-900: #000409;
+  --primitive-color-accent-ink-50: #e0f1ff;
+  --primitive-color-accent-ink-100: #c0e3ff;
+  --primitive-color-accent-ink-200: #7ac6ff;
+  --primitive-color-accent-ink-300: #53a7e1;
+  --primitive-color-accent-ink-400: #3288c0;
+  --primitive-color-accent-ink-500: #0069a0;
+  --primitive-color-accent-ink-600: #066ca3;
+  --primitive-color-accent-ink-700: #00314e;
+  --primitive-color-accent-ink-800: #001829;
+  --primitive-color-accent-ink-900: #000409;
+  --primitive-color-palette-preview-50: #e0f1ff;
+  --primitive-color-palette-preview-100: #cdf5fd;
+  --primitive-color-palette-preview-200: #7bc6ff;
+  --primitive-color-palette-preview-300: #a0e9ff;
+  --primitive-color-palette-preview-400: #0088ce;
+  --primitive-color-palette-preview-500: #89cff3;
+  --primitive-color-palette-preview-600: #004c76;
+  --primitive-color-palette-preview-700: #00a9ff;
+  --primitive-color-palette-preview-800: #00182a;
+  --primitive-color-palette-preview-900: #000409;
+  --primitive-color-glass-50: #e0f1ff;
+  --primitive-color-glass-100: #c0e3ff;
+  --primitive-color-glass-200: #7bc6ff;
+  --primitive-color-glass-300: #00a7fd;
+  --primitive-color-glass-400: #0088ce;
+  --primitive-color-glass-500: #00a9ff;
+  --primitive-color-glass-600: #004c76;
+  --primitive-color-glass-700: #00314e;
+  --primitive-color-glass-800: #00182a;
+  --primitive-color-glass-900: #000409;
+}
+
+/* Palette polar : les pas d'échelle qui diffèrent de brand. */
+:root[data-palette="polar"] {
+  --primitive-color-accent-50: #def2ff;
+  --primitive-color-accent-100: #bce4ff;
+  --primitive-color-accent-200: #90d2f5;
+  --primitive-color-accent-300: #4aa9df;
+  --primitive-color-accent-400: #2589be;
+  --primitive-color-accent-500: #097baf;
+  --primitive-color-accent-600: #004d71;
+  --primitive-color-accent-700: #00324b;
+  --primitive-color-accent-800: #001827;
+  --primitive-color-accent-900: #000408;
+  --primitive-color-accent-ink-50: #def2ff;
+  --primitive-color-accent-ink-100: #bce4ff;
+  --primitive-color-accent-ink-200: #74c8fc;
+  --primitive-color-accent-ink-300: #54a8da;
+  --primitive-color-accent-ink-400: #3289ba;
+  --primitive-color-accent-ink-500: #006b9a;
+  --primitive-color-accent-ink-600: #056d9c;
+  --primitive-color-accent-ink-700: #00324b;
+  --primitive-color-accent-ink-800: #001827;
+  --primitive-color-accent-ink-900: #000408;
+  --primitive-color-palette-preview-50: #dcf3ff;
+  --primitive-color-palette-preview-100: #f2f3f7;
+  --primitive-color-palette-preview-200: #92c6e2;
+  --primitive-color-palette-preview-300: #90d2f5;
+  --primitive-color-palette-preview-400: #5588a2;
+  --primitive-color-palette-preview-500: #21a5ec;
+  --primitive-color-palette-preview-600: #194e65;
+  --primitive-color-palette-preview-700: #053f56;
+  --primitive-color-palette-preview-800: #001925;
+  --primitive-color-palette-preview-900: #000408;
+  --primitive-color-glass-50: #dff1ff;
+  --primitive-color-glass-100: #bee4ff;
+  --primitive-color-glass-200: #75c8ff;
+  --primitive-color-glass-300: #28a9f0;
+  --primitive-color-glass-400: #0089c8;
+  --primitive-color-glass-500: #21a5ec;
+  --primitive-color-glass-600: #004d73;
+  --primitive-color-glass-700: #00314c;
+  --primitive-color-glass-800: #001828;
+  --primitive-color-glass-900: #000409;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-background: var(--primitive-color-ink-800);
+    --color-surface: var(--primitive-color-ink-750);
+    --color-surface-raised: var(--primitive-color-ink-700);
+    --color-text: var(--primitive-color-paper-50);
+    --color-text-muted: var(--primitive-color-ink-300);
+    --color-rule: var(--primitive-color-ink-700);
+    --color-rule-hover: var(--primitive-color-ink-600);
+    --color-hover: var(--primitive-color-ink-700);
+    --color-selection: color-mix(in srgb, var(--color-accent) 24%, transparent);
+    --color-accent: var(--primitive-color-accent-200);
+    --color-accent-text: var(--primitive-color-accent-200);
+    --color-on-accent: var(--primitive-color-ink-800);
+    --color-danger: var(--primitive-color-red-300);
+    --color-on-danger: var(--primitive-color-ink-800);
+    --color-success: var(--primitive-color-green-300);
+    --color-on-success: var(--primitive-color-ink-800);
+    --color-warning: var(--primitive-color-amber-300);
+    --color-on-warning: var(--primitive-color-ink-800);
+    --color-info: var(--primitive-color-blue-300);
+    --color-on-info: var(--primitive-color-ink-800);
+    --color-shadow-near: color-mix(in srgb, var(--primitive-color-ink-900) 50%, transparent);
+    --color-shadow-far: color-mix(in srgb, var(--primitive-color-ink-900) 40%, transparent);
+    --color-scrim: color-mix(in srgb, var(--primitive-color-ink-900) 56%, transparent);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --color-background: var(--primitive-color-ink-800);
+  --color-surface: var(--primitive-color-ink-750);
+  --color-surface-raised: var(--primitive-color-ink-700);
+  --color-text: var(--primitive-color-paper-50);
+  --color-text-muted: var(--primitive-color-ink-300);
+  --color-rule: var(--primitive-color-ink-700);
+  --color-rule-hover: var(--primitive-color-ink-600);
+  --color-hover: var(--primitive-color-ink-700);
+  --color-selection: color-mix(in srgb, var(--color-accent) 24%, transparent);
+  --color-accent: var(--primitive-color-accent-200);
+  --color-accent-text: var(--primitive-color-accent-200);
+  --color-on-accent: var(--primitive-color-ink-800);
+  --color-danger: var(--primitive-color-red-300);
+  --color-on-danger: var(--primitive-color-ink-800);
+  --color-success: var(--primitive-color-green-300);
+  --color-on-success: var(--primitive-color-ink-800);
+  --color-warning: var(--primitive-color-amber-300);
+  --color-on-warning: var(--primitive-color-ink-800);
+  --color-info: var(--primitive-color-blue-300);
+  --color-on-info: var(--primitive-color-ink-800);
+  --color-shadow-near: color-mix(in srgb, var(--primitive-color-ink-900) 50%, transparent);
+  --color-shadow-far: color-mix(in srgb, var(--primitive-color-ink-900) 40%, transparent);
+  --color-scrim: color-mix(in srgb, var(--primitive-color-ink-900) 56%, transparent);
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --color-text-muted: var(--primitive-color-ink-600);
+    --color-rule: var(--primitive-color-ink-400);
+    --color-rule-hover: var(--primitive-color-ink-500);
+    --color-danger: var(--primitive-color-red-600);
+    --color-success: var(--primitive-color-green-650);
+    --color-warning: var(--primitive-color-amber-600);
+    --color-info: var(--primitive-color-blue-600);
+  }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-text-muted: var(--primitive-color-ink-200);
+    --color-rule: var(--primitive-color-ink-400);
+    --color-rule-hover: var(--primitive-color-ink-300);
+    --color-danger: var(--primitive-color-red-150);
+    --color-success: var(--primitive-color-green-200);
+    --color-warning: var(--primitive-color-amber-200);
+    --color-info: var(--primitive-color-blue-200);
+  }
+}
+@media (prefers-contrast: more) {
+  :root[data-theme="dark"] {
+    --color-text-muted: var(--primitive-color-ink-200);
+    --color-rule: var(--primitive-color-ink-400);
+    --color-rule-hover: var(--primitive-color-ink-300);
+    --color-danger: var(--primitive-color-red-150);
+    --color-success: var(--primitive-color-green-200);
+    --color-warning: var(--primitive-color-amber-200);
+    --color-info: var(--primitive-color-blue-200);
+  }
+}
+
+@media (max-width: 40rem) {
+  :root {
+    --type-title-size: var(--primitive-font-26);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-scale-from: 1;
+    --motion-press-scale: 1;
+    --motion-shift: 0px;
+    --motion-stagger: 0ms;
+  }
+}
+
+.type-hero {
+  font-family: var(--font-sans);
+  font-size: var(--type-hero-size);
+  line-height: var(--type-hero-leading);
+  font-weight: var(--type-hero-weight);
+  letter-spacing: var(--type-hero-tracking);
+  font-variant-numeric: tabular-nums;
+  font-optical-sizing: auto;
+}
+
+.type-title {
+  font-family: var(--font-sans);
+  font-size: var(--type-title-size);
+  line-height: var(--type-title-leading);
+  font-weight: var(--type-title-weight);
+  letter-spacing: var(--type-title-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-figure {
+  font-family: var(--font-sans);
+  font-size: var(--type-figure-size);
+  line-height: var(--type-figure-leading);
+  font-weight: var(--type-figure-weight);
+  letter-spacing: var(--type-figure-tracking);
+  font-variant-numeric: tabular-nums;
+  font-optical-sizing: auto;
+}
+
+.type-section {
+  font-family: var(--font-sans);
+  font-size: var(--type-section-size);
+  line-height: var(--type-section-leading);
+  font-weight: var(--type-section-weight);
+  letter-spacing: var(--type-section-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-wordmark {
+  font-family: var(--font-sans);
+  font-size: var(--type-wordmark-size);
+  line-height: var(--type-wordmark-leading);
+  font-weight: var(--type-wordmark-weight);
+  letter-spacing: var(--type-wordmark-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-lede {
+  font-family: var(--font-sans);
+  font-size: var(--type-lede-size);
+  line-height: var(--type-lede-leading);
+  font-weight: var(--type-lede-weight);
+  letter-spacing: var(--type-lede-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-subheading {
+  font-family: var(--font-sans);
+  font-size: var(--type-subheading-size);
+  line-height: var(--type-subheading-leading);
+  font-weight: var(--type-subheading-weight);
+  letter-spacing: var(--type-subheading-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-heading {
+  font-family: var(--font-sans);
+  font-size: var(--type-heading-size);
+  line-height: var(--type-heading-leading);
+  font-weight: var(--type-heading-weight);
+  letter-spacing: var(--type-heading-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-body {
+  font-family: var(--font-sans);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-leading);
+  font-weight: var(--type-body-weight);
+  letter-spacing: var(--type-body-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-label {
+  font-family: var(--font-sans);
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  font-weight: var(--type-label-weight);
+  letter-spacing: var(--type-label-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-small {
+  font-family: var(--font-sans);
+  font-size: var(--type-small-size);
+  line-height: var(--type-small-leading);
+  font-weight: var(--type-small-weight);
+  letter-spacing: var(--type-small-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-caption {
+  font-family: var(--font-sans);
+  font-size: var(--type-caption-size);
+  line-height: var(--type-caption-leading);
+  font-weight: var(--type-caption-weight);
+  letter-spacing: var(--type-caption-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-code {
+  font-family: var(--font-mono);
+  font-size: var(--type-code-size);
+  line-height: var(--type-code-leading);
+  font-weight: var(--type-code-weight);
+  letter-spacing: var(--type-code-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-overline {
+  font-family: var(--font-sans);
+  font-size: var(--type-overline-size);
+  line-height: var(--type-overline-leading);
+  font-weight: var(--type-overline-weight);
+  letter-spacing: var(--type-overline-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-tag {
+  font-family: var(--font-sans);
+  font-size: var(--type-tag-size);
+  line-height: var(--type-tag-leading);
+  font-weight: var(--type-tag-weight);
+  letter-spacing: var(--type-tag-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-micro {
+  font-family: var(--font-sans);
+  font-size: var(--type-micro-size);
+  line-height: var(--type-micro-leading);
+  font-weight: var(--type-micro-weight);
+  letter-spacing: var(--type-micro-tracking);
+  font-optical-sizing: auto;
+}
+
+.type-field {
+  font-family: var(--font-sans);
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-leading);
+  font-weight: var(--type-label-weight);
+  letter-spacing: var(--type-label-tracking);
+  font-optical-sizing: auto;
+}
+
+@media (pointer: coarse) {
+  .type-field {
+    font-size: var(--type-field-touch-size);
+  }
+}
+
+.type-numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+.type-emphasis {
+  font-weight: var(--type-emphasis-weight);
+}

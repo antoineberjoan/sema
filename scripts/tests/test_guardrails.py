@@ -67,6 +67,15 @@ class GuardrailsTests(unittest.TestCase):
         self.write("Sources/MarketCore/Other+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
         self.assertTrue(any("un seul type visible" in error for error in self.errors()))
 
+    def test_generated_stylesheet_is_not_read_as_site_style(self):
+        generated = "/* fabriqué depuis tokens.json par sophos/outils/jetons.mjs ; ne pas modifier à la main */\n:root { --c: #fff; }\n.type-title { font-size: 28px; }\n"
+        self.write("site/dist/brand/tokens.css", ":root { --space-1: 4px; }\n")
+        self.write("site/dist/brand/sophos-tokens.css", generated)
+        self.write("site/dist/brand/page.css", "a { padding: 7px; }\n")
+        errors = self.errors()
+        self.assertFalse(any("sophos-tokens.css" in error for error in errors))
+        self.assertTrue(any("page.css" in error for error in errors))
+
     def test_forbidden_import_variants(self):
         for statement in ("import SwiftUI", "@preconcurrency import AppKit", "public import UserNotifications",
                           "import struct SwiftUI.Color", "import Foundation; import SwiftUI"):

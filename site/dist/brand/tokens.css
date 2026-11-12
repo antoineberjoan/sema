@@ -1,16 +1,18 @@
 /* Déclare les valeurs visuelles de la marque, du guide et du site ; aucune autre feuille CSS n’écrit de valeur brute. */
+/* Les cinq couleurs de la marque lisent la feuille fabriquée depuis Resources/Brand/tokens.json ; le reste de ce fichier est propre au site (voir docs/decisions/2026-11-12-ecart-patron-site-valeurs-propres.md). */
+@import url("sophos-tokens.css");
 :root {
   /* Identité (tokens.json) */
-  --ink: #141414;
-  --paper: #FAFAFA;
+  --ink: var(--primitive-color-ink-800);
+  --paper: var(--primitive-color-paper-0);
   --secondary: #AAAAAA;
   --secondary-light: #5C5C5C;
   --surface: #262626;
-  --graphite: #474747;
-  --brume: #E3E5E2;
-  --sarcelle: #1F6F73;
-  --sarcelle-light: #7CC2C0;
-  --signal: #7CC2C0;
+  --graphite: var(--primitive-color-ink-600);
+  --brume: var(--primitive-color-paper-100);
+  --sarcelle: var(--primitive-color-accent-500);
+  --sarcelle-light: var(--primitive-color-accent-200);
+  --signal: var(--primitive-color-accent-200);
   --radius-control: 8px;
   --radius-surface: 16px;
   --shadow-panel: 0 2px 4px #0003, 0 12px 26px #0002;
