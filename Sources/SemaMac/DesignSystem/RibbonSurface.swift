@@ -13,7 +13,7 @@ private struct RibbonGlassBackdrop: NSViewRepresentable {
         view.blendingMode = .behindWindow
         view.state = .active
         view.wantsLayer = true
-        view.layer?.cornerRadius = Theme.surfaceCorner
+        view.layer?.cornerRadius = DesignRadius.card
         view.layer?.masksToBounds = true
         return view
     }
@@ -71,7 +71,7 @@ struct RibbonSurface: ViewModifier {
 
     func body(content: Content) -> some View {
         let opaque = reduceTransparency || contrast == .increased
-        let shape = RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
         // NSVisualEffectView owns the blur. Only the contrast veil changes opacity.
         let veil = (colorScheme == .dark ? RibbonGlassStyle.darkVeil : RibbonGlassStyle.lightVeil)
             * (1 - glass.transparency) * RibbonGlassStyle.veilRange
@@ -79,7 +79,7 @@ struct RibbonSurface: ViewModifier {
         content
             .background {
                 if opaque {
-                    shape.fill(Theme.surface)
+                    shape.fill(DesignColor.surfaceRaised)
                     shape.fill(glassTint.opacity(RibbonGlassStyle.opaqueTintOpacity))
                 }
                 else {
@@ -101,7 +101,7 @@ struct RibbonSurface: ViewModifier {
             .overlay {
                 shape.strokeBorder(LinearGradient(colors: [.white.opacity(colorScheme == .dark ? RibbonGlassStyle.edgeDarkOpacity : RibbonGlassStyle.edgeLightOpacity),
                                                            .white.opacity(RibbonGlassStyle.edgeEndOpacity)], startPoint: .topLeading,
-                                                  endPoint: .bottomTrailing), lineWidth: Theme.hairline)
+                                                  endPoint: .bottomTrailing), lineWidth: DesignBorder.width)
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
             .elevation(emphasized ? DesignElevation.floating : DesignElevation.raised)
