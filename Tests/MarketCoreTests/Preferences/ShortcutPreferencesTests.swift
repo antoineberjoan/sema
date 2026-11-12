@@ -13,7 +13,7 @@ struct ShortcutPreferencesTests {
         {"schemaVersion":2,"favoriteIDs":["EXR.D.USD.EUR.SP00.A"],"followedSeriesIDs":["EXR.D.USD.EUR.SP00.A"],"alerts":[],"notificationsEnabled":false}
         """.utf8)
         try data.write(to: file)
-        let loaded = try PreferencesStore(fileURL: file).load()
+        let loaded = try PreferencesRepository(fileURL: file).load()
         #expect(loaded.shortcuts == nil)
         #expect(loaded.favoriteIDs == ["EXR.D.USD.EUR.SP00.A"])
         #expect(try Data(contentsOf: file) == data)
@@ -22,7 +22,7 @@ struct ShortcutPreferencesTests {
     @Test func customAndDisabledBindingsSurviveRelaunch() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-shortcuts-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let store = PreferencesStore(fileURL: directory.appendingPathComponent("preferences.json"))
+        let store = PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json"))
         let custom = AppShortcut(keyCode: 49, modifiers: [.control, .shift], key: "espace")
         let expected = AppPreferences(favoriteIDs: [], themeID: "polar", appearanceID: "dark",
             followedSeriesIDs: [], shortcuts: ShortcutPreferences(ribbon: custom, workspace: nil))
@@ -56,7 +56,7 @@ struct ShortcutPreferencesTests {
         #expect(ShortcutPreferences.standard[.search] == nil)
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-shortcuts-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let store = PreferencesStore(fileURL: directory.appendingPathComponent("preferences.json"))
+        let store = PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json"))
         let chosen = AppShortcut(keyCode: 49, modifiers: [.option], key: "espace")
         let expected = AppPreferences(shortcuts: ShortcutPreferences(ribbon: nil, workspace: nil, search: chosen))
         try store.save(expected)

@@ -83,7 +83,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public func isSourceEnabled(_ id: String) -> Bool { !(disabledSourceIDs ?? []).contains(id) }
 
     public func migrated() throws -> AppPreferences {
-        guard (1...Self.currentSchemaVersion).contains(schemaVersion) else { throw PreferencesStore.StoreError.unsupportedVersion(schemaVersion) }
+        guard (1...Self.currentSchemaVersion).contains(schemaVersion) else { throw PreferencesError.unsupportedVersion(schemaVersion) }
         var value = self
         value.schemaVersion = Self.currentSchemaVersion
         value.favoriteIDs = Set(favoriteIDs.map(WebstatClient.canonicalID))

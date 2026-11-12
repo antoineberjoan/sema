@@ -23,7 +23,7 @@ struct ProfileAndSourcesTests {
     @Test func localProfileAndSourcePausesSurviveAtomicSave() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let file = PreferencesStore(fileURL: directory.appendingPathComponent("preferences.json"))
+        let file = PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json"))
         var value = AppPreferences(disabledSourceIDs: ["insee", "future-source"],
             profile: LocalProfile(firstName: " Élodie ", lastName: " Martin ", avatarJPEG: Data([1, 2, 3])))
         value.alertBaselineIDs = [UUID()]

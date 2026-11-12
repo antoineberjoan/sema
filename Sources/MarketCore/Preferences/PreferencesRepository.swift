@@ -1,13 +1,7 @@
 // Lit et écrit atomiquement les préférences sans remplacer un document illisible.
 import Foundation
 
-public struct PreferencesStore: Sendable {
-    public enum StoreError: Error, LocalizedError {
-        case unsupportedVersion(Int)
-        public var errorDescription: String? {
-            switch self { case .unsupportedVersion(let version): "Version de réglages non prise en charge : \(version)." }
-        }
-    }
+public struct PreferencesRepository: Sendable {
     public let fileURL: URL
     public init(fileURL: URL) { self.fileURL = fileURL }
 

@@ -126,7 +126,7 @@ struct MarketCoreTests {
     func testPreferencesPersistFavoritesAndDecimalAlertThreshold() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-test-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let store = PreferencesStore(fileURL: directory.appendingPathComponent("preferences.json"))
+        let store = PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json"))
         var preferences = AppPreferences(favoriteIDs: ["atlas-i-eur", "eurusd"])
         preferences.alerts = [AlertRule(seriesID: "atlas-i-eur", direction: .fall, threshold: Decimal(string: "2.5")!)]
         try store.save(preferences)
@@ -139,7 +139,7 @@ struct MarketCoreTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let file = directory.appendingPathComponent("preferences.json")
-        let store = PreferencesStore(fileURL: file)
+        let store = PreferencesRepository(fileURL: file)
         try Data("broken".utf8).write(to: file)
         #expect(throws: (any Error).self) { _ = try store.load() }
         #expect(try String(contentsOf: file, encoding: .utf8) == "broken")

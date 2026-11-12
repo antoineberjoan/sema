@@ -88,7 +88,7 @@ struct ExchangeRatePairTests {
         {"schemaVersion":2,"favoriteIDs":["eurusd"],"followedSeriesIDs":["eurusd"],"alerts":[],"notificationsEnabled":false}
         """.utf8)
         try previous.write(to: file)
-        let store = PreferencesStore(fileURL: file)
+        let store = PreferencesRepository(fileURL: file)
         var preferences = try store.load()
         #expect(preferences.invertedCurrencyPairs == nil)
         let originalFile = try Data(contentsOf: file)
