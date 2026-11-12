@@ -6,27 +6,27 @@ import SwiftUI
 import MarketCore
 
 struct WorkspaceView: View {
-    private static let searchCorner = Radius.control
+    private static let searchCorner = DesignRadius.control
     private static let minimumWidth: CGFloat = 980
     private static let minimumHeight: CGFloat = 680
-    private static let focusHorizontalMargin = Spacing.s48
-    private static let statusPadding = Spacing.s14
-    static let statusSpacing = Spacing.s12
+    private static let focusHorizontalMargin = DesignSpace.pageInsetWide
+    private static let statusPadding = DesignSpace.menuInset
+    static let statusSpacing = DesignSpace.fieldGap
     static let statusLines = 2
-    private static let previewInset = Spacing.s10
-    private static let previewVerticalInset = Spacing.s6
-    private static let switcherScrim = Color.black.opacity(0.035)
+    private static let previewInset = DesignSpace.frameInset
+    private static let previewVerticalInset = DesignSpace.controlInsetDense
+    private static let switcherScrim = DesignColor.text.opacity(DesignOpacity.glassRest)
     // Every sidebar text starts on one edge: an 8 pt block inset plus an 8 pt inner padding equals the 16 pt margin.
-    private static let sidebarSpacing = Spacing.s16
-    private static let sidebarMargin = Spacing.s16
-    private static let searchSpacing = Spacing.s8
-    private static let searchPadding = Spacing.s8
-    private static let searchInset = Spacing.s8
-    private static let itemSpacing = Spacing.s2
-    private static let itemsInset = Spacing.s8
-    private static let rowInsets = EdgeInsets(top: Spacing.s2, leading: Spacing.s8, bottom: Spacing.s2, trailing: Spacing.s8)
-    private static let profileSpacing = Spacing.s8
-    private static let profileTextSpacing = Spacing.s2
+    private static let sidebarSpacing = DesignSpace.itemGap
+    private static let sidebarMargin = DesignSpace.cardInset
+    private static let searchSpacing = DesignIcon.gap
+    private static let searchPadding = DesignSpace.rowInset
+    private static let searchInset = DesignSpace.rowInset
+    private static let itemSpacing = DesignSpace.listGapDense
+    private static let itemsInset = DesignSpace.rowInset
+    private static let rowInsets = EdgeInsets(top: DesignSpace.listGapDense, leading: DesignSpace.rowInset, bottom: DesignSpace.listGapDense, trailing: DesignSpace.rowInset)
+    private static let profileSpacing = DesignIcon.gap
+    private static let profileTextSpacing = DesignSpace.titleGap
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -62,7 +62,7 @@ struct WorkspaceView: View {
         } detail: {
             VStack(spacing: 0) {
                 if store.section == .explorer {
-                    ExplorerView().padding(Theme.contentPadding).frame(maxWidth: .infinity, maxHeight: .infinity)
+                    ExplorerView().padding(DesignSpace.pageInsetNarrow).frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if store.section == .overview {
                     ViewThatFits(in: .vertical) {
                         overviewContent
@@ -79,15 +79,15 @@ struct WorkspaceView: View {
                             case .explorer: EmptyView()
                             }
                         }
-                        .padding(Theme.contentPadding)
+                        .padding(DesignSpace.pageInsetNarrow)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                 }
                 if store.section != .overview, store.section != .explorer, store.status != nil || store.connectedMarkets.isEmpty {
-                    dataStatus.padding(.horizontal, Theme.contentPadding).padding(.vertical, Self.statusPadding)
+                    dataStatus.padding(.horizontal, DesignSpace.pageInsetNarrow).padding(.vertical, Self.statusPadding)
                 }
             }
-            .background(Theme.background)
+            .background(DesignColor.background)
             .navigationTitle(store.section == .overview ? "" : store.section.title)
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
@@ -119,7 +119,7 @@ struct WorkspaceView: View {
                 sidebarContent
                     .frame(width: FocusMotion.sidebarWidth)
                     .frame(maxHeight: .infinity)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous))
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignRadius.window, style: .continuous))
                     .elevation(DesignElevation.floating)
                     .padding(.leading, Self.previewInset).padding(.vertical, Self.previewVerticalInset)
                     .onHover { sidebarHover(.panel, inside: $0) }
@@ -131,8 +131,8 @@ struct WorkspaceView: View {
 
     private var overviewContent: some View {
         OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
-            .padding(.horizontal, Self.focusHorizontalMargin).padding(.top, Theme.majorSpacing)
-            .padding(.bottom, Theme.contentPadding)
+            .padding(.horizontal, Self.focusHorizontalMargin).padding(.top, DesignSpace.pageInsetNarrow)
+            .padding(.bottom, DesignSpace.pageInsetNarrow)
     }
 
     private var keyboardWorkspace: some View {
@@ -260,23 +260,23 @@ struct WorkspaceView: View {
                     Image(systemName: "magnifyingglass")
                     Text("Rechercher")
                     Spacer()
-                    Text("⌘K").typeRole(.tag).foregroundStyle(Theme.sidebarSecondaryText)
+                    Text("⌘K").typeRole(.tag).foregroundStyle(DesignColor.textMuted)
                 }
-                .typeRole(.small).foregroundStyle(.primary)
-                .padding(Self.searchPadding).background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Self.searchCorner))
+                .typeRole(.small).foregroundStyle(DesignColor.text)
+                .padding(Self.searchPadding).background(DesignColor.text.opacity(DesignOpacity.glassRest), in: RoundedRectangle(cornerRadius: Self.searchCorner))
                 .contentShape(Rectangle())
             }
             .buttonStyle(PressStyle()).help("Rechercher un repère · ⌘K")
-            .padding(.horizontal, Self.searchInset).padding(.top, Theme.minorSpacing)
+            .padding(.horizontal, Self.searchInset).padding(.top, DesignSpace.rowInset)
 
             VStack(spacing: Self.itemSpacing) {
                 ForEach(WorkspaceSection.allCases.filter { $0 != .overview }) { SidebarItem(section: $0) }
             }
             .padding(.horizontal, Self.itemsInset)
 
-            VStack(spacing: Theme.minorSpacing) {
+            VStack(spacing: DesignSpace.titleGap) {
                 HStack {
-                    Text("Mes repères").typeRole(.overline).foregroundStyle(Theme.sidebarSecondaryText)
+                    Text("Mes repères").typeRole(.overline).foregroundStyle(DesignColor.textMuted)
                     Spacer()
                     Button { store.section = .explorer } label: { Image(systemName: "plus") }
                         .buttonStyle(.borderless).help("Ajouter un repère")
@@ -306,7 +306,7 @@ struct WorkspaceView: View {
 
             profileButton.padding(.horizontal, Self.sidebarMargin).padding(.bottom, Self.sidebarMargin)
         }
-        .background(Theme.sidebarBackground)
+        .background(DesignColor.surface)
     }
 
     private var profileButton: some View {
@@ -319,7 +319,7 @@ struct WorkspaceView: View {
                 VStack(alignment: .leading, spacing: Self.profileTextSpacing) {
                     if !store.profile.displayName.isEmpty {
                         Text(store.profile.displayName).typeRole(.label)
-                            .foregroundStyle(.primary).lineLimit(1)
+                            .foregroundStyle(DesignColor.text).lineLimit(1)
                     }
                     Text("Mon espace").typeRole(.small)
                 }
@@ -327,7 +327,7 @@ struct WorkspaceView: View {
                 Image(systemName: "gearshape").typeRole(.small)
             }.frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
         }
-        .buttonStyle(.plain).foregroundStyle(.primary)
+        .buttonStyle(.plain).foregroundStyle(DesignColor.text)
         .help("Personnaliser mon profil local")
         .accessibilityLabel(store.profile.displayName.isEmpty ? "Mon espace" : "Mon espace, \(store.profile.displayName)")
     }
@@ -347,7 +347,7 @@ struct WorkspaceView: View {
         @Environment(\.openSettings) private var openSettings
 
         var body: some View {
-            HStack(spacing: Theme.minorSpacing) {
+            HStack(spacing: DesignIcon.gap) {
                 if let status = store.status {
                     Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
                     Text(status).lineLimit(WorkspaceView.statusLines).help(status)
@@ -357,7 +357,7 @@ struct WorkspaceView: View {
                     Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
                 }
             }
-            .typeRole(.caption).foregroundStyle(.secondary)
+            .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
         }
     }
 
@@ -366,7 +366,7 @@ struct WorkspaceView: View {
     }
 
     private struct SidebarSeriesRow: View {
-    private static let textSpacing = Spacing.s2
+    private static let textSpacing = DesignSpace.titleGap
     private static let nameLines = 2
     @Environment(AppStore.self) private var store
     let series: MarketSeries
@@ -377,13 +377,13 @@ struct WorkspaceView: View {
         Button { store.show(series); store.section = .overview } label: {
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text(MarketFormat.name(displayed)).typeRole(.small).fontWeight(selected ? .semibold : .regular)
-                    .foregroundStyle(.primary).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
+                    .foregroundStyle(DesignColor.text).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
                 if displayed.latest != nil {
-                    Text(MarketFormat.value(displayed)).typeRole(.caption).monospacedDigit().foregroundStyle(Theme.sidebarSecondaryText)
+                    Text(MarketFormat.value(displayed)).typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading).padding(Spacing.s8)
-            .background(selected ? Theme.sidebarSelection : .clear, in: RoundedRectangle(cornerRadius: Radius.control))
+            .frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
+            .background(selected ? DesignColor.selection(store.palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.control))
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
@@ -393,11 +393,11 @@ struct WorkspaceView: View {
 }
 
 private struct SidebarItem: View {
-    private static let iconSpacing = Spacing.s8
+    private static let iconSpacing = DesignIcon.gap
     /// Interface icon size from Espace et forme 1.1.
     private static let iconWidth: CGFloat = 16
-    private static let countSpacing = Spacing.s4
-    private static let verticalPadding = Spacing.s8
+    private static let countSpacing = DesignSpace.markInset
+    private static let verticalPadding = DesignSpace.rowInset
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
@@ -410,22 +410,22 @@ private struct SidebarItem: View {
                 Image(systemName: section.symbol).frame(width: Self.iconWidth)
                 Text(section.title)
                 Spacer(minLength: Self.countSpacing)
-                if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(Theme.sidebarSecondaryText) }
+                if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(DesignColor.textMuted) }
                 if section == .alerts && !(store.macroAlerts.isEmpty && store.moveWatches.isEmpty) {
-                    Text("\(store.macroAlerts.count + store.moveWatches.count)").foregroundStyle(Theme.sidebarSecondaryText)
+                    Text("\(store.macroAlerts.count + store.moveWatches.count)").foregroundStyle(DesignColor.textMuted)
                 }
             }
             .typeRole(.small).fontWeight(selected ? .semibold : .regular)
-            .foregroundStyle(.primary)
-            .padding(.horizontal, Spacing.s8).padding(.vertical, Self.verticalPadding)
-            .background(selected ? Theme.sidebarSelection : (isHovered ? Theme.hoverFill : .clear),
-                        in: RoundedRectangle(cornerRadius: Radius.control, style: .continuous))
+            .foregroundStyle(DesignColor.text)
+            .padding(.horizontal, DesignSpace.rowInset).padding(.vertical, Self.verticalPadding)
+            .background(selected ? DesignColor.selection(store.palette) : (isHovered ? DesignColor.text.opacity(DesignOpacity.glassHover) : .clear),
+                        in: RoundedRectangle(cornerRadius: DesignRadius.control, style: .continuous))
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
         .accessibilityAddTraits(selected ? [.isSelected] : [])
         .onHover { isHovered = $0 }
-        .animation(reduceMotion ? nil : .timingCurve(DesignEase.hover, duration: Theme.hoverDuration), value: isHovered)
+        .animation(reduceMotion ? nil : .timingCurve(DesignEase.hover, duration: DesignDuration.fast), value: isHovered)
     }
 }
 
