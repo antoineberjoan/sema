@@ -4,8 +4,7 @@ import SwiftUI
 import MarketCore
 
 struct SearchScreen: View {
-    static let size = CGSize(width: 600, height: 460)
-    private static let resultsHeight: CGFloat = 280
+    static let size = CGSize(width: DesignLayout.searchPanelWidth, height: DesignLayout.searchPanelHeight)
     private static let panelPadding = DesignSpace.cardInset
     private static let fieldSpacing = DesignSpace.fieldGap
     private static let escapeRadius = DesignRadius.control
@@ -46,7 +45,7 @@ struct SearchScreen: View {
                     .overlay(RoundedRectangle(cornerRadius: Self.escapeRadius).stroke(DesignColor.rule))
             }
             .padding(.horizontal, DesignSpace.rowInset)
-            SeriesResultsView(results: results, selectedID: $selectedID, height: Self.resultsHeight) { model.detail = $0 }
+            SeriesResultsView(results: results, selectedID: $selectedID, height: DesignLayout.searchResultsHeight) { model.detail = $0 }
             Button { openCatalogues(query) } label: {
                 Label(query.isEmpty ? "Chercher dans les catalogues" : "Chercher « \(query) » dans les catalogues",
                       systemImage: "books.vertical").typeRole(.small)
@@ -61,7 +60,7 @@ struct SearchScreen: View {
     private func detail(_ series: MarketSeries) -> some View {
         VStack(alignment: .leading, spacing: Self.fieldSpacing) {
             RibbonCard(series: store.displayedSeries(series), period: store.period(for: series)) { openInHub(series) }
-                .frame(height: MenuRibbonLayout.cardHeight)
+                .frame(height: DesignLayout.menuRibbonCardHeight)
             Spacer(minLength: 0)
             HStack {
                 Text("esc retour").typeRole(.caption).foregroundStyle(.secondary)

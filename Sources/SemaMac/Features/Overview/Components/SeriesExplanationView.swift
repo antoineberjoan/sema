@@ -4,13 +4,12 @@ import SwiftUI
 import MarketCore
 
 struct SeriesExplanationView: View {
-    private static let definitionLines = 4
     private static let leadingInset = DesignSpace.cardInset
     let explanation: SeriesExplanation
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
-            Text(explanation.definition).lineLimit(Self.definitionLines)
+            Text(explanation.definition).lineLimit(Int(DesignMeasure.seriesExplanationDefinitionLines))
             if let reading = explanation.reading { Text(reading) }
             if let implication = explanation.implication {
                 Text(implication).foregroundStyle(DesignColor.textMuted)

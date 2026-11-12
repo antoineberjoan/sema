@@ -5,8 +5,6 @@ import SwiftUI
 
 @main
 struct MacApp: App {
-    private static let defaultWidth: CGFloat = 1120
-    private static let defaultHeight: CGFloat = 760
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @State private var store = AppStore()
 
@@ -27,7 +25,7 @@ struct MacApp: App {
                         .environment(\.locale, .french)
                 }
         }
-        .defaultSize(width: Self.defaultWidth, height: Self.defaultHeight)
+        .defaultSize(width: DesignLayout.macAppDefaultWidth, height: DesignLayout.macAppDefaultHeight)
         .windowStyle(.automatic)
         .windowToolbarStyle(.unifiedCompact)
         .commands {

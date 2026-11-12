@@ -26,9 +26,9 @@ struct RibbonScreen: View {
                         LazyVStack(spacing: MenuRibbonLayout.spacing) {
                             ForEach(items) { item in
                                 RibbonCard(series: store.displayedSeries(item), period: store.period(for: item)) { open(item) }
-                                    .frame(height: MenuRibbonLayout.cardHeight)
+                                    .frame(height: DesignLayout.menuRibbonCardHeight)
                             }
-                            AgendaCard(openWorkspace: openWorkspace).frame(height: MenuRibbonLayout.cardHeight)
+                            AgendaCard(openWorkspace: openWorkspace).frame(height: DesignLayout.menuRibbonCardHeight)
                         }.padding(.vertical, Self.cardsVerticalPadding)
                     }.scrollIndicators(.automatic).scrollClipDisabled()
                 }
@@ -36,7 +36,7 @@ struct RibbonScreen: View {
                 header
             } else {
                 // The ribbon follows the period chosen in the hub: no rail, the cards take the whole width.
-                horizontalFavorites.frame(height: MenuRibbonLayout.cardHeight)
+                horizontalFavorites.frame(height: DesignLayout.menuRibbonCardHeight)
             }
         }
         .padding(.horizontal, MenuRibbonLayout.padding)
@@ -59,7 +59,7 @@ struct RibbonScreen: View {
                         LazyHStack(spacing: MenuRibbonLayout.spacing) {
                             ForEach(items) { item in
                                 RibbonCard(series: store.displayedSeries(item), period: store.period(for: item)) { open(item) }
-                                    .frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
+                                    .frame(width: cardWidth, height: DesignLayout.menuRibbonCardHeight)
                             }
                         }
                         .scrollTargetLayout()
@@ -68,13 +68,13 @@ struct RibbonScreen: View {
                     .scrollTargetBehavior(.viewAligned)
                     .frame(width: CGFloat(visibleCount) * cardWidth + CGFloat(visibleCount - 1) * MenuRibbonLayout.spacing)
                 }
-                AgendaCard(openWorkspace: openWorkspace).frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
+                AgendaCard(openWorkspace: openWorkspace).frame(width: cardWidth, height: DesignLayout.menuRibbonCardHeight)
                 RibbonSignatureView(presentationID: presentationID)
                     .frame(width: cardWidth, height: MenuRibbonLayout.signatureHeight)
                     .overlay(alignment: .topTrailing) { settingsButton.padding(DesignSpace.rowInset) }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: MenuRibbonLayout.cardHeight)
+            .frame(height: DesignLayout.menuRibbonCardHeight)
         }
     }
 
@@ -98,7 +98,7 @@ struct RibbonScreen: View {
             .padding(.horizontal, Self.headerHorizontalPadding).padding(.vertical, Self.headerVerticalPadding)
             .modifier(RibbonSurface())
         }
-        .foregroundStyle(DesignColor.text).frame(height: MenuRibbonLayout.headerHeight)
+        .foregroundStyle(DesignColor.text).frame(height: DesignLayout.menuRibbonHeaderHeight)
     }
 
     private var emptyState: some View {

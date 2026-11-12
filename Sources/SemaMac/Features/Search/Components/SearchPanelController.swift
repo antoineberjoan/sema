@@ -6,8 +6,6 @@ import SwiftUI
 
 @MainActor
 final class SearchPanelController {
-    /// Share of the visible screen height left above the panel.
-    private static let topInset: CGFloat = 0.18
     private let store: AppStore
     private let openWorkspace: () -> Void
     private let model = SearchPanelModel()
@@ -53,7 +51,7 @@ final class SearchPanelController {
         let size = SearchScreen.size
         let visible = screen.visibleFrame
         let target = NSRect(x: visible.midX - size.width / 2,
-                            y: visible.maxY - visible.height * Self.topInset - size.height, width: size.width, height: size.height)
+                            y: visible.maxY - visible.height * CGFloat(DesignMeasure.searchPanelControllerTopInset) - size.height, width: size.width, height: size.height)
         panel.setFrame(target, display: false)
         panel.alphaValue = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 1 : 0
         panel.makeKeyAndOrderFront(nil)

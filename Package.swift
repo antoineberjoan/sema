@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "SemaDesign", targets: ["SemaDesign"])
     ],
     targets: [
-        .target(name: "MarketCore", exclude: ["AGENTS.md"]),
+        .target(name: "MarketCore", exclude: ["AGENTS.md"], resources: [.copy("Resources/Starters")]),
         .target(name: "SemaDesign"),
         .executableTarget(name: "SemaMac", dependencies: ["MarketCore", "SemaDesign"], exclude: ["AGENTS.md"]),
         .testTarget(name: "MarketCoreTests", dependencies: ["MarketCore"]),

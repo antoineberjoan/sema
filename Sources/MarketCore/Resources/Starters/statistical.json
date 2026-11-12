@@ -1,0 +1,888 @@
+{
+  "insee": [
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.00.00.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Ensemble"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.01.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Alimentation et boissons non alcoolisées"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.02.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Boissons alcoolisées et tabac"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.03.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Habillement et chaussures"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.04.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Logement, eau, électricité et gaz"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.05.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Ameublement et équipement ménager"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.06.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Santé"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.07.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Transports"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.08.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Information et communication"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.09.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Loisirs et culture"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.10.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Enseignement"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.11.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Restaurants et hôtels"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.12.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Assurance et services financiers"
+    },
+    {
+      "agency": null,
+      "dataset": "IPC-2025",
+      "series": "M.IPC.SO.13.SO.INDICE.ENSEMBLE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPC France · Soins personnels et autres biens et services"
+    },
+    {
+      "agency": null,
+      "dataset": "IPCH-2025",
+      "series": "M.IPCH.00.INDICE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPCH France · Ensemble"
+    },
+    {
+      "agency": null,
+      "dataset": "IPCH-2025",
+      "series": "M.IPCH.01.INDICE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPCH France · Alimentation et boissons non alcoolisées"
+    },
+    {
+      "agency": null,
+      "dataset": "IPCH-2025",
+      "series": "M.IPCH.02.INDICE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPCH France · Boissons alcoolisées et tabac"
+    },
+    {
+      "agency": null,
+      "dataset": "IPCH-2025",
+      "series": "M.IPCH.03.INDICE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPCH France · Habillement et chaussures"
+    },
+    {
+      "agency": null,
+      "dataset": "IPCH-2025",
+      "series": "M.IPCH.04.INDICE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPCH France · Logement, eau, électricité et gaz"
+    },
+    {
+      "agency": null,
+      "dataset": "IPCH-2025",
+      "series": "M.IPCH.05.INDICE.FE.SO.BRUT.2025.FALSE",
+      "title": "IPCH France · Ameublement et équipement ménager"
+    }
+  ],
+  "ecb": [
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.USD.EUR.SP00.A",
+      "title": "EUR / États-Unis · dollar"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.GBP.EUR.SP00.A",
+      "title": "EUR / Royaume-Uni · livre sterling"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.JPY.EUR.SP00.A",
+      "title": "EUR / Japon · yen"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.CHF.EUR.SP00.A",
+      "title": "EUR / Suisse · franc suisse"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.CAD.EUR.SP00.A",
+      "title": "EUR / Canada · dollar"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.AUD.EUR.SP00.A",
+      "title": "EUR / Australie · dollar"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.CNY.EUR.SP00.A",
+      "title": "EUR / Chine · yuan renminbi"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.INR.EUR.SP00.A",
+      "title": "EUR / Inde · roupie"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.KRW.EUR.SP00.A",
+      "title": "EUR / Corée du Sud · won"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.HKD.EUR.SP00.A",
+      "title": "EUR / Hong Kong · dollar"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.SGD.EUR.SP00.A",
+      "title": "EUR / Singapour · dollar"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.BRL.EUR.SP00.A",
+      "title": "EUR / Brésil · real"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.MXN.EUR.SP00.A",
+      "title": "EUR / Mexique · peso"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.ZAR.EUR.SP00.A",
+      "title": "EUR / Afrique du Sud · rand"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.TRY.EUR.SP00.A",
+      "title": "EUR / Turquie · livre"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.PLN.EUR.SP00.A",
+      "title": "EUR / Pologne · zloty"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.SEK.EUR.SP00.A",
+      "title": "EUR / Suède · couronne"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.NOK.EUR.SP00.A",
+      "title": "EUR / Norvège · couronne"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.DKK.EUR.SP00.A",
+      "title": "EUR / Danemark · couronne"
+    },
+    {
+      "agency": "ECB",
+      "dataset": "EXR",
+      "series": "D.NZD.EUR.SP00.A",
+      "title": "EUR / Nouvelle-Zélande · dollar"
+    }
+  ],
+  "eurostat": [
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.FR",
+      "title": "Inflation annuelle · France"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.DE",
+      "title": "Inflation annuelle · Allemagne"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.IT",
+      "title": "Inflation annuelle · Italie"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.ES",
+      "title": "Inflation annuelle · Espagne"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.NL",
+      "title": "Inflation annuelle · Pays-Bas"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.EA20",
+      "title": "Inflation annuelle · Zone euro"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.EU27_2020",
+      "title": "Inflation annuelle · Union européenne"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.BE",
+      "title": "Inflation annuelle · Belgique"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.PL",
+      "title": "Inflation annuelle · Pologne"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.PT",
+      "title": "Inflation annuelle · Portugal"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.IE",
+      "title": "Inflation annuelle · Irlande"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "PRC_HICP_MINR",
+      "series": "M.RCH_A.TOTAL.AT",
+      "title": "Inflation annuelle · Autriche"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "UNE_RT_A",
+      "series": "A.Y15-74.PC_ACT.T.FR",
+      "title": "Chômage · France"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "UNE_RT_A",
+      "series": "A.Y15-74.PC_ACT.T.DE",
+      "title": "Chômage · Allemagne"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "UNE_RT_A",
+      "series": "A.Y15-74.PC_ACT.T.IT",
+      "title": "Chômage · Italie"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "UNE_RT_A",
+      "series": "A.Y15-74.PC_ACT.T.ES",
+      "title": "Chômage · Espagne"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "UNE_RT_A",
+      "series": "A.Y15-74.PC_ACT.T.NL",
+      "title": "Chômage · Pays-Bas"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "UNE_RT_A",
+      "series": "A.Y15-74.PC_ACT.T.EA20",
+      "title": "Chômage · Zone euro"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "UNE_RT_A",
+      "series": "A.Y15-74.PC_ACT.T.EU27_2020",
+      "title": "Chômage · Union européenne"
+    },
+    {
+      "agency": "ESTAT",
+      "dataset": "UNE_RT_A",
+      "series": "A.Y15-74.PC_ACT.T.BE",
+      "title": "Chômage · Belgique"
+    }
+  ],
+  "bis": [
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.US",
+      "title": "Taux directeur · États-Unis"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.GB",
+      "title": "Taux directeur · Royaume-Uni"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.JP",
+      "title": "Taux directeur · Japon"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.CA",
+      "title": "Taux directeur · Canada"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.AU",
+      "title": "Taux directeur · Australie"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.CH",
+      "title": "Taux directeur · Suisse"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.CN",
+      "title": "Taux directeur · Chine"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.IN",
+      "title": "Taux directeur · Inde"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.BR",
+      "title": "Taux directeur · Brésil"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.MX",
+      "title": "Taux directeur · Mexique"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.KR",
+      "title": "Taux directeur · Corée du Sud"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.NO",
+      "title": "Taux directeur · Norvège"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.SE",
+      "title": "Taux directeur · Suède"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.NZ",
+      "title": "Taux directeur · Nouvelle-Zélande"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.PL",
+      "title": "Taux directeur · Pologne"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.CZ",
+      "title": "Taux directeur · Tchéquie"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.ZA",
+      "title": "Taux directeur · Afrique du Sud"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.TR",
+      "title": "Taux directeur · Turquie"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.ID",
+      "title": "Taux directeur · Indonésie"
+    },
+    {
+      "agency": "BIS",
+      "dataset": "WS_CBPOL",
+      "series": "M.TH",
+      "title": "Taux directeur · Thaïlande"
+    }
+  ],
+  "oecd": [
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "FRA.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · France"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "ITA.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Italie"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "ESP.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Espagne"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "NLD.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Pays-Bas"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "BEL.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Belgique"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "JPN.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Japon"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "CAN.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Canada"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "CHE.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Suisse"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "MEX.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Mexique"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "TUR.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Turquie"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "NOR.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Norvège"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "SWE.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Suède"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "DNK.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Danemark"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "POL.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Pologne"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "IRL.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Irlande"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "GRC.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Grèce"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "PRT.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Portugal"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "FIN.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Finlande"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "CZE.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Tchéquie"
+    },
+    {
+      "agency": "OECD.SDD.TPS",
+      "dataset": "DSD_PRICES_COICOP2018@DF_PRICES_C2018_ALL",
+      "series": "HUN.M.N.CPI.PA._T.N.GY",
+      "title": "Inflation · Hongrie"
+    }
+  ],
+  "newYorkFed": [
+    {
+      "agency": "NYFED",
+      "dataset": "EFFR",
+      "series": "percentRate",
+      "title": "Taux effectif des fonds fédéraux"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "EFFR",
+      "series": "targetRateFrom",
+      "title": "Cible des fonds fédéraux · borne basse"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "EFFR",
+      "series": "targetRateTo",
+      "title": "Cible des fonds fédéraux · borne haute"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "EFFR",
+      "series": "percentPercentile25",
+      "title": "EFFR · 25e percentile"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "EFFR",
+      "series": "percentPercentile75",
+      "title": "EFFR · 75e percentile"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "EFFR",
+      "series": "volumeInBillions",
+      "title": "EFFR · volume en milliards de dollars"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFR",
+      "series": "percentRate",
+      "title": "SOFR · taux garanti au jour le jour"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFR",
+      "series": "percentPercentile25",
+      "title": "SOFR · 25e percentile"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFR",
+      "series": "percentPercentile75",
+      "title": "SOFR · 75e percentile"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFR",
+      "series": "percentPercentile1",
+      "title": "SOFR · 1er percentile"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFR",
+      "series": "percentPercentile99",
+      "title": "SOFR · 99e percentile"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFR",
+      "series": "volumeInBillions",
+      "title": "SOFR · volume en milliards de dollars"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFRAI",
+      "series": "average30day",
+      "title": "SOFR · moyenne composée sur 30 jours"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFRAI",
+      "series": "average90day",
+      "title": "SOFR · moyenne composée sur 90 jours"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFRAI",
+      "series": "average180day",
+      "title": "SOFR · moyenne composée sur 180 jours"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "SOFRAI",
+      "series": "index",
+      "title": "SOFR · indice composé"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "OBFR",
+      "series": "percentRate",
+      "title": "Taux de financement bancaire overnight"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "OBFR",
+      "series": "percentPercentile25",
+      "title": "OBFR · 25e percentile"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "TGCR",
+      "series": "percentRate",
+      "title": "Taux général des pensions du Trésor"
+    },
+    {
+      "agency": "NYFED",
+      "dataset": "BGCR",
+      "series": "percentRate",
+      "title": "Taux général des pensions du Trésor (garanties bilatérales)"
+    }
+  ],
+  "fred": [
+    {
+      "agency": "FRED",
+      "dataset": "200",
+      "series": "VIXCLS",
+      "title": "VIX · volatilité du S&P 500"
+    },
+    {
+      "agency": "FRED",
+      "dataset": "18",
+      "series": "DGS10",
+      "title": "Treasury américain 10 ans · quotidien"
+    },
+    {
+      "agency": "FRED",
+      "dataset": "18",
+      "series": "DGS2",
+      "title": "Treasury américain 2 ans · quotidien"
+    },
+    {
+      "agency": "FRED",
+      "dataset": "17",
+      "series": "DTWEXBGS",
+      "title": "Dollar · indice large pondéré"
+    },
+    {
+      "agency": "FRED",
+      "dataset": "17",
+      "series": "DEXUSEU",
+      "title": "Euro / Dollar · FRED"
+    }
+  ],
+  "worldBank": [
+    {
+      "agency": "2",
+      "dataset": "NY.GDP.MKTP.CD",
+      "series": "FR",
+      "title": "France · PIB · dollars courants"
+    },
+    {
+      "agency": "2",
+      "dataset": "NY.GDP.PCAP.CD",
+      "series": "FR",
+      "title": "France · PIB par habitant · dollars courants"
+    },
+    {
+      "agency": "2",
+      "dataset": "NY.GDP.MKTP.KD.ZG",
+      "series": "FR",
+      "title": "France · Croissance du PIB"
+    },
+    {
+      "agency": "2",
+      "dataset": "FP.CPI.TOTL.ZG",
+      "series": "FR",
+      "title": "France · Inflation · prix à la consommation"
+    },
+    {
+      "agency": "2",
+      "dataset": "SL.UEM.TOTL.ZS",
+      "series": "FR",
+      "title": "France · Chômage · total"
+    },
+    {
+      "agency": "2",
+      "dataset": "SP.POP.TOTL",
+      "series": "FR",
+      "title": "France · Population totale"
+    },
+    {
+      "agency": "2",
+      "dataset": "NE.EXP.GNFS.CD",
+      "series": "FR",
+      "title": "France · Exportations · biens et services"
+    },
+    {
+      "agency": "2",
+      "dataset": "NE.IMP.GNFS.CD",
+      "series": "FR",
+      "title": "France · Importations · biens et services"
+    },
+    {
+      "agency": "2",
+      "dataset": "NE.TRD.GNFS.ZS",
+      "series": "FR",
+      "title": "France · Commerce extérieur · part du PIB"
+    },
+    {
+      "agency": "2",
+      "dataset": "NV.AGR.TOTL.ZS",
+      "series": "FR",
+      "title": "France · Agriculture · part du PIB"
+    },
+    {
+      "agency": "2",
+      "dataset": "NV.IND.TOTL.ZS",
+      "series": "FR",
+      "title": "France · Industrie · part du PIB"
+    },
+    {
+      "agency": "2",
+      "dataset": "NV.SRV.TOTL.ZS",
+      "series": "FR",
+      "title": "France · Services · part du PIB"
+    },
+    {
+      "agency": "2",
+      "dataset": "BX.KLT.DINV.CD.WD",
+      "series": "FR",
+      "title": "France · Investissements directs étrangers · flux"
+    },
+    {
+      "agency": "2",
+      "dataset": "BX.KLT.DINV.WD.GD.ZS",
+      "series": "FR",
+      "title": "France · Investissements directs étrangers · part du PIB"
+    },
+    {
+      "agency": "2",
+      "dataset": "SP.DYN.LE00.IN",
+      "series": "FR",
+      "title": "France · Espérance de vie à la naissance"
+    },
+    {
+      "agency": "2",
+      "dataset": "EG.FEC.RNEW.ZS",
+      "series": "FR",
+      "title": "France · Énergies renouvelables · part de la consommation"
+    },
+    {
+      "agency": "2",
+      "dataset": "IT.NET.USER.ZS",
+      "series": "FR",
+      "title": "France · Population utilisant Internet"
+    },
+    {
+      "agency": "2",
+      "dataset": "SH.DYN.MORT",
+      "series": "FR",
+      "title": "France · Mortalité avant 5 ans"
+    },
+    {
+      "agency": "2",
+      "dataset": "SP.URB.TOTL.IN.ZS",
+      "series": "FR",
+      "title": "France · Population urbaine"
+    },
+    {
+      "agency": "2",
+      "dataset": "SP.RUR.TOTL.ZS",
+      "series": "FR",
+      "title": "France · Population rurale"
+    }
+  ]
+}

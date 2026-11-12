@@ -19,7 +19,8 @@ binary_directory="$(swift build "${swift_arguments[@]}" --show-bin-path)"
 mkdir -p "$destination/Contents/MacOS" "$destination/Contents/Resources"
 cp "$binary_directory/SemaMac" "$destination/Contents/MacOS/SemaMac"
 cp Resources/Info.plist "$destination/Contents/Info.plist"
-swift scripts/render-icon.swift "$project_root/.build/Sema.iconset"
+swiftc -o "$project_root/.build/render-icon" Sources/SemaMac/Components/Custom/SignalPath.swift Sources/SemaDesign/DesignPrimitive.swift Sources/SemaDesign/DesignPalette.swift scripts/render-icon/main.swift
+"$project_root/.build/render-icon" "$project_root/.build/Sema.iconset"
 iconutil -c icns "$project_root/.build/Sema.iconset" -o "$destination/Contents/Resources/Sema.icns"
 if [[ -n "${SEMA_DEVELOPMENT_DATA_DIRECTORY:-}" ]]; then
     /usr/libexec/PlistBuddy -c "Add :SemaDevelopmentDataDirectory string $SEMA_DEVELOPMENT_DATA_DIRECTORY" "$destination/Contents/Info.plist"

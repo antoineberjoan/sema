@@ -4,9 +4,6 @@ import SwiftUI
 import MarketCore
 
 struct AgendaView: View {
-    private static let maximumWidth: CGFloat = 520
-    private static let titleLines = 2
-    private static let dotSize: CGFloat = 6
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
@@ -23,7 +20,7 @@ struct AgendaView: View {
             lines
         }
         .padding(DesignSpace.cardInset)
-        .frame(maxWidth: Self.maximumWidth, alignment: .leading)
+        .frame(maxWidth: DesignLayout.agendaMaximumWidth, alignment: .leading)
         .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.card))
         .task(id: day) {
             isAllShown = false
@@ -61,7 +58,7 @@ struct AgendaView: View {
                     VStack(spacing: DesignSpace.listGapDense) {
                         Text(AgendaDay.text(value, "EEE").capitalized).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                         Text(AgendaDay.text(value, "d")).typeRole(.subheading).monospacedDigit()
-                        Circle().fill(store.hasUnusualMove(on: value) ? accent : Color.clear).frame(width: Self.dotSize, height: Self.dotSize)
+                        Circle().fill(store.hasUnusualMove(on: value) ? accent : Color.clear).frame(width: DesignLayout.dotSize, height: DesignLayout.dotSize)
                     }
                     .frame(maxWidth: .infinity).padding(.vertical, DesignSpace.rowInset)
                     .background(isSelected ? DesignColor.selection(palette) : Color.clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))
@@ -106,10 +103,10 @@ struct AgendaView: View {
 
     private func rowBody(_ line: AgendaLine, action: String) -> some View {
         HStack(spacing: DesignSpace.fieldGap) {
-            Rectangle().fill(line.bar(palette: palette)).frame(width: AgendaLine.barWidth)
+            Rectangle().fill(line.bar(palette: palette)).frame(width: DesignLayout.agendaLineBarWidth)
             VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                 Text(line.kind).typeRole(.overline).foregroundStyle(DesignColor.textMuted)
-                Text(line.title).typeRole(.label).multilineTextAlignment(.leading).lineLimit(Self.titleLines)
+                Text(line.title).typeRole(.label).multilineTextAlignment(.leading).lineLimit(Int(DesignMeasure.agendaTitleLines))
                 if !line.detail.isEmpty { Text(line.detail).typeRole(.caption).foregroundStyle(DesignColor.textMuted) }
             }
             Spacer(minLength: DesignSpace.fieldGap)

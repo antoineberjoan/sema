@@ -8,14 +8,8 @@ struct SeriesDetailView: View {
     private static let sectionSpacing = DesignSpace.groupGap
     private static let headerSpacing = DesignSpace.fieldGap
     private static let titleSpacing = DesignSpace.titleGap
-    private static let valueMinimumScale: CGFloat = 0.55
     private static let valueSpacing = DesignSpace.titleGap
     private static let actionSpacing = DesignSpace.fieldGap
-    private static let inspectorMinWidth: CGFloat = 280
-    private static let inspectorIdealWidth: CGFloat = 320
-    private static let inspectorMaxWidth: CGFloat = 420
-    private static let previewChartHeight: CGFloat = 170
-    private static let chartHeight: CGFloat = 235
     private static let sourceSpacing = DesignSpace.fieldGap
     private static let metadataFieldSpacing = DesignSpace.titleGap
     private static let metadataLabelSpacing = DesignSpace.listGapDense
@@ -57,7 +51,7 @@ struct SeriesDetailView: View {
                         .buttonStyle(.borderedProminent).tint(DesignColor.accent(store.palette))
                 }
             }
-            .frame(maxWidth: .infinity, minHeight: HistoryChart.defaultHeight, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, minHeight: DesignLayout.historyChartDefaultHeight, maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .modifier(SeriesDetailSurface(isFocus: isFocus))
@@ -99,7 +93,7 @@ struct SeriesDetailView: View {
                 VStack(alignment: .leading, spacing: Self.valueSpacing) {
                     Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
                         .typeRole(.figure)
-                        .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
+                        .lineLimit(1).minimumScaleFactor(CGFloat(DesignMeasure.seriesDetailValueMinimumScale))
                     Text(MarketFormat.unit(displayed)).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                     if series.latest != nil {
                         Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
@@ -114,7 +108,7 @@ struct SeriesDetailView: View {
                 .typeRole(.small).fixedSize(horizontal: false, vertical: true)
             }
             if !isFocus { periodPicker }
-            HistoryChart(series: displayed, period: period, height: isFocus ? nil : preview ? Self.previewChartHeight : Self.chartHeight, isReadingShown: !isFocus)
+            HistoryChart(series: displayed, period: period, height: isFocus ? nil : preview ? DesignLayout.seriesDetailPreviewChartHeight : DesignLayout.seriesDetailChartHeight, isReadingShown: !isFocus)
             if period == .all, series.hasCompleteHistory != true {
                 HStack(spacing: Self.actionSpacing) {
                     if store.historyLoadingID == series.id {
@@ -166,7 +160,7 @@ struct SeriesDetailView: View {
         .disclosureGroupStyle(RowDisclosureStyle())
         .inspector(isPresented: contextBinding) {
             MoveContextView(series: series)
-                .inspectorColumnWidth(min: Self.inspectorMinWidth, ideal: Self.inspectorIdealWidth, max: Self.inspectorMaxWidth)
+                .inspectorColumnWidth(min: DesignLayout.seriesDetailInspectorMinWidth, ideal: DesignLayout.seriesDetailInspectorIdealWidth, max: DesignLayout.seriesDetailInspectorMaxWidth)
         }
         .onChange(of: series.id, initial: true) { _, _ in
             localPeriod = series.supports(.year) ? .year : .all
@@ -222,7 +216,7 @@ struct SeriesDetailView: View {
         HStack(alignment: .firstTextBaseline, spacing: DesignSpace.titleGap) {
             Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
                 .typeRole(.hero)
-                .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
+                .lineLimit(1).minimumScaleFactor(CGFloat(DesignMeasure.seriesDetailValueMinimumScale))
             Text(MarketFormat.unit(displayed)).typeRole(.small).foregroundStyle(DesignColor.textMuted)
         }
         .accessibilityElement(children: .combine)

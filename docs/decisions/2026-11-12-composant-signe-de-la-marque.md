@@ -21,12 +21,12 @@ Le composant est gardé avec cet écart à la référence (SwiftUI).
 
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
-| Trois composants propres | Le signe identique partout dans l'app | Un tracé à garder aligné avec le fichier de marque |
+| Trois composants propres | Le signe identique partout dans l'app ; une source pour les SVG et l'icône | Un export à relancer quand la géométrie change |
 | Un fichier image | Une seule source | Pas de tracé animé |
 
 ## Conséquences
 
-**La géométrie du signe existe en trois copies** : le fichier SVG de marque, ces composants SwiftUI et `scripts/render-icon.swift`. C'est une même connaissance en trois endroits, contraire à « une seule source ». Cette décision le dit sans le résoudre ; la sortie est une génération des trois depuis une seule description.
+**Une seule source.** La géométrie du signe est écrite une fois, dans `SignalPath.swift` (points, trait, rayons, géométrie de l'icône d'app). Les fichiers SVG de la marque sont exportés par `scripts/export_signe.py`, et `controler.sh` échoue si l'un d'eux diffère de l'export. Les tailles d'icône du bundle sont dessinées par `scripts/render-icon/main.swift`, compilé avec `SignalPath.swift` et les couleurs générées. Le mot « sema » du lockup est un dessin (`Resources/Brand/sema-wordmark.svg`), repris tel quel.
 
 ## Trace
 

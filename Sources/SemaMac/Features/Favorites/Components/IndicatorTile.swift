@@ -4,7 +4,6 @@ import SemaDesign
 import SwiftUI
 
 struct IndicatorTile: View {
-    private static let valueMinimumScale: CGFloat = 0.85
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
@@ -29,7 +28,7 @@ struct IndicatorTile: View {
                     HStack(alignment: .firstTextBaseline) {
                         Text(MarketFormat.value(displayed))
                             .typeRole(.figure)
-                            .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
+                            .lineLimit(1).minimumScaleFactor(CGFloat(DesignMeasure.indicatorTileValueMinimumScale))
                         Spacer(minLength: DesignSpace.fieldGap)
                         Text(MarketFormat.change(displayed, period: .month))
                             .typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)

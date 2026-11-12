@@ -5,7 +5,6 @@ import MarketCore
 
 struct SeriesResultsView: View {
     private static let iconSpacing = DesignSpace.fieldGap
-    private static let iconWidth: CGFloat = 16
     private static let textSpacing = DesignSpace.titleGap
     private static let emptyTopPadding = DesignSpace.pageInsetNarrow
     @Environment(AppStore.self) private var store
@@ -45,7 +44,7 @@ struct SeriesResultsView: View {
     private func row(_ item: MarketSeries) -> some View {
         HStack(spacing: Self.iconSpacing) {
             Image(systemName: store.isFavorite(item.id) ? "star.fill" : "chart.xyaxis.line")
-                .foregroundStyle(accentText).frame(width: Self.iconWidth)
+                .foregroundStyle(accentText).frame(width: DesignLayout.iconWidth)
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text(MarketFormat.name(item)).typeRole(.heading)
                 Text(item.subtitle).typeRole(.caption).foregroundStyle(.secondary).lineLimit(1)
