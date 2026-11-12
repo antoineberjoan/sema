@@ -1,49 +1,90 @@
-# Travailler sur sema
+# AGENTS.md
 
-Entrée commune à tous les agents. Lire les sections utiles de `docs/PRODUCT.md`, `docs/ARCHITECTURE.md` et les fichiers concernés avant de coder. Ne charger que les références nécessaires à la tâche.
+Lis ce fichier en entier avant toute action. En cas de doute ou de contradiction, arrête-toi et demande.
 
-## Autorité et arbitrage
+## Skills Sophos actifs
 
-- Antoine fixe l’intention. **Notion pilote les objectifs, les priorités, l’organisation, le suivi et toutes les décisions, y compris techniques. GitHub les implémente** : code, configuration et preuves de livraison. Les issues, plans et PR renvoient à la page Notion propriétaire sans constituer un pilotage concurrent. Liens : `docs/engineering/SOURCES.md`.
-- Le code prouve ce qui fonctionne ; il ne valide pas une nouvelle décision, y compris technique. Une page plus récente n’a pas automatiquement raison.
-- Si deux versions se contredisent sur la direction à retenir, présenter l’écart et **demander à Antoine laquelle conserver**. Préserver les deux jusqu’à sa réponse ; avancer sur le travail indépendant. Ne pas choisir silencieusement ni dupliquer une décision pour résoudre le conflit.
-- Une intention formulée dans le chat vaut instruction pour la tâche. Reporter sa décision durable dans sa source d’autorité, avec date et référence, sans transformer une hypothèse en décision.
+Référence : dépôt `antoineberjoan/sophos`. Lire le `SKILL.md` d'un skill à sa source avant le travail correspondant. Ne pas recopier ses règles ici.
 
-## Code et structure
+<!-- carte:skills:debut — fabriqué depuis projet.yml par sophos/outils/carte.mjs ; ne pas modifier à la main -->
+| Skill | Version |
+| --- | --- |
+| [penser](https://antoineberjoan.github.io/sophos/skills/penser/SKILL.html) | 1.4.0 |
+| [construire](https://antoineberjoan.github.io/sophos/skills/construire/SKILL.html) | 0.9.0 |
+| [expliquer](https://antoineberjoan.github.io/sophos/skills/expliquer/SKILL.html) | 0.3.0 |
+| [concevoir](https://antoineberjoan.github.io/sophos/skills/concevoir/SKILL.html) | 0.5.0 |
+<!-- carte:skills:fin -->
 
-- Une seule implémentation active par responsabilité. Pas d’alias de compatibilité, de code mort, de branche de secours spéculative ni de copie « v2 », « new » ou « final ». Les migrations de données sont traitées dans `docs/engineering/CONVENTIONS.md`.
-- Noms courts et explicites, même terme pour le même concept : `docs/engineering/GLOSSARY.md`. Pas de préfixe `Sema` dans un nouvel identifiant : le projet le dit déjà. Respecter les API natives et les schémas externes.
-- Chaque fichier de code commence par une courte description de sa responsabilité, avant les imports et après les directives obligatoires. Expliquer son utilité, sans paraphraser son nom.
-- Chaque emplacement a un rôle dans `.agents/structure.json`. Réutiliser la zone existante ; justifier un nouvel emplacement. Pas de dossier fourre-tout. Un fichier Swift porte un seul type visible, à son nom ; ses aides restent `private` et les extensions d’un type vivent dans `Type+Rôle.swift`.
-- Centraliser les choix métier, visuels et d’environnement chez leur propriétaire. Pas de valeur en dur ni de secret dans le code ; pas de configuration spéculative. Détails dans `docs/engineering/CONVENTIONS.md`.
-- Un système durable qui se réutilise : partir de l’existant (`DesignSystem`, conventions, composants), l’étendre plutôt que réinventer. Changer seulement pour une valeur réelle, jamais pour changer.
-- Changements ciblés, patterns existants, aucune abstraction sans usage concret. Ne supprimer que ce qui devient inutile pour la tâche.
-- Ne pas ajouter de dépendance de production sans accord. Pas de nouvelle cible, framework d’architecture ou service serveur sans besoin explicite.
-- App **sema**, en minuscules dans les textes visibles. Français pour l’interface et la documentation ; anglais pour les identifiants.
+- `penser` : la façon de travailler avec Antoine. Une direction qu'il tranche est une décision de ce dépôt, dans `docs/decisions/`.
+- `construire` : une seule implémentation par responsabilité, aucun alias ni code mort, preuve avant de dire « fini ». Les valeurs financières restent en `Decimal`.
+- `expliquer` : français simple pour toute explication, avec ce qui n'est pas vérifié.
+- `concevoir` : interface, texte visible et mouvement. Les choix de direction visuelle de sema sont des décisions datées dans `docs/decisions/`.
 
-## Charger au bon moment
+Une recherche de fond avec des sources ne reste pas dans une conversation. Avant la fin de la session, propose la note ou la fiche de lecture, et son coffre (`cristalliser`) : la finance et le patrimoine dans Épistémè, le sport et la physiologie dans Ponos, la façon de penser, d'écrire ou de travailler dans la bibliothèque de Sophos. Une direction que je tranche est une décision de ce dépôt, pas une note.
 
-| Travail | Instructions à lire |
+## Ce que fait le projet
+
+sema est une app macOS native (SwiftUI, Swift 6, macOS 14 et plus) pour consulter des séries économiques publiques, suivre ses favoris et définir des seuils. Le détail est dans `docs/fondation.md` et `docs/PRODUCT.md`.
+
+- Dedans : le cœur (`Sources/MarketCore`), l'app (`Sources/SemaMac`), ses tests (`Tests/`), le site (`site/`), la distribution (`distribution/`).
+- Dehors : un serveur, un compte, une clé fournisseur partagée.
+- Nom : **sema**, en minuscules dans les textes visibles. Français pour l'interface et la documentation ; anglais pour les identifiants et les rôles. Pas de préfixe `Sema` dans un nouvel identifiant.
+
+Charger au bon moment, sans tout lire au démarrage :
+
+| Travail | À lire |
 | --- | --- |
 | Modèles, données, calculs, préférences et leurs tests | `Sources/MarketCore/AGENTS.md` |
 | App native, état, design et mouvement | `Sources/SemaMac/AGENTS.md` |
 | Site | `site/AGENTS.md` |
-| Changement fonctionnel ou chantier à plusieurs étapes | `.agents/skills/sema-change/SKILL.md` |
-| Design, texte visible ou mouvement | `.agents/skills/sema-design/SKILL.md` |
-| Relais, fin de chantier ou session avec travail restant | `.agents/skills/sema-handoff/SKILL.md` |
-| Fonctionnement du dispositif et nouveaux outils d’agent | `docs/engineering/WORKFLOW.md` |
 
-Ces chemins fonctionnent aussi quand l’agent ne découvre pas les skills automatiquement. Ne pas charger toutes les skills au démarrage.
+## Structure du code
+
+Référence : `patron/structure.md` de Sophos. Chaque sorte de code a une forme fermée. `projet.yml` déclare les unités ; `structure.mjs` refuse ce qui sort de la forme, et un cliquet compte l'existant hors forme (il ne peut que baisser, jusqu'à 0).
+
+| Sorte | Unités de sema |
+| --- | --- |
+| Bibliothèque de règles | `Sources/MarketCore/Series`, `Moves`, `Alerts`, `Context` |
+| Dépôt de données | `Sources/MarketCore/Preferences`, `Sources/SemaMac/Infrastructure/Storage` |
+| Connecteur | `Sources/MarketCore/Webstat`, `Sdmx`, `NewYorkFed`, `WorldBank`, `Fred`, `TwelveData`, `AlphaVantage`, `ECB`, `Claude`, `Gdelt`, `CentralBankFeeds` ; `Sources/SemaMac/Infrastructure/Keychain`, `Notifications`, `LoginItem`, `GlobalShortcuts`, `AppleIntelligence`, `Feedback` |
+| Module d'écran | `Sources/SemaMac/Features/*` |
+
+En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Le détail est dans `docs/decisions/2026-11-12-forme-swift-des-unites.md`. La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés.
+
+## Bibliothèque de composants
+
+Référence : **SwiftUI** (macOS 14). AppKit seulement pour un comportement macOS précis.
+
+On assemble ses composants avant d'écrire. Les composants propres et ceux qui reprennent la référence avec un écart sont dans `Sources/SemaMac/components/custom/`, avec `@documentation` et `@decision` en en-tête (le dossier s'écrit en minuscules : voir `docs/decisions/2026-11-12-ecart-patron-dossier-components-en-minuscules.md`). Un composant qu'on ne peut pas assembler suit sa structure et déclare la page suivie : la méthode est dans `patron/composants.md` de Sophos.
+
+## Sources de vérité
+
+Une information vit à un seul endroit. Si deux sources se contredisent, arrête-toi et demande.
+
+| Domaine | Source |
+| --- | --- |
+| Règles du projet | `AGENTS.md` |
+| Ce qu'est le projet | `docs/fondation.md` |
+| Périmètre du produit | `docs/PRODUCT.md` |
+| Décisions | `docs/decisions/` |
+| Mots du métier | `docs/lexique.md` |
+| Marque | `Resources/Brand/` |
+| Carte du dépôt | `projet.yml` |
+
+Notion ne pilote plus sema (`docs/decisions/2026-11-12-alignement-sur-sophos.md`). Une intention formulée dans le chat vaut instruction pour la tâche ; sa décision durable s'écrit dans `docs/decisions/`, avec sa date.
 
 ## Validation et autonomie
 
-- Définir une condition de réussite observable avant un gros changement. Lire le diff et exécuter le plus petit contrôle pertinent.
-- `python3 scripts/guardrails.py` : structure, descriptifs, frontières, liens, valeurs en dur et cohérence mécanique ; les hooks Claude et Cursor le lancent après chaque édition et en fin de tour. `./scripts/check.sh` : contrôles et tests après modification fonctionnelle. `./scripts/build-app.sh` : validation du bundle.
-- Après modification UI, vérifier le parcours dans l’app native ou le navigateur : clavier, états utiles, accessibilité et interruption des animations. Séparer ce qui est observé de ce qui reste à vérifier.
-- Les réparations et validations locales dans le périmètre demandé sont autonomes. Ne pas élargir la mission ni modifier les règles pour faire passer un contrôle.
-- Publication, fusion vers `main` (qui déploie le site), dépense, suppression irréversible et changement de vision nécessitent une autorisation couvrant l’action. Ne pas redemander un accord déjà donné pour cette action.
-- Garder une trace utile : plan actif si nécessaire, décision durable si nécessaire, PR et preuves. Aucune transcription brute ni journal quotidien automatique. Procédure : `sema-handoff`.
+- `./controler.sh` : contrôles rapides, sur toute machine. `./scripts/check.sh` : suite Swift. `./scripts/build-app.sh` : le bundle. La suite Swift et le bundle demandent macOS et un Swift complet ; la CI les lance.
+- Après une modification d'interface, vérifie le parcours dans l'app native : clavier, états utiles, accessibilité, interruption des animations. Sépare ce qui est observé de ce qui reste à vérifier.
+- Les réparations et validations locales dans le périmètre demandé sont autonomes. Ne contourne jamais un contrôle ni un hook.
+- La publication, la fusion vers `main` (qui déploie le site), une dépense et une suppression irréversible demandent une autorisation qui couvre l'action.
+- Ne change pas le nom d'un fichier, d'une clé ou d'une valeur que la personne a déjà sur son disque (préférences, alertes, profil, cache). Une migration de format est une décision d'Antoine.
 
-## Code Review Rules
+## Contrôles
 
-Signaler une perte de données, une promesse non tenue, une deuxième implémentation, un contournement de contrôle ou un calcul financier hors du cœur. Vérifier le sens des noms et la valeur de chaque ajout. Les scripts ne prouvent ni l’absence de code mort ni la qualité du design.
+Le lanceur unique est nommé dans `projet.yml` (`politique.controle`). Il passe avant chaque envoi. Il lance les outils de Sophos depuis un clone de Sophos : `../sophos` à côté de ce dépôt, ou la variable `SOPHOS`. Un clone absent est un échec, jamais un contrôle sauté.
+
+## Revue de code
+
+Signaler une perte de données, une promesse non tenue, une deuxième implémentation, un contournement de contrôle ou un calcul financier hors du cœur. Vérifier le sens des noms et la valeur de chaque ajout.

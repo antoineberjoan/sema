@@ -19,16 +19,8 @@ class GuardrailsTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = pathlib.Path(self.temp.name)
         self.git("init", "--quiet")
-        self.write(".agents/structure.json", json.dumps({
-            ".agents/": "Procédures", ".claude/skills/": "Liens des skills", "AGENTS.md": "Instructions", "CLAUDE.md": "Import",
-            "Sources/MarketCore/": "Cœur", "Sources/SemaMac/": "App", "docs/": "Documentation",
-            "distribution/": "Release", "site/": "Site", ".env": "Configuration"
-        }))
         self.write("AGENTS.md", "# Instructions\n")
         self.write("CLAUDE.md", "@AGENTS.md\n")
-        self.write(".agents/skills/example/SKILL.md", "---\nname: example\ndescription: Procédure de test.\n---\n")
-        (self.root / ".claude/skills").mkdir(parents=True)
-        (self.root / ".claude/skills/example").symlink_to("../../.agents/skills/example")
         self.write("Sources/MarketCore/Series.swift", "// Décrit les observations économiques indépendantes de l’interface.\nimport Foundation\n")
         self.write("distribution/release.json", '{"version": "1"}')
         self.write("site/dist/download/release.json", '{"version": "1"}')
@@ -57,8 +49,8 @@ class GuardrailsTests(unittest.TestCase):
         self.assertTrue(any("description" in error for error in self.errors(staged=True)))
 
     def test_untracked_files_are_checked_only_in_worktree(self):
-        self.write("scratch.txt", "essai")
-        self.assertTrue(any("sans responsabilité" in error for error in self.errors()))
+        self.write("Sources/MarketCore/Scratch.swift", "import Foundation\n")
+        self.assertTrue(any("description" in error for error in self.errors()))
         self.assertEqual(self.errors(staged=True), [])
 
     def test_deleted_target_breaks_link_in_index(self):
@@ -67,6 +59,22 @@ class GuardrailsTests(unittest.TestCase):
         self.git("add", ".")
         self.git("rm", "-f", "docs/b.md")
         self.assertTrue(any("lien local" in error for error in self.errors(staged=True)))
+
+    def test_type_may_be_declared_in_its_role_file(self):
+        self.write("Sources/MarketCore/Rule+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
+        self.write("Sources/MarketCore/RuleUse.swift", "// Lit la règle pour qu'elle serve.\nimport Foundation\nlet rule = Rule.self\n")
+        self.assertEqual(self.errors(), [])
+        self.write("Sources/MarketCore/Other+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
+        self.assertTrue(any("un seul type visible" in error for error in self.errors()))
+
+    def test_generated_stylesheet_is_not_read_as_site_style(self):
+        generated = "/* fabriqué depuis tokens.json par sophos/outils/jetons.mjs ; ne pas modifier à la main */\n:root { --c: #fff; }\n.type-title { font-size: 28px; }\n"
+        self.write("site/dist/brand/tokens.css", ":root { --space-1: 4px; }\n")
+        self.write("site/dist/brand/sophos-tokens.css", generated)
+        self.write("site/dist/brand/page.css", "a { padding: 7px; }\n")
+        errors = self.errors()
+        self.assertFalse(any("sophos-tokens.css" in error for error in errors))
+        self.assertTrue(any("page.css" in error for error in errors))
 
     def test_forbidden_import_variants(self):
         for statement in ("import SwiftUI", "@preconcurrency import AppKit", "public import UserNotifications",
@@ -160,63 +168,9 @@ class GuardrailsTests(unittest.TestCase):
         self.git("add", "-u")
         self.assertEqual(sum("manquant" in error for error in self.errors(staged=True)), 2)
 
-    def test_deleted_agents_md_is_rejected(self):
-        (self.root / "AGENTS.md").unlink()
-        self.assertTrue(any("AGENTS.md" in error for error in self.errors()))
-        self.assertEqual(self.errors(staged=True), [])
-        self.git("add", "-u", "AGENTS.md")
-        self.assertTrue(any("AGENTS.md" in error for error in self.errors(staged=True)))
-
-    def test_invalid_json_and_skill(self):
+    def test_invalid_json(self):
         self.write("docs/data.json", "{")
-        self.write(".agents/skills/example/SKILL.md", "---\nname: wrong\ndescription: Exemple\n---\n")
-        errors = self.errors()
-        self.assertTrue(any("JSON invalide" in error for error in errors))
-        self.assertTrue(any("skill invalides" in error for error in errors))
-
-    def test_claude_adapter_cannot_duplicate_rules(self):
-        self.write("CLAUDE.md", "@AGENTS.md\nRègle divergente\n")
-        self.assertTrue(any("importer uniquement" in error for error in self.errors()))
-
-    def test_missing_skill_link_is_rejected(self):
-        path = ".claude/skills/example"
-        (self.root / path).unlink()
-        self.assertTrue(any("lien symbolique requis" in error for error in self.errors()))
-        self.assertEqual(self.errors(staged=True), [])
-        self.git("add", "-u", path)
-        self.assertTrue(any("lien symbolique requis" in error for error in self.errors(staged=True)))
-
-    def test_wrong_skill_link_in_index_is_not_hidden_by_worktree_fix(self):
-        path = self.root / ".claude/skills/example"
-        path.unlink()
-        path.symlink_to("../../.agents/skills/absent")
-        self.assertTrue(any("lien symbolique requis" in error for error in self.errors()))
-        self.git("add", ".claude/skills/example")
-        path.unlink()
-        path.symlink_to("../../.agents/skills/example")
-        self.assertEqual(self.errors(), [])
-        self.assertTrue(any("lien symbolique requis" in error for error in self.errors(staged=True)))
-
-    def test_skill_copy_cannot_replace_link(self):
-        (self.root / ".claude/skills/example").unlink()
-        self.write(".claude/skills/example/SKILL.md", (self.root / ".agents/skills/example/SKILL.md").read_text())
-        self.assertTrue(any("seuls les liens" in error for error in self.errors()))
-        self.git("add", ".")
-        self.assertTrue(any("seuls les liens" in error for error in self.errors(staged=True)))
-
-    def test_plain_text_cannot_replace_skill_link(self):
-        path = ".claude/skills/example"
-        (self.root / path).unlink()
-        self.write(path, "../../.agents/skills/example")
-        self.assertTrue(any("lien symbolique requis" in error for error in self.errors()))
-        self.git("add", path)
-        self.assertTrue(any("lien symbolique requis" in error for error in self.errors(staged=True)))
-
-    def test_orphan_skill_link_is_rejected(self):
-        (self.root / ".claude/skills/obsolete").symlink_to("../../.agents/skills/example")
-        self.assertTrue(any("obsolete" in error for error in self.errors()))
-        self.git("add", ".")
-        self.assertTrue(any("obsolete" in error for error in self.errors(staged=True)))
+        self.assertTrue(any("JSON invalide" in error for error in self.errors()))
 
     def test_required_directives_can_precede_header(self):
         for source in (
@@ -269,7 +223,7 @@ class GuardrailsTests(unittest.TestCase):
             "// cornerRadius: 12 reste un commentaire",
             "var size: CGFloat = 32",
             'static let standard = Self(\n    ribbon: Shortcut(keyCode: 11, key: "B"))',
-            ".padding(SemaTheme.rowPadding).frame(width: 0, height: 0)",
+            ".padding(DesignSpace.rowInset).frame(width: 0, height: 0)",
             ".opacity(stage >= 2 ? 1 : 0)",
             ".frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight)",
             ".lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)",
@@ -316,7 +270,7 @@ class GuardrailsTests(unittest.TestCase):
         self.assertTrue(any("typeRole" in error for error in self.errors()))
         self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nlet title = Font.system(size: side * scale)\n")
         self.assertEqual(self.errors(), [])
-        self.write("Sources/SemaMac/DesignSystem/TypeRole.swift", "// Décrit les rôles.\nstatic let title = Font.system(size: 28, weight: .medium)\n")
+        self.write("Sources/SemaMac/Style/TypeRole.swift", "// Décrit les rôles.\nstatic let title = Font.system(size: 28, weight: .medium)\n")
         self.assertFalse(any("typeRole" in error for error in self.errors()))
 
     def test_new_type_does_not_repeat_project_name(self):
@@ -334,7 +288,7 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual([error for error in self.errors() if "Tests/" not in error], [])
 
     def test_glossary_spelling_is_enforced(self):
-        self.write("docs/engineering/GLOSSARY.md", "| Concept | Nom dans le code | Sens |\n| --- | --- | --- |\n| Identifiant | `seriesID` | Série |\n")
+        self.write("docs/lexique.md", "| Concept | Nom dans le code | Sens |\n| --- | --- | --- |\n| Identifiant | `seriesID` | Série |\n")
         self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nimport Observation\nlet seriesId = 1\n")
         errors = self.errors()
         self.assertEqual(len(errors), 1)
@@ -374,10 +328,19 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 3)
         self.assertTrue(all("styles morts" in error or "style mort" in error for error in errors))
 
-    def test_shadow_belongs_to_design_system(self):
+    def test_generated_design_type_may_wait_for_its_reader(self):
+        header = "// Les espaces.\n// fabriqué depuis tokens.json par sophos/outils/jetons.mjs ; ne pas modifier à la main (patron 1.1.0).\nimport SwiftUI\n"
+        self.write("Sources/SemaDesign/DesignSpace.swift", header + "public enum DesignSpace {}\n")
+        self.assertEqual(self.errors(), [])
+        self.write("Sources/SemaDesign/DesignHand.swift", "// Écrit à la main.\nimport SwiftUI\npublic enum DesignHand {}\n")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("DesignHand", errors[0])
+
+    def test_shadow_belongs_to_style(self):
         source = "// Décrit une surface flottante.\n.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius)\n"
         self.write("Sources/SemaMac/Features/Panel.swift", source)
-        self.write("Sources/SemaMac/DesignSystem/Shadow.swift", source)
+        self.write("Sources/SemaMac/Style/Shadow.swift", source)
         self.write("Sources/SemaMac/Features/Card.swift", "// Décrit une carte.\n.shadow(.card)\n")
         errors = self.errors()
         self.assertEqual(len(errors), 1)

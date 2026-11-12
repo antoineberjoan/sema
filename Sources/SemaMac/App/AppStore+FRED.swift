@@ -3,10 +3,10 @@ import Foundation
 import MarketCore
 
 extension AppStore {
-    /// Statistical client for catalogues and refreshes; the FRED key is read from the Keychain only when it exists.
-    func statisticalClient() async -> StatisticalClient {
-        guard hasFREDKey, isSourceEnabled(StatisticalSource.fred.rawValue) else { return StatisticalClient() }
-        return StatisticalClient(fredKey: try? await fredKeychain.read())
+    /// Statistical connectors for catalogues and refreshes; the FRED key is read from the Keychain only when it exists.
+    func statisticalConnectors() async -> StatisticalConnectors {
+        guard hasFREDKey, isSourceEnabled(StatisticalSource.fred.rawValue) else { return StatisticalConnectors(fredKey: nil) }
+        return StatisticalConnectors(fredKey: try? await fredKeychain.read())
     }
 
     func checkFREDKey() async {
@@ -22,7 +22,7 @@ extension AppStore {
         let key = key.trimmingCharacters(in: .whitespacesAndNewlines)
         let generation = sourceGenerations[source]
         do {
-            try await StatisticalClient(fredKey: key).validateFREDKey()
+            try await FredClient(key: key).validateKey()
             guard isSourceEnabled(source), generation == sourceGenerations[source] else { return false }
             try await fredKeychain.save(key)
             hasFREDKey = true

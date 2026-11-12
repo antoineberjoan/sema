@@ -6,12 +6,12 @@ import MarketCore
 
 @Observable @MainActor
 final class AppStore {
-    var series = WebstatClient.starterSeries
+    var series = WebstatStarter.series
     var preferences = AppPreferences()
     var section: WorkspaceSection = .overview
     var settingsTab: SettingsTab = .general
     var category: SeriesCategory = .markets
-    var selectedSeriesID = WebstatClient.canonicalID("eurusd")
+    var selectedSeriesID = WebstatStarter.canonicalID("eurusd")
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -26,8 +26,8 @@ final class AppStore {
     var catalogueSeed: String?
     var isOnboardingPresented = false
     var shortcutError: String?
-    let globalShortcuts = GlobalShortcuts()
-    let loginItem = LoginItem()
+    let globalShortcuts = GlobalShortcutsClient()
+    let loginItem = LoginItemClient()
     var opensAlertAfterSearch = false
     var seriesErrors: [String: String] = [:]
     var historyLoadingID: String?
@@ -48,17 +48,19 @@ final class AppStore {
     var previewSourceID: String?
     var statisticalCatalogues: [String: [StatisticalDataset]] = [:]
     var statisticalDescriptors: [String: StatisticalSeriesDescriptor] = [:]
-    let storage: LocalStorage
-    let notifications = NotificationService()
-    let webstatKeychain = SourceKeychain(sourceID: "webstat", title: "Webstat")
-    let marketClients = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, MarketDataClient(provider: $0)) })
-    let marketKeychains = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, SourceKeychain(sourceID: $0.rawValue, title: $0.title)) })
+    let storage: LocalRepository
+    let notifications = NotificationClient()
+    let webstatKeychain = KeychainClient(sourceID: "webstat", title: "Webstat")
+    let twelveDataClient = TwelveDataClient()
+    let alphaVantageClient = AlphaVantageClient()
+    var marketClients: [MarketProvider: any MarketDataConnector] { [.twelveData: twelveDataClient, .alphaVantage: alphaVantageClient] }
+    let marketKeychains = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, KeychainClient(sourceID: $0.rawValue, title: $0.title)) })
     var connectedMarkets: Set<MarketProvider> = []
-    let fredKeychain = SourceKeychain(sourceID: StatisticalSource.fred.rawValue, title: StatisticalSource.fred.title)
+    let fredKeychain = KeychainClient(sourceID: StatisticalSource.fred.rawValue, title: StatisticalSource.fred.title)
     var hasFREDKey = false
     var isConnectingFRED = false
     var fredError: String?
-    let claudeKeychain = SourceKeychain(sourceID: AppStore.claudeSourceID, title: "Claude")
+    let claudeKeychain = KeychainClient(sourceID: AppStore.claudeSourceID, title: "Claude")
     var hasClaudeKey = false
     var isConnectingClaude = false
     var claudeError: String?
@@ -88,7 +90,7 @@ final class AppStore {
     @ObservationIgnored var rescheduleRefresh: () -> Void = {}
     @ObservationIgnored var invertedExchangeRates: [String: (source: MarketSeries, display: MarketSeries)] = [:]
 
-    init(storage: LocalStorage = .applicationDefault()) {
+    init(storage: LocalRepository = .applicationDefault()) {
         self.storage = storage
         do { preferences = try storage.preferences.load() }
         catch {
@@ -99,13 +101,13 @@ final class AppStore {
         do {
             let cached = try storage.cachedWebstat()
             if !cached.isEmpty {
-                merge(cached.map { $0.withID(WebstatClient.canonicalID($0.id)) })
+                merge(cached.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
                 hasLoadedWebstat = cached.contains { $0.sourceURL?.host == "webstat.banque-france.fr" }
                 status = "Repères conservés localement · consultez la période et la date de publication."
             } else {
                 let previousRates = try storage.cachedRates()
                 if !previousRates.isEmpty {
-                    merge(previousRates.map { $0.withID(WebstatClient.canonicalID($0.id)) })
+                    merge(previousRates.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
                     status = "Ancien cache BCE · connectez Webstat dans les réglages pour actualiser."
                 }
             }
@@ -128,7 +130,7 @@ final class AppStore {
         return true
     }
 
-    var starterSeries: [MarketSeries] { WebstatClient.starterSeries }
+    var starterSeries: [MarketSeries] { WebstatStarter.series }
     var storedFollowedSeries: [MarketSeries] { preferences.followedSeriesIDs.compactMap { id in series.first { $0.id == id } } }
     /// Seuls les repères qui ont des valeurs sont visibles ; les autres restent suivis et reviennent avec leurs données.
     var followedSeries: [MarketSeries] { SeriesEquivalence.unique(storedFollowedSeries).filter { !$0.observations.isEmpty } }
@@ -142,9 +144,9 @@ final class AppStore {
     @discardableResult func setProfile(_ profile: LocalProfile) -> Bool { mutatePreferences { $0.profile = profile } }
 
     @discardableResult func followStarterSeries(ids: [String]) -> Bool {
-        let allowed = Set(WebstatClient.starterIDs)
+        let allowed = Set(WebstatStarter.ids)
         var seen: Set<String> = []
-        let chosen = ids.map(WebstatClient.canonicalID).filter { allowed.contains($0) && seen.insert($0).inserted }
+        let chosen = ids.map(WebstatStarter.canonicalID).filter { allowed.contains($0) && seen.insert($0).inserted }
         let result = mutatePreferences { value in
             value.followedSeriesIDs = chosen + value.followedSeriesIDs.filter { !allowed.contains($0) }
             for index in value.alerts.indices where allowed.contains(value.alerts[index].seriesID) && !chosen.contains(value.alerts[index].seriesID) {

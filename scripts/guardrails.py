@@ -40,14 +40,11 @@ CONFIG_LITERAL = re.compile(r'\b(?:URL|URLComponents)\(string:\s*"|\b(?:Locale|T
 DAY_SECONDS = re.compile(r"(?<![\w.])86_?400(?![\w.])")
 # Typographie 1.1 : une taille de texte écrite en chiffres vit seulement dans les rôles de `TypeRole`.
 NATIVE_TEXT_SIZE = re.compile(r"\.system\(size:\s*\d")
-TYPE_ROLES = "Sources/SemaMac/DesignSystem/TypeRole.swift"
-# Noms antérieurs à la règle « pas de préfixe Sema » ; aucun nouveau type ne s’y ajoute.
-LEGACY_SEMA_TYPES = {"SemaAppDelegate", "SemaAppearance", "SemaCommands", "SemaElevation", "SemaFeedback", "SemaMacApp", "SemaMark",
-                     "SemaPalette", "SemaPressStyle", "SemaSettingsTab", "SemaSettingsView", "SemaSignalPath", "SemaSupport", "SemaSymbol", "SemaTheme"}
+TYPE_ROLES = "Sources/SemaMac/Style/TypeRole.swift"
 PRIVATE_DECLARATION = re.compile(r"\b(?:private|fileprivate)\s+(?:(?:static|final|lazy|nonisolated|override|mutating|indirect)\s+)*"
                                  r"(?:let|var|func|struct|enum|class|actor|typealias)\s+(\w+)")
 IMPLICIT_NAMES = {"CodingKeys", "body", "init"}
-GLOSSARY = "docs/engineering/GLOSSARY.md"
+GLOSSARY = "docs/lexique.md"
 IDENTIFIER = re.compile(r"\b[A-Za-z_]\w*\b")
 TOP_EXTENSION = re.compile(r"^(?:@\w+\s+)*(?:(?:public|internal|private|fileprivate)\s+)?extension\s+(?P<name>\w+)", re.MULTILINE)
 
@@ -87,13 +84,6 @@ class Snapshot:
         if self.staged:
             return self.git("show", ":" + path).decode("utf-8")
         return (self.root / path).read_text(encoding="utf-8")
-
-    def link(self, path):
-        if self.staged:
-            entry = self.git("ls-files", "--stage", "-z", "--", path)
-            return self.read(path) if entry.startswith(b"120000 ") else None
-        target = self.root / path
-        return target.readlink().as_posix() if target.is_symlink() else None
 
 
 def has_header(source):
@@ -180,7 +170,7 @@ def hardcoded(path, source):
             arguments = VISUAL_ARGUMENT.findall(line) + [argument for call in VISUAL_CALL.finditer(line)
                                                          for argument in call_arguments(line, call.end() - 1)]
             if any(literal_values(argument) for argument in arguments):
-                errors.append(f"{path}:{number} : valeur visuelle en dur ; la nommer dans un rôle de `SemaTheme` "
+                errors.append(f"{path}:{number} : valeur visuelle en dur ; la nommer dans un rôle de `SemaDesign` "
                               "ou un `static let` de son propriétaire.")
         raw = raw_lines[number - 1] if number <= len(raw_lines) else ""
         if any(line[m.start():m.start() + 6] == raw[m.start():m.start() + 6] for m in CONFIG_LITERAL.finditer(raw)):
@@ -189,8 +179,8 @@ def hardcoded(path, source):
             errors.append(f"{path}:{number} : durée d’un jour en dur ; utiliser `TimeInterval.day`.")
         if "keyCode" in line and any(value not in STRUCTURAL_NUMBERS for value in NUMBER.findall(line)):
             errors.append(f"{path}:{number} : code de touche en dur ; utiliser `kVK_…` ou une constante nommée.")
-        if ".shadow(color" in line and not path.startswith("Sources/SemaMac/DesignSystem/"):
-            errors.append(f"{path}:{number} : ombre composée hors DesignSystem ; utiliser une `SemaTheme.Shadow`.")
+        if ".shadow(color" in line and not path.startswith("Sources/SemaMac/Style/"):
+            errors.append(f"{path}:{number} : ombre composée hors de `Style/` ; utiliser `elevation(_:)` avec une élévation de `SemaDesign`.")
     return errors
 
 
@@ -200,7 +190,9 @@ def misplaced_types(path, source):
     stem = pathlib.PurePosixPath(path).stem
     visible = [m["name"] for m in TOP_TYPE.finditer(code) if (m["access"] or "").strip() not in ("private", "fileprivate")]
     if visible:
-        if visible != [stem]:
+        # Un type peut se déclarer dans `Type+Rôle.swift` : le nom du type ouvre toujours celui du fichier.
+        declared_in_role_file = len(visible) == 1 and "+" in stem and stem.split("+")[0] == visible[0]
+        if visible != [stem] and not declared_in_role_file:
             return [f"{path} : un seul type visible par fichier, nommé comme lui ; trouvé {', '.join(visible)}."]
         return []
     extended = {m["name"] for m in TOP_EXTENSION.finditer(code)}
@@ -213,7 +205,7 @@ def new_sema_types(path, source):
     """Refuse un nouveau type au préfixe redondant `Sema`."""
     names = {m["name"] for m in TOP_TYPE.finditer(swift_code(source))}
     return [f"{path} : `{name}` répète le nom du projet ; nommer le type sans préfixe `Sema`."
-            for name in sorted(names) if name.startswith("Sema") and name not in LEGACY_SEMA_TYPES]
+            for name in sorted(names) if name.startswith("Sema")]
 
 
 def unused_private(path, source):
@@ -232,12 +224,19 @@ def glossary_variants(path, source, glossary):
     return [f"{path} : `{word}` s’écrit `{glossary[word.lower()]}` selon le glossaire." for word in variants]
 
 
+GENERATED = "fabriqué depuis tokens.json par sophos/outils/jetons.mjs"
+
+
+def is_generated(code):
+    return any(GENERATED in line for line in code.splitlines()[:3])
+
+
 def unused_types(sources):
-    """Signale un type visible du code que rien n’utilise, hors point d’entrée `@main`."""
+    """Signale un type visible du code que rien n’utilise, hors point d’entrée `@main` et sortie fabriquée des jetons."""
     usages = collections.Counter(IDENTIFIER.findall("\n".join(sources.values())))
     errors = []
     for path, code in sorted(sources.items()):
-        if not path.startswith("Sources/") or "@main" in code:
+        if not path.startswith("Sources/") or "@main" in code or is_generated(code):
             continue
         for match in TOP_TYPE.finditer(swift_code(code)):
             if (match["access"] or "").strip() not in ("private", "fileprivate") and \
@@ -254,6 +253,8 @@ def web_errors(sources):
     pages = "\n".join(source for path, source in sources.items() if not path.endswith(".css"))
     defined = {name for source in sources.values() for match in CSS_VARIABLE_DEFINITION.finditer(source) for name in match.groups() if name}
     for path, css in sorted(styles.items()):
+        if is_generated(sources[path]):
+            continue  # la feuille fabriquée par `jetons.mjs` définit des variables et des classes de rôle : jetons.mjs la contrôle
         if path != TOKEN_SHEET:
             for number, line in enumerate(css.splitlines(), 1):
                 for match in RAW_STYLE.finditer(line):
@@ -288,16 +289,6 @@ def markdown_prose(source):
 
 def check(snapshot):
     errors = []
-    try:
-        structure = json.loads(snapshot.read(".agents/structure.json"))
-        if not isinstance(structure, dict) or not structure or not all(
-            isinstance(path, str) and path and isinstance(purpose, str) and purpose.strip()
-            for path, purpose in structure.items()
-        ):
-            raise ValueError("Chaque emplacement doit avoir une responsabilité.")
-    except (OSError, ValueError, subprocess.CalledProcessError) as error:
-        return [f".agents/structure.json : carte illisible ({error})."]
-
     glossary = {}
     if GLOSSARY in snapshot.paths:
         for row in snapshot.read(GLOSSARY).splitlines():
@@ -308,8 +299,6 @@ def check(snapshot):
     web_sources = {}
 
     for path in sorted(snapshot.paths):
-        if not any(path == route or (route.endswith("/") and path.startswith(route)) for route in structure):
-            errors.append(f"{path} : emplacement sans responsabilité dans .agents/structure.json.")
         name = pathlib.PurePosixPath(path).name
         suffix = pathlib.PurePosixPath(path).suffix
         if name == ".env" or (name.startswith(".env.") and name != ".env.example") or suffix in {".key", ".p12", ".p8"}:
@@ -355,26 +344,9 @@ def check(snapshot):
                                               posixpath.join(posixpath.dirname(path), target_path))
                 if resolved not in snapshot.paths and not any(p.startswith(resolved.rstrip("/") + "/") for p in snapshot.paths):
                     errors.append(f"{path} : lien local introuvable : {link}.")
-        if path.startswith(".agents/skills/") and name == "SKILL.md":
-            match = re.match(r"---\nname: ([a-z0-9-]+)\ndescription: (.+)\n---\n", source)
-            if not match or match[1] != pathlib.PurePosixPath(path).parent.name:
-                errors.append(f"{path} : nom et description de skill invalides.")
 
     errors.extend(unused_types(swift_sources))
     errors.extend(web_errors(web_sources))
-    if "AGENTS.md" not in snapshot.paths:
-        errors.append("AGENTS.md : entrée commune obligatoire manquante.")
-    if "CLAUDE.md" not in snapshot.paths or snapshot.read("CLAUDE.md").strip() != "@AGENTS.md":
-        errors.append("CLAUDE.md : importer uniquement @AGENTS.md ; règles communes dans AGENTS.md.")
-    skills = {posixpath.dirname(path) for path in snapshot.paths
-              if re.fullmatch(r"\.agents/skills/[^/]+/SKILL\.md", path)}
-    adapters = {".claude/skills/" + posixpath.basename(skill): "../../" + skill for skill in skills}
-    for path, target in sorted(adapters.items()):
-        if path not in snapshot.paths or snapshot.link(path) != target:
-            errors.append(f"{path} : lien symbolique requis vers {target}, source unique de la skill.")
-    for path in sorted(snapshot.paths):
-        if path.startswith(".claude/skills/") and path not in adapters:
-            errors.append(f"{path} : seuls les liens vers les skills communes sont autorisés ici.")
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths

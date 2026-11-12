@@ -1,0 +1,27 @@
+# La fiche du dépôt (fonder § 5). Elle pointe vers la marque : elle ne recopie aucune valeur.
+nom: "sema"
+depot: antoineberjoan/sema
+role: "Une application macOS native pour consulter des séries économiques, suivre ses favoris et définir des seuils."
+raison: "Que chacun garde à portée de main les repères économiques publics qui comptent pour lui, avec leur source, leur unité et leur date."
+etat: actif
+sophos: 2
+sorte: application macOS
+adresse: https://getsema.app
+skills: [penser, construire, expliquer, concevoir]
+marque:
+  tokens: Resources/Brand/tokens.json
+  icone-claire: Resources/Brand/sema-app-icon.svg
+  icone-sombre: Resources/Brand/sema-app-icon-dark.svg
+  clair: { fond: color.background, texte: color.text, accent: color.accent }
+  sombre: { fond: color.background, texte: color.text, accent: color.accent }
+politique:
+  defaut: orange
+  vert: [docs/**, site/**]
+  rouge: [Package.swift, Sources/MarketCore/**, Sources/SemaMac/Infrastructure/**, distribution/**, scripts/distribution/**]
+  controle: ./controler.sh
+structure:
+  unites:
+    bibliotheque-de-regles: [Sources/MarketCore/Series, Sources/MarketCore/Moves, Sources/MarketCore/Alerts, Sources/MarketCore/Context]
+    depot-de-donnees: [Sources/MarketCore/Preferences, Sources/SemaMac/Infrastructure/Storage]
+    connecteur: [Sources/MarketCore/Webstat, Sources/MarketCore/Sdmx, Sources/MarketCore/NewYorkFed, Sources/MarketCore/WorldBank, Sources/MarketCore/Fred, Sources/MarketCore/TwelveData, Sources/MarketCore/AlphaVantage, Sources/MarketCore/ECB, Sources/MarketCore/Claude, Sources/MarketCore/Gdelt, Sources/MarketCore/CentralBankFeeds, Sources/SemaMac/Infrastructure/Keychain, Sources/SemaMac/Infrastructure/Notifications, Sources/SemaMac/Infrastructure/LoginItem, Sources/SemaMac/Infrastructure/GlobalShortcuts, Sources/SemaMac/Infrastructure/AppleIntelligence, Sources/SemaMac/Infrastructure/Feedback]
+    module-ecran: [Sources/SemaMac/Features/*]

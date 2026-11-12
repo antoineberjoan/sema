@@ -26,7 +26,7 @@ extension AppStore {
 
     func economicReleases(on day: Date) async -> [EconomicRelease]? {
         guard hasFREDKey, isSourceEnabled(StatisticalSource.fred.rawValue) else { return nil }
-        return try? await statisticalClient().releaseDates(on: day)
+        return try? await statisticalConnectors().releaseDates(on: day)
     }
 
     func pressReleases(from start: Date, to end: Date) async -> [PressRelease]? {
@@ -43,11 +43,11 @@ extension AppStore {
     func headlines(from start: Date, to end: Date) async -> [Headline]? {
         switch headlineSource {
         case .none: return []
-        case .gdelt: return try? await GDELTClient().headlines(from: start, to: end)
+        case .gdelt: return try? await GdeltClient().headlines(from: start, to: end)
         case .alphaVantage:
-            guard connectedMarkets.contains(.alphaVantage), let client = marketClients[.alphaVantage],
+            guard connectedMarkets.contains(.alphaVantage),
                   let key = try? await marketKeychains[.alphaVantage]?.read() else { return nil }
-            return try? await client.news(from: start, to: end, key: key)
+            return try? await alphaVantageClient.news(from: start, to: end, key: key)
         }
     }
 }

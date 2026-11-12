@@ -1,0 +1,5 @@
+#!/bin/sh
+# Fabriqué par garde.mjs de Sophos ; ne pas modifier à la main.
+# Git lance ce fichier avant chaque envoi, pour tout agent et pour une personne : les contrôles du projet,
+# puis la recherche de secrets. Activer dans une copie du dépôt : git config core.hooksPath .githooks
+exec node "$(git rev-parse --show-toplevel)/.claude/sophos/garde.mjs" --pousser

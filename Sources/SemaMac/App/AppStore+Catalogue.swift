@@ -46,7 +46,7 @@ extension AppStore {
                 }
                 let items: [WebstatSeriesDescriptor]
                 let hasMore: Bool
-                if offset >= WebstatClient.maximumSearchOffset {
+                if WebstatClient.usesSummaryExport(forOffset: offset) {
                     if summaryExportSearch != search {
                         let summaries = try await WebstatClient().exportSummaries(apiKey: key, search: search)
                         try Task.checkCancellation()
@@ -72,7 +72,7 @@ extension AppStore {
                     let known = Set(catalogueResults.map(\.key)); catalogueResults += resolvedItems.filter { !known.contains($0.key) }
                 } else {
                     // Prépendre les séries starters (favoris) si pas de recherche texte
-                    let starters = search.query.isEmpty ? WebstatClient.starterSeries.compactMap { series in
+                    let starters = search.query.isEmpty ? WebstatStarter.series.compactMap { series in
                         resolvedItems.first { $0.key == series.id }
                     } : []
                     let starterKeys = Set(starters.map(\.key))
@@ -133,7 +133,7 @@ extension AppStore {
         let requestID = UUID().uuidString; statisticalPreviewRequest = requestID; isLoadingPreview = true
         previewTask = Task {
             do {
-                let value = try await statisticalClient().fetch(dataset: dataset, structure: structure, key: key)
+                let value = try await statisticalConnectors().fetch(dataset: dataset, structure: structure, key: key)
                 try Task.checkCancellation()
                 guard statisticalPreviewRequest == requestID else { return }
                 if let old = series.first(where: { $0.id == value.id }),
