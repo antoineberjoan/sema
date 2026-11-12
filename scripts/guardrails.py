@@ -286,6 +286,34 @@ def markdown_prose(source):
     return re.sub(r"(?<!`)(`+)(?!`)(.*?)\1(?!`)", "", "".join(lines), flags=re.DOTALL)
 
 
+# Un chemin du dépôt cité entre apostrophes inverses dans un texte existe : un document ne renvoie pas à un fichier disparu.
+CITED_ROOTS = {"Sources", "Tests", "docs", "scripts", "site", "distribution", "Resources", ".github", ".claude", ".githooks"}
+PARTIAL_FILE = re.compile(r"^[A-Z][\w.-]*(?:/[\w.-]+)+\.(?:swift|md|json|py|sh|css|js|html)$")
+BACKTICK_SPAN = re.compile(r"`([^`\n]+)`")
+UNCHECKED_PATH = re.compile(r"[\s*<>{}()$~@|]|://|^-")
+
+
+def cited_path_errors(snapshot):
+    errors = []
+    for path in sorted(snapshot.paths):
+        name = pathlib.PurePosixPath(path).name
+        if not (path.endswith(".md") and (path.startswith("docs/") or name in {"AGENTS.md", "README.md", "CONTRIBUTING.md", "SECURITY.md"})):
+            continue
+        for number, line in enumerate(snapshot.read(path).splitlines(), 1):
+            for span in BACKTICK_SPAN.findall(line):
+                cited = span.rstrip("/") if span.endswith("/") else span
+                if "/" not in span or UNCHECKED_PATH.search(span):
+                    continue
+                if cited.split("/")[0] not in CITED_ROOTS:
+                    # Un chemin partiel (`App/Store.swift`) se termine un chemin du dépôt.
+                    if PARTIAL_FILE.match(span) and not any(other == span or other.endswith("/" + span) for other in snapshot.paths):
+                        errors.append(f"{path}:{number} : le fichier cité `{span}` n’existe pas.")
+                    continue
+                if cited not in snapshot.paths and not any(other.startswith(cited + "/") for other in snapshot.paths):
+                    errors.append(f"{path}:{number} : le chemin cité `{span}` n’existe pas.")
+    return errors
+
+
 META_THEME_COLOR = re.compile(r'<meta\s+name="theme-color"\s+content="([^"]*)"', re.IGNORECASE)
 
 
@@ -366,6 +394,7 @@ def check(snapshot):
     errors.extend(unused_types(swift_sources))
     errors.extend(web_errors(web_sources))
     errors.extend(theme_color_errors(snapshot))
+    errors.extend(cited_path_errors(snapshot))
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths

@@ -5,7 +5,7 @@ Décidé par : Antoine
 
 ## Contexte
 
-`scripts/guardrails.py` refuse un type visible que rien n'utilise. Sophos fabrique tous les jetons : une famille de valeurs (bordure, icône, couche, cible tactile) existe dans `Sources/SemaDesign/` même quand l'app ne l'emploie pas encore. Le contrôle refuse donc seize types fabriqués, et `AGENTS.md` interdit de changer une règle pour faire passer un contrôle.
+`scripts/guardrails.py` refuse un type écrit à la main que rien n'utilise. Sophos fabrique tous les jetons : une famille de valeurs (bordure, icône, couche, cible tactile) existe dans `Sources/SemaDesign/` même quand l'app ne l'emploie pas encore.
 
 ## Décision
 
@@ -16,7 +16,7 @@ Le contrôle des types inutilisés ne lit pas un fichier dont l'une des trois pr
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
 | Exclure la seule sortie fabriquée des jetons | Des jetons complets, comme Sophos les fabrique ; `jetons.mjs --verifier` garde la sortie à jour octet pour octet | Une exception écrite dans le contrôle |
-| Garder la règle telle quelle | Aucune exception | Il faut brancher chaque famille à une vue, ou retirer des types de la sortie fabriquée, qui n'est alors plus celle de Sophos |
+| Contrôler aussi les types fabriqués | Aucune exception | Il faut brancher chaque famille à une vue, ou retirer des types de la sortie fabriquée, qui n'est alors plus celle de Sophos |
 
 ## Conséquences
 

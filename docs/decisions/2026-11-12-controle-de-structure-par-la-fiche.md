@@ -16,9 +16,9 @@ Chaque sorte de code a une forme fermée, déclarée dans le bloc `structure:` d
 
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
-| Un seul contrôle de structure, celui de Sophos | Une seule méthode | Aucune règle de structure propre à sema |
-| Un contrôle propre au dépôt en plus | Des règles locales | Deux méthodes en même temps |
+| `structure.mjs` pour la structure, `guardrails.py` pour le reste | Un outil par sujet | Deux outils à lancer : `controler.sh` les lance tous |
+| Des règles de structure propres à sema dans `guardrails.py` | Des règles locales | Deux méthodes pour le même sujet |
 
 ## Conséquences
 
-`scripts/guardrails.py` garde les autres contrôles : secrets, marqueurs de conflit, descriptif en tête de fichier, imports interdits dans le cœur, valeurs visuelles en dur, un type par fichier, types inutilisés, miroir de release, JSON, liens.
+`scripts/guardrails.py` porte les contrôles propres à sema : secrets, marqueurs de conflit, descriptif en tête de fichier, imports interdits dans le cœur, valeurs visuelles en dur, un type par fichier, types inutilisés, miroir de release, JSON, liens.

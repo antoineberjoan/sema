@@ -76,6 +76,6 @@ Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade
 
 ## Versions publiées
 
-La version publiée, son build, la taille du DMG et son SHA-256 sont dans `distribution/release.json`, généré par `scripts/distribution/release-manifest.py` depuis le bundle publié. `site/dist/download/release.json` en est la copie : `guardrails.py` refuse une différence. L'historique des versions publiées est dans les releases de `antoineberjoan/homebrew-sema`.
+La version publiée, son build, la taille du DMG et son SHA-256 sont dans `distribution/release.json`, généré par `scripts/distribution/release-manifest.py` depuis le bundle publié. `site/dist/download/release.json` en est la copie : `scripts/guardrails.py` refuse une différence. L'historique des versions publiées est dans les releases de `antoineberjoan/homebrew-sema`.
 
 `Resources/Info.plist` porte la version en cours de développement. Entre deux publications, elle est plus récente que celle de `distribution/release.json`.

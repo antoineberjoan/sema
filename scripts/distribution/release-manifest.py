@@ -15,7 +15,7 @@ def bundle_facts(bundle):
     info = plistlib.loads((bundle / "Contents/Info.plist").read_bytes())
     if info.get("CFBundleIdentifier") != "com.antoineberjoan.sema":
         raise ValueError("Le bundle doit être celui de sema, pas une app de revue.")
-    if "SemaDevelopmentDataDirectory" in info:
+    if "DevelopmentDataDirectory" in info:
         raise ValueError("Le bundle contient une configuration de développement.")
     version = info.get("CFBundleShortVersionString", "")
     build = str(info.get("CFBundleVersion", ""))

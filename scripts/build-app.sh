@@ -23,7 +23,7 @@ swiftc -o "$project_root/.build/render-icon" Sources/SemaMac/Components/Custom/S
 "$project_root/.build/render-icon" "$project_root/.build/Sema.iconset"
 iconutil -c icns "$project_root/.build/Sema.iconset" -o "$destination/Contents/Resources/Sema.icns"
 if [[ -n "${SEMA_DEVELOPMENT_DATA_DIRECTORY:-}" ]]; then
-    /usr/libexec/PlistBuddy -c "Add :SemaDevelopmentDataDirectory string $SEMA_DEVELOPMENT_DATA_DIRECTORY" "$destination/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c "Add :DevelopmentDataDirectory string $SEMA_DEVELOPMENT_DATA_DIRECTORY" "$destination/Contents/Info.plist"
 fi
 codesign --force --sign - "$destination"
 echo "App locale créée : $destination"

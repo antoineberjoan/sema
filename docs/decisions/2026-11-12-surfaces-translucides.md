@@ -24,10 +24,10 @@ Les surfaces translucides de sema sont ces quatre, et aucune autre.
 
 | Surface | Fichier, vue | Matière |
 | --- | --- | --- |
-| a | `Components/Custom/RibbonSurface.swift`, posé sur les cartes du bandeau (`RibbonCard`, `AgendaCard`, `MenuRibbonView`) et le panneau de recherche (`SearchPanelView`) | `NSVisualEffectView` et voile de contraste |
-| b | `Overview/FocusSwitcherView.swift` | `.regularMaterial` |
-| c | `Workspace/WorkspaceView.swift`, barre latérale en aperçu | `.regularMaterial` |
-| d | `Ribbon/MenuRibbonView.swift`, bouton de réglages | `.regularMaterial` dans un cercle |
+| a | `Sources/SemaMac/Components/Custom/RibbonSurface.swift`, posé sur les cartes du bandeau (`RibbonCard`, `AgendaCard`, `RibbonScreen`) et le panneau de recherche (`SearchScreen`) | `NSVisualEffectView` et voile de contraste |
+| b | `Sources/SemaMac/Features/Overview/Components/FocusSwitcherView.swift` | `.regularMaterial` |
+| c | `Sources/SemaMac/Features/Workspace/WorkspaceScreen.swift`, barre latérale en aperçu | `.regularMaterial` |
+| d | `Sources/SemaMac/Features/Ribbon/RibbonScreen.swift`, bouton de réglages | `.regularMaterial` dans un cercle |
 
 Les fonds de repos et de survol concernés : le badge de comparaison de `RibbonCard`, le rail de jours d'`AgendaCard`, le champ de recherche et la ligne survolée de la barre latérale. Ajouter une surface à cette liste est une décision datée.
 
