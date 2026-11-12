@@ -3,7 +3,7 @@ import SemaDesign
 import SwiftUI
 import MarketCore
 
-struct MenuRibbonView: View {
+struct RibbonScreen: View {
     private static let cardsVerticalPadding = DesignSpace.listGapDense
     private static let headerHorizontalPadding = DesignSpace.frameInset
     private static let headerVerticalPadding = DesignSpace.markInset
