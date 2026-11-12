@@ -1,4 +1,5 @@
 // Dimensions et séquence d’ouverture du bandeau, partagées avec son contrôleur AppKit.
+import SemaDesign
 import SwiftUI
 
 // BANDEAU
@@ -23,9 +24,9 @@ enum MenuRibbonLayout {
     /// Cards outside the scroll view: the agenda and the signature.
     static let fixedCards = 2
     static let cardHeight: CGFloat = 216
-    static let revealDuration = Motion.standard
-    static let dismissDuration = Motion.standard * Motion.exitRatio
-    static let hoverDuration = Motion.fast
+    static let revealDuration = DesignDuration.standard
+    static let dismissDuration = DesignDuration.standard * DesignMotion.exitRatio
+    static let hoverDuration = DesignDuration.fast
     static let sparklineWidth: CGFloat = 1.8
-    static let revealOffset = Motion.shift
+    static let revealOffset = DesignMotion.shift
 }

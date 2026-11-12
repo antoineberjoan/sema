@@ -16,7 +16,7 @@ struct CatalogueBrowserView: View {
     private static let resultsMaxWidth: CGFloat = 350
     private static let compactPreviewMinWidth: CGFloat = 330
     private static let previewMinWidth: CGFloat = 360
-    private static let previewOffset = Motion.shift
+    private static let previewOffset = DesignMotion.shift
     private static let previewSpacing = Spacing.s14
     private static let previewContentSpacing = Spacing.s16
     private static let loadingMinHeight: CGFloat = 280
@@ -29,8 +29,8 @@ struct CatalogueBrowserView: View {
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    private let selectionDuration = Motion.fast
-    private let previewDuration = Motion.standard
+    private let selectionDuration = DesignDuration.fast
+    private let previewDuration = DesignDuration.standard
     @State private var showsFilters = false
     @State private var selectedID: String?
     @State private var isAdding = false
@@ -86,7 +86,7 @@ struct CatalogueBrowserView: View {
                             .transition(.opacity.combined(with: .offset(y: reduceMotion ? 0 : Self.previewOffset)))
                     }
                 }
-                .animation(reduceMotion ? nil : Motion.easeOut(previewDuration), value: store.previewDescriptor?.key)
+                .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: previewDuration), value: store.previewDescriptor?.key)
             }
         }
         .onAppear { store.searchCatalogue() }
@@ -182,7 +182,7 @@ struct CatalogueBrowserView: View {
                         }.buttonStyle(PressStyle()).id(item.id)
                         .accessibilityAddTraits(selectedID == item.id ? [.isSelected] : [])
                         .help(item.definition)
-                        .animation(reduceMotion ? nil : .easeInOut(duration: selectionDuration), value: selectedID == item.id)
+                        .animation(reduceMotion ? nil : .timingCurve(DesignEase.inOut, duration: selectionDuration), value: selectedID == item.id)
                     }
                     if let error = store.catalogueError {
                         Label(error, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(.secondary).padding(Self.messagePadding)

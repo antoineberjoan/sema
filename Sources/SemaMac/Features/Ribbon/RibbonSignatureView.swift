@@ -13,11 +13,11 @@ private enum SignatureMotion {
     // Mouvement 1.1: the line draws in 550 ms (seen at each opening, so kept short), then the point and the
     // context fade in together, the mission follows after a 50 ms stagger. The whole sequence ends under 900 ms.
     static let drawDelay = 100
-    static let drawDuration = Motion.explain
+    static let drawDuration = DesignDuration.explain
     static let contextDelay = drawDelay + Int(drawDuration * 1_000)
-    static let missionDelay = contextDelay + Int(Motion.stagger * 1_000)
-    static let textDuration = Motion.standard
-    static let textOffset = Motion.shift
+    static let missionDelay = contextDelay + Int(DesignMotion.stagger * 1_000)
+    static let textDuration = DesignDuration.standard
+    static let textOffset = DesignMotion.shift
     static let markSize: CGFloat = 72
     static let lineWidth = SignalPath.stroke * markSize / SignalPath.viewBox
     static let drawStage = 1
@@ -51,21 +51,21 @@ struct RibbonSignatureView: View {
                 // The teal point settles once the line has arrived.
                 SignalDot().fill(DesignColor.accentControl(.brand))
                     .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
-                    .animation(reduceMotion ? nil : Motion.easeOut(SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
+                    .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             }
                 .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
                 .frame(height: Self.markAreaHeight).accessibilityHidden(true)
-                .animation(reduceMotion ? nil : Motion.easeInOut(SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
+                .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.inOut, duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
             Spacer(minLength: Theme.minorSpacing)
             Text("L’économie bouge.")
                 .typeRole(.small).foregroundStyle(.white.opacity(Self.contextOpacity))
                 .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
-                .animation(reduceMotion ? nil : Motion.easeOut(SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
+                .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             Text("Gardez vos repères.")
                 .typeRole(.section).padding(.top, Self.titleTopPadding)
                 .opacity(stage >= SignatureMotion.missionStage ? 1 : 0)
                 .offset(y: stage >= SignatureMotion.missionStage || reduceMotion ? 0 : SignatureMotion.textOffset)
-                .animation(reduceMotion ? nil : Motion.easeOut(SignatureMotion.textDuration), value: stage >= SignatureMotion.missionStage)
+                .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.missionStage)
             Button(action: openFeedback) {
                 Label("Une idée ou un bug ?", systemImage: "bubble.left")
                     .typeRole(.overline).padding(.horizontal, Self.feedbackPadding)

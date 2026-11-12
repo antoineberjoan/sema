@@ -10,11 +10,11 @@ import MarketCore
 // 180 ms  Un thème change de teinte et l’aperçu du bandeau suit, sans déplacer les tuiles.
 
 private enum WelcomeMotion {
-    static let drawDuration = Motion.explain
-    static let stepDuration = Motion.standard
-    static let contentOffset = Motion.shift
-    static let selectionDuration = Motion.fast
-    static let previewScale = Motion.scaleFrom
+    static let drawDuration = DesignDuration.explain
+    static let stepDuration = DesignDuration.standard
+    static let contentOffset = DesignMotion.shift
+    static let selectionDuration = DesignDuration.fast
+    static let previewScale = DesignMotion.scaleFrom
 }
 
 private enum WelcomeLayout {
@@ -180,7 +180,7 @@ struct OnboardingView: View {
         .interactiveDismissDisabled()
         .task {
             await store.checkWebstatKey()
-            withAnimation(reduceMotion ? nil : Motion.easeOut(WelcomeMotion.drawDuration)) { drawProgress = 1 }
+            withAnimation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: WelcomeMotion.drawDuration)) { drawProgress = 1 }
         }
     }
 
@@ -261,7 +261,7 @@ struct OnboardingView: View {
         }
         .frame(maxWidth: .infinity, minHeight: MenuRibbonLayout.cardHeight, maxHeight: MenuRibbonLayout.cardHeight, alignment: .leading)
         .environment(\.semaGlassSettings, store.ribbonGlass)
-        .animation(reduceMotion ? nil : Motion.easeOut(WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
+        .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
         .allowsHitTesting(false).accessibilityHidden(true)
     }
 
@@ -270,7 +270,7 @@ struct OnboardingView: View {
     }
 
     private func toggle(_ collection: WelcomeCollection) {
-        withAnimation(reduceMotion ? nil : Motion.easeOut(WelcomeMotion.selectionDuration)) {
+        withAnimation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: WelcomeMotion.selectionDuration)) {
             if isSelected(collection) { selection.subtract(collection.seriesIDs) }
             else { selection.formUnion(collection.seriesIDs) }
         }
@@ -315,7 +315,7 @@ struct OnboardingView: View {
     }
 
     private func go(to next: Int) {
-        withAnimation(reduceMotion ? nil : Motion.easeInOut(WelcomeMotion.stepDuration)) { step = next }
+        withAnimation(reduceMotion ? nil : Animation.timingCurve(DesignEase.inOut, duration: WelcomeMotion.stepDuration)) { step = next }
     }
 
     private var footer: some View {

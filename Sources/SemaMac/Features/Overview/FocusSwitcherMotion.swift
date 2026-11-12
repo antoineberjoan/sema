@@ -1,4 +1,5 @@
 // Séquence et ressorts du sélecteur Focus, partagés avec l’espace de travail.
+import SemaDesign
 import SwiftUI
 
 // SÉLECTEUR
@@ -6,6 +7,6 @@ import SwiftUI
 // 180 ms  Le défilement centre la sélection avec un ressort sans rebond.
 // Relâcher ⌘ / Entrée → ouverture ; Échap / sortie de fenêtre → annulation.
 enum FocusSwitcherMotion {
-    static let selection = Motion.easeOut(Motion.standard)
-    static let presentation = Motion.easeOut(Motion.standard)
+    static let selection = Animation.timingCurve(DesignEase.out, duration: DesignDuration.standard)
+    static let presentation = Animation.timingCurve(DesignEase.out, duration: DesignDuration.standard)
 }

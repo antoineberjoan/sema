@@ -1,4 +1,5 @@
 // Déplie ou replie une section en cliquant sur toute sa ligne, pas seulement sur la flèche.
+import SemaDesign
 import SwiftUI
 
 struct RowDisclosureStyle: DisclosureGroupStyle {
@@ -12,7 +13,7 @@ struct RowDisclosureStyle: DisclosureGroupStyle {
     func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .leading, spacing: Self.contentSpacing) {
             Button {
-                withAnimation(reduceMotion ? nil : .easeOut(duration: Self.duration)) {
+                withAnimation(reduceMotion ? nil : .timingCurve(DesignEase.out, duration: Self.duration)) {
                     configuration.isExpanded.toggle()
                 }
             } label: {

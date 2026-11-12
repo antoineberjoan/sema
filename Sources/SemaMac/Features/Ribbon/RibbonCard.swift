@@ -53,7 +53,7 @@ struct RibbonCard: View {
         }
         .buttonStyle(PressStyle())
         .onHover { hovered = $0 }
-        .animation(reduceMotion ? nil : .easeInOut(duration: MenuRibbonLayout.hoverDuration), value: hovered)
+        .animation(reduceMotion ? nil : .timingCurve(DesignEase.hover, duration: MenuRibbonLayout.hoverDuration), value: hovered)
         .contextMenu {
             Button(store.isWatched(series.id) ? "Ne plus surveiller les mouvements" : "Me prévenir des mouvements inhabituels") {
                 Task { await store.toggleWatch(series) }
