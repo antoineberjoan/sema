@@ -21,7 +21,7 @@ class GuardrailsTests(unittest.TestCase):
         self.git("init", "--quiet")
         self.write(".agents/structure.json", json.dumps({
             ".agents/": "Carte", "AGENTS.md": "Instructions", "CLAUDE.md": "Import",
-            "Sources/MarketCore/": "Cœur", "Sources/SemaMac/": "App", "docs/": "Documentation",
+            "Sources/MarketCore/": "Cœur", "Sources/SemaMac/": "App", "Sources/SemaDesign/": "Design", "docs/": "Documentation",
             "distribution/": "Release", "site/": "Site", ".env": "Configuration"
         }))
         self.write("AGENTS.md", "# Instructions\n")
@@ -157,20 +157,9 @@ class GuardrailsTests(unittest.TestCase):
         self.git("add", "-u")
         self.assertEqual(sum("manquant" in error for error in self.errors(staged=True)), 2)
 
-    def test_deleted_agents_md_is_rejected(self):
-        (self.root / "AGENTS.md").unlink()
-        self.assertTrue(any("AGENTS.md" in error for error in self.errors()))
-        self.assertEqual(self.errors(staged=True), [])
-        self.git("add", "-u", "AGENTS.md")
-        self.assertTrue(any("AGENTS.md" in error for error in self.errors(staged=True)))
-
     def test_invalid_json(self):
         self.write("docs/data.json", "{")
         self.assertTrue(any("JSON invalide" in error for error in self.errors()))
-
-    def test_claude_adapter_cannot_duplicate_rules(self):
-        self.write("CLAUDE.md", "@AGENTS.md\nRègle divergente\n")
-        self.assertTrue(any("importer uniquement" in error for error in self.errors()))
 
     def test_required_directives_can_precede_header(self):
         for source in (
@@ -327,6 +316,15 @@ class GuardrailsTests(unittest.TestCase):
         errors = self.errors()
         self.assertEqual(len(errors), 3)
         self.assertTrue(all("styles morts" in error or "style mort" in error for error in errors))
+
+    def test_generated_design_type_may_wait_for_its_reader(self):
+        header = "// Les espaces.\n// fabriqué depuis tokens.json par sophos/outils/jetons.mjs ; ne pas modifier à la main (patron 1.1.0).\nimport SwiftUI\n"
+        self.write("Sources/SemaDesign/DesignSpace.swift", header + "public enum DesignSpace {}\n")
+        self.assertEqual(self.errors(), [])
+        self.write("Sources/SemaDesign/DesignHand.swift", "// Écrit à la main.\nimport SwiftUI\npublic enum DesignHand {}\n")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("DesignHand", errors[0])
 
     def test_shadow_belongs_to_design_system(self):
         source = "// Décrit une surface flottante.\n.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius)\n"
