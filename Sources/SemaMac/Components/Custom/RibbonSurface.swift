@@ -26,20 +26,8 @@ private struct RibbonGlassBackdrop: NSViewRepresentable {
 }
 
 private enum RibbonGlassStyle {
-    static let darkVeil = 0.10
-    static let lightVeil = 0.20
-    static let darkTint = 0.22
-    static let lightTint = 0.12
-    static let maximumGrainOpacity = 0.16
     static let veilRange = 4.0
     static let tintRange = 2.0
-    static let tintEndOpacity = 0.08
-    static let opaqueTintOpacity = 0.06
-    static let highlightOpacity = 0.025
-    static let emphasizedHighlightOpacity = 0.07
-    static let edgeDarkOpacity = 0.16
-    static let edgeLightOpacity = 0.65
-    static let edgeEndOpacity = 0.025
     static let grainScale: CGFloat = 2
 }
 
@@ -75,34 +63,34 @@ struct RibbonSurface: ViewModifier {
         let isOpaque = reduceTransparency || contrast == .increased
         let shape = RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
         // NSVisualEffectView owns the blur. Only the contrast veil changes opacity.
-        let veil = (colorScheme == .dark ? RibbonGlassStyle.darkVeil : RibbonGlassStyle.lightVeil)
+        let veil = (colorScheme == .dark ? DesignOpacity.glassVeilDark : DesignOpacity.glassVeilLight)
             * (1 - glass.transparency) * RibbonGlassStyle.veilRange
-        let tint = (colorScheme == .dark ? RibbonGlassStyle.darkTint : RibbonGlassStyle.lightTint) * glass.tint * RibbonGlassStyle.tintRange
+        let tint = (colorScheme == .dark ? DesignOpacity.glassTintDark : DesignOpacity.glassTintLight) * glass.tint * RibbonGlassStyle.tintRange
         content
             .background {
                 if isOpaque {
                     shape.fill(DesignColor.surfaceRaised)
-                    shape.fill(glassTint.opacity(RibbonGlassStyle.opaqueTintOpacity))
+                    shape.fill(glassTint.opacity(DesignOpacity.glassTintOpaque))
                 }
                 else {
                     RibbonGlassBackdrop()
-                    shape.fill(colorScheme == .dark ? Color.black.opacity(veil) : Color.white.opacity(veil))
-                    shape.fill(LinearGradient(colors: [glassTint.opacity(tint), glassTint.opacity(RibbonGlassStyle.tintEndOpacity * glass.tint)],
+                    shape.fill(DesignColor.glassVeil.opacity(veil))
+                    shape.fill(LinearGradient(colors: [glassTint.opacity(tint), glassTint.opacity(DesignOpacity.glassTintEnd * glass.tint)],
                                               startPoint: .topLeading, endPoint: .bottomTrailing))
                     if glass.grain > 0, let texture = RibbonGrain.image {
                         Image(decorative: texture, scale: RibbonGlassStyle.grainScale)
                             .resizable(resizingMode: .tile).interpolation(.none)
                             .clipShape(shape)
-                            .opacity(glass.grain * RibbonGlassStyle.maximumGrainOpacity)
+                            .opacity(glass.grain * DesignOpacity.glassGrainMax)
                             .blendMode(.softLight)
                             .allowsHitTesting(false).accessibilityHidden(true)
                     }
-                    shape.fill(Color.white.opacity(isEmphasized ? RibbonGlassStyle.emphasizedHighlightOpacity : RibbonGlassStyle.highlightOpacity))
+                    shape.fill(DesignColor.glassHighlight.opacity(isEmphasized ? DesignOpacity.glassHighlightEmphasized : DesignOpacity.glassHighlightRest))
                 }
             }
             .overlay {
-                shape.strokeBorder(LinearGradient(colors: [.white.opacity(colorScheme == .dark ? RibbonGlassStyle.edgeDarkOpacity : RibbonGlassStyle.edgeLightOpacity),
-                                                           .white.opacity(RibbonGlassStyle.edgeEndOpacity)], startPoint: .topLeading,
+                shape.strokeBorder(LinearGradient(colors: [DesignColor.glassEdge.opacity(colorScheme == .dark ? DesignOpacity.glassEdgeDark : DesignOpacity.glassEdgeLight),
+                                                           DesignColor.glassEdge.opacity(DesignOpacity.glassEdgeEnd)], startPoint: .topLeading,
                                                   endPoint: .bottomTrailing), lineWidth: DesignBorder.width)
                     .allowsHitTesting(false).accessibilityHidden(true)
             }

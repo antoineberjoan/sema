@@ -72,6 +72,14 @@ public enum DesignColor {
     public static func glassTint(_ variant: DesignPalette) -> Color {
         makeColor(DesignPrimitive.glass500(variant))
     }
+    /// Propre à sema : le voile de contraste posé sur la matière du verre du bandeau, à une opacité d'opacity.glass-veil-* ; papier en clair, encre en sombre. Pas pour un aplat d'interface.
+    public static let glassVeil: Color = makeAdaptive(light: DesignPrimitive.paper0, dark: DesignPrimitive.ink900)
+    /// Propre à sema : le reflet clair sur le verre du bandeau, à une opacité d'opacity.glass-highlight-*. Pas pour un aplat d'interface.
+    public static let glassHighlight: Color = makeColor(DesignPrimitive.paper0)
+    /// Propre à sema : le bord clair du verre du bandeau, à une opacité d'opacity.glass-edge-*. Pas pour un aplat d'interface.
+    public static let glassEdge: Color = makeColor(DesignPrimitive.paper0)
+    /// Propre à sema : le fond sous le dégradé d'accent de la signature du bandeau ; encre dans les deux modes.
+    public static let signatureBase: Color = makeColor(DesignPrimitive.ink900)
     /// La nuance 1 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface.
     public static func palettePreview1(_ variant: DesignPalette) -> Color {
         makeColor(DesignPrimitive.palettePreview700(variant))

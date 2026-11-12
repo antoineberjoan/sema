@@ -44,7 +44,7 @@ Avant tout : `swift build` réussit, `swift test --disable-xctest` passe, et l'a
 ## Bandeau
 
 - L'écart de 12 points entre cartes (`field-gap`) : le nombre de cartes visibles ne change pas sur un petit écran.
-- Le verre des cartes (`RibbonSurface`) avec « Réduire la transparence » : repli opaque.
+- Le verre des cartes (`RibbonSurface`) avec « Réduire la transparence » : repli opaque. Le voile, le reflet et le bord lisent des rôles de couleur (papier et encre au lieu d'un blanc et d'un noir purs) : la différence de teinte est minime, à confirmer à l'œil, en clair et en sombre.
 - **La signature** : le texte, le tracé et le bord lisent `on-accent` sur un dégradé d'accent. À mesurer à l'œil aux deux extrémités du dégradé, en clair et en sombre : la mesure de contraste de Sophos ne couvre pas un dégradé. En mode sombre, `on-accent` est une encre foncée : vérifier qu'elle reste lisible sur le fond noir sous le dégradé.
 - Le mouvement de la signature (tracé 550 ms, apparition du texte) : fluide, et immédiatement à l'état final avec « Réduire les animations ».
 
