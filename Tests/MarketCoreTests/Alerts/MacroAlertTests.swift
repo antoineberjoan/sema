@@ -66,7 +66,7 @@ struct MacroAlertTests {
         }
     }
 
-    @Test func legacyPreferencesAndFundRulesRemainReadableWithoutReinterpretation() throws {
+    @Test func schemaOnePreferencesAndFundRulesStayReadableWithoutReinterpretation() throws {
         let storedV1 = Data("""
         {"schemaVersion":1,"favoriteIDs":["atlas-i-eur","fr10"],"notificationsEnabled":false,
          "alerts":[{"id":"0F1396B5-51D9-42B3-A6DC-75E16B00D144","seriesID":"atlas-i-eur",

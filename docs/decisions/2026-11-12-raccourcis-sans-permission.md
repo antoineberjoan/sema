@@ -1,7 +1,7 @@
 # Les raccourcis globaux n'exigent aucune permission d'accessibilité
 
 Date : 2026-11-12 · Statut : proposée
-Décidé par : à confirmer par Antoine (reprise d'un document retiré)
+Décidé par : à confirmer par Antoine
 
 ## Contexte
 
@@ -25,7 +25,3 @@ Un observateur global de frappe demande une permission d'accessibilité, ce qui 
 ## Conséquences
 
 Le contrat est dans le champ optionnel `shortcuts` du document v2.
-
-## Trace
-
-Repris de `docs/ARCHITECTURE.md` à son retrait, le 2026-11-12. La date d'origine n'est pas écrite : le texte complet reste dans l'historique Git.

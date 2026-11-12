@@ -5,7 +5,7 @@ Décidé par : à confirmer par Antoine (arbitrage de l'architecte du 2026-11-12
 
 ## Contexte
 
-`ARCHITECTURE.md` décrivait des contrats de comportement avec leur valeur exacte. Ce document est retiré. Une règle qui compte a un test : sans test, elle ne vit que dans l'historique Git et personne ne voit qu'on la casse. Quatre contrats sont dans ce cas ou doivent être vérifiés.
+Un contrat de comportement s'écrit avec sa valeur exacte. Une règle qui compte a un test : sans test, personne ne voit qu'on la casse. Quatre contrats sont dans ce cas ou doivent être vérifiés.
 
 ## Décision
 
@@ -30,8 +30,8 @@ Restent à écrire : le test du seuil de 9 950 et celui des tranches de 6 année
 
 ## Conséquences
 
-Un lot de tests de comportement est posé avant les lots de structure du code : ces tests protègent les déplacements. Le tableau de `docs/PRODUCT.md` n'est plus la source d'un comportement dès que son test existe.
+Les tests de comportement protègent les déplacements de code. Le tableau de `docs/PRODUCT.md` n'est plus la source d'un comportement dès que son test existe.
 
 ## Trace
 
-Retrait des anciens documents du 2026-11-12. Les valeurs viennent de la lecture du code à cette date ; les tests viennent de `Tests/MarketCoreTests`.
+Les valeurs viennent du code au 2026-11-12 ; les tests sont dans `Tests/MarketCoreTests`.

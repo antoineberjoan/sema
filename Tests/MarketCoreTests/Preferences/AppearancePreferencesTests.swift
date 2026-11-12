@@ -1,4 +1,4 @@
-// Vérifie la conservation du mode d’apparence et le repli des préférences anciennes.
+// Vérifie la conservation du mode d’apparence et le repli d’un fichier de préférences sans mode d’apparence.
 import Foundation
 import Testing
 @testable import MarketCore

@@ -5,11 +5,11 @@ Décidé par : à confirmer par Antoine (arbitrage de l'architecte du 2026-11-12
 
 ## Contexte
 
-`StatisticalClient` parlait à huit services avec un seul fichier de 410 lignes. Cinq parlent SDMX (Insee, BCE, Eurostat, BRI, OCDE). Trois ont leur propre format : la Fed de New York, la Banque mondiale, FRED. Sophos veut « un service, un connecteur », avec le décodage dans `Mapping`.
+Huit services statistiques sont servis. Cinq parlent SDMX (Insee, BCE, Eurostat, BRI, OCDE). Trois ont leur propre format : la Fed de New York, la Banque mondiale, FRED. Sophos veut « un service, un connecteur », avec le décodage dans `Mapping`.
 
 ## Décision
 
-Quatre connecteurs remplacent le client unique.
+Quatre connecteurs servent les huit services.
 
 | Connecteur | Services | Particularité |
 | --- | --- | --- |
@@ -29,13 +29,13 @@ Trois choix en découlent.
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
 | Un connecteur par hôte SDMX | Aucune ambiguïté sur l'hôte | Cinq copies du même code (`construire` : une seule implémentation) |
-| Garder le client unique | Aucun changement | Une règle de Sophos non suivie |
+| Un client unique pour les huit services | Un seul fichier | Une règle de Sophos non suivie |
 | Un connecteur SDMX à hôte en paramètre, un connecteur par autre service | La règle suivie, une seule implémentation du protocole SDMX | Un aiguilleur côté app |
 
 ## Conséquences
 
-`StatisticalClient.ClientError` devient `PublicDataError` : `GdeltClient`, `PressReleaseClient` et `XMLTree` le lisaient déjà, alors qu'ils ne parlent pas à un service statistique. `AppStore.statisticalClient()` devient `statisticalConnectors()`. Les données de départ (`StatisticalStarter`) restent un écart daté : voir la décision sur les écarts de forme.
+`PublicDataError` est l'erreur commune des connecteurs : `GdeltClient`, `PressReleaseClient` et `XMLTree` la lisent aussi, sans parler à un service statistique. `AppStore.statisticalConnectors()` choisit le connecteur de chaque source. Les données de départ sont dans `Sources/MarketCore/Resources/Starters/statistical.json`.
 
 ## Trace
 
-Premier lot des connecteurs refaits conformes à l'arbitrage de l'architecte du 2026-11-12. Le Swift n'est pas compilé : l'aiguilleur `any StatisticalConnector`, les valeurs par défaut des extensions du protocole et `precondition` dans `SdmxClient.init` sont à compiler.
+Arbitrage de l'architecte du 2026-11-12.

@@ -1,7 +1,7 @@
 # On n'ajoute un cadre qu'au moment où un besoin réel le demande
 
 Date : 2026-11-12 · Statut : proposée
-Décidé par : à confirmer par Antoine (reprise d'un document retiré)
+Décidé par : à confirmer par Antoine
 
 ## Contexte
 
@@ -24,7 +24,3 @@ sema est petit. Un cadre construit à l'avance coûte de la lecture et de l'entr
 ## Conséquences
 
 Même esprit que la décision `interface-native-et-dependances`.
-
-## Trace
-
-Repris de `docs/ARCHITECTURE.md` à son retrait, le 2026-11-12. La date d'origine n'est pas écrite : le texte complet reste dans l'historique Git.

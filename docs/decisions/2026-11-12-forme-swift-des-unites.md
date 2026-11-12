@@ -28,8 +28,4 @@ Sophos range chaque sorte de code selon une forme fermée : un rôle est le dern
 
 ## Conséquences
 
-Le premier lot de structure pose le bloc `structure:` de `projet.yml` avec un cliquet égal au nombre de fautes de ce jour (121). Chaque lot qui range une unité baisse le cliquet ; il est à 0 à la fin.
-
-## Trace
-
-Premier lot de structure du code de l'alignement de sema sur Sophos. Le comptage vient de `structure.mjs` : 121 fautes pour les 17 unités déclarées.
+Le bloc `structure:` de `projet.yml` déclare les unités, avec un cliquet égal au nombre de fautes de `structure.mjs`. Il ne peut que baisser, jusqu'à 0.

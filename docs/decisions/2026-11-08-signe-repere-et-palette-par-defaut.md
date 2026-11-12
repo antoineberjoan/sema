@@ -25,7 +25,3 @@ Le 8 novembre, Antoine a fourni une nouvelle identité. Elle remplace « Palier 
 ## Conséquences
 
 Les valeurs de couleur sont dans `Resources/Brand/tokens.json`. Les noms enregistrés des palettes ne changent jamais.
-
-## Trace
-
-Repris de `docs/IDENTITY.md` à son retrait, le 2026-11-12. Le texte complet reste dans l'historique Git.

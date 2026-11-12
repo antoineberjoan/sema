@@ -9,26 +9,22 @@ L'écran Explorateur regroupe le choix d'une source, le catalogue, la recherche,
 
 ## Décision
 
-- **Les lignes de résultat** (jeux, séries, instruments, repères de départ) ont une marge de 8 points (`row-inset`, 12 avant) et un rayon de 10 points. Elles sont séparées de 2 points (`list-gap-dense`, 4 avant). Un titre et son texte sont séparés de 4 points (`title-gap`, 8 avant).
-- **Les cartes de source** ont une marge de 16 points (`card-inset`, 24 avant) et un rayon de 10 points (16 avant).
-- **Les champs de recherche** gardent une marge de 12 points (`menu-inset`) : ce sont des champs, pas des lignes de liste. Les lignes en dessous sont à 8 points ; l'écart de 4 points entre les deux se voit à l'alignement.
-- **Le titre d'un résultat** garde un maximum de trois lignes. Ce nombre n'est pas un jeton : il vit dans `ExplorerLayout`, partagé par les trois listes.
+- **Les lignes de résultat** (jeux, séries, instruments, repères de départ) ont une marge de 8 points (`row-inset`) et un rayon de 10 points. Elles sont séparées de 2 points (`list-gap-dense`). Un titre et son texte sont séparés de 4 points (`title-gap`).
+- **Les cartes de source** ont une marge de 16 points (`card-inset`) et un rayon de 10 points.
+- **Les champs de recherche** ont une marge de 12 points (`menu-inset`) : ce sont des champs, pas des lignes de liste. Les lignes en dessous sont à 8 points ; l'écart de 4 points entre les deux se voit à l'alignement.
+- **Le titre d'un résultat** a un maximum de trois lignes. Ce nombre n'est pas un jeton : il vit dans `ExplorerLayout`, partagé par les trois listes.
 - **La sélection d'un résultat** lit `selection` (teinte d'accent de 12 % en clair, 24 % en sombre).
-- **Le champ de clé exacte** lit le rôle `code` (monospace, 13 points) à la place de `callout` du système en monospace (12 points).
+- **Le champ de clé exacte** lit le rôle `code` (monospace, 13 points).
 - **Le panneau de recherche rapide et la liste de ses résultats** gardent le texte secondaire du système : ils sont sur la liste fermée des surfaces translucides. La liste des résultats est la même dans le panneau et dans la feuille ⌘K, donc elle garde ce texte dans les deux. Le contour de la touche « esc » lit `rule`.
-- **Les marges d'une feuille ou d'une zone de chargement** de 24 points passent à 32 points (`page-inset-narrow`).
+- **Les marges d'une feuille ou d'une zone de chargement** sont de 32 points (`page-inset-narrow`).
 
 ## Options
 
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
-| Lire le rôle par son sens | Aucune valeur recopiée ; une seule marge pour toutes les lignes | Des lignes plus serrées de 4 points, des cartes moins hautes |
-| Garder les valeurs actuelles | Aucun changement visible | Des rôles propres à sema pour 12, 14, 24 points et pour deux rayons |
+| Lire le rôle par son sens | Aucune valeur recopiée ; une seule marge pour toutes les lignes | Des lignes serrées (8 points), des cartes peu hautes |
+| Écrire une valeur propre à sema | Des marges sur mesure | Des rôles propres à sema pour 12, 14, 24 points et pour deux rayons |
 
 ## Conséquences
 
-Le même choix de 8 points pour une ligne de liste vaut pour Brief et pour l'écran Alertes. Si on le change, c'est un remplacement de `row-inset` dans les fichiers de liste.
-
-## Trace
-
-Sixième lot d'écran de l'alignement de sema sur Sophos.
+Le même choix de 8 points pour une ligne de liste vaut pour Brief et pour l'écran Alertes. Le changer est un remplacement de `row-inset` dans les fichiers de liste.

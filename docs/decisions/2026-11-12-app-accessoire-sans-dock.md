@@ -1,7 +1,7 @@
 # sema est une app accessoire : sans Dock, avec un bandeau et un lancement à la demande
 
 Date : 2026-11-12 · Statut : proposée
-Décidé par : à confirmer par Antoine (reprise d'un document retiré)
+Décidé par : à confirmer par Antoine
 
 ## Contexte
 
@@ -24,7 +24,3 @@ sema vit surtout dans la barre des menus. Le système possède l'état de l'ouve
 ## Conséquences
 
 La distribution et la mise à jour restent par le cask Homebrew et les versions publiques.
-
-## Trace
-
-Repris de `docs/ARCHITECTURE.md` à son retrait, le 2026-11-12. La date d'origine n'est pas écrite : le texte complet reste dans l'historique Git.

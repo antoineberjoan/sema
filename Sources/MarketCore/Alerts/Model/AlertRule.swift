@@ -7,7 +7,7 @@ public struct AlertRule: Codable, Identifiable, Equatable, Sendable {
     public let direction: AlertDirection
     public let threshold: Decimal
     public var isEnabled: Bool
-    /// Missing on legacy fund rules, which keep their original relative-change semantics.
+    /// Absente d’une règle de fonds écrite en schéma 1 : elle garde la variation relative.
     public let condition: AlertCondition?
     public var lastEvaluatedAt: Date?
 

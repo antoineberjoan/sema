@@ -26,8 +26,4 @@ Le 17 octobre, Antoine a retenu une présentation web très courte. Le site gard
 
 ## Conséquences
 
-Le chantier du site (dernier lot de l'alignement) reprend ces règles dans `site/AGENTS.md` ou les remplace par une décision.
-
-## Trace
-
-Repris de `docs/IDENTITY.md` à son retrait, le 2026-11-12. Le texte complet reste dans l'historique Git.
+Ces règles sont reprises dans `site/AGENTS.md`, ou remplacées par une décision.

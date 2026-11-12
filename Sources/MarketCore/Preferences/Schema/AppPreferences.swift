@@ -1,4 +1,4 @@
-// Préférences persistées de l’app et migration des versions de schéma distribuées.
+// Préférences persistées de l’app, au format de schéma 2.
 import Foundation
 
 public struct AppPreferences: Codable, Equatable, Sendable {
@@ -77,27 +77,10 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         headlineSourceID = try values.decodeIfPresent(String.self, forKey: .headlineSourceID)
         summaryWriterID = try values.decodeIfPresent(String.self, forKey: .summaryWriterID)
         brief = try values.decodeIfPresent(BriefPreferences.self, forKey: .brief)
-        // Empty is a valid v2 selection; absence only means legacy v1.
+        // Schéma 2 : la liste peut être vide. Schéma 1 : elle est absente et la sélection de départ s’applique (`PreferencesMigration`).
         if schemaVersion > 1 { followedSeriesIDs = try values.decode([String].self, forKey: .followedSeriesIDs) }
         else { followedSeriesIDs = WebstatStarter.ids }
     }
 
     public func isSourceEnabled(_ id: String) -> Bool { !(disabledSourceIDs ?? []).contains(id) }
-
-    public func migrated() throws -> AppPreferences {
-        guard (1...Self.currentSchemaVersion).contains(schemaVersion) else { throw PreferencesError.unsupportedVersion(schemaVersion) }
-        var value = self
-        value.schemaVersion = Self.currentSchemaVersion
-        value.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.canonicalID))
-        var seen: Set<String> = []
-        value.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.canonicalID).filter { seen.insert($0).inserted }
-        value.alerts = alerts.map { rule in
-            AlertRule(id: rule.id, seriesID: WebstatStarter.canonicalID(rule.seriesID), direction: rule.direction,
-                threshold: rule.threshold, isEnabled: rule.isEnabled, condition: rule.effectiveCondition,
-                lastEvaluatedAt: rule.lastEvaluatedAt)
-        }
-        value.shortcuts = shortcuts?.migrated()
-        if schemaVersion == 1 { value.isOnboardingCompleted = true }
-        return value
-    }
 }
