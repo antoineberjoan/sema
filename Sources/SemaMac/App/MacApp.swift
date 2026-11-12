@@ -20,7 +20,7 @@ struct MacApp: App {
                     MenuRibbonAttachment(store: store, appDelegate: appDelegate).frame(width: 0, height: 0)
                 }
                 .sheet(isPresented: $store.isOnboardingPresented) {
-                    OnboardingView(initialSelection: store.preferences.followedSeriesIDs,
+                    OnboardingScreen(initialSelection: store.preferences.followedSeriesIDs,
                         selectSeries: store.followStarterSeries, finish: store.finishOnboarding)
                         .environment(store).tint(DesignColor.accentControl(store.palette))
                         .environment(\.palette, store.palette)

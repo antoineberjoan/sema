@@ -3,7 +3,7 @@ import SemaDesign
 import SwiftUI
 import MarketCore
 
-struct AlertsView: View {
+struct AlertsScreen: View {
     private static let sectionSpacing = DesignSpace.groupGap
     private static let emptyMinHeight: CGFloat = 350
     @Environment(AppStore.self) private var store
