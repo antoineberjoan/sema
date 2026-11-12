@@ -12,7 +12,7 @@ private struct GlassSettingsKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var semaGlassSettings: RibbonGlassPreferences {
+    var glassSettings: RibbonGlassPreferences {
         get { self[GlassSettingsKey.self] }
         set { self[GlassSettingsKey.self] = newValue }
     }

@@ -103,7 +103,7 @@ struct RibbonCard: View {
                 }
                 if let selected {
                     RuleMark(x: .value("Date", selected.date))
-                        .foregroundStyle(.secondary).lineStyle(StrokeStyle(lineWidth: 1, dash: [2, 3]))
+                        .foregroundStyle(.secondary).lineStyle(StrokeStyle(lineWidth: DesignBorder.width, dash: [2, 3]))
                     PointMark(x: .value("Date", selected.date), y: .value(series.displayUnit, MarketFormat.double(selected.value)))
                         .symbolSize(Self.selectionPointSize).foregroundStyle(accent)
                 }

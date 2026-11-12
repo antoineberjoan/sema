@@ -20,7 +20,7 @@ struct RibbonGlassSettingsView: View {
                     .frame(height: MenuRibbonLayout.cardHeight)
                     .allowsHitTesting(false).accessibilityHidden(true)
                     .environment(\.palette, store.palette)
-                    .environment(\.semaGlassSettings, store.ribbonGlass)
+                    .environment(\.glassSettings, store.ribbonGlass)
             }
 
             glassSlider("Transparence", symbol: "drop", value: Binding(get: { store.ribbonGlass.transparency }, set: { value in

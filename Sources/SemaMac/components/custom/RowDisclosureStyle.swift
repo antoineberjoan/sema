@@ -7,7 +7,6 @@ import SwiftUI
 struct RowDisclosureStyle: DisclosureGroupStyle {
     private static let spacing: CGFloat = 6
     private static let chevronWidth: CGFloat = 12
-    private static let chevronFont = Font.caption.weight(.semibold)
     private static let contentSpacing: CGFloat = 8
     private static let duration = 0.18
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -20,7 +19,7 @@ struct RowDisclosureStyle: DisclosureGroupStyle {
                 }
             } label: {
                 HStack(spacing: Self.spacing) {
-                    Image(systemName: "chevron.right").font(Self.chevronFont)
+                    Image(systemName: "chevron.right").typeRole(.caption).fontWeight(.semibold)
                         .rotationEffect(.degrees(configuration.isExpanded ? 90 : 0))
                         .frame(width: Self.chevronWidth).accessibilityHidden(true)
                     configuration.label

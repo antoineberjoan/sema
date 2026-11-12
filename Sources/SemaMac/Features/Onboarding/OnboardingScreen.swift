@@ -260,7 +260,7 @@ struct OnboardingScreen: View {
             }
         }
         .frame(maxWidth: .infinity, minHeight: MenuRibbonLayout.cardHeight, maxHeight: MenuRibbonLayout.cardHeight, alignment: .leading)
-        .environment(\.semaGlassSettings, store.ribbonGlass)
+        .environment(\.glassSettings, store.ribbonGlass)
         .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
         .allowsHitTesting(false).accessibilityHidden(true)
     }

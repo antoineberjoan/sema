@@ -41,9 +41,6 @@ DAY_SECONDS = re.compile(r"(?<![\w.])86_?400(?![\w.])")
 # Typographie 1.1 : une taille de texte écrite en chiffres vit seulement dans les rôles de `TypeRole`.
 NATIVE_TEXT_SIZE = re.compile(r"\.system\(size:\s*\d")
 TYPE_ROLES = "Sources/SemaMac/Style/TypeRole.swift"
-# Noms antérieurs à la règle « pas de préfixe Sema » ; aucun nouveau type ne s’y ajoute.
-LEGACY_SEMA_TYPES = {"SemaAppDelegate", "SemaAppearance", "SemaCommands", "SemaElevation", "SemaFeedback", "SemaMacApp", "SemaMark",
-                     "SemaPalette", "SemaPressStyle", "SemaSettingsTab", "SemaSettingsView", "SemaSignalPath", "SemaSupport", "SemaSymbol", "SemaTheme"}
 PRIVATE_DECLARATION = re.compile(r"\b(?:private|fileprivate)\s+(?:(?:static|final|lazy|nonisolated|override|mutating|indirect)\s+)*"
                                  r"(?:let|var|func|struct|enum|class|actor|typealias)\s+(\w+)")
 IMPLICIT_NAMES = {"CodingKeys", "body", "init"}
@@ -208,7 +205,7 @@ def new_sema_types(path, source):
     """Refuse un nouveau type au préfixe redondant `Sema`."""
     names = {m["name"] for m in TOP_TYPE.finditer(swift_code(source))}
     return [f"{path} : `{name}` répète le nom du projet ; nommer le type sans préfixe `Sema`."
-            for name in sorted(names) if name.startswith("Sema") and name not in LEGACY_SEMA_TYPES]
+            for name in sorted(names) if name.startswith("Sema")]
 
 
 def unused_private(path, source):
