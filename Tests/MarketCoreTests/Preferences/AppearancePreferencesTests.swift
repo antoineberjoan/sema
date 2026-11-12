@@ -13,7 +13,7 @@ struct AppearancePreferencesTests {
         {"schemaVersion":2,"favoriteIDs":["eurusd"],"followedSeriesIDs":["eurusd"],"alerts":[],"notificationsEnabled":false,"themeID":"polar"}
         """.utf8)
         try previous.write(to: file)
-        let value = try PreferencesStore(fileURL: file).load()
+        let value = try PreferencesRepository(fileURL: file).load()
         #expect(value.appearanceID == nil)
         #expect(value.themeID == "polar")
         #expect(value.followedSeriesIDs == [WebstatClient.canonicalID("eurusd")])
@@ -24,7 +24,7 @@ struct AppearancePreferencesTests {
     @Test func appearanceAndPalettePersistIndependently() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-appearance-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let store = PreferencesStore(fileURL: directory.appendingPathComponent("preferences.json"))
+        let store = PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json"))
         try store.save(AppPreferences(themeID: "polar", appearanceID: "dark"))
         var value = try store.load()
         #expect(value.appearanceID == "dark")

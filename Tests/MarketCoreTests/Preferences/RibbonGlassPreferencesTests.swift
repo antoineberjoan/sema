@@ -13,7 +13,7 @@ struct RibbonGlassPreferencesTests {
         {"schemaVersion":2,"favoriteIDs":[],"followedSeriesIDs":[],"alerts":[],"notificationsEnabled":false,"themeID":"polar","appearanceID":"dark"}
         """.utf8)
         try previous.write(to: file)
-        let loaded = try PreferencesStore(fileURL: file).load()
+        let loaded = try PreferencesRepository(fileURL: file).load()
         #expect(loaded.ribbonGlass == nil)
         #expect((loaded.ribbonGlass ?? .standard).transparency == 0.75)
         #expect((loaded.ribbonGlass ?? .standard).tint == 0.5)
@@ -24,7 +24,7 @@ struct RibbonGlassPreferencesTests {
     @Test func glassPersistsAndResetsWithoutChangingOtherChoices() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-glass-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
-        let store = PreferencesStore(fileURL: directory.appendingPathComponent("preferences.json"))
+        let store = PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json"))
         let expected = AppPreferences(favoriteIDs: ["eurusd"], notificationsEnabled: true,
             themeID: "polar", appearanceID: "light", ribbonPositionID: "left", invertedCurrencyPairs: ["EUR/USD"],
             ribbonGlass: RibbonGlassPreferences(transparency: 0.9, tint: 0.8, grain: 0.3))

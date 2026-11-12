@@ -13,7 +13,7 @@ struct LocalStorage {
         return LocalStorage(directory: root.appendingPathComponent("Sema", isDirectory: true))
     }
 
-    var preferences: PreferencesStore { PreferencesStore(fileURL: directory.appendingPathComponent("preferences.json")) }
+    var preferences: PreferencesRepository { PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json")) }
 
     func cachedRates() throws -> [MarketSeries] {
         let url = directory.appendingPathComponent("ecb-cache.json")
@@ -31,7 +31,7 @@ struct LocalStorage {
         guard FileManager.default.fileExists(atPath: url.path) else { return [] }
         let data = try Data(contentsOf: url)
         if let cache = try? JSONDecoder().decode(WebstatCache.self, from: data) {
-            guard cache.schemaVersion == WebstatCache.currentSchemaVersion else { throw PreferencesStore.StoreError.unsupportedVersion(cache.schemaVersion) }
+            guard cache.schemaVersion == WebstatCache.currentSchemaVersion else { throw PreferencesError.unsupportedVersion(cache.schemaVersion) }
             return cache.series
         }
         let legacy = try JSONDecoder().decode([MarketSeries].self, from: data)
@@ -59,7 +59,7 @@ struct LocalStorage {
         let url = directory.appendingPathComponent("statistical-catalogues.json")
         guard FileManager.default.fileExists(atPath: url.path) else { return [:] }
         let cache = try JSONDecoder().decode(StatisticalCatalogueCache.self, from: Data(contentsOf: url))
-        guard cache.schemaVersion == 1 else { throw PreferencesStore.StoreError.unsupportedVersion(cache.schemaVersion) }
+        guard cache.schemaVersion == 1 else { throw PreferencesError.unsupportedVersion(cache.schemaVersion) }
         return cache.datasets
     }
     func cacheStatisticalCatalogues(_ datasets: [String: [StatisticalDataset]]) throws {

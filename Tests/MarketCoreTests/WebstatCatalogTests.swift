@@ -175,7 +175,7 @@ struct WebstatCatalogTests {
         let file = directory.appendingPathComponent("preferences.json")
         let old = Data("{\"schemaVersion\":1,\"favoriteIDs\":[\"eurusd\"],\"alerts\":[],\"notificationsEnabled\":false}".utf8)
         try old.write(to: file)
-        let store = PreferencesStore(fileURL: file)
+        let store = PreferencesRepository(fileURL: file)
         let migrated = try store.load()
         #expect(migrated.followedSeriesIDs.count == WebstatClient.starterIDs.count)
         #expect(try Data(contentsOf: file.appendingPathExtension("v1-backup")) == old)
