@@ -11,7 +11,7 @@ Sophos range chaque sorte de code selon une forme fermée : un rôle est le dern
 
 - Un rôle qui porte plusieurs types est un **dossier** du nom du rôle, avec un fichier par type : `Model/`, `Contract/`, `Schema/`, `Types/`.
 - Un rôle qui porte un seul type est un **fichier** dont le nom finit par le rôle : `WebstatClient.swift`, `PreferencesRepository.swift`, `AlertsScreen.swift`.
-- Une règle de calcul est un fichier `Type+Calculations.swift` : le rôle est le dernier mot du nom, et le type garde son nom. `guardrails.py` accepte qu'un type se déclare dans un fichier `Type+Rôle.swift` (son nom ouvre toujours celui du fichier). Une étape de la bibliothèque de règles n'a que de tels fichiers.
+- Les règles de calcul d'une étape sont dans un dossier `Calculations/`, un fichier par type, nommé comme son type. `guardrails.py` garde la règle d'origine : un type visible par fichier, nommé comme lui.
 - Les dossiers sont en `PascalCase` ; l'outil de contrôle ignore la casse.
 - Un déplacement de fichier ne change aucun nom public : tout `MarketCore` reste une seule cible. Un renommage de type change la surface publique, et `PublicSurfaceTests` est alors mis à jour exprès.
 - Les fichiers de l'utilisateur (noms, clés, valeurs) ne changent jamais. `PersistedFormatTests` le garde.

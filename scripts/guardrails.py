@@ -189,9 +189,7 @@ def misplaced_types(path, source):
     stem = pathlib.PurePosixPath(path).stem
     visible = [m["name"] for m in TOP_TYPE.finditer(code) if (m["access"] or "").strip() not in ("private", "fileprivate")]
     if visible:
-        # Un type peut se déclarer dans `Type+Rôle.swift` : le nom du type ouvre toujours celui du fichier.
-        declared_in_role_file = len(visible) == 1 and "+" in stem and stem.split("+")[0] == visible[0]
-        if visible != [stem] and not declared_in_role_file:
+        if visible != [stem]:
             return [f"{path} : un seul type visible par fichier, nommé comme lui ; trouvé {', '.join(visible)}."]
         return []
     extended = {m["name"] for m in TOP_EXTENSION.finditer(code)}

@@ -60,11 +60,11 @@ class GuardrailsTests(unittest.TestCase):
         self.git("rm", "-f", "docs/b.md")
         self.assertTrue(any("lien local" in error for error in self.errors(staged=True)))
 
-    def test_type_may_be_declared_in_its_role_file(self):
-        self.write("Sources/MarketCore/Rule+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
+    def test_type_is_named_like_its_file(self):
+        self.write("Sources/MarketCore/Rule.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
         self.write("Sources/MarketCore/RuleUse.swift", "// Lit la règle pour qu'elle serve.\nimport Foundation\nlet rule = Rule.self\n")
         self.assertEqual(self.errors(), [])
-        self.write("Sources/MarketCore/Other+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
+        self.write("Sources/MarketCore/Other+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Other {}\n")
         self.assertTrue(any("un seul type visible" in error for error in self.errors()))
 
     def test_generated_stylesheet_is_not_read_as_site_style(self):
