@@ -2,7 +2,7 @@
 import SemaDesign
 import SwiftUI
 
-struct OverviewView: View {
+struct OverviewScreen: View {
     private static let sectionSpacing = DesignSpace.sectionGap
     private static let switcherSpacing = DesignSpace.groupGap
     private static let switcherBottomPadding = DesignSpace.frameInset

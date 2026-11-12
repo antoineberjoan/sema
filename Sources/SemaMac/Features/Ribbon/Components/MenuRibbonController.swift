@@ -24,7 +24,7 @@ final class MenuRibbonController: NSObject {
     private lazy var hostedContent = NSHostingView(rootView: ribbonContent(presentationID: nil))
 
     private func ribbonContent(presentationID: UUID?) -> AnyView {
-        AnyView(MenuRibbonView(presentationID: presentationID,
+        AnyView(RibbonScreen(presentationID: presentationID,
             openWorkspace: { [weak self] in self?.showWorkspace() },
             openSettings: { [weak self] in self?.showSettings() }).environment(store))
     }

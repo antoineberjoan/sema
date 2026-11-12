@@ -130,7 +130,7 @@ struct WorkspaceView: View {
     }
 
     private var overviewContent: some View {
-        OverviewView(showsQuickSwitcher: columnVisibility == .detailOnly)
+        OverviewScreen(showsQuickSwitcher: columnVisibility == .detailOnly)
             .padding(.horizontal, Self.focusHorizontalMargin).padding(.top, DesignSpace.pageInsetNarrow)
             .padding(.bottom, DesignSpace.pageInsetNarrow)
     }
