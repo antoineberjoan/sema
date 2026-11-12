@@ -88,13 +88,6 @@ class Snapshot:
             return self.git("show", ":" + path).decode("utf-8")
         return (self.root / path).read_text(encoding="utf-8")
 
-    def link(self, path):
-        if self.staged:
-            entry = self.git("ls-files", "--stage", "-z", "--", path)
-            return self.read(path) if entry.startswith(b"120000 ") else None
-        target = self.root / path
-        return target.readlink().as_posix() if target.is_symlink() else None
-
 
 def has_header(source):
     for line in source.splitlines():
@@ -355,10 +348,6 @@ def check(snapshot):
                                               posixpath.join(posixpath.dirname(path), target_path))
                 if resolved not in snapshot.paths and not any(p.startswith(resolved.rstrip("/") + "/") for p in snapshot.paths):
                     errors.append(f"{path} : lien local introuvable : {link}.")
-        if path.startswith(".agents/skills/") and name == "SKILL.md":
-            match = re.match(r"---\nname: ([a-z0-9-]+)\ndescription: (.+)\n---\n", source)
-            if not match or match[1] != pathlib.PurePosixPath(path).parent.name:
-                errors.append(f"{path} : nom et description de skill invalides.")
 
     errors.extend(unused_types(swift_sources))
     errors.extend(web_errors(web_sources))
@@ -366,15 +355,6 @@ def check(snapshot):
         errors.append("AGENTS.md : entrée commune obligatoire manquante.")
     if "CLAUDE.md" not in snapshot.paths or snapshot.read("CLAUDE.md").strip() != "@AGENTS.md":
         errors.append("CLAUDE.md : importer uniquement @AGENTS.md ; règles communes dans AGENTS.md.")
-    skills = {posixpath.dirname(path) for path in snapshot.paths
-              if re.fullmatch(r"\.agents/skills/[^/]+/SKILL\.md", path)}
-    adapters = {".claude/skills/" + posixpath.basename(skill): "../../" + skill for skill in skills}
-    for path, target in sorted(adapters.items()):
-        if path not in snapshot.paths or snapshot.link(path) != target:
-            errors.append(f"{path} : lien symbolique requis vers {target}, source unique de la skill.")
-    for path in sorted(snapshot.paths):
-        if path.startswith(".claude/skills/") and path not in adapters:
-            errors.append(f"{path} : seuls les liens vers les skills communes sont autorisés ici.")
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths

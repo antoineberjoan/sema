@@ -9,4 +9,4 @@ if [[ -n "$hooks_path" && "$hooks_path" != ".githooks" ]]; then
     exit 1
 fi
 git config --local core.hooksPath .githooks
-echo "Hook pre-commit activé pour sema. La CI reste indépendante des hooks locaux."
+echo "Hook pre-push activé pour sema. La CI reste indépendante des hooks locaux."

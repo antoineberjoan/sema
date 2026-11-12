@@ -25,6 +25,5 @@ Plans conservés dans leur état documenté ; certains lots ont été réalisés
 
 - [Actualisation quotidienne](plans/automatic-refresh.md), publiée en 0.6.0.
 - [Réglages avec sidebar](plans/settings-sidebar.md), publiés en 0.6.0.
-- [Socle agentique](plans/agent-foundation.md), livré en PR brouillon.
 - [Explications déterministes des repères](plans/series-explanations.md), réalisées et vérifiées dans la branche de revue.
 - [Recherche naturelle](plans/natural-search.md), évaluation comparative Apple Intelligence : le modèle est disponible sur le Mac testé mais sa précision est insuffisante, la recherche naturelle reste désactivée.
