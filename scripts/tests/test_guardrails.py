@@ -270,8 +270,8 @@ class GuardrailsTests(unittest.TestCase):
         self.assertTrue(any("typeRole" in error for error in self.errors()))
         self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nlet title = Font.system(size: side * scale)\n")
         self.assertEqual(self.errors(), [])
-        self.write("Sources/SemaMac/Style/TypeRole.swift", "// Décrit les rôles.\nstatic let title = Font.system(size: 28, weight: .medium)\n")
-        self.assertFalse(any("typeRole" in error for error in self.errors()))
+        self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nlet title = Text(\"x\").typeRole(.title)\n")
+        self.assertEqual(self.errors(), [])
 
     def test_new_type_does_not_repeat_project_name(self):
         self.write("Sources/MarketCore/SemaClock.swift", "// Décrit une horloge.\npublic struct SemaClock {}\nlet clock = SemaClock()\n")
@@ -337,11 +337,10 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("DesignHand", errors[0])
 
-    def test_shadow_belongs_to_style(self):
+    def test_shadow_comes_from_elevation(self):
         source = "// Décrit une surface flottante.\n.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius)\n"
         self.write("Sources/SemaMac/Features/Panel.swift", source)
-        self.write("Sources/SemaMac/Style/Shadow.swift", source)
-        self.write("Sources/SemaMac/Features/Card.swift", "// Décrit une carte.\n.shadow(.card)\n")
+        self.write("Sources/SemaMac/Features/Card.swift", "// Décrit une carte.\n.elevation(DesignElevation.raised)\n")
         errors = self.errors()
         self.assertEqual(len(errors), 1)
         self.assertIn("Features/Panel.swift:2 : ombre", errors[0])
