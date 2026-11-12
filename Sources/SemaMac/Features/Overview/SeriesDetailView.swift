@@ -4,21 +4,21 @@ import SwiftUI
 import MarketCore
 
 struct SeriesDetailView: View {
-    private static let focusSectionSpacing = Spacing.s24
-    private static let sectionSpacing = Spacing.s24
-    private static let headerSpacing = Spacing.s12
-    private static let titleSpacing = Spacing.s4
+    private static let focusSectionSpacing = DesignSpace.groupGap
+    private static let sectionSpacing = DesignSpace.groupGap
+    private static let headerSpacing = DesignSpace.fieldGap
+    private static let titleSpacing = DesignSpace.titleGap
     private static let valueMinimumScale: CGFloat = 0.55
-    private static let valueSpacing = Spacing.s8
-    private static let actionSpacing = Spacing.s12
+    private static let valueSpacing = DesignSpace.titleGap
+    private static let actionSpacing = DesignSpace.fieldGap
     private static let inspectorMinWidth: CGFloat = 280
     private static let inspectorIdealWidth: CGFloat = 320
     private static let inspectorMaxWidth: CGFloat = 420
     private static let previewChartHeight: CGFloat = 170
     private static let chartHeight: CGFloat = 235
-    private static let sourceSpacing = Spacing.s10
-    private static let metadataFieldSpacing = Spacing.s8
-    private static let metadataLabelSpacing = Spacing.s2
+    private static let sourceSpacing = DesignSpace.fieldGap
+    private static let metadataFieldSpacing = DesignSpace.titleGap
+    private static let metadataLabelSpacing = DesignSpace.listGapDense
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     let series: MarketSeries
@@ -40,9 +40,9 @@ struct SeriesDetailView: View {
             VStack(alignment: .leading, spacing: Self.titleSpacing) {
                 Text(MarketFormat.name(displayed))
                     .typeRole(focus ? .small : .section)
-                    .foregroundStyle(focus ? .secondary : .primary).textSelection(.enabled)
+                    .foregroundStyle(focus ? DesignColor.textMuted : DesignColor.text).textSelection(.enabled)
                 if !focus {
-                    Text(displayed.subtitle).typeRole(.small).foregroundStyle(.secondary)
+                    Text(displayed.subtitle).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -75,9 +75,9 @@ struct SeriesDetailView: View {
                 VStack(alignment: .leading, spacing: Self.titleSpacing) {
                     Text(MarketFormat.name(displayed))
                         .typeRole(focus ? .small : .section)
-                        .foregroundStyle(focus ? .secondary : .primary).textSelection(.enabled)
+                        .foregroundStyle(focus ? DesignColor.textMuted : DesignColor.text).textSelection(.enabled)
                     if !focus {
-                        Text(displayed.subtitle).typeRole(.small).foregroundStyle(.secondary)
+                        Text(displayed.subtitle).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
@@ -91,7 +91,7 @@ struct SeriesDetailView: View {
             }
             if !store.isSourceEnabled(series.marketInstrument?.provider.rawValue ?? series.statisticalDescriptor?.dataset.source.rawValue ?? store.sourceID(for: series.id)) {
                 Label("Source désactivée · historique conservé, actualisations et alertes en pause.", systemImage: "pause.circle")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
             if focus {
                 focusHeadline(displayed)
@@ -100,10 +100,10 @@ struct SeriesDetailView: View {
                     Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
                         .typeRole(.figure)
                         .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
-                    Text(MarketFormat.unit(displayed)).typeRole(.small).foregroundStyle(.secondary)
+                    Text(MarketFormat.unit(displayed)).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                     if series.latest != nil {
                         Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
-                            .typeRole(.caption).foregroundStyle(.secondary)
+                            .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                     }
                 }
             }
@@ -119,12 +119,12 @@ struct SeriesDetailView: View {
                 HStack(spacing: Self.actionSpacing) {
                     if store.historyLoadingID == series.id {
                         ProgressView().controlSize(.small)
-                        Text(store.historyProgress ?? "Chargement…").typeRole(.caption).foregroundStyle(.secondary)
+                        Text(store.historyProgress ?? "Chargement…").typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                         Spacer()
                         Button("Annuler") { store.cancelHistory() }.buttonStyle(.borderless)
                     } else {
                         Text("Couverture : depuis " + MarketFormat.date(series.observations.first?.date))
-                            .typeRole(.caption).foregroundStyle(.secondary)
+                            .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                         Spacer()
                         if series.marketInstrument == nil {
                             Button("Charger tout l’historique") { store.loadAllHistory(series) }
@@ -139,26 +139,26 @@ struct SeriesDetailView: View {
                     Text(selectedPeriodLabel)
                     } else { Label(selectedPeriodLabel, systemImage: "calendar") }
                 }
-                .typeRole(.caption).foregroundStyle(.secondary)
+                .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: Theme.minorSpacing)
+                Spacer(minLength: DesignSpace.fieldGap)
                 if !focus { alertButton }
             }
             if !focus, store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
                 Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
             if !series.canAlert {
                 Text("Alertes indisponibles pour cette unité.")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
             if let error = store.seriesErrors[series.id] {
                 Label(error + " Les observations conservées restent visibles.", systemImage: "exclamationmark.triangle")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
             if !focus {
                 DisclosureGroup("Source et définition") { sourceDetails }
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 metadata
             }
         }
@@ -175,25 +175,25 @@ struct SeriesDetailView: View {
     }
 
     private func focusHeadline(_ displayed: MarketSeries) -> some View {
-        HStack(spacing: Theme.majorSpacing) {
+        HStack(spacing: DesignSpace.groupGap) {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: Theme.majorSpacing) {
+                HStack(spacing: DesignSpace.groupGap) {
                     focusValue(displayed)
                     focusActions(displayed)
                 }
-                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
+                VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
                     focusValue(displayed)
                     focusActions(displayed)
                 }
             }
-            Spacer(minLength: Theme.minorSpacing)
+            Spacer(minLength: DesignSpace.fieldGap)
             ExchangeDirectionButton(series: series)
             FavoriteButton(seriesID: series.id, seriesName: MarketFormat.name(displayed))
         }
     }
 
     private func focusActions(_ displayed: MarketSeries) -> some View {
-        VStack(alignment: .leading, spacing: Theme.minorSpacing) {
+        VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
             variationBadge(displayed)
             alertButton
         }
@@ -202,7 +202,7 @@ struct SeriesDetailView: View {
 
     @ViewBuilder private var alertButton: some View {
         if store.isFollowing(series.id) {
-            HStack(spacing: Spacing.s8) {
+            HStack(spacing: DesignSpace.fieldGap) {
                 WatchButton(series: series)
                 if focus {
                     Button { store.isContextPresented.toggle() } label: { Label("Pourquoi ?", systemImage: "text.magnifyingglass") }
@@ -219,11 +219,11 @@ struct SeriesDetailView: View {
     }
 
     private func focusValue(_ displayed: MarketSeries) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: Theme.minorSpacing) {
+        HStack(alignment: .firstTextBaseline, spacing: DesignSpace.titleGap) {
             Text(displayed.latest.map { MarketFormat.number($0.value, digits: displayed.fractionDigits) } ?? "—")
                 .typeRole(.hero)
                 .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
-            Text(MarketFormat.unit(displayed)).typeRole(.small).foregroundStyle(.secondary)
+            Text(MarketFormat.unit(displayed)).typeRole(.small).foregroundStyle(DesignColor.textMuted)
         }
         .accessibilityElement(children: .combine)
     }
@@ -232,13 +232,13 @@ struct SeriesDetailView: View {
         if displayed.change(for: period) != nil {
             Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
                 .typeRole(.tag).fontWeight(.medium).monospacedDigit().lineLimit(1)
-                .foregroundStyle(DesignColor.accent(store.palette))
-                .padding(.horizontal, Spacing.s8)
-                .padding(.vertical, Spacing.s2)
-                .background(DesignColor.accent(store.palette).opacity(Theme.badgeFillOpacity), in: RoundedRectangle(cornerRadius: Radius.mark))
+                .foregroundStyle(DesignColor.accentText(store.palette))
+                .padding(.horizontal, DesignSpace.markInsetInline)
+                .padding(.vertical, DesignSpace.markInset)
+                .background(DesignColor.selection(store.palette), in: RoundedRectangle(cornerRadius: DesignRadius.mark))
         } else if series.latest != nil {
             Text(MarketFormat.change(displayed, period: period))
-                .typeRole(.small).foregroundStyle(.secondary)
+                .typeRole(.small).foregroundStyle(DesignColor.textMuted)
         }
     }
 
@@ -280,15 +280,15 @@ struct SeriesDetailView: View {
                     .buttonStyle(.borderless).disabled(!store.canLoadFullHistory(series) || store.historyLoadingID != nil)
             }
         }
-        .typeRole(.caption).foregroundStyle(.secondary)
-        .frame(maxWidth: .infinity, alignment: .leading).padding(.top, Theme.minorSpacing)
+        .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
+        .frame(maxWidth: .infinity, alignment: .leading).padding(.top, DesignSpace.rowInset)
     }
 
     @ViewBuilder private var metadata: some View {
         if let descriptor = series.descriptor {
             DisclosureGroup("Métadonnées de Webstat") {
                 VStack(alignment: .leading, spacing: Self.metadataFieldSpacing) {
-                    Text(descriptor.key).font(.system(.caption, design: .monospaced)).textSelection(.enabled)
+                    Text(descriptor.key).typeRole(.code).textSelection(.enabled)
                     ForEach(descriptor.raw.keys.sorted(), id: \.self) { key in
                         if let text = descriptor.raw[key]?.text {
                             VStack(alignment: .leading, spacing: Self.metadataLabelSpacing) {
@@ -297,21 +297,21 @@ struct SeriesDetailView: View {
                             }.frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
-                }.typeRole(.micro).padding(.top, Theme.minorSpacing)
-            }.typeRole(.caption).foregroundStyle(.secondary)
+                }.typeRole(.micro).padding(.top, DesignSpace.rowInset)
+            }.typeRole(.caption).foregroundStyle(DesignColor.textMuted)
         }
         if let descriptor = series.statisticalDescriptor {
             DisclosureGroup("Métadonnées de la source") {
                 VStack(alignment: .leading, spacing: Self.metadataFieldSpacing) {
-                    Text(descriptor.key).font(.system(.caption, design: .monospaced)).textSelection(.enabled)
+                    Text(descriptor.key).typeRole(.code).textSelection(.enabled)
                     ForEach(descriptor.fields.keys.sorted(), id: \.self) { key in
                         VStack(alignment: .leading, spacing: Self.metadataLabelSpacing) {
                             Text(key).fontWeight(.medium)
                             Text(descriptor.fields[key] ?? "").textSelection(.enabled)
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
-                }.typeRole(.micro).padding(.top, Theme.minorSpacing)
-            }.typeRole(.caption).foregroundStyle(.secondary)
+                }.typeRole(.micro).padding(.top, DesignSpace.rowInset)
+            }.typeRole(.caption).foregroundStyle(DesignColor.textMuted)
         }
     }
 
@@ -337,6 +337,6 @@ private struct SeriesDetailSurface: ViewModifier {
     let focus: Bool
     @ViewBuilder func body(content: Content) -> some View {
         if focus { content }
-        else { Surface { content }.clipShape(RoundedRectangle(cornerRadius: Theme.surfaceCorner)) }
+        else { Surface { content }.clipShape(RoundedRectangle(cornerRadius: DesignRadius.card)) }
     }
 }

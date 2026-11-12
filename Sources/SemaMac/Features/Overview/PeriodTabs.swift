@@ -12,14 +12,14 @@ struct PeriodTabs: View {
     let select: (HistoryPeriod) -> Void
 
     var body: some View {
-        HStack(spacing: Spacing.s16) {
+        HStack(spacing: DesignSpace.itemGap) {
             ForEach(periods) { period in
                 let selected = period == selection
                 Button { select(period) } label: {
                     Text(period.shortTitle)
                         .typeRole(.small).fontWeight(selected ? .semibold : .regular)
-                        .foregroundStyle(selected ? Color.primary : Color.secondary)
-                        .padding(.bottom, Spacing.s4)
+                        .foregroundStyle(selected ? DesignColor.text : DesignColor.textMuted)
+                        .padding(.bottom, DesignSpace.markInset)
                         .overlay(alignment: .bottom) {
                             Rectangle().fill(selected ? accent : .clear).frame(height: Self.indicatorHeight)
                         }

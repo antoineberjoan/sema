@@ -3,7 +3,7 @@ import SemaDesign
 import SwiftUI
 
 enum TypeRole {
-    case hero, title, figure, section, subheading, heading, body, lede, label, small, caption, overline, tag, micro, wordmark
+    case hero, title, figure, section, subheading, heading, body, lede, label, small, caption, overline, tag, micro, wordmark, code
 
     /// SwiftUI adds line spacing on top of the font's natural line height, about 1.2 times its size.
     private static let naturalLeading: CGFloat = 1.2
@@ -32,12 +32,13 @@ enum TypeRole {
         case .tag: Self.make(DesignType.tagSize, DesignType.tagWeight, leading: DesignType.tagLeading, tracking: DesignType.tagTracking)
         case .micro: Self.make(DesignType.microSize, DesignType.microWeight, leading: DesignType.microLeading, tracking: DesignType.microTracking)
         case .wordmark: Self.make(DesignType.wordmarkSize, DesignType.wordmarkWeight, leading: DesignType.wordmarkLeading, tracking: DesignType.wordmarkTracking)
+        case .code: Self.make(DesignType.codeSize, DesignType.codeWeight, leading: DesignType.codeLeading, tracking: DesignType.codeTracking)
         }
     }
 
     /// Hero and figure values change and line up, so their digits share one width.
     var font: Font {
-        let font = Font.system(size: metrics.size, weight: metrics.weight)
+        let font = Font.system(size: metrics.size, weight: metrics.weight, design: self == .code ? .monospaced : .default)
         return self == .hero || self == .figure ? font.monospacedDigit() : font
     }
     var tracking: CGFloat { metrics.size * metrics.tracking }

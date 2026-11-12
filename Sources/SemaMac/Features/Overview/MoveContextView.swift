@@ -1,4 +1,5 @@
 // Inspecteur « Pourquoi ce mouvement ? » : faits datés de la séance et, à la demande, leur synthèse vérifiée.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -21,10 +22,10 @@ struct MoveContextView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Spacing.s24) {
-                VStack(alignment: .leading, spacing: Spacing.s2) {
+            VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
+                VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                     Text("Pourquoi ce mouvement ?").typeRole(.heading)
-                    Text(MarketFormat.date(series.latest?.date)).typeRole(.caption).foregroundStyle(.secondary)
+                    Text(MarketFormat.date(series.latest?.date)).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 }
                 Picker("Affichage", selection: $tab) {
                     ForEach(Tab.allCases) { Text($0.rawValue).tag($0) }
@@ -38,9 +39,9 @@ struct MoveContextView: View {
                 } else if isLoading { ProgressView().controlSize(.small) }
                 Text(tab == .facts ? "sema rassemble des faits datés et leurs liens. Il n’affirme pas de cause."
                      : "Chaque phrase cite ses faits. Vérifiez-la avant de la partager.")
-                    .typeRole(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted).fixedSize(horizontal: false, vertical: true)
             }
-            .padding(Spacing.s24)
+            .padding(DesignSpace.pageInsetNarrow)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .task(id: AppStore.contextKey(series)) {
@@ -52,7 +53,7 @@ struct MoveContextView: View {
 
     @ViewBuilder private func summarySection(_ context: DayContext) -> some View {
         if let blocker = store.summaryBlocker {
-            VStack(alignment: .leading, spacing: Spacing.s8) {
+            VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
                 empty(blocker)
                 Button("Ouvrir les réglages") { store.settingsTab = .sources; openSettings() }.controlSize(.small)
             }
@@ -61,30 +62,30 @@ struct MoveContextView: View {
         } else if isWriting {
             ProgressView().controlSize(.small).accessibilityLabel("Rédaction en cours")
         } else {
-            VStack(alignment: .leading, spacing: Spacing.s8) {
+            VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
                 Button("Rédiger la synthèse") { Task { await write(context) } }
                 Text(store.summaryWriter == .claude ? "Un appel payant à votre compte Anthropic." : "Rédigée sur ce Mac, sans réseau.")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
         }
-        if let summaryError { Text(summaryError).typeRole(.small).foregroundStyle(.red).textSelection(.enabled) }
+        if let summaryError { Text(summaryError).typeRole(.small).foregroundStyle(DesignColor.danger).textSelection(.enabled) }
     }
 
     private func sentences(_ summary: SummaryCheck, facts: [ContextFact]) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.s16) {
+        VStack(alignment: .leading, spacing: DesignSpace.itemGap) {
             if summary.kept.isEmpty { empty("Aucune phrase ne correspond aux faits. Consultez l’onglet Faits.") }
             ForEach(Array(summary.kept.enumerated()), id: \.offset) { _, sentence in
-                VStack(alignment: .leading, spacing: Spacing.s4) {
+                VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                     Text(sentence.text).typeRole(.body).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
-                    Text("D’après " + sources(of: sentence, in: facts)).typeRole(.caption).foregroundStyle(.secondary)
+                    Text("D’après " + sources(of: sentence, in: facts)).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 }
             }
-            VStack(alignment: .leading, spacing: Spacing.s2) {
-                Text("Rédigée par \(store.summaryWriter.signature).").typeRole(.micro).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: DesignSpace.listGapDense) {
+                Text("Rédigée par \(store.summaryWriter.signature).").typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                 if summary.hiddenCount > 0 {
                     Text(summary.hiddenCount == 1 ? "1 phrase masquée : ses chiffres ou son sens ne figurent pas dans les faits."
                          : "\(summary.hiddenCount) phrases masquées : leurs chiffres ou leur sens ne figurent pas dans les faits.")
-                        .typeRole(.micro).foregroundStyle(.secondary)
+                        .typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                 }
             }
         }
@@ -108,10 +109,10 @@ struct MoveContextView: View {
         group("Vos repères ce jour") {
             if context.peers.isEmpty { empty("Aucun autre repère suivi n’a publié ce jour.") }
             ForEach(context.peers.prefix(6)) { peer in
-                HStack(spacing: Spacing.s8) {
+                HStack(spacing: DesignSpace.fieldGap) {
                     Text(MarketFormat.name(store.displayedSeries(peer.series))).typeRole(.small).lineLimit(1)
-                    Spacer(minLength: Spacing.s8)
-                    Text(MarketFormat.sessionChange(peer.change, series: peer.series)).typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
+                    Spacer(minLength: DesignSpace.fieldGap)
+                    Text(MarketFormat.sessionChange(peer.change, series: peer.series)).typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)
                     if let ratio = peer.ratio { MoveBadge(ratio: ratio) }
                 }
             }
@@ -135,19 +136,19 @@ struct MoveContextView: View {
     }
 
     private func group<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.s8) {
-            Text(title).typeRole(.overline).foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
+            Text(title).typeRole(.overline).foregroundStyle(DesignColor.textMuted)
             content()
         }
     }
 
-    private func empty(_ text: String) -> some View { Text(text).typeRole(.small).foregroundStyle(.secondary) }
+    private func empty(_ text: String) -> some View { Text(text).typeRole(.small).foregroundStyle(DesignColor.textMuted) }
 
     private func link(_ title: String, url: URL, detail: String) -> some View {
         Link(destination: url) {
-            VStack(alignment: .leading, spacing: Spacing.s2) {
-                Text(title).typeRole(.small).multilineTextAlignment(.leading).foregroundStyle(.primary)
-                Text(detail).typeRole(.caption).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
+                Text(title).typeRole(.small).multilineTextAlignment(.leading).foregroundStyle(DesignColor.text)
+                Text(detail).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
         }
         .buttonStyle(.plain).help(url.absoluteString)
