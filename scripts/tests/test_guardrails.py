@@ -329,6 +329,12 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("`theme-color` vaut `#111111`", errors[0])
 
+    def test_site_css_reads_roles_not_scale_steps(self):
+        self.write_site(".card { padding: var(--scale-space-1); }", tokens="--scale-space-1: 4px; --ink: #141414;")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("lit la primitive `scale-space-1`", errors[0])
+
     def test_site_variable_must_be_defined(self):
         self.write_site(".card { padding: var(--space-9); margin: var(--wrap-max, var(--space-1)); }\n.card { --wrap-max: var(--space-1); }")
         errors = self.errors()

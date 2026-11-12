@@ -53,6 +53,7 @@ TOKEN_SOURCE = "site/tokens.json"
 CSS_NOISE = re.compile(r"/\*[\s\S]*?\*/|\"[^\"\n]*\"|'[^'\n]*'|url\([^)]*\)|@(?:media|supports)[^{]*")
 RAW_STYLE = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\(|cubic-bezier\(|(?<![\w.#])(?P<number>\d*\.?\d+)(?P<unit>px|ms|s|rem)\b"
                        r"|\b(?:z-index|font-weight|letter-spacing)\s*:\s*-?[.\d]")
+SCALE_USE = re.compile(r"var\(--(scale-[\w-]+)")
 CSS_SELECTOR = re.compile(r"([^{};]+)\{")
 CSS_NAME = re.compile(r"[.#](-?[A-Za-z_][\w-]*)")
 CSS_VARIABLE_USE = re.compile(r"var\((--[\w-]+)")
@@ -257,6 +258,8 @@ def web_errors(sources):
                 if match["unit"] == "px" and float(match["number"]) in (0, 1):
                     continue
                 errors.append(f"{path}:{number} : valeur visuelle en dur `{match[0]}` ; la nommer dans {TOKEN_SOURCE}.")
+        errors.extend(f"{path} : lit la primitive `{name}` ; lire un rôle nommé par usage dans {TOKEN_SOURCE}."
+                      for name in sorted(set(SCALE_USE.findall(css))))
         errors.extend(f"{path} : `{name}` n’est défini nulle part ; l’ajouter à {TOKEN_SOURCE}."
                       for name in sorted(set(CSS_VARIABLE_USE.findall(css)) - defined))
         names = {name for selector in CSS_SELECTOR.findall(css) for name in CSS_NAME.findall(selector)}

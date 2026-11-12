@@ -2,13 +2,14 @@
 import AppKit
 import SwiftUI
 import QuartzCore
+import SemaDesign
 
 /// A native status item owns the panel independently of the hub's window lifetime.
 @MainActor
 final class MenuRibbonController: NSObject {
     /// The menu bar image: the brand symbol, drawn once as a template image.
     private static let menuBarIcon: NSImage = {
-        let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(.black).frame(width: 18, height: 18))
+        let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(DesignColor.text).frame(width: 18, height: 18))
         renderer.scale = 2
         let image = renderer.nsImage ?? NSImage(systemSymbolName: "waveform.path", accessibilityDescription: "sema")!
         image.isTemplate = true

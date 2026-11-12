@@ -75,40 +75,25 @@
   --selection: rgb(214 214 214 / 0.2);
   /* Propre au site : font family (typographie). */
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  /* Propre au site : weight light (typographie). */
-  --weight-light: 300;
-  /* Propre au site : weight regular (typographie). */
-  --weight-regular: 400;
-  /* Propre au site : weight medium (typographie). */
-  --weight-medium: 500;
-  /* Propre au site : weight bold (typographie). */
-  --weight-bold: 600;
-  /* Propre au site : text 1 (typographie). */
-  --text-1: 10px;
-  /* Propre au site : text 2 (typographie). */
-  --text-2: 11px;
-  /* Propre au site : text 3 (typographie). */
-  --text-3: 12px;
-  /* Propre au site : text 4 (typographie). */
-  --text-4: 13px;
-  /* Propre au site : text 5 (typographie). */
-  --text-5: 14px;
-  /* Propre au site : text 6 (typographie). */
-  --text-6: 16px;
-  /* Propre au site : text 7 (typographie). */
-  --text-7: 18px;
-  /* Propre au site : text 8 (typographie). */
-  --text-8: 20px;
-  /* Propre au site : text 9 (typographie). */
-  --text-9: 24px;
-  /* Propre au site : text 10 (typographie). */
-  --text-10: 28px;
-  /* Propre au site : text 11 (typographie). */
-  --text-11: 32px;
-  /* Propre au site : text 12 (typographie). */
-  --text-12: 40px;
-  /* Propre au site : text 13 (typographie). */
-  --text-13: 48px;
+  /* Primitive du site : une graisse de la police. Le CSS lit un rôle, jamais cette marche. */
+  --scale-weight-light: 300;
+  --scale-weight-regular: 400;
+  --scale-weight-medium: 500;
+  --scale-weight-bold: 600;
+  /* Primitive du site : une marche de l'échelle de taille de texte. Le CSS lit un rôle, jamais cette marche. */
+  --scale-text-1: 10px;
+  --scale-text-2: 11px;
+  --scale-text-3: 12px;
+  --scale-text-4: 13px;
+  --scale-text-5: 14px;
+  --scale-text-6: 16px;
+  --scale-text-7: 18px;
+  --scale-text-8: 20px;
+  --scale-text-9: 24px;
+  --scale-text-10: 28px;
+  --scale-text-11: 32px;
+  --scale-text-12: 40px;
+  --scale-text-13: 48px;
   /* Propre au site : text command (typographie). */
   --text-command: clamp(13px, 1.4vw, 18px);
   /* Propre au site : display hero (typographie). */
@@ -139,32 +124,20 @@
   --tracking-label: .03em;
   /* Propre au site : underline offset (typographie). */
   --underline-offset: 4px;
-  /* Propre au site : space 1 (espacement et dimensions). */
-  --space-1: 4px;
-  /* Propre au site : space 2 (espacement et dimensions). */
-  --space-2: 8px;
-  /* Propre au site : space 3 (espacement et dimensions). */
-  --space-3: 12px;
-  /* Propre au site : space 4 (espacement et dimensions). */
-  --space-4: 16px;
-  /* Propre au site : space 5 (espacement et dimensions). */
-  --space-5: 20px;
-  /* Propre au site : space 6 (espacement et dimensions). */
-  --space-6: 24px;
-  /* Propre au site : space 7 (espacement et dimensions). */
-  --space-7: 32px;
-  /* Propre au site : space 8 (espacement et dimensions). */
-  --space-8: 40px;
-  /* Propre au site : space 9 (espacement et dimensions). */
-  --space-9: 48px;
-  /* Propre au site : space 10 (espacement et dimensions). */
-  --space-10: 64px;
-  /* Propre au site : space 11 (espacement et dimensions). */
-  --space-11: 80px;
-  /* Propre au site : space 12 (espacement et dimensions). */
-  --space-12: 96px;
-  /* Propre au site : space 13 (espacement et dimensions). */
-  --space-13: 128px;
+  /* Primitive du site : une marche de l'échelle d'espacement. Le CSS lit un rôle, jamais cette marche. */
+  --scale-space-1: 4px;
+  --scale-space-2: 8px;
+  --scale-space-3: 12px;
+  --scale-space-4: 16px;
+  --scale-space-5: 20px;
+  --scale-space-6: 24px;
+  --scale-space-7: 32px;
+  --scale-space-8: 40px;
+  --scale-space-9: 48px;
+  --scale-space-10: 64px;
+  --scale-space-11: 80px;
+  --scale-space-12: 96px;
+  --scale-space-13: 128px;
   /* Propre au site : block 1 (espacement et dimensions). */
   --block-1: 160px;
   /* Propre au site : block 2 (espacement et dimensions). */
@@ -345,12 +318,358 @@
   --copy-feedback-duration: 2200ms;
   /* Propre au site : la part de hauteur d'une scène qui doit être visible pour la jouer. */
   --scene-visible-threshold: .35;
+  /* Propre au site : la valeur `scroll-padding-top` de `:root`. */
+  --root-scroll-padding-top: var(--scale-space-8);
+  /* Propre au site : l'écart du contour de focus de `button:focus-visible`. */
+  --button-focus-outline-offset: var(--scale-space-1);
+  /* Propre au site : le décalage gauche de `.skip-link`. */
+  --skip-link-left: var(--scale-space-4);
+  /* Propre au site : le décalage haut de `.skip-link`. */
+  --skip-link-top: var(--scale-space-3);
+  /* Propre au site : l'espace intérieur de `.skip-link`. */
+  --skip-link-padding: var(--scale-space-3);
+  /* Propre au site : l'écart entre éléments de `.button`. */
+  --button-gap: var(--scale-space-2);
+  /* Propre au site : l'espace intérieur (padding-inline) de `.button`. */
+  --button-padding-inline: var(--scale-space-6);
+  /* Propre au site : la taille du texte de `.button`. */
+  --button-text-size: var(--scale-text-6);
+  /* Propre au site : la graisse du texte de `.button`. */
+  --button-weight: var(--scale-weight-bold);
+  /* Propre au site : la largeur de `.button svg`. */
+  --button-svg-width: var(--scale-space-4);
+  /* Propre au site : la hauteur de `.button svg`. */
+  --button-svg-height: var(--scale-space-4);
+  /* Propre au site : l'espace intérieur de `details summary`. */
+  --details-summary-padding: var(--scale-space-5) 0;
+  /* Propre au site : l'écart entre éléments de `details summary`. */
+  --details-summary-gap: var(--scale-space-5);
+  /* Propre au site : la taille du texte de `details summary`. */
+  --details-summary-text-size: var(--scale-text-5);
+  /* Propre au site : la largeur de `.plus`. */
+  --plus-width: var(--scale-space-3);
+  /* Propre au site : la hauteur de `.plus`. */
+  --plus-height: var(--scale-space-3);
+  /* Propre au site : la marge de `details p`. */
+  --details-p-margin: 0 var(--scale-space-6) var(--scale-space-5) 0;
+  /* Propre au site : la taille du texte de `details p`. */
+  --details-p-text-size: var(--scale-text-5);
+  /* Propre au site : la marge (margin-left) de `.marketing-header .brand-mark`. */
+  --marketing-header-brand-mark-margin-left: calc(-1 * var(--scale-space-1));
+  /* Propre au site : la taille du texte de `.marketing-header nav`. */
+  --marketing-header-nav-text-size: var(--scale-text-3);
+  /* Propre au site : la taille du texte de `.marketing-header .header-download`. */
+  --marketing-header-header-download-text-size: var(--scale-text-3);
+  /* Propre au site : la graisse du texte de `.marketing-header .header-download`. */
+  --marketing-header-header-download-weight: var(--scale-weight-medium);
+  /* Propre au site : l'écart entre éléments de `.marketing-footer`. */
+  --marketing-footer-gap: var(--scale-space-6);
+  /* Propre au site : l'espace intérieur (padding-block) de `.marketing-footer`. */
+  --marketing-footer-padding-block: var(--scale-space-7) var(--scale-space-8);
+  /* Propre au site : la taille du texte de `.marketing-footer`. */
+  --marketing-footer-text-size: var(--scale-text-3);
+  /* Propre au site : l'écart entre éléments de `.marketing-footer nav`. */
+  --marketing-footer-nav-gap: var(--scale-space-6);
+  /* Propre au site : l'écart entre éléments de `.marketing-footer` sur écran étroit. */
+  --marketing-footer-gap-narrow: var(--scale-space-4);
+  /* Propre au site : l'écart entre éléments de `.marketing-footer nav` sur écran étroit. */
+  --marketing-footer-nav-gap-narrow: var(--scale-space-4);
+  /* Propre au site : l'espace intérieur (padding-top) de `.landing .hero`. */
+  --landing-hero-padding-top: var(--scale-space-11);
+  /* Propre au site : l'espace intérieur (padding-bottom) de `.landing .hero`. */
+  --landing-hero-padding-bottom: var(--scale-space-10);
+  /* Propre au site : la graisse du texte de `.landing h1`. */
+  --landing-h1-weight: var(--scale-weight-medium);
+  /* Propre au site : la marge (margin-top) de `.landing .button`. */
+  --landing-button-margin-top: var(--scale-space-7);
+  /* Propre au site : la marge (margin-top) de `.brew-line`. */
+  --brew-line-margin-top: var(--scale-space-6);
+  /* Propre au site : l'espace intérieur de `.brew-copy`. */
+  --brew-copy-padding: var(--scale-space-1) 0;
+  /* Propre au site : la graisse du texte de `.brew-copy`. */
+  --brew-copy-weight: var(--scale-weight-light);
+  /* Propre au site : l'espace intérieur (padding-top) de `.brew-copy[data-copied]::after`. */
+  --brew-copy-after-padding-top: var(--scale-space-1);
+  /* Propre au site : la taille du texte de `.brew-copy[data-copied]::after`. */
+  --brew-copy-after-text-size: var(--scale-text-2);
+  /* Propre au site : l'espace intérieur (padding-block) de `.showcase`. */
+  --showcase-padding-block: var(--scale-space-12) 0;
+  /* Propre au site : la marge de `.showcase-head h2`. */
+  --showcase-head-h2-margin: 0 0 var(--scale-space-3);
+  /* Propre au site : la graisse du texte de `.showcase-head h2`. */
+  --showcase-head-h2-weight: var(--scale-weight-medium);
+  /* Propre au site : la taille du texte de `.showcase-head p`. */
+  --showcase-head-p-text-size: var(--scale-text-6);
+  /* Propre au site : la marge de `.showcase > .scene`. */
+  --showcase-scene-margin: var(--scale-space-8) 0 0;
+  /* Propre au site : l'écart entre éléments de `.showcase-split`. */
+  --showcase-split-gap: var(--scale-space-10);
+  /* Propre au site : l'espace intérieur de `.scene-visual`. */
+  --scene-visual-padding: var(--scale-space-7);
+  /* Propre au site : l'écart entre éléments de `.menubar`. */
+  --menubar-gap: var(--scale-space-5);
+  /* Propre au site : la marge de `.menubar`. */
+  --menubar-margin: calc(-1 * var(--scale-space-3)) 0 var(--scale-space-7);
+  /* Propre au site : la taille du texte de `.menubar`. */
+  --menubar-text-size: var(--scale-text-2);
+  /* Propre au site : l'écart entre éléments de `.menubar-menus`. */
+  --menubar-menus-gap: var(--scale-space-4);
+  /* Propre au site : la largeur de `.menubar-mark`. */
+  --menubar-mark-width: var(--scale-space-6);
+  /* Propre au site : la hauteur de `.menubar-mark`. */
+  --menubar-mark-height: var(--scale-space-6);
+  /* Propre au site : le débord de `.menubar-mark::after`. */
+  --menubar-mark-after-inset: calc(-1 * var(--scale-space-1));
+  /* Propre au site : l'écart entre éléments de `.favs`. */
+  --favs-gap: var(--scale-space-4);
+  /* Propre au site : l'écart entre éléments de `.fav`. */
+  --fav-gap: var(--scale-space-2);
+  /* Propre au site : l'espace intérieur de `.fav`. */
+  --fav-padding: var(--scale-space-5);
+  /* Propre au site : la taille du texte de `.fav-name`. */
+  --fav-name-text-size: var(--scale-text-3);
+  /* Propre au site : la graisse du texte de `.fav-name`. */
+  --fav-name-weight: var(--scale-weight-medium);
+  /* Propre au site : la taille du texte de `.fav-value`. */
+  --fav-value-text-size: var(--scale-text-12);
+  /* Propre au site : la graisse du texte de `.fav-value`. */
+  --fav-value-weight: var(--scale-weight-medium);
+  /* Propre au site : la marge (margin-left) de `.fav-value small`. */
+  --fav-value-small-margin-left: var(--scale-space-2);
+  /* Propre au site : la taille du texte de `.fav-value small`. */
+  --fav-value-small-text-size: var(--scale-text-3);
+  /* Propre au site : la graisse du texte de `.fav-value small`. */
+  --fav-value-small-weight: var(--scale-weight-regular);
+  /* Propre au site : la marge (margin-block) de `.spark`. */
+  --spark-margin-block: var(--scale-space-2);
+  /* Propre au site : l'écart entre éléments de `.fav-meta`. */
+  --fav-meta-gap: var(--scale-space-2);
+  /* Propre au site : la taille du texte de `.fav-meta`. */
+  --fav-meta-text-size: var(--scale-text-2);
+  /* Propre au site : l'espace intérieur de `.search-stage`. */
+  --search-stage-padding: var(--scale-space-9) var(--scale-space-7);
+  /* Propre au site : l'espace intérieur de `.search-panel`. */
+  --search-panel-padding: var(--scale-space-3);
+  /* Propre au site : l'écart entre éléments de `.search-input`. */
+  --search-input-gap: var(--scale-space-3);
+  /* Propre au site : l'espace intérieur de `.search-input`. */
+  --search-input-padding: var(--scale-space-3) var(--scale-space-3) var(--scale-space-4);
+  /* Propre au site : la taille du texte de `.search-input`. */
+  --search-input-text-size: var(--scale-text-10);
+  /* Propre au site : la largeur de `.search-input svg`. */
+  --search-input-svg-width: var(--scale-space-6);
+  /* Propre au site : la hauteur de `.search-input svg`. */
+  --search-input-svg-height: var(--scale-space-6);
+  /* Propre au site : la marge (margin-left) de `.caret`. */
+  --caret-margin-left: calc(-1 * var(--scale-space-2));
+  /* Propre au site : l'écart entre éléments de `.result`. */
+  --result-gap: var(--scale-space-4);
+  /* Propre au site : l'espace intérieur de `.result`. */
+  --result-padding: var(--scale-space-3) var(--scale-space-4);
+  /* Propre au site : l'écart entre éléments de `.result > span:first-child`. */
+  --result-span-gap: var(--scale-space-1);
+  /* Propre au site : la taille du texte de `.result b`. */
+  --result-b-text-size: var(--scale-text-7);
+  /* Propre au site : la graisse du texte de `.result b`. */
+  --result-b-weight: var(--scale-weight-medium);
+  /* Propre au site : la taille du texte de `.result small`. */
+  --result-small-text-size: var(--scale-text-3);
+  /* Propre au site : la taille du texte de `.result-value`. */
+  --result-value-text-size: var(--scale-text-5);
+  /* Propre au site : l'écart entre éléments de `.focus`. */
+  --focus-gap: var(--scale-space-4);
+  /* Propre au site : l'espace intérieur de `.focus`. */
+  --focus-padding: var(--scale-space-5) var(--scale-space-6) var(--scale-space-4);
+  /* Propre au site : l'écart entre éléments de `.focus-head`. */
+  --focus-head-gap: var(--scale-space-3) var(--scale-space-4);
+  /* Propre au site : la taille du texte de `.focus-head`. */
+  --focus-head-text-size: var(--scale-text-4);
+  /* Propre au site : l'espace intérieur de `.range`. */
+  --range-padding: var(--scale-space-1);
+  /* Propre au site : la taille du texte de `.range`. */
+  --range-text-size: var(--scale-text-3);
+  /* Propre au site : l'espace intérieur de `.range span`. */
+  --range-span-padding: var(--scale-space-1) var(--scale-space-3);
+  /* Propre au site : l'écart entre colonnes de `.focus-main`. */
+  --focus-main-column-gap: var(--scale-space-4);
+  /* Propre au site : l'écart entre lignes de `.focus-main`. */
+  --focus-main-row-gap: var(--scale-space-1);
+  /* Propre au site : la taille du texte de `.focus-value`. */
+  --focus-value-text-size: var(--scale-text-13);
+  /* Propre au site : la graisse du texte de `.focus-value`. */
+  --focus-value-weight: var(--scale-weight-medium);
+  /* Propre au site : la marge (margin-left) de `.focus-value small`. */
+  --focus-value-small-margin-left: var(--scale-space-2);
+  /* Propre au site : la taille du texte de `.focus-value small`. */
+  --focus-value-small-text-size: var(--scale-text-5);
+  /* Propre au site : la graisse du texte de `.focus-value small`. */
+  --focus-value-small-weight: var(--scale-weight-regular);
+  /* Propre au site : l'écart entre éléments de `.focus-actions`. */
+  --focus-actions-gap: var(--scale-space-3);
+  /* Propre au site : l'espace intérieur (padding-bottom) de `.focus-actions`. */
+  --focus-actions-padding-bottom: var(--scale-space-2);
+  /* Propre au site : la largeur de `.focus-actions svg`. */
+  --focus-actions-svg-width: var(--scale-space-5);
+  /* Propre au site : la hauteur de `.focus-actions svg`. */
+  --focus-actions-svg-height: var(--scale-space-5);
+  /* Propre au site : la largeur de `.swap-btn`. */
+  --swap-btn-width: var(--scale-space-5);
+  /* Propre au site : la hauteur de `.swap-btn`. */
+  --swap-btn-height: var(--scale-space-5);
+  /* Propre au site : le débord de `.swap-btn::after`. */
+  --swap-btn-after-inset: calc(-1 * var(--scale-space-1));
+  /* Propre au site : la largeur de `.focus-actions .pointer`. */
+  --focus-actions-pointer-width: var(--scale-space-4);
+  /* Propre au site : la taille du texte de `.focus-meta`. */
+  --focus-meta-text-size: var(--scale-text-3);
+  /* Propre au site : l'écart entre colonnes de `.focus-plot`. */
+  --focus-plot-column-gap: var(--scale-space-4);
+  /* Propre au site : l'écart entre lignes de `.focus-plot`. */
+  --focus-plot-row-gap: var(--scale-space-2);
+  /* Propre au site : la largeur de `.focus-ticks`. */
+  --focus-ticks-width: var(--scale-space-9);
+  /* Propre au site : la taille du texte de `.focus-ticks`. */
+  --focus-ticks-text-size: var(--scale-text-2);
+  /* Propre au site : la taille du texte de `.focus-axis`. */
+  --focus-axis-text-size: var(--scale-text-2);
+  /* Propre au site : l'écart entre éléments de `.focus-foot`. */
+  --focus-foot-gap: var(--scale-space-2);
+  /* Propre au site : la taille du texte de `.focus-foot`. */
+  --focus-foot-text-size: var(--scale-text-3);
+  /* Propre au site : la largeur de `.focus-foot svg`. */
+  --focus-foot-svg-width: var(--scale-space-4);
+  /* Propre au site : la hauteur de `.focus-foot svg`. */
+  --focus-foot-svg-height: var(--scale-space-4);
+  /* Propre au site : l'écart entre éléments de `.hints`. */
+  --hints-gap: var(--scale-space-5);
+  /* Propre au site : l'espace intérieur de `.hints`. */
+  --hints-padding: var(--scale-space-3) var(--scale-space-4) var(--scale-space-2);
+  /* Propre au site : la taille du texte de `.hints`. */
+  --hints-text-size: var(--scale-text-3);
+  /* Propre au site : l'écart entre éléments de `.hint`. */
+  --hint-gap: var(--scale-space-2);
+  /* Propre au site : la largeur minimale de `.hint kbd`. */
+  --hint-kbd-min-width: var(--scale-space-5);
+  /* Propre au site : la hauteur de `.hint kbd`. */
+  --hint-kbd-height: var(--scale-space-5);
+  /* Propre au site : le rayon des coins de `.hint kbd`. */
+  --hint-kbd-border-radius: var(--scale-space-1);
+  /* Propre au site : la taille du texte de `.hint kbd`. */
+  --hint-kbd-text-size: var(--scale-text-2);
+  /* Propre au site : l'écart entre éléments de `.keys`. */
+  --keys-gap: var(--scale-space-4);
+  /* Propre au site : la largeur de `.key`. */
+  --key-width: var(--scale-space-11);
+  /* Propre au site : la hauteur de `.key`. */
+  --key-height: var(--scale-space-11);
+  /* Propre au site : la taille du texte de `.key`. */
+  --key-text-size: var(--scale-text-13);
+  /* Propre au site : l'écart entre éléments de `.questions`. */
+  --questions-gap: var(--scale-space-10);
+  /* Propre au site : l'espace intérieur (padding-block) de `.questions`. */
+  --questions-padding-block: var(--scale-space-13) var(--scale-space-12);
+  /* Propre au site : la marge de `.questions h2`. */
+  --questions-h2-margin: 0 0 var(--scale-space-4);
+  /* Propre au site : la taille du texte de `.questions h2`. */
+  --questions-h2-text-size: var(--scale-text-9);
+  /* Propre au site : la graisse du texte de `.questions h2`. */
+  --questions-h2-weight: var(--scale-weight-medium);
+  /* Propre au site : la marge (margin-top) de `.faq-list`. */
+  --faq-list-margin-top: calc(-1 * var(--scale-space-2));
+  /* Propre au site : la marge (margin-block) de `.support-note`. */
+  --support-note-margin-block: 0 var(--scale-space-10);
+  /* Propre au site : la taille du texte de `.support-note`. */
+  --support-note-text-size: var(--scale-text-4);
+  /* Propre au site : le décalage ou le rayon de l'animation `scene-fan`. */
+  --scene-fan-offset: var(--scale-space-4);
+  --scene-fan-offset-2: var(--scale-space-6);
+  /* Propre au site : le décalage ou le rayon de l'animation `scene-glow`. */
+  --scene-glow-offset: var(--scale-space-7);
+  /* Propre au site : le décalage ou le rayon de l'animation `scene-press`. */
+  --scene-press-offset: var(--scale-space-1);
+  /* Propre au site : le décalage ou le rayon de l'animation `scene-out`. */
+  --scene-out-offset: var(--scale-space-2);
+  /* Propre au site : le décalage ou le rayon de l'animation `scene-in`. */
+  --scene-in-offset: var(--scale-space-2);
+  /* Propre au site : le décalage ou le rayon de l'animation `scene-tap`. */
+  --scene-tap-offset: var(--scale-space-1);
+  /* Propre au site : le décalage ou le rayon de l'animation `scene-pointer`. */
+  --scene-pointer-offset: var(--scale-space-12);
+  --scene-pointer-offset-2: var(--scale-space-6);
+  /* Propre au site : le décalage ou le rayon de l'animation `scene-open`. */
+  --scene-open-offset: var(--scale-space-5);
+  /* Propre au site : l'espace intérieur (padding-top) de `.landing .hero` sur écran étroit. */
+  --landing-hero-padding-top-narrow: var(--scale-space-9);
+  /* Propre au site : l'espace intérieur (padding-bottom) de `.landing .hero` sur écran étroit. */
+  --landing-hero-padding-bottom-narrow: var(--scale-space-9);
+  /* Propre au site : l'écart entre éléments de `.questions` sur écran étroit. */
+  --questions-gap-narrow: var(--scale-space-4);
+  /* Propre au site : l'espace intérieur (padding-block) de `.questions` sur écran étroit. */
+  --questions-padding-block-narrow: var(--scale-space-11) var(--scale-space-10);
+  /* Propre au site : l'espace intérieur (padding-top) de `.showcase` sur écran étroit. */
+  --showcase-padding-top-narrow: var(--scale-space-11);
+  /* Propre au site : l'écart entre éléments de `.showcase-split` sur écran étroit. */
+  --showcase-split-gap-narrow: var(--scale-space-8);
+  /* Propre au site : la marge (margin-top) de `.showcase > .scene` sur écran étroit. */
+  --showcase-scene-margin-top-narrow: var(--scale-space-6);
+  /* Propre au site : l'espace intérieur de `.scene-visual` sur écran étroit. */
+  --scene-visual-padding-narrow: var(--scale-space-4);
+  /* Propre au site : l'écart entre éléments de `.favs` sur écran étroit. */
+  --favs-gap-narrow: var(--scale-space-3);
+  /* Propre au site : l'espace intérieur de `.fav` sur écran étroit. */
+  --fav-padding-narrow: var(--scale-space-4);
+  /* Propre au site : la taille du texte de `.fav-value` sur écran étroit. */
+  --fav-value-text-size-narrow: var(--scale-text-9);
+  /* Propre au site : la taille du texte de `.search-input` sur écran étroit. */
+  --search-input-text-size-narrow: var(--scale-text-9);
+  /* Propre au site : l'espace intérieur de `.focus` sur écran étroit. */
+  --focus-padding-narrow: var(--scale-space-4);
+  /* Propre au site : la taille du texte de `.focus-value` sur écran étroit. */
+  --focus-value-text-size-narrow: var(--scale-text-11);
+  /* Propre au site : la taille du texte de `.range` sur écran étroit. */
+  --range-text-size-narrow: var(--scale-text-2);
+  /* Propre au site : l'espace intérieur (padding-inline) de `.range span` sur écran étroit. */
+  --range-span-padding-inline-narrow: var(--scale-space-2);
+  /* Propre au site : la largeur de `.focus-ticks` sur écran étroit. */
+  --focus-ticks-width-narrow: var(--scale-space-8);
+  /* Propre au site : la marge (margin-bottom) de `.menubar` sur écran étroit. */
+  --menubar-margin-bottom-narrow: var(--scale-space-5);
+  /* Propre au site : la largeur de `.key` sur écran étroit. */
+  --key-width-narrow: var(--scale-space-9);
+  /* Propre au site : la hauteur de `.key` sur écran étroit. */
+  --key-height-narrow: var(--scale-space-9);
+  /* Propre au site : la taille du texte de `.key` sur écran étroit. */
+  --key-text-size-narrow: var(--scale-text-9);
+  /* Propre au site : l'espace intérieur (padding-block) de `.legal-content.wrap`. */
+  --legal-content-wrap-padding-block: var(--scale-space-11) var(--scale-space-12);
+  /* Propre au site : la graisse du texte de `.legal-content h1`. */
+  --legal-content-h1-weight: var(--scale-weight-medium);
+  /* Propre au site : la marge de `.legal-content .updated`. */
+  --legal-content-updated-margin: var(--scale-space-4) 0 var(--scale-space-10);
+  /* Propre au site : la taille du texte de `.legal-content .updated`. */
+  --legal-content-updated-text-size: var(--scale-text-3);
+  /* Propre au site : la marge (margin-top) de `.legal-content section + section`. */
+  --legal-content-section-margin-top: var(--scale-space-8);
+  /* Propre au site : la marge de `.legal-content h2`. */
+  --legal-content-h2-margin: 0 0 var(--scale-space-3);
+  /* Propre au site : la taille du texte de `.legal-content h2`. */
+  --legal-content-h2-text-size: var(--scale-text-8);
+  /* Propre au site : la graisse du texte de `.legal-content h2`. */
+  --legal-content-h2-weight: var(--scale-weight-medium);
+  /* Propre au site : la taille du texte de `.legal-content p`. */
+  --legal-content-p-text-size: var(--scale-text-5);
+  /* Propre au site : la marge de `.legal-content p`. */
+  --legal-content-p-margin: var(--scale-space-3) 0;
+  /* Propre au site : l'espace intérieur (padding-block) de `.legal-content.wrap` sur écran étroit. */
+  --legal-content-wrap-padding-block-narrow: var(--scale-space-9) var(--scale-space-10);
+  /* Propre au site : la marge (margin-bottom) de `.legal-content .updated` sur écran étroit. */
+  --legal-content-updated-margin-bottom-narrow: var(--scale-space-8);
 }
 
 @media (max-width: 700px) {
   :root {
-    --wrap-fill: calc(100% - var(--space-8));
+    --wrap-fill: calc(100% - var(--scale-space-8));
     --header-height: 64px;
-    --header-gap: var(--space-4);
+    --header-gap: var(--scale-space-4);
   }
 }
