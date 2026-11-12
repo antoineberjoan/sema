@@ -39,36 +39,35 @@ private extension SettingsTab {
 
 struct SettingsView: View {
     private static let sidebarWidth: CGFloat = 230
-    private static let searchSpacing = Spacing.s8
-    private static let searchPadding = Spacing.s10
-    private static let searchFill = Color.primary.opacity(0.06)
-    private static let fieldCorner = Radius.block
-    private static let searchInsets = EdgeInsets(top: 18, leading: 14, bottom: 12, trailing: 14)
-    private static let tabPadding = Spacing.s8
-    private static let profileSpacing = Spacing.s10
+    private static let searchSpacing = DesignIcon.gap
+    private static let searchPadding = DesignSpace.frameInset
+    private static let fieldCorner = DesignRadius.block
+    private static let searchInsets = EdgeInsets(top: DesignSpace.cardInset, leading: DesignSpace.panelInsetInline, bottom: DesignSpace.menuInset, trailing: DesignSpace.panelInsetInline)
+    private static let tabPadding = DesignSpace.rowInset
+    private static let profileSpacing = DesignSpace.fieldGap
     private static let profileAvatarSize: CGFloat = 28
-    private static let profilePadding = Spacing.s10
-    private static let profileInset = Spacing.s12
-    private static let titleInsets = EdgeInsets(top: 26, leading: 28, bottom: 10, trailing: 28)
+    private static let profilePadding = DesignSpace.frameInset
+    private static let profileInset = DesignSpace.menuInset
+    private static let titleInsets = EdgeInsets(top: DesignSpace.pageInsetNarrow, leading: DesignSpace.pageInsetNarrow, bottom: DesignSpace.frameInset, trailing: DesignSpace.pageInsetNarrow)
     private static let minimumWidth: CGFloat = 880
     private static let idealWidth: CGFloat = 980
     private static let minimumHeight: CGFloat = 660
     private static let idealHeight: CGFloat = 740
-    private static let choiceLabelTop = Spacing.s16
-    private static let modeSpacing = Spacing.s24
-    private static let positionSpacing = Spacing.s16
-    private static let swatchCorner = Radius.block
-    private static let innerSwatchCorner = Radius.mark
-    private static let innerSwatchInset = Spacing.s12
-    private static let swatchPadding = Spacing.s4
+    private static let choiceLabelTop = DesignSpace.cardInset
+    private static let modeSpacing = DesignSpace.groupGap
+    private static let positionSpacing = DesignSpace.itemGap
+    private static let swatchCorner = DesignRadius.block
+    private static let innerSwatchCorner = DesignRadius.mark
+    private static let innerSwatchInset = DesignSpace.menuInset
+    private static let swatchPadding = DesignSpace.markInset
     private static let swatchHeight: CGFloat = 58
     private static let selectedStroke: CGFloat = 2
     private static let paletteTitleLines = 2
     private static let paletteTitleHeight: CGFloat = 28
-    private static let aboutSpacing = Spacing.s16
+    private static let aboutSpacing = DesignSpace.itemGap
     private static let markSize: CGFloat = 48
-    private static let aboutTextSpacing = Spacing.s6
-    private static let aboutPadding = Spacing.s12
+    private static let aboutTextSpacing = DesignSpace.titleGap
+    private static let aboutPadding = DesignSpace.menuInset
     @Environment(AppStore.self) private var store
     @State private var search = ""
     @FocusState private var searchFocused: Bool
@@ -84,18 +83,18 @@ struct SettingsView: View {
         HStack(spacing: 0) {
             VStack(spacing: 0) {
                 HStack(spacing: Self.searchSpacing) {
-                    Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+                    Image(systemName: "magnifyingglass").foregroundStyle(DesignColor.textMuted)
                     TextField("Rechercher", text: $search).textFieldStyle(.plain)
                         .focused($searchFocused).accessibilityLabel("Rechercher un réglage")
                         .onSubmit { if let first = matches.first { store.settingsTab = first; searchFocused = false } }
                         .onKeyPress(.escape) { search = ""; searchFocused = false; return .handled }
                     if !search.isEmpty {
-                        Button { search = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary) }
+                        Button { search = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(DesignColor.textMuted) }
                             .buttonStyle(.plain).accessibilityLabel("Effacer la recherche de réglages")
                     }
                 }
                 .typeRole(.body).padding(Self.searchPadding)
-                .background(Self.searchFill, in: RoundedRectangle(cornerRadius: Self.fieldCorner))
+                .background(DesignColor.surfaceRaised, in: RoundedRectangle(cornerRadius: Self.fieldCorner))
                 .padding(Self.searchInsets)
 
                 List(selection: Binding<SettingsTab?>(get: { store.settingsTab }, set: {
@@ -111,7 +110,7 @@ struct SettingsView: View {
                 .scrollContentBackground(.hidden)
                 .overlay {
                     if matches.isEmpty {
-                        Text("Aucun réglage trouvé").typeRole(.small).foregroundStyle(.secondary)
+                        Text("Aucun réglage trouvé").typeRole(.small).foregroundStyle(DesignColor.textMuted)
                     }
                 }
 
@@ -122,7 +121,7 @@ struct SettingsView: View {
                         Spacer()
                     }
                     .padding(Self.profilePadding)
-                    .background(store.settingsTab == .profile ? Theme.sidebarSelection : .clear,
+                    .background(store.settingsTab == .profile ? DesignColor.selection(store.palette) : .clear,
                                 in: RoundedRectangle(cornerRadius: Self.fieldCorner))
                     .contentShape(Rectangle())
                 }
@@ -130,7 +129,7 @@ struct SettingsView: View {
                 .accessibilityAddTraits(store.settingsTab == .profile ? [.isSelected] : [])
             }
             .frame(width: Self.sidebarWidth)
-            .background(Theme.surface)
+            .background(DesignColor.surface)
             Divider()
             VStack(alignment: .leading, spacing: 0) {
                 Text(store.settingsTab.title).typeRole(.title)
@@ -139,10 +138,10 @@ struct SettingsView: View {
                 settingsContent
                     .scrollContentBackground(.hidden)
                     .buttonStyle(.bordered)
-                    .tint(DesignColor.accent(store.palette))
+                    .tint(DesignColor.accentControl(store.palette))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .background(Theme.background)
+            .background(DesignColor.background)
         }
         .navigationTitle("Réglages")
         .frame(minWidth: Self.minimumWidth, idealWidth: Self.idealWidth, minHeight: Self.minimumHeight, idealHeight: Self.idealHeight)
@@ -174,7 +173,7 @@ struct SettingsView: View {
                         .buttonStyle(.borderless)
                 }
                 if let error = store.loginItem.error {
-                    Text(error).typeRole(.small).foregroundStyle(.secondary)
+                    Text(error).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                 }
             }
             Section {
@@ -185,9 +184,9 @@ struct SettingsView: View {
                 Picker(selection: Binding(get: { store.moveSensitivity }, set: { store.setMoveSensitivity($0) })) {
                     ForEach(MoveSensitivity.allCases) { Text($0.title).tag($0) }
                 } label: {
-                    VStack(alignment: .leading, spacing: Spacing.s2) {
+                    VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                         Text("Mouvements inhabituels")
-                        Text(sensitivityDescription).typeRole(.caption).foregroundStyle(.secondary)
+                        Text(sensitivityDescription).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -206,7 +205,7 @@ struct SettingsView: View {
                     .disabled(!store.brief.isEnabled)
             } header: { Text("Brief du matin") } footer: {
                 Text("Mouvements inhabituels de la dernière séance, seuils proches et agenda du jour. Envoyé au réveil si le Mac dormait à l’heure prévue.")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
         }.formStyle(.grouped).onAppear { store.loginItem.refresh() }
     }
@@ -236,13 +235,13 @@ struct SettingsView: View {
                             store.setAppearance(mode)
                         }
                     }
-                }.padding(.vertical, Theme.minorSpacing)
+                }.padding(.vertical, DesignSpace.rowInset)
             }
             Section("Palette") {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Theme.minorSpacing), count: DesignPalette.allCases.count), spacing: Theme.minorSpacing) {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: DesignSpace.fieldGap), count: DesignPalette.allCases.count), spacing: DesignSpace.fieldGap) {
                     ForEach(DesignPalette.allCases, id: \.self) { palette in
                         Button { store.setPalette(palette) } label: {
-                            VStack(spacing: Theme.minorSpacing) {
+                            VStack(spacing: DesignSpace.fieldGap) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: Self.swatchCorner).fill(DesignColor.palettePreview1(palette))
                                     RoundedRectangle(cornerRadius: Self.innerSwatchCorner).fill(DesignColor.palettePreview2(palette))
@@ -258,7 +257,7 @@ struct SettingsView: View {
                         .buttonStyle(.plain).accessibilityLabel("Palette " + palette.title)
                         .accessibilityAddTraits(store.palette == palette ? [.isSelected] : [])
                     }
-                }.padding(.vertical, Theme.minorSpacing)
+                }.padding(.vertical, DesignSpace.rowInset)
             }
             Section("Bandeau") {
                 HStack(alignment: .top) {
@@ -269,7 +268,7 @@ struct SettingsView: View {
                             store.setRibbonPosition(position)
                         }
                     }
-                }.padding(.vertical, Theme.minorSpacing)
+                }.padding(.vertical, DesignSpace.rowInset)
             }
             RibbonGlassSettingsView()
         }.formStyle(.grouped)
@@ -282,9 +281,9 @@ struct SettingsView: View {
                     Symbol().frame(width: Self.markSize, height: Self.markSize)
                     VStack(alignment: .leading, spacing: Self.aboutTextSpacing) {
                         Text("sema").typeRole(.title)
-                        Text("Gardez vos repères.").foregroundStyle(.secondary)
+                        Text("Gardez vos repères.").foregroundStyle(DesignColor.textMuted)
                         Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—")")
-                            .typeRole(.caption).foregroundStyle(.secondary)
+                            .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                     }
                 }.padding(.vertical, Self.aboutPadding)
             }
@@ -304,10 +303,9 @@ struct SettingsView: View {
 }
 
 private struct SettingsChoice: View {
-    private static let spacing = Spacing.s8
+    private static let spacing = DesignIcon.gap
     private static let tileHeight: CGFloat = 48
-    private static let restingFill = Color.primary.opacity(0.06)
-    private static let corner = Radius.block
+    private static let corner = DesignRadius.block
     private static let selectedStroke: CGFloat = 2
     private static let width: CGFloat = 76
     @Environment(\.palette) private var palette
@@ -322,7 +320,7 @@ private struct SettingsChoice: View {
             VStack(spacing: Self.spacing) {
                 Image(systemName: symbol).typeRole(.section)
                     .frame(maxWidth: .infinity).frame(height: Self.tileHeight)
-                    .background(selected ? accent.opacity(Theme.selectionOpacity) : Self.restingFill, in: RoundedRectangle(cornerRadius: Self.corner))
+                    .background(selected ? DesignColor.selection(palette) : DesignColor.surface, in: RoundedRectangle(cornerRadius: Self.corner))
                     .overlay(RoundedRectangle(cornerRadius: Self.corner).strokeBorder(selected ? accent : .clear, lineWidth: Self.selectedStroke))
                 Text(title).typeRole(.caption).lineLimit(1)
             }

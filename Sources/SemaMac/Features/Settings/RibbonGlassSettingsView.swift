@@ -4,7 +4,7 @@ import SwiftUI
 import MarketCore
 
 struct RibbonGlassSettingsView: View {
-    private static let sliderSpacing = Spacing.s16
+    private static let sliderSpacing = DesignSpace.itemGap
     private static let labelWidth: CGFloat = 136
     private static let valueWidth: CGFloat = 38
     @Environment(AppStore.self) private var store
@@ -41,7 +41,7 @@ struct RibbonGlassSettingsView: View {
             }))
             .disabled(opaque)
 
-            Text(explanation).typeRole(.small).foregroundStyle(.secondary)
+            Text(explanation).typeRole(.small).foregroundStyle(DesignColor.textMuted)
             Button("Réinitialiser le verre") { store.setRibbonGlass(.standard) }
                 .disabled(store.ribbonGlass == .standard)
         }
@@ -62,7 +62,7 @@ struct RibbonGlassSettingsView: View {
                 .accessibilityLabel(title)
                 .accessibilityValue("\(Int((value.wrappedValue * 100).rounded())) %")
             Text(value.wrappedValue, format: .percent.precision(.fractionLength(0)))
-                .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
+                .typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)
                 .frame(width: Self.valueWidth, alignment: .trailing).accessibilityHidden(true)
         }
     }

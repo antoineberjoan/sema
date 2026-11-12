@@ -1,11 +1,12 @@
 // Présente les trois accès globaux modifiables et rappelle la navigation clavier du hub.
 import AppKit
 import Carbon
+import SemaDesign
 import SwiftUI
 import MarketCore
 
 struct ShortcutSettingsView: View {
-    private static let rowSpacing = Spacing.s14
+    private static let rowSpacing = DesignSpace.fieldGap
     private static let recorderWidth: CGFloat = 142
     private static let recorderHeight: CGFloat = 30
     @Environment(AppStore.self) private var store
@@ -17,7 +18,7 @@ struct ShortcutSettingsView: View {
                 shortcutRow(.workspace, title: "Hub")
                 shortcutRow(.search, title: "Recherche")
                 if let error = store.shortcutError {
-                    Text(error).typeRole(.small).foregroundStyle(.red)
+                    Text(error).typeRole(.small).foregroundStyle(DesignColor.danger)
                         .accessibilityLabel("Raccourci indisponible : " + error)
                 }
             }
@@ -46,7 +47,7 @@ struct ShortcutSettingsView: View {
                 finish: { store.activateShortcuts() },
                 save: { store.setShortcut($0, for: action) })
                 .frame(width: Self.recorderWidth, height: Self.recorderHeight)
-        }.padding(.vertical, Theme.settingsRowPadding)
+        }.padding(.vertical, DesignSpace.controlInsetDense)
     }
 }
 
