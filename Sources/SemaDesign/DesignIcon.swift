@@ -9,4 +9,6 @@ public enum DesignIcon {
     public static let stroke: CGFloat = 1.75
     /// Écart entre une icône et son libellé.
     public static let gap: CGFloat = DesignScale.space8
+    /// Côté d'un bouton d'icône d'une fenêtre Mac au pointeur : app Mac au pointeur, cible au toucher non applicable. Une vue qui accepte le toucher lit target.min.
+    public static let buttonSize: CGFloat = 26
 }

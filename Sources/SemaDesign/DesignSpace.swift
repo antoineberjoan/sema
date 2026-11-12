@@ -7,6 +7,10 @@ public enum DesignSpace {
     public static let listGapDense: CGFloat = DesignScale.space2
     /// Marge intérieure d'une pastille ou d'un tag.
     public static let markInset: CGFloat = DesignScale.space4
+    /// Entre un titre et sa valeur ou son sous-titre.
+    public static let titleGap: CGFloat = DesignScale.space4
+    /// Marge latérale d'une pastille ou d'un tag.
+    public static let markInsetInline: CGFloat = DesignScale.space8
     /// Marge verticale d'un petit bouton ou d'un contrôle compact.
     public static let controlInsetDense: CGFloat = DesignScale.space6
     /// Marge intérieure d'une ligne de liste.
@@ -15,10 +19,14 @@ public enum DesignSpace {
     public static let frameInset: CGFloat = DesignScale.space10
     /// Marge intérieure d'un menu.
     public static let menuInset: CGFloat = DesignScale.space12
+    /// Entre deux champs ou deux contrôles d'un même bloc.
+    public static let fieldGap: CGFloat = DesignScale.space12
     /// Marge latérale d'un bloc de propriétés.
     public static let panelInsetInline: CGFloat = DesignScale.space14
     /// Marge intérieure d'une carte.
     public static let cardInset: CGFloat = DesignScale.space16
+    /// Entre deux éléments répétés d'une liste ou d'une grille.
+    public static let itemGap: CGFloat = DesignScale.space16
     /// Entre deux groupes d'une même section.
     public static let groupGap: CGFloat = DesignScale.space24
     /// Marge d'une page étroite.

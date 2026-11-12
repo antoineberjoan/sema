@@ -17,11 +17,11 @@ public enum DesignColor {
     /// Texte principal et icône porteuse de sens ; pas sur un aplat d'accent (on-accent).
     public static let text: Color = makeAdaptive(light: DesignPrimitive.ink800, dark: DesignPrimitive.paper50)
     /// Texte d'appoint, légende, icône discrète ; jamais une information indispensable seule.
-    public static let textMuted: Color = makeAdaptive(light: DesignPrimitive.ink500, dark: DesignPrimitive.ink300)
+    public static let textMuted: Color = makeAdaptive(light: DesignPrimitive.ink500, dark: DesignPrimitive.ink300, lightHigh: DesignPrimitive.ink600, darkHigh: DesignPrimitive.ink200)
     /// Filet de séparation, contour discret ; décoratif, sans seuil de contraste. Pas pour le contour d'un champ qui doit se voir seul.
-    public static let rule: Color = makeAdaptive(light: DesignPrimitive.paper100, dark: DesignPrimitive.ink700)
+    public static let rule: Color = makeAdaptive(light: DesignPrimitive.paper100, dark: DesignPrimitive.ink700, lightHigh: DesignPrimitive.ink400, darkHigh: DesignPrimitive.ink400)
     /// Filet au survol ; pas au repos.
-    public static let ruleHover: Color = makeAdaptive(light: DesignPrimitive.paper200, dark: DesignPrimitive.ink600)
+    public static let ruleHover: Color = makeAdaptive(light: DesignPrimitive.paper200, dark: DesignPrimitive.ink600, lightHigh: DesignPrimitive.ink500, darkHigh: DesignPrimitive.ink300)
     /// Fond d'une ligne ou d'un contrôle au survol ; pas pour la sélection.
     public static let hover: Color = makeAdaptive(light: DesignPrimitive.paper50, dark: DesignPrimitive.ink700)
     /// Fond d'un élément sélectionné, accent très léger ; pas pour le survol.
@@ -43,19 +43,19 @@ public enum DesignColor {
         makeAdaptive(light: DesignPrimitive.accent500(variant), dark: DesignPrimitive.accent200(variant))
     }
     /// L'erreur et la suppression, en texte, icône ou aplat ; jamais une décoration.
-    public static let danger: Color = makeAdaptive(light: DesignPrimitive.red500, dark: DesignPrimitive.red300)
+    public static let danger: Color = makeAdaptive(light: DesignPrimitive.red500, dark: DesignPrimitive.red300, lightHigh: DesignPrimitive.red600, darkHigh: DesignPrimitive.red150)
     /// Texte posé sur un aplat danger.
     public static let onDanger: Color = makeAdaptive(light: DesignPrimitive.paper0, dark: DesignPrimitive.ink800)
     /// La réussite confirmée, en texte, icône ou aplat ; jamais une décoration.
-    public static let success: Color = makeAdaptive(light: DesignPrimitive.green600, dark: DesignPrimitive.green300)
+    public static let success: Color = makeAdaptive(light: DesignPrimitive.green600, dark: DesignPrimitive.green300, lightHigh: DesignPrimitive.green650, darkHigh: DesignPrimitive.green200)
     /// Texte posé sur un aplat success.
     public static let onSuccess: Color = makeAdaptive(light: DesignPrimitive.paper0, dark: DesignPrimitive.ink800)
     /// L'avertissement, en texte, icône ou aplat ; jamais une décoration.
-    public static let warning: Color = makeAdaptive(light: DesignPrimitive.amber500, dark: DesignPrimitive.amber300)
+    public static let warning: Color = makeAdaptive(light: DesignPrimitive.amber500, dark: DesignPrimitive.amber300, lightHigh: DesignPrimitive.amber600, darkHigh: DesignPrimitive.amber200)
     /// Texte posé sur un aplat warning.
     public static let onWarning: Color = makeAdaptive(light: DesignPrimitive.paper0, dark: DesignPrimitive.ink800)
     /// L'information neutre, en texte, icône ou aplat ; pas l'accent de la marque.
-    public static let info: Color = makeAdaptive(light: DesignPrimitive.blue500, dark: DesignPrimitive.blue300)
+    public static let info: Color = makeAdaptive(light: DesignPrimitive.blue500, dark: DesignPrimitive.blue300, lightHigh: DesignPrimitive.blue600, darkHigh: DesignPrimitive.blue200)
     /// Texte posé sur un aplat info.
     public static let onInfo: Color = makeAdaptive(light: DesignPrimitive.paper0, dark: DesignPrimitive.ink800)
     /// Ombre proche : nette et plus dense, elle pose l'objet ; lue par les élévations seulement.
@@ -94,17 +94,22 @@ public enum DesignColor {
         Color(.sRGB, red: makeChannel(value, 16), green: makeChannel(value, 8), blue: makeChannel(value, 0))
     }
 
-    /// A color that follows the light or dark appearance.
-    static func makeAdaptive(light: UInt32, dark: UInt32, lightOpacity: Double = 1, darkOpacity: Double = 1) -> Color {
+    /// A color that follows the light or dark appearance, and the system's increased contrast when a high value is given.
+    static func makeAdaptive(light: UInt32, dark: UInt32, lightHigh: UInt32? = nil, darkHigh: UInt32? = nil, lightOpacity: Double = 1, darkOpacity: Double = 1) -> Color {
         #if canImport(AppKit)
         Color(nsColor: NSColor(name: nil) { appearance in
-            let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            return makePlatformColor(isDark ? dark : light, opacity: isDark ? darkOpacity : lightOpacity)
+            let match = appearance.bestMatch(from: [.aqua, .darkAqua, .accessibilityHighContrastAqua, .accessibilityHighContrastDarkAqua])
+            let isDark = match == .darkAqua || match == .accessibilityHighContrastDarkAqua
+            let isHigh = match == .accessibilityHighContrastAqua || match == .accessibilityHighContrastDarkAqua
+            let value = isDark ? (isHigh ? darkHigh ?? dark : dark) : (isHigh ? lightHigh ?? light : light)
+            return makePlatformColor(value, opacity: isDark ? darkOpacity : lightOpacity)
         })
         #else
         Color(uiColor: UIColor { traits in
             let isDark = traits.userInterfaceStyle == .dark
-            return makePlatformColor(isDark ? dark : light, opacity: isDark ? darkOpacity : lightOpacity)
+            let isHigh = traits.accessibilityContrast == .high
+            let value = isDark ? (isHigh ? darkHigh ?? dark : dark) : (isHigh ? lightHigh ?? light : light)
+            return makePlatformColor(value, opacity: isDark ? darkOpacity : lightOpacity)
         })
         #endif
     }
