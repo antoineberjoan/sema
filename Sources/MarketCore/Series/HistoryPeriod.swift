@@ -8,6 +8,18 @@ public enum HistoryPeriod: String, CaseIterable, Identifiable, Sendable {
     public static let visible: [HistoryPeriod] = [.quarter, .year, .threeYears, .fiveYears, .all]
     /// Years of recent history loaded by default, one more than the longest visible horizon.
     public static let recentYears = 6
+
+    /// A tranche of history: `recentYears` calendar years ending at `end`, never starting before `first`.
+    /// `isComplete` is true once the tranche reaches `first`, the start of the published history.
+    public static func tranche(endingAt end: Date, notBefore first: Date? = nil, calendar: Calendar) -> (start: Date, end: Date, isComplete: Bool) {
+        let windowStart = calendar.date(byAdding: .year, value: -recentYears, to: end)!
+        guard let first else { return (windowStart, end, false) }
+        let start = max(first, windowStart)
+        return (start, end, start <= first)
+    }
+
+    /// Where the next older tranche ends: the day before the current one starts.
+    public static func previousEnd(before start: Date) -> Date { start.addingTimeInterval(-.day) }
     public var days: Int {
         switch self { case .month: 30; case .quarter: 90; case .halfYear: 183; case .year: 365; case .threeYears: 1_095; case .fiveYears: 1_825; case .all: Int.max }
     }

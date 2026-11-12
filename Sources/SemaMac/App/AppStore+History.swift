@@ -28,11 +28,12 @@ extension AppStore {
                 var points = reload ? [] : item.observations
                 while end >= first {
                     try Task.checkCancellation()
-                    let start = max(first, calendar.date(byAdding: .year, value: -HistoryPeriod.recentYears, to: end)!)
+                    let tranche = HistoryPeriod.tranche(endingAt: end, notBefore: first, calendar: calendar)
+                    let start = tranche.start
                     let older = try await WebstatClient().observations(apiKey: key, descriptor: descriptor, start: start, end: end)
                     points = older + points
                     try Task.checkCancellation()
-                    let complete = start <= first
+                    let complete = tranche.isComplete
                     let value = descriptor.series(observations: points, syncedAt: .now, completeHistory: complete)
                     if isFollowing(item.id) {
                         merge([value]); try storage.cacheWebstat(series)
@@ -40,7 +41,7 @@ extension AppStore {
                     if previewDescriptor?.key == item.id { previewSeries = value }
                     historyProgress = "Historique reçu depuis \(MarketFormat.date(value.observations.first?.date))"
                     if complete { break }
-                    end = start.addingTimeInterval(-.day)
+                    end = HistoryPeriod.previousEnd(before: start)
                 }
             } catch is CancellationError { }
             catch { seriesErrors[item.id] = error.localizedDescription; if previewDescriptor?.key == item.id { previewError = error.localizedDescription } }

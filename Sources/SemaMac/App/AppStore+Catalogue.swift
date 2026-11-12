@@ -46,7 +46,7 @@ extension AppStore {
                 }
                 let items: [WebstatSeriesDescriptor]
                 let hasMore: Bool
-                if offset >= WebstatClient.maximumSearchOffset {
+                if WebstatClient.usesSummaryExport(forOffset: offset) {
                     if summaryExportSearch != search {
                         let summaries = try await WebstatClient().exportSummaries(apiKey: key, search: search)
                         try Task.checkCancellation()

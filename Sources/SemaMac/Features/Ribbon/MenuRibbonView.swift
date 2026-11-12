@@ -49,11 +49,8 @@ struct MenuRibbonView: View {
     private var horizontalFavorites: some View {
         GeometryReader { geometry in
             // Two slots stay outside the scroll view: the agenda and the signature, always visible.
-            let capacity = max(1, Int((geometry.size.width + MenuRibbonLayout.spacing)
-                                     / (MenuRibbonLayout.minimumCardWidth + MenuRibbonLayout.spacing)) - MenuRibbonLayout.fixedCards)
-            let visibleCount = max(1, min(items.count, capacity, MenuRibbonLayout.preferredVisibleCards))
-            let cardWidth = (geometry.size.width - CGFloat(visibleCount + MenuRibbonLayout.fixedCards - 1) * MenuRibbonLayout.spacing)
-                / CGFloat(visibleCount + MenuRibbonLayout.fixedCards)
+            let visibleCount = MenuRibbonLayout.visibleCardCount(width: geometry.size.width, favoriteCount: items.count)
+            let cardWidth = MenuRibbonLayout.cardWidth(width: geometry.size.width, visibleCount: visibleCount)
             HStack(spacing: MenuRibbonLayout.spacing) {
                 if items.isEmpty {
                     emptyState.frame(maxWidth: .infinity, maxHeight: .infinity)
