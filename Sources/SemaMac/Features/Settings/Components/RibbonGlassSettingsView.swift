@@ -5,8 +5,6 @@ import MarketCore
 
 struct RibbonGlassSettingsView: View {
     private static let sliderSpacing = DesignSpace.itemGap
-    private static let labelWidth: CGFloat = 136
-    private static let valueWidth: CGFloat = 38
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
@@ -17,7 +15,7 @@ struct RibbonGlassSettingsView: View {
         Section("Verre des cartes") {
             if let series = store.favorites.first {
                 RibbonCard(series: store.displayedSeries(series), period: .year, action: {})
-                    .frame(height: MenuRibbonLayout.cardHeight)
+                    .frame(height: DesignLayout.menuRibbonCardHeight)
                     .allowsHitTesting(false).accessibilityHidden(true)
                     .environment(\.palette, store.palette)
                     .environment(\.glassSettings, store.ribbonGlass)
@@ -57,13 +55,13 @@ struct RibbonGlassSettingsView: View {
 
     private func glassSlider(_ title: String, symbol: String, value: Binding<Double>) -> some View {
         HStack(spacing: Self.sliderSpacing) {
-            Label(title, systemImage: symbol).frame(width: Self.labelWidth, alignment: .leading)
+            Label(title, systemImage: symbol).frame(width: DesignLayout.ribbonGlassSettingsLabelWidth, alignment: .leading)
             Slider(value: value, in: 0...1)
                 .accessibilityLabel(title)
                 .accessibilityValue("\(Int((value.wrappedValue * 100).rounded())) %")
             Text(value.wrappedValue, format: .percent.precision(.fractionLength(0)))
                 .typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)
-                .frame(width: Self.valueWidth, alignment: .trailing).accessibilityHidden(true)
+                .frame(width: DesignLayout.ribbonGlassSettingsValueWidth, alignment: .trailing).accessibilityHidden(true)
         }
     }
 }

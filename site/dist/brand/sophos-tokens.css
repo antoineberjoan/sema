@@ -257,6 +257,8 @@
   --color-palette-preview-3: var(--primitive-color-palette-preview-300);
   /* La nuance 4 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface. */
   --color-palette-preview-4: var(--primitive-color-palette-preview-100);
+  /* Propre à sema : le fond sur lequel une photo de profil à fond transparent est aplatie avant l'enregistrement en JPEG ; papier dans les deux modes, car l'image enregistrée ne suit pas l'apparence. */
+  --color-photo-matte: var(--primitive-color-paper-0);
   /* Entre deux lignes d'une liste serrée ; pas entre deux groupes. */
   --space-list-gap-dense: var(--primitive-space-2);
   /* Marge intérieure d'une pastille ou d'un tag. */
@@ -363,6 +365,12 @@
   --opacity-glass-edge-end: 0.025;
   /* Propre à sema : l'opacité du grain quand son réglage est au maximum. */
   --opacity-glass-grain-max: 0.16;
+  /* Propre à sema : area opacity, RibbonCard (opacité). */
+  --opacity-ribbon-card-area-opacity: 0.14;
+  /* Propre à sema : area opacity, HistoryChart (opacité). */
+  --opacity-history-chart-area-opacity: 0.09;
+  /* Propre à sema : pressed opacity, Press (opacité). */
+  --opacity-press-pressed-opacity: 0.82;
   /* Barre ou en-tête collé au défilement. */
   --layer-sticky: 10;
   /* Menu, liste déroulante, popover. */
@@ -385,6 +393,66 @@
   --target-min: 44px;
   /* Largeur maximale d'une colonne de lecture, en caractères. */
   --measure-reading: 65ch;
+  /* Propre à sema : le facteur qui étend l'opacité du voile du verre sur toute la plage du réglage Transparence. */
+  --measure-glass-veil-range: 4;
+  /* Propre à sema : le facteur qui étend l'opacité de la teinte du verre sur toute la plage du réglage Teinte. */
+  --measure-glass-tint-range: 2;
+  /* Propre à sema : l'échelle de la tuile de grain du verre, en pixels de l'image par point. */
+  --measure-glass-grain-scale: 2;
+  /* Propre à sema : la taille des initiales d'un avatar, en fraction de sa taille. */
+  --measure-avatar-initials-scale: 0.34;
+  /* Propre à sema : la taille du symbole d'un avatar sans photo ni initiales, en fraction de sa taille. */
+  --measure-avatar-symbol-scale: 0.4;
+  /* Propre à sema : value minimum scale, RibbonCard (mesure). */
+  --measure-ribbon-card-value-minimum-scale: 0.7;
+  /* Propre à sema : top inset, SearchPanelController (mesure). */
+  --measure-search-panel-controller-top-inset: 0.18;
+  /* Propre à sema : value minimum scale, IndicatorTile (mesure). */
+  --measure-indicator-tile-value-minimum-scale: 0.85;
+  /* Propre à sema : value minimum scale, SeriesDetail (mesure). */
+  --measure-series-detail-value-minimum-scale: 0.55;
+  /* Propre à sema : value minimum scale, FocusSwitcher (mesure). */
+  --measure-focus-switcher-value-minimum-scale: 0.75;
+  /* Propre à sema : domain margin, HistoryChart (mesure). */
+  --measure-history-chart-domain-margin: 0.2;
+  /* Propre à sema : relative margin floor, HistoryChart (mesure). */
+  --measure-history-chart-relative-margin-floor: 0.002;
+  /* Propre à sema : margin floor, HistoryChart (mesure). */
+  --measure-history-chart-margin-floor: 0.0001;
+  /* Propre à sema : status lines, Workspace (taille). */
+  --measure-workspace-status-lines: 2;
+  /* Propre à sema : name lines, Workspace (taille). */
+  --measure-name-lines: 2;
+  /* Propre à sema : palette title lines, Settings (taille). */
+  --measure-settings-palette-title-lines: 2;
+  /* Propre à sema : heading lines, RibbonCard (taille). */
+  --measure-ribbon-card-heading-lines: 2;
+  /* Propre à sema : empty lines, AgendaCard (taille). */
+  --measure-agenda-card-empty-lines: 4;
+  /* Propre à sema : preferred visible cards, MenuRibbon (taille). */
+  --measure-menu-ribbon-preferred-visible-cards: 4;
+  /* Propre à sema : fixed cards, MenuRibbon (taille). */
+  --measure-menu-ribbon-fixed-cards: 2;
+  /* Propre à sema : title lines, Agenda (taille). */
+  --measure-agenda-title-lines: 2;
+  /* Propre à sema : topic lines, SourceExplorer (taille). */
+  --measure-source-explorer-topic-lines: 2;
+  /* Propre à sema : series title lines, StatisticalExplorer (taille). */
+  --measure-statistical-explorer-series-title-lines: 4;
+  /* Propre à sema : value lines, StatisticalExplorer (taille). */
+  --measure-statistical-explorer-value-lines: 2;
+  /* Propre à sema : detail lines, CatalogueBrowser (taille). */
+  --measure-catalogue-browser-detail-lines: 2;
+  /* Propre à sema : row title lines, Explorer (taille). */
+  --measure-explorer-row-title-lines: 3;
+  /* Propre à sema : definition lines, SeriesExplanation (taille). */
+  --measure-series-explanation-definition-lines: 4;
+  /* Propre à sema : le côté en pixels de la photo de profil enregistrée. */
+  --measure-profile-photo-pixel-size: 384;
+  /* Propre à sema : le côté maximal en pixels de la vignette lue avant le recadrage de la photo de profil. */
+  --measure-profile-photo-thumbnail-pixel-size: 768;
+  /* Propre à sema : la qualité de compression JPEG de la photo de profil, de 0 à 1. */
+  --measure-profile-photo-jpeg-quality: 0.85;
   /* Écran étroit : sous ce seuil, le titre rétrécit. Seul seuil de largeur du patron. */
   --breakpoint-narrow: 40rem;
   /* Famille de l'interface ; le projet y met sa police. */
@@ -535,6 +603,10 @@
   --duration-wide: var(--primitive-duration-300);
   /* Explication, accueil, page vue une fois ; jamais sur une interface fréquente. */
   --duration-explain: var(--primitive-duration-550);
+  /* Propre à sema : draw delay, SignatureMotion (durée). */
+  --duration-signature-motion-draw-delay: 100ms;
+  /* Propre à sema : duration, RowDisclosure (durée). */
+  --duration-row-disclosure-duration: 180ms;
   /* Entrée et sortie ; le choix par défaut. */
   --ease-out: var(--primitive-ease-out);
   /* Déplacement ou transformation à l'écran. */
@@ -555,6 +627,216 @@
   --motion-stagger: 50ms;
   /* Une sortie dure cette part de son entrée. */
   --motion-exit-ratio: 0.6;
+  /* Propre à sema : default width, MacApp (taille). */
+  --layout-mac-app-default-width: 1120px;
+  /* Propre à sema : default height, MacApp (taille). */
+  --layout-mac-app-default-height: 760px;
+  /* Propre à sema : empty min height, Overview (taille). */
+  --layout-overview-empty-min-height: 450px;
+  /* Propre à sema : empty min height, Alerts (taille). */
+  --layout-alerts-empty-min-height: 350px;
+  /* Propre à sema : name width, WatchRow (taille). */
+  --layout-watch-row-name-width: 220px;
+  /* Propre à sema : icon size, AlertRow (taille). */
+  --layout-alert-row-icon-size: 30px;
+  /* Propre à sema : minimum height, Explorer (taille). */
+  --layout-explorer-minimum-height: 510px;
+  /* Propre à sema : minimum width, Workspace (taille). */
+  --layout-workspace-minimum-width: 980px;
+  /* Propre à sema : minimum height, Workspace (taille). */
+  --layout-workspace-minimum-height: 680px;
+  /* Propre à sema : icon width, SidebarItem (taille). */
+  --layout-icon-width: 16px;
+  /* Propre à sema : sidebar min width, FocusMotion (taille). */
+  --layout-focus-motion-sidebar-min-width: 220px;
+  /* Propre à sema : sidebar max width, FocusMotion (taille). */
+  --layout-focus-motion-sidebar-max-width: 280px;
+  /* Propre à sema : sidebar width, FocusMotion (taille). */
+  --layout-focus-motion-sidebar-width: 240px;
+  /* Propre à sema : window width, Welcome (taille). */
+  --layout-welcome-window-width: 640px;
+  /* Propre à sema : window height, Welcome (taille). */
+  --layout-welcome-window-height: 700px;
+  /* Propre à sema : signal size, Welcome (taille). */
+  --layout-welcome-signal-size: 44px;
+  /* Propre à sema : hero signal size, Welcome (taille). */
+  --layout-welcome-hero-signal-size: 88px;
+  /* Propre à sema : dot size, Welcome (taille). */
+  --layout-dot-size: 6px;
+  /* Propre à sema : active dot width, Welcome (taille). */
+  --layout-welcome-active-dot-width: 18px;
+  /* Propre à sema : feature column width, Welcome (taille). */
+  --layout-welcome-feature-column-width: 420px;
+  /* Propre à sema : feature symbol width, Welcome (taille). */
+  --layout-welcome-feature-symbol-width: 32px;
+  /* Propre à sema : tile min height, Welcome (taille). */
+  --layout-welcome-tile-min-height: 64px;
+  /* Propre à sema : preview card width, Welcome (taille). */
+  --layout-welcome-preview-card-width: 176px;
+  /* Propre à sema : maximum width, Brief (taille). */
+  --layout-brief-maximum-width: 640px;
+  /* Propre à sema : sidebar width, Settings (taille). */
+  --layout-settings-sidebar-width: 230px;
+  /* Propre à sema : profile avatar size, Settings (taille). */
+  --layout-settings-profile-avatar-size: 28px;
+  /* Propre à sema : minimum width, Settings (taille). */
+  --layout-settings-minimum-width: 880px;
+  /* Propre à sema : ideal width, Settings (taille). */
+  --layout-settings-ideal-width: 980px;
+  /* Propre à sema : minimum height, Settings (taille). */
+  --layout-settings-minimum-height: 660px;
+  /* Propre à sema : ideal height, Settings (taille). */
+  --layout-settings-ideal-height: 740px;
+  /* Propre à sema : swatch height, Settings (taille). */
+  --layout-settings-swatch-height: 58px;
+  /* Propre à sema : selected stroke, Settings (taille). */
+  --layout-selected-stroke: 2px;
+  /* Propre à sema : palette title height, Settings (taille). */
+  --layout-settings-palette-title-height: 28px;
+  /* Propre à sema : mark size, Settings (taille). */
+  --layout-settings-mark-size: 48px;
+  /* Propre à sema : tile height, SettingsChoice (taille). */
+  --layout-settings-choice-tile-height: 48px;
+  /* Propre à sema : width, SettingsChoice (taille). */
+  --layout-settings-choice-width: 76px;
+  /* Propre à sema : empty min height, Favorites (taille). */
+  --layout-favorites-empty-min-height: 380px;
+  /* Propre à sema : tile min width, Favorites (taille). */
+  --layout-favorites-tile-min-width: 250px;
+  /* Propre à sema : results height, Search (taille). */
+  --layout-search-results-height: 280px;
+  /* Propre à sema : chart height, RibbonCard (taille). */
+  --layout-ribbon-card-chart-height: 80px;
+  /* Propre à sema : selection point size, RibbonCard (taille). */
+  --layout-ribbon-card-selection-point-size: 36px;
+  /* Propre à sema : mark size, SignatureMotion (taille). */
+  --layout-signature-motion-mark-size: 72px;
+  /* Propre à sema : mark area height, RibbonSignature (taille). */
+  --layout-ribbon-signature-mark-area-height: 48px;
+  /* Propre à sema : feedback height, RibbonSignature (taille). */
+  --layout-ribbon-signature-feedback-height: 26px;
+  /* Propre à sema : day height, AgendaCard (taille). */
+  --layout-agenda-card-day-height: 34px;
+  /* Propre à sema : line height, AgendaCard (taille). */
+  --layout-agenda-card-line-height: 42px;
+  /* Propre à sema : vertical width, MenuRibbon (taille). */
+  --layout-menu-ribbon-vertical-width: 368px;
+  /* Propre à sema : header height, MenuRibbon (taille). */
+  --layout-menu-ribbon-header-height: 32px;
+  /* Propre à sema : minimum card width, MenuRibbon (taille). */
+  --layout-menu-ribbon-minimum-card-width: 208px;
+  /* Propre à sema : card height, MenuRibbon (taille). */
+  --layout-menu-ribbon-card-height: 216px;
+  /* Propre à sema : sparkline width, MenuRibbon (taille). */
+  --layout-menu-ribbon-sparkline-width: 1.8px;
+  /* Propre à sema : sheet width, SeriesSearch (taille). */
+  --layout-series-search-sheet-width: 880px;
+  /* Propre à sema : sheet height, SeriesSearch (taille). */
+  --layout-series-search-sheet-height: 560px;
+  /* Propre à sema : mode picker width, SeriesSearch (taille). */
+  --layout-series-search-mode-picker-width: 300px;
+  /* Propre à sema : catalogue height, SeriesSearch (taille). */
+  --layout-series-search-catalogue-height: 420px;
+  /* Propre à sema : results height, SeriesSearch (taille). */
+  --layout-series-search-results-height: 320px;
+  /* Propre à sema : label width, RibbonGlassSettings (taille). */
+  --layout-ribbon-glass-settings-label-width: 136px;
+  /* Propre à sema : value width, RibbonGlassSettings (taille). */
+  --layout-ribbon-glass-settings-value-width: 38px;
+  /* Propre à sema : avatar size, ProfileSettings (taille). */
+  --layout-profile-settings-avatar-size: 56px;
+  /* Propre à sema : recorder width, ShortcutSettings (taille). */
+  --layout-shortcut-settings-recorder-width: 142px;
+  /* Propre à sema : recorder height, ShortcutSettings (taille). */
+  --layout-shortcut-settings-recorder-height: 30px;
+  /* Propre à sema : maximum width, Agenda (taille). */
+  --layout-agenda-maximum-width: 520px;
+  /* Propre à sema : bar width, AgendaLine (taille). */
+  --layout-agenda-line-bar-width: 3px;
+  /* Propre à sema : picker width, SourceExplorer (taille). */
+  --layout-source-explorer-picker-width: 190px;
+  /* Propre à sema : compact card min width, SourceExplorer (taille). */
+  --layout-source-explorer-compact-card-min-width: 240px;
+  /* Propre à sema : card min width, SourceExplorer (taille). */
+  --layout-source-explorer-card-min-width: 270px;
+  /* Propre à sema : card min height, SourceExplorer (taille). */
+  --layout-source-explorer-card-min-height: 66px;
+  /* Propre à sema : datasets min width, StatisticalExplorer (taille). */
+  --layout-statistical-explorer-datasets-min-width: 230px;
+  /* Propre à sema : datasets ideal width, StatisticalExplorer (taille). */
+  --layout-statistical-explorer-datasets-ideal-width: 280px;
+  /* Propre à sema : datasets max width, StatisticalExplorer (taille). */
+  --layout-statistical-explorer-datasets-max-width: 310px;
+  /* Propre à sema : compact series min width, StatisticalExplorer (taille). */
+  --layout-statistical-explorer-compact-series-min-width: 340px;
+  /* Propre à sema : series min width, StatisticalExplorer (taille). */
+  --layout-statistical-explorer-series-min-width: 350px;
+  /* Propre à sema : advanced label max width, StatisticalExplorer (taille). */
+  --layout-statistical-explorer-advanced-label-max-width: 140px;
+  /* Propre à sema : advanced max height, StatisticalExplorer (taille). */
+  --layout-statistical-explorer-advanced-max-height: 250px;
+  /* Propre à sema : compact results min width, CatalogueBrowser (taille). */
+  --layout-catalogue-browser-compact-results-min-width: 260px;
+  /* Propre à sema : results min width, CatalogueBrowser (taille). */
+  --layout-catalogue-browser-results-min-width: 300px;
+  /* Propre à sema : results max width, CatalogueBrowser (taille). */
+  --layout-catalogue-browser-results-max-width: 350px;
+  /* Propre à sema : compact preview min width, CatalogueBrowser (taille). */
+  --layout-catalogue-browser-compact-preview-min-width: 330px;
+  /* Propre à sema : preview min width, CatalogueBrowser (taille). */
+  --layout-catalogue-browser-preview-min-width: 360px;
+  /* Propre à sema : loading min height, CatalogueBrowser (taille). */
+  --layout-catalogue-browser-loading-min-height: 280px;
+  /* Propre à sema : list width, MarketExplorer (taille). */
+  --layout-market-explorer-list-width: 310px;
+  /* Propre à sema : sheet width, AlertEditor (taille). */
+  --layout-alert-editor-sheet-width: 480px;
+  /* Propre à sema : inspector min width, SeriesDetail (taille). */
+  --layout-series-detail-inspector-min-width: 280px;
+  /* Propre à sema : inspector ideal width, SeriesDetail (taille). */
+  --layout-series-detail-inspector-ideal-width: 320px;
+  /* Propre à sema : inspector max width, SeriesDetail (taille). */
+  --layout-series-detail-inspector-max-width: 420px;
+  /* Propre à sema : preview chart height, SeriesDetail (taille). */
+  --layout-series-detail-preview-chart-height: 170px;
+  /* Propre à sema : chart height, SeriesDetail (taille). */
+  --layout-series-detail-chart-height: 235px;
+  /* Propre à sema : indicator height, PeriodTabs (taille). */
+  --layout-period-tabs-indicator-height: 2px;
+  /* Propre à sema : panel max width, FocusSwitcher (taille). */
+  --layout-focus-switcher-panel-max-width: 700px;
+  /* Propre à sema : tile width, FocusSwitcher (taille). */
+  --layout-focus-switcher-tile-width: 166px;
+  /* Propre à sema : name height, FocusSwitcher (taille). */
+  --layout-focus-switcher-name-height: 32px;
+  /* Propre à sema : default height, HistoryChart (taille). */
+  --layout-history-chart-default-height: 190px;
+  /* Propre à sema : axis tick count, HistoryChart (taille). */
+  --layout-history-chart-axis-tick-count: 3px;
+  /* Propre à sema : plot padding, HistoryChart (taille). */
+  --layout-history-chart-plot-padding: 12px;
+  /* Propre à sema : point size, HistoryChart (taille). */
+  --layout-history-chart-point-size: 35px;
+  /* Propre à sema : content spacing, HistoryChart (taille). */
+  --layout-history-chart-content-spacing: 9px;
+  /* Propre à sema : reading spacing, HistoryChart (taille). */
+  --layout-history-chart-reading-spacing: 3px;
+  /* Propre à sema : reading horizontal padding, HistoryChart (taille). */
+  --layout-history-chart-reading-horizontal-padding: 10px;
+  /* Propre à sema : reading vertical padding, HistoryChart (taille). */
+  --layout-history-chart-reading-vertical-padding: 7px;
+  /* Propre à sema : line width, HistoryChart (taille). */
+  --layout-history-chart-line-width: 2px;
+  /* Propre à sema : spacing, RowDisclosure (taille). */
+  --layout-row-disclosure-spacing: 6px;
+  /* Propre à sema : chevron width, RowDisclosure (taille). */
+  --layout-row-disclosure-chevron-width: 12px;
+  /* Propre à sema : content spacing, RowDisclosure (taille). */
+  --layout-row-disclosure-content-spacing: 8px;
+  /* Propre à sema : la taille d'un avatar de profil quand l'appelant n'en donne pas. */
+  --layout-profile-avatar-default-size: 32px;
+  /* Propre à sema : la taille du texte du bouton d'enregistrement d'un raccourci, un contrôle natif d'AppKit. */
+  --layout-shortcut-recorder-font-size: 12px;
 }
 
 /* Palette graphite : les pas d'échelle qui diffèrent de brand. */

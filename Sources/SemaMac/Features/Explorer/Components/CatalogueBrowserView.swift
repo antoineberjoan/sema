@@ -11,18 +11,11 @@ struct CatalogueBrowserView: View {
     private static let toolbarSpacing = DesignSpace.fieldGap
     private static let clearButtonTopPadding = DesignSpace.markInset
     private static let columnSpacing = DesignSpace.groupGap
-    private static let compactResultsMinWidth: CGFloat = 260
-    private static let resultsMinWidth: CGFloat = 300
-    private static let resultsMaxWidth: CGFloat = 350
-    private static let compactPreviewMinWidth: CGFloat = 330
-    private static let previewMinWidth: CGFloat = 360
     private static let previewOffset = DesignMotion.shift
     private static let previewSpacing = DesignSpace.fieldGap
     private static let previewContentSpacing = DesignSpace.itemGap
-    private static let loadingMinHeight: CGFloat = 280
     private static let loadingPadding = DesignSpace.pageInsetNarrow
     private static let previewBottomPadding = DesignSpace.frameInset
-    private static let detailLines = 2
     private static let messagePadding = DesignSpace.cardInset
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
@@ -79,10 +72,10 @@ struct CatalogueBrowserView: View {
                     }.typeRole(.small)
                 }
                 HStack(alignment: .top, spacing: Self.columnSpacing) {
-                    results.frame(minWidth: isCompact ? Self.compactResultsMinWidth : Self.resultsMinWidth, maxWidth: store.previewDescriptor == nil ? .infinity : Self.resultsMaxWidth)
+                    results.frame(minWidth: isCompact ? DesignLayout.catalogueBrowserCompactResultsMinWidth : DesignLayout.catalogueBrowserResultsMinWidth, maxWidth: store.previewDescriptor == nil ? .infinity : DesignLayout.catalogueBrowserResultsMaxWidth)
                     if let descriptor = store.previewDescriptor {
                         previewPane(descriptor)
-                            .frame(minWidth: isCompact ? Self.compactPreviewMinWidth : Self.previewMinWidth, maxWidth: .infinity)
+                            .frame(minWidth: isCompact ? DesignLayout.catalogueBrowserCompactPreviewMinWidth : DesignLayout.catalogueBrowserPreviewMinWidth, maxWidth: .infinity)
                             .transition(.opacity.combined(with: .offset(y: reduceMotion ? 0 : Self.previewOffset)))
                     }
                 }
@@ -117,7 +110,7 @@ struct CatalogueBrowserView: View {
                             Text(descriptor.title).typeRole(.section)
                             Text(descriptor.definition).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                             ProgressView("Chargement de l’historique…").controlSize(.small)
-                        }.frame(maxWidth: .infinity, minHeight: Self.loadingMinHeight, alignment: .topLeading).padding(Self.loadingPadding)
+                        }.frame(maxWidth: .infinity, minHeight: DesignLayout.catalogueBrowserLoadingMinHeight, alignment: .topLeading).padding(Self.loadingPadding)
                     } else {
                         SeriesDetailView(series: store.previewSeries ?? descriptor.series(observations: []), preview: true)
                     }
@@ -169,12 +162,12 @@ struct CatalogueBrowserView: View {
                         Button { selectedID = item.id; store.openPreview(item) } label: {
                             VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                                 HStack(alignment: .top, spacing: DesignSpace.fieldGap) {
-                                    Text(MarketFormat.name(item.series(observations: []))).typeRole(.label).lineLimit(ExplorerLayout.rowTitleLines)
+                                    Text(MarketFormat.name(item.series(observations: []))).typeRole(.label).lineLimit(Int(DesignMeasure.explorerRowTitleLines))
                                     Spacer(minLength: 0)
                                     if store.followedMatch(for: item.series(observations: [])) != nil { Image(systemName: "checkmark").foregroundStyle(accentText).accessibilityLabel("Déjà suivi") }
                                 }
                                 Text([item.area, item.frequencyTitle, item.displayUnit].compactMap { $0 }.joined(separator: " · "))
-                                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted).lineLimit(Self.detailLines)
+                                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted).lineLimit(Int(DesignMeasure.catalogueBrowserDetailLines))
                             }
                             .foregroundStyle(DesignColor.text).frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
                             .background(selectedID == item.id ? DesignColor.selection(palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))

@@ -4,7 +4,6 @@ import SwiftUI
 import MarketCore
 
 struct MarketExplorerView: View {
-    private static let listWidth: CGFloat = 310
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     let provider: MarketProvider
@@ -64,7 +63,7 @@ struct MarketExplorerView: View {
                         Text(catalogue.scope).typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                     }
                     Text(provider.quota).typeRole(.micro).foregroundStyle(DesignColor.textMuted)
-                }.frame(width: Self.listWidth)
+                }.frame(width: DesignLayout.marketExplorerListWidth)
                 ScrollView {
                     VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
                         if let selected {

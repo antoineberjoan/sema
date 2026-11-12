@@ -10,7 +10,6 @@ struct AgendaLine: Identifiable {
         case link(URL)
     }
 
-    static let barWidth: CGFloat = 3
     private static let releaseURL = "https://fred.stlouisfed.org/release?rid="
 
     let id: String

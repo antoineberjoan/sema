@@ -45,4 +45,10 @@ public enum DesignOpacity {
     public static let glassEdgeEnd: Double = 0.025
     /// Propre à sema : l'opacité du grain quand son réglage est au maximum.
     public static let glassGrainMax: Double = 0.16
+    /// Propre à sema : area opacity, RibbonCard (opacité).
+    public static let ribbonCardAreaOpacity: Double = 0.14
+    /// Propre à sema : area opacity, HistoryChart (opacité).
+    public static let historyChartAreaOpacity: Double = 0.09
+    /// Propre à sema : pressed opacity, Press (opacité).
+    public static let pressPressedOpacity: Double = 0.82
 }

@@ -6,11 +6,6 @@ import MarketCore
 
 struct RibbonCard: View {
     private static let contentSpacing = DesignSpace.rowInset
-    private static let valueMinimumScale: CGFloat = 0.7
-    private static let headingLines = 2
-    private static let chartHeight: CGFloat = 80
-    private static let areaOpacity = 0.14
-    private static let selectionPointSize: CGFloat = 36
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
@@ -66,7 +61,7 @@ struct RibbonCard: View {
     private var heading: some View {
         HStack(alignment: .top, spacing: DesignSpace.fieldGap) {
             VStack(alignment: .leading, spacing: 0) {
-                Text(MarketFormat.name(series)).typeRole(.heading).lineLimit(Self.headingLines)
+                Text(MarketFormat.name(series)).typeRole(.heading).lineLimit(Int(DesignMeasure.ribbonCardHeadingLines))
                 Text(series.originBadge + " · " + MarketFormat.unit(series)).typeRole(.caption).foregroundStyle(.secondary).lineLimit(1)
             }
             Spacer(minLength: 0)
@@ -80,7 +75,7 @@ struct RibbonCard: View {
     private var valueAndDate: some View {
         VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
             Text((selected ?? series.latest).map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
-                .typeRole(.figure).lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
+                .typeRole(.figure).lineLimit(1).minimumScaleFactor(CGFloat(DesignMeasure.ribbonCardValueMinimumScale))
             HStack(spacing: DesignSpace.fieldGap) {
                 Text((selected ?? series.latest).map { MarketFormat.date($0.date) } ?? "Aucune publication").lineLimit(1)
                 if selected == nil, let unusual {
@@ -96,27 +91,27 @@ struct RibbonCard: View {
             Chart {
                 ForEach(points) { point in
                     AreaMark(x: .value("Date", point.date), y: .value(series.displayUnit, MarketFormat.double(point.value)))
-                        .foregroundStyle(accent.opacity(Self.areaOpacity))
+                        .foregroundStyle(accent.opacity(DesignOpacity.ribbonCardAreaOpacity))
                     LineMark(x: .value("Date", point.date), y: .value(series.displayUnit, MarketFormat.double(point.value)))
                         .foregroundStyle(accent)
-                        .lineStyle(StrokeStyle(lineWidth: MenuRibbonLayout.sparklineWidth, lineCap: .round, lineJoin: .round))
+                        .lineStyle(StrokeStyle(lineWidth: DesignLayout.menuRibbonSparklineWidth, lineCap: .round, lineJoin: .round))
                 }
                 if let selected {
                     RuleMark(x: .value("Date", selected.date))
                         .foregroundStyle(.secondary).lineStyle(StrokeStyle(lineWidth: DesignBorder.width, dash: [2, 3]))
                     PointMark(x: .value("Date", selected.date), y: .value(series.displayUnit, MarketFormat.double(selected.value)))
-                        .symbolSize(Self.selectionPointSize).foregroundStyle(accent)
+                        .symbolSize(DesignLayout.ribbonCardSelectionPointSize).foregroundStyle(accent)
                 }
             }
             .chartXSelection(value: $selectedDate)
             .chartXAxis(.hidden).chartYAxis(.hidden)
             .chartYScale(domain: .automatic(includesZero: false))
-            .frame(height: Self.chartHeight).accessibilityHidden(true)
+            .frame(height: DesignLayout.ribbonCardChartHeight).accessibilityHidden(true)
         } else {
             Text(points.isEmpty ? "Historique indisponible" : "Une observation disponible")
                 .typeRole(.caption).foregroundStyle(.secondary)
                 .padding(.horizontal, MenuRibbonLayout.cardPadding).padding(.bottom, MenuRibbonLayout.cardPadding)
-                .frame(height: Self.chartHeight, alignment: .bottomLeading)
+                .frame(height: DesignLayout.ribbonCardChartHeight, alignment: .bottomLeading)
         }
     }
 

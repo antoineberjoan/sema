@@ -4,9 +4,6 @@ import SwiftUI
 import MarketCore
 
 struct AgendaCard: View {
-    private static let dayHeight: CGFloat = 34
-    private static let lineHeight: CGFloat = 42
-    private static let emptyLines = 4
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
     private var accentText: Color { DesignColor.accentText(palette) }
@@ -41,7 +38,7 @@ struct AgendaCard: View {
                         Text(AgendaDay.text(value, "EEE").capitalized).typeRole(.micro).foregroundStyle(.secondary)
                         Text(AgendaDay.text(value, "d")).typeRole(.small).monospacedDigit()
                     }
-                    .frame(maxWidth: .infinity).frame(height: Self.dayHeight)
+                    .frame(maxWidth: .infinity).frame(height: DesignLayout.agendaCardDayHeight)
                     .background(isSelected ? DesignColor.selection(palette) : Color.clear, in: RoundedRectangle(cornerRadius: DesignRadius.control))
                     .contentShape(RoundedRectangle(cornerRadius: DesignRadius.control))
                 }
@@ -66,7 +63,7 @@ struct AgendaCard: View {
             VStack(alignment: .leading, spacing: DesignSpace.markInset) {
                 if agenda.items.isEmpty {
                     Text(AgendaLine.emptyText(hasFREDKey: store.hasFREDKey)).typeRole(.small).foregroundStyle(.secondary)
-                        .lineLimit(Self.emptyLines)
+                        .lineLimit(Int(DesignMeasure.agendaCardEmptyLines))
                 }
                 ForEach(agenda.shown.map { AgendaLine($0, store: store) }) { line in
                     switch line.destination {
@@ -86,7 +83,7 @@ struct AgendaCard: View {
 
     private func row(_ line: AgendaLine) -> some View {
         HStack(spacing: DesignSpace.rowInset) {
-            Rectangle().fill(line.bar(palette: palette)).frame(width: AgendaLine.barWidth)
+            Rectangle().fill(line.bar(palette: palette)).frame(width: DesignLayout.agendaLineBarWidth)
             VStack(alignment: .leading, spacing: 0) {
                 Text(line.title).typeRole(.small).lineLimit(1)
                 Text(line.subtitle).typeRole(.micro).foregroundStyle(.secondary).lineLimit(1)
@@ -94,7 +91,7 @@ struct AgendaCard: View {
             Spacer(minLength: 0)
         }
         .padding(.trailing, DesignSpace.rowInset)
-        .frame(height: Self.lineHeight)
+        .frame(height: DesignLayout.agendaCardLineHeight)
         .background(line.tint(palette: palette), in: RoundedRectangle(cornerRadius: DesignRadius.control))
         .clipShape(RoundedRectangle(cornerRadius: DesignRadius.control))
         .contentShape(RoundedRectangle(cornerRadius: DesignRadius.control))

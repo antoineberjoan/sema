@@ -7,30 +7,16 @@ import Charts
 import MarketCore
 
 struct HistoryChart: View {
-    static let defaultHeight: CGFloat = 190
     /// Beyond this many points, the line keeps one point per bucket so that drawing stays fluid.
     private static let decimationThreshold = 1_200
     private static let decimationTarget = 500
-    /// Vertical margin around the curve: a share of its range, with floors for flat or near-zero series.
-    private static let domainMargin = 0.2
-    private static let relativeMarginFloor = 0.002
-    private static let marginFloor = 0.0001
     private static let minimumAxisDigits = 4
     private static let maximumAxisDigits = 6
-    private static let axisTickCount = 3
-    private static let plotPadding: CGFloat = 12
-    private static let pointSize: CGFloat = 35
-    private static let contentSpacing: CGFloat = 9
-    private static let readingSpacing: CGFloat = 3
-    private static let readingHorizontalPadding: CGFloat = 10
-    private static let readingVerticalPadding: CGFloat = 7
-    private static let areaOpacity = 0.09
-    private static let lineWidth: CGFloat = 2
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
     let series: MarketSeries
     let period: HistoryPeriod
-    var height: CGFloat? = Self.defaultHeight
+    var height: CGFloat? = DesignLayout.historyChartDefaultHeight
     var isReadingShown = true
     @State private var hoveredDate: Date?
 
@@ -54,7 +40,7 @@ struct HistoryChart: View {
         let values = points.map { MarketFormat.double($0.value) }
         let low = values.min() ?? 0
         let high = values.max() ?? 1
-        let padding = max((high - low) * Self.domainMargin, abs(high) * Self.relativeMarginFloor, Self.marginFloor)
+        let padding = max((high - low) * DesignMeasure.historyChartDomainMargin, abs(high) * DesignMeasure.historyChartRelativeMarginFloor, DesignMeasure.historyChartMarginFloor)
         return (low - padding)...(high + padding)
     }
     private var hovered: MarketObservation? {
@@ -68,29 +54,29 @@ struct HistoryChart: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Self.contentSpacing) {
+        VStack(alignment: .leading, spacing: DesignLayout.historyChartContentSpacing) {
             Chart {
                 ForEach(drawnPoints) { point in
                     AreaMark(x: .value("Date", point.date), yStart: .value("Base", domain.lowerBound),
                              yEnd: .value(series.displayUnit, MarketFormat.double(point.value)))
-                        .foregroundStyle(LinearGradient(colors: [accent.opacity(Self.areaOpacity), .clear], startPoint: .top, endPoint: .bottom))
+                        .foregroundStyle(LinearGradient(colors: [accent.opacity(DesignOpacity.historyChartAreaOpacity), .clear], startPoint: .top, endPoint: .bottom))
                     LineMark(x: .value("Date", point.date), y: .value(series.displayUnit, MarketFormat.double(point.value)))
-                        .foregroundStyle(accent).lineStyle(StrokeStyle(lineWidth: Self.lineWidth, lineCap: .round, lineJoin: .round))
+                        .foregroundStyle(accent).lineStyle(StrokeStyle(lineWidth: DesignLayout.historyChartLineWidth, lineCap: .round, lineJoin: .round))
                 }
                 if let hovered {
                     RuleMark(x: .value("Date sélectionnée", hovered.date))
                         .foregroundStyle(DesignColor.ruleHover)
                     PointMark(x: .value("Date", hovered.date), y: .value(series.displayUnit, MarketFormat.double(hovered.value)))
-                        .foregroundStyle(accent).symbolSize(Self.pointSize)
+                        .foregroundStyle(accent).symbolSize(DesignLayout.historyChartPointSize)
                         .annotation(position: .top, spacing: DesignIcon.gap,
                                     overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
-                            VStack(alignment: .leading, spacing: Self.readingSpacing) {
+                            VStack(alignment: .leading, spacing: DesignLayout.historyChartReadingSpacing) {
                                 Text(MarketFormat.date(hovered.date)).foregroundStyle(DesignColor.textMuted)
                                 Text(MarketFormat.number(hovered.value, digits: series.fractionDigits) + " " + series.displayUnit)
                                     .fontWeight(.medium).monospacedDigit()
                             }
                             .typeRole(.caption)
-                            .padding(.horizontal, Self.readingHorizontalPadding).padding(.vertical, Self.readingVerticalPadding)
+                            .padding(.horizontal, DesignLayout.historyChartReadingHorizontalPadding).padding(.vertical, DesignLayout.historyChartReadingVerticalPadding)
                             .background(DesignColor.surfaceRaised, in: RoundedRectangle(cornerRadius: DesignRadius.block))
                             .elevation(DesignElevation.floating)
                             .allowsHitTesting(false)
@@ -98,18 +84,18 @@ struct HistoryChart: View {
                 }
             }
             .chartYScale(domain: domain)
-            .chartXScale(range: .plotDimension(padding: Self.plotPadding))
+            .chartXScale(range: .plotDimension(padding: DesignLayout.historyChartPlotPadding))
             .chartXSelection(value: $hoveredDate)
             .contentShape(Rectangle())
             .chartXAxis {
-                AxisMarks(values: .automatic(desiredCount: Self.axisTickCount)) { _ in
+                AxisMarks(values: .automatic(desiredCount: DesignLayout.historyChartAxisTickCount)) { _ in
                     AxisValueLabel(format: period.days > HistoryPeriod.year.days
                         ? .dateTime.month(.abbreviated).year()
                         : .dateTime.day().month(.abbreviated))
                 }
             }
             .chartYAxis {
-                AxisMarks(position: .trailing, values: .automatic(desiredCount: Self.axisTickCount)) { value in
+                AxisMarks(position: .trailing, values: .automatic(desiredCount: DesignLayout.historyChartAxisTickCount)) { value in
                     AxisGridLine().foregroundStyle(DesignColor.rule)
                     AxisValueLabel {
                         if let number = value.as(Double.self) {
@@ -118,7 +104,7 @@ struct HistoryChart: View {
                     }
                 }
             }
-            .frame(minHeight: height ?? Self.defaultHeight, maxHeight: height ?? .infinity)
+            .frame(minHeight: height ?? DesignLayout.historyChartDefaultHeight, maxHeight: height ?? .infinity)
             .accessibilityLabel("Historique de \(series.name), en \(series.displayUnit)")
 
             if isReadingShown {
