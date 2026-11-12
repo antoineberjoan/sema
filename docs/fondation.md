@@ -41,7 +41,7 @@ Dehors : un service serveur, la synchronisation entre appareils, une clé fourni
 
 sema doit sembler calme et précise. Les surfaces suivent l'apparence du système ; la valeur et son graphique passent d'abord.
 
-La marque tient en cinq couleurs : Encre, Graphite, Papier, Brume et Sarcelle Profonde (`Resources/Brand/sema-colors.json`). La personne choisit sa palette dans les réglages, parmi sept (la marque et six autres) ; chaque palette redistribue les valeurs des mêmes rôles. L'icône est dans `Resources/Brand/`. La typographie est celle du système (SF Pro). Les jetons de couleur, de forme, d'espace, de texte et de mouvement viennent de `Resources/Brand/tokens.json`, source unique ; `Sources/SemaDesign/` en est la sortie Swift. La direction visuelle détaillée est dans [IDENTITY.md](IDENTITY.md).
+La marque tient en cinq couleurs : Encre, Graphite, Papier, Brume et Sarcelle Profonde (`Resources/Brand/sema-colors.json`). La personne choisit sa palette dans les réglages, parmi sept (la marque et six autres) ; chaque palette redistribue les valeurs des mêmes rôles. L'icône est dans `Resources/Brand/`. La typographie est celle du système (SF Pro). Les jetons de couleur, de forme, d'espace, de texte et de mouvement viennent de `Resources/Brand/tokens.json`, source unique ; `Sources/SemaDesign/` en est la sortie Swift. Les choix de direction visuelle sont des décisions datées dans `docs/decisions/`.
 
 ## Voix
 

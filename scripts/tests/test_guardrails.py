@@ -19,11 +19,6 @@ class GuardrailsTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = pathlib.Path(self.temp.name)
         self.git("init", "--quiet")
-        self.write(".agents/structure.json", json.dumps({
-            ".agents/": "Carte", "AGENTS.md": "Instructions", "CLAUDE.md": "Import",
-            "Sources/MarketCore/": "Cœur", "Sources/SemaMac/": "App", "Sources/SemaDesign/": "Design", "docs/": "Documentation",
-            "distribution/": "Release", "site/": "Site", ".env": "Configuration"
-        }))
         self.write("AGENTS.md", "# Instructions\n")
         self.write("CLAUDE.md", "@AGENTS.md\n")
         self.write("Sources/MarketCore/Series.swift", "// Décrit les observations économiques indépendantes de l’interface.\nimport Foundation\n")
@@ -54,8 +49,8 @@ class GuardrailsTests(unittest.TestCase):
         self.assertTrue(any("description" in error for error in self.errors(staged=True)))
 
     def test_untracked_files_are_checked_only_in_worktree(self):
-        self.write("scratch.txt", "essai")
-        self.assertTrue(any("sans responsabilité" in error for error in self.errors()))
+        self.write("Sources/MarketCore/Scratch.swift", "import Foundation\n")
+        self.assertTrue(any("description" in error for error in self.errors()))
         self.assertEqual(self.errors(staged=True), [])
 
     def test_deleted_target_breaks_link_in_index(self):

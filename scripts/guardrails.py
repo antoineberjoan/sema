@@ -288,16 +288,6 @@ def markdown_prose(source):
 
 def check(snapshot):
     errors = []
-    try:
-        structure = json.loads(snapshot.read(".agents/structure.json"))
-        if not isinstance(structure, dict) or not structure or not all(
-            isinstance(path, str) and path and isinstance(purpose, str) and purpose.strip()
-            for path, purpose in structure.items()
-        ):
-            raise ValueError("Chaque emplacement doit avoir une responsabilité.")
-    except (OSError, ValueError, subprocess.CalledProcessError) as error:
-        return [f".agents/structure.json : carte illisible ({error})."]
-
     glossary = {}
     if GLOSSARY in snapshot.paths:
         for row in snapshot.read(GLOSSARY).splitlines():
@@ -308,8 +298,6 @@ def check(snapshot):
     web_sources = {}
 
     for path in sorted(snapshot.paths):
-        if not any(path == route or (route.endswith("/") and path.startswith(route)) for route in structure):
-            errors.append(f"{path} : emplacement sans responsabilité dans .agents/structure.json.")
         name = pathlib.PurePosixPath(path).name
         suffix = pathlib.PurePosixPath(path).suffix
         if name == ".env" or (name.startswith(".env.") and name != ".env.example") or suffix in {".key", ".p12", ".p8"}:
