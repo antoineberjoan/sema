@@ -42,7 +42,7 @@ struct BriefScreen: View {
 
     private var schedule: some View {
         HStack(alignment: .firstTextBaseline) {
-            Text("Notification \(store.brief.weekdaysOnly ? "chaque jour ouvré" : "chaque jour") à \(Self.time(store.brief)).")
+            Text("Notification \(store.brief.isWeekdaysOnly ? "chaque jour ouvré" : "chaque jour") à \(Self.time(store.brief)).")
                 .typeRole(.small).foregroundStyle(DesignColor.textMuted)
             Spacer(minLength: DesignSpace.fieldGap)
             Button("Réglages du brief") { store.settingsTab = .general; openSettings() }.buttonStyle(.borderless).typeRole(.small)

@@ -127,10 +127,10 @@ struct WebstatClientTests {
 
     @Test
     func existingCacheRemainsDecodableAndNewMetadataSurvivesRoundTrip() throws {
-        let old = """
+        let storedDocument = """
         {"id":"eurusd","name":"Dollar","subtitle":"","category":"markets","unit":"usd","fractionDigits":4,"source":"BCE","observations":[{"date":0,"value":1.12}]}
         """
-        let previous = try JSONDecoder().decode(MarketSeries.self, from: Data(old.utf8))
+        let previous = try JSONDecoder().decode(MarketSeries.self, from: Data(storedDocument.utf8))
         #expect(previous.frequency == nil)
         #expect(previous.latest?.updatedAt == nil)
         let current = try WebstatMapping.starterHistory(fixture(), now: now)

@@ -50,7 +50,7 @@ public actor TwelveDataClient: MarketDataConnector {
 
     public func fetch(_ instrument: MarketInstrument, key: String) async throws -> MarketSeries {
         guard instrument.provider == .twelveData else { throw MarketDataError.invalidData }
-        var query = ["symbol": instrument.symbol, "interval": instrument.weekly ? "1week" : "1day",
+        var query = ["symbol": instrument.symbol, "interval": instrument.isWeekly ? "1week" : "1day",
                      "outputsize": String(Self.historySize), "order": "asc", "adjust": "none"]
         if !instrument.exchange.isEmpty { query["exchange"] = instrument.exchange }
         let data = try await request("time_series", parameters: query, key: key)

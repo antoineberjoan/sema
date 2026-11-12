@@ -10,26 +10,26 @@ struct OverviewScreen: View {
     private static let emptyMinHeight: CGFloat = 450
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
-    var showsQuickSwitcher = false
+    var isQuickSwitcherShown = false
 
     var body: some View {
         if let selected = store.selectedSeries {
             VStack(spacing: Self.sectionSpacing) {
-                SeriesDetailView(series: selected, focus: true)
-                if showsQuickSwitcher {
+                SeriesDetailView(series: selected, isFocus: true)
+                if isQuickSwitcherShown {
                     ScrollView(.horizontal) {
                         HStack(spacing: Self.switcherSpacing) {
                             ForEach(store.followedSeries) { item in
-                                let current = item.id == selected.id
+                                let isCurrent = item.id == selected.id
                                 Button { store.show(item) } label: {
                                     Text(MarketFormat.name(store.displayedSeries(item)))
-                                        .typeRole(.small).foregroundStyle(current ? DesignColor.text : DesignColor.textMuted)
+                                        .typeRole(.small).foregroundStyle(isCurrent ? DesignColor.text : DesignColor.textMuted)
                                         .padding(.bottom, Self.switcherBottomPadding)
                                         .overlay(alignment: .bottom) {
-                                            if current { Rectangle().frame(height: DesignBorder.width).foregroundStyle(DesignColor.text) }
+                                            if isCurrent { Rectangle().frame(height: DesignBorder.width).foregroundStyle(DesignColor.text) }
                                         }
                                 }
-                                .buttonStyle(.plain).accessibilityAddTraits(current ? [.isSelected] : [])
+                                .buttonStyle(.plain).accessibilityAddTraits(isCurrent ? [.isSelected] : [])
                             }
                         }.padding(.horizontal, Self.switcherInset)
                     }

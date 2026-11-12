@@ -80,7 +80,7 @@ public enum SDMXParser {
         for set in root.descendants("DataSet") {
             let shared = fields(set)
             for node in set.children where node.name == "Series" {
-                let value = try descriptor(fields: shared.merging(fields(node), uniquingKeysWith: { _, new in new }), dataset: dataset, structure: structure)
+                let value = try descriptor(fields: shared.merging(fields(node), uniquingKeysWith: { _, replacement in replacement }), dataset: dataset, structure: structure)
                 if let previous = items[value.id], previous != value { throw PublicDataError.invalidData }
                 items[value.id] = value
             }
@@ -117,7 +117,7 @@ public enum SDMXParser {
         for set in root.descendants("DataSet") {
             let shared = fields(set)
             for node in set.children where node.name == "Series" {
-                let descriptor = try descriptor(fields: shared.merging(fields(node), uniquingKeysWith: { _, new in new }), dataset: dataset, structure: structure)
+                let descriptor = try descriptor(fields: shared.merging(fields(node), uniquingKeysWith: { _, replacement in replacement }), dataset: dataset, structure: structure)
                 let attributes = descriptor.fields
                 var points: [MarketObservation] = []
                 for obs in node.children where obs.name == "Obs" {
@@ -142,7 +142,7 @@ public enum SDMXParser {
     }
 
     private static func fields(_ node: XMLTree) -> [String: String] {
-        var values = Dictionary(node.attributes.map { ($0.key.uppercased(), $0.value) }, uniquingKeysWith: { _, new in new })
+        var values = Dictionary(node.attributes.map { ($0.key.uppercased(), $0.value) }, uniquingKeysWith: { _, replacement in replacement })
         for container in node.children where ["SeriesKey", "Attributes"].contains(container.name) {
             for value in container.children where value.name == "Value" {
                 if let id = value.attributes["id"], let text = value.attributes["value"] { values[id.uppercased()] = text }

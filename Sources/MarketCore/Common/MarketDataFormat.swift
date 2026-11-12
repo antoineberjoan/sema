@@ -27,7 +27,7 @@ enum MarketDataFormat {
         return MarketSeries(id: instrument.id, name: instrument.name,
             subtitle: instrument.summary + " · cours non ajustés",
             category: .markets, unit: .number, fractionDigits: displayDigits, source: instrument.provider.title,
-            sourceURL: instrument.provider.website, frequency: instrument.weekly ? .weekly : .businessDaily,
+            sourceURL: instrument.provider.website, frequency: instrument.isWeekly ? .weekly : .businessDaily,
             observations: points, syncedAt: now, hasCompleteHistory: false, marketInstrument: instrument)
     }
 

@@ -18,18 +18,18 @@ struct SeriesSearchView: View {
     @FocusState private var isSearchFocused: Bool
     @State private var query = ""
     @State private var selectedID: String?
-    @State private var catalogue = false
+    @State private var isCatalogueSearch = false
 
     private var results: [MarketSeries] { store.searchResults(for: query) }
 
     var body: some View {
         VStack(spacing: Self.sectionSpacing) {
-            Picker("Où rechercher", selection: $catalogue) {
+            Picker("Où rechercher", selection: $isCatalogueSearch) {
                 Text("Mes repères").tag(false)
                 Text("Catalogues").tag(true)
             }.pickerStyle(.segmented).frame(width: Self.modePickerWidth)
-            if catalogue {
-                SourceExplorerView(compact: true, close: { dismiss() }).frame(height: Self.catalogueHeight)
+            if isCatalogueSearch {
+                SourceExplorerView(isCompact: true, close: { dismiss() }).frame(height: Self.catalogueHeight)
                 HStack { Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
             } else {
             HStack(spacing: Self.searchSpacing) {
@@ -57,12 +57,12 @@ struct SeriesSearchView: View {
         .padding(Self.sheetPadding).frame(width: Self.sheetWidth, height: Self.sheetHeight).background(DesignColor.surface)
         .onAppear {
             // The search panel hands over its text and asks for the catalogues tab.
-            if let seed = store.catalogueSeed { query = seed; catalogue = true; store.catalogueSeed = nil }
+            if let seed = store.catalogueSeed { query = seed; isCatalogueSearch = true; store.catalogueSeed = nil }
             selectedID = results.first?.id; isSearchFocused = true
         }
         .onChange(of: query) { _, _ in selectedID = results.first?.id }
-        .onChange(of: catalogue) { _, selected in
-            if selected { store.catalogueSearch.query = query } else { query = store.catalogueSearch.query }
+        .onChange(of: isCatalogueSearch) { _, isCatalogue in
+            if isCatalogue { store.catalogueSearch.query = query } else { query = store.catalogueSearch.query }
         }
         .onDisappear { store.closePreview() }
     }

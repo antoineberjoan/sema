@@ -5,7 +5,7 @@ import Testing
 
 struct ProfileAndSourcesTests {
     @Test func olderPreferencesKeepEverySourceAvailable() throws {
-        let original = AppPreferences(favoriteIDs: [], followedSeriesIDs: [], onboardingCompleted: true)
+        let original = AppPreferences(favoriteIDs: [], followedSeriesIDs: [], isOnboardingCompleted: true)
         let data = try JSONEncoder().encode(original)
         let raw = try JSONSerialization.jsonObject(with: data)
         var document = try #require(raw as? [String: Any])

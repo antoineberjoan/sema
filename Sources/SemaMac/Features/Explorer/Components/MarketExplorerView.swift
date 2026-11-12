@@ -12,13 +12,13 @@ struct MarketExplorerView: View {
     @State private var query = ""
     @State private var catalogue: MarketCatalogue?
     @State private var results: [MarketInstrument] = []
-    @State private var catalogueLoading = false
+    @State private var isCatalogueLoading = false
     @State private var catalogueError: String?
     @State private var retry = UUID()
     @State private var selectedID: String?
-    @State private var weekly = false
+    @State private var isWeekly = false
     @State private var preview: MarketSeries?
-    @State private var loading = false
+    @State private var isLoading = false
     @State private var error: String?
     @State private var task: Task<Void, Never>?
     @State private var generation = UUID()
@@ -45,7 +45,7 @@ struct MarketExplorerView: View {
                     TextField("Filtrer le catalogue…", text: $query).textFieldStyle(.roundedBorder)
                         .accessibilityLabel("Filtrer les instruments \(provider.title)")
                         .disabled(catalogue == nil)
-                    if catalogueLoading {
+                    if isCatalogueLoading {
                         ProgressView("Chargement du catalogue…").controlSize(.small)
                     } else if let catalogueError {
                         Text(catalogueError).typeRole(.small).foregroundStyle(DesignColor.textMuted)
@@ -68,11 +68,11 @@ struct MarketExplorerView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
                         if let selected {
-                            Picker("Historique", selection: $weekly) {
+                            Picker("Historique", selection: $isWeekly) {
                                 Text("Quotidien").tag(false)
                                 Text("Hebdomadaire").tag(true)
                             }.pickerStyle(.segmented)
-                            if provider == .alphaVantage, !weekly {
+                            if provider == .alphaVantage, !isWeekly {
                                 Text("Gratuit : 100 dernières séances. Pour un historique long, choisissez Hebdomadaire.")
                                     .typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                             }
@@ -82,21 +82,21 @@ struct MarketExplorerView: View {
                                     Button("Ouvrir") { store.show(preview); store.section = .overview; close?() }
                                 } else {
                                     Button("Ajouter à mes repères") { add(preview) }.buttonStyle(.borderedProminent)
-                                        .disabled(loading || error != nil)
+                                        .disabled(isLoading || error != nil)
                                 }
-                            } else if !loading { Text(selected.name).typeRole(.section) }
+                            } else if !isLoading { Text(selected.name).typeRole(.section) }
                         } else if catalogue != nil {
                             ContentUnavailableView(results.isEmpty ? "Aucun instrument" : "Choisir un instrument",
                                                    systemImage: "chart.xyaxis.line")
                         }
-                        if loading { ProgressView().controlSize(.small) }
+                        if isLoading { ProgressView().controlSize(.small) }
                         if let error { Text(error).typeRole(.small).foregroundStyle(DesignColor.textMuted).textSelection(.enabled) }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
             }.task(id: catalogueID) { await loadCatalogue() }
                 .onChange(of: query) { _, _ in filter() }
                 .onChange(of: selectedID) { _, _ in loadPreview() }
-                .onChange(of: weekly) { _, _ in loadPreview() }
+                .onChange(of: isWeekly) { _, _ in loadPreview() }
                 .onChange(of: store.connectedMarkets) { _, values in
                     if !values.contains(provider) { cancel(); catalogue = nil; results = []; selectedID = nil }
                 }
@@ -106,14 +106,14 @@ struct MarketExplorerView: View {
 
     private func loadCatalogue() async {
         cancel(); catalogue = nil; results = []; selectedID = nil; preview = nil; error = nil
-        catalogueError = nil; catalogueLoading = true
+        catalogueError = nil; isCatalogueLoading = true
         do {
             let value = try await store.marketCatalogue(provider)
             try Task.checkCancellation()
-            catalogue = value; filter(); catalogueLoading = false
+            catalogue = value; filter(); isCatalogueLoading = false
         } catch {
             guard !Task.isCancelled else { return }
-            catalogueError = error.localizedDescription; catalogueLoading = false
+            catalogueError = error.localizedDescription; isCatalogueLoading = false
         }
     }
     private func rows(_ items: ArraySlice<MarketInstrument>) -> some View {
@@ -139,19 +139,19 @@ struct MarketExplorerView: View {
         }
         if let selectedID, !results.contains(where: { $0.id == selectedID }) { self.selectedID = nil }
     }
-    private func cancel() { task?.cancel(); generation = UUID(); loading = false }
+    private func cancel() { task?.cancel(); generation = UUID(); isLoading = false }
     private func loadPreview() {
         cancel(); preview = nil; error = nil
-        guard let instrument = selected?.usingWeekly(weekly) else { return }
-        let id = generation; loading = true
+        guard let instrument = selected?.usingWeekly(isWeekly) else { return }
+        let id = generation; isLoading = true
         task = Task {
             do {
                 let value = try await store.fetchMarket(instrument)
                 guard !Task.isCancelled, id == generation else { return }
-                preview = value; loading = false
+                preview = value; isLoading = false
             } catch {
                 guard !Task.isCancelled, id == generation else { return }
-                self.error = error.localizedDescription; loading = false
+                self.error = error.localizedDescription; isLoading = false
             }
         }
     }

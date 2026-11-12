@@ -31,7 +31,7 @@ struct ProductDefaultsTests {
     @Test func theBriefIsDueAtEightOnWeekdaysByDefault() {
         let brief = BriefPreferences()
         #expect(brief.hour == 8 && brief.minute == 0)
-        #expect(brief.weekdaysOnly)
+        #expect(brief.isWeekdaysOnly)
         #expect(!brief.isEnabled)
     }
 

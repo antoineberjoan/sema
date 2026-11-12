@@ -31,10 +31,10 @@ struct CatalogueBrowserView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let selectionDuration = DesignDuration.fast
     private let previewDuration = DesignDuration.standard
-    @State private var showsFilters = false
+    @State private var isFiltersShown = false
     @State private var selectedID: String?
     @State private var isAdding = false
-    var compact = false
+    var isCompact = false
     var close: (() -> Void)?
 
     var body: some View {
@@ -52,12 +52,12 @@ struct CatalogueBrowserView: View {
                 HStack(spacing: Self.toolbarSpacing) {
                     CatalogueSearchField(query: $store.catalogueSearch.query, prompt: "Rechercher dans Webstat…",
                         isSearching: store.isSearchingCatalogue, submit: openSelection, move: moveSelection)
-                    Button { showsFilters.toggle() } label: {
+                    Button { isFiltersShown.toggle() } label: {
                         Label("Filtres", systemImage: hasFilters ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease")
                     }.buttonStyle(.borderless).help("Filtrer les résultats")
-                        .accessibilityValue(showsFilters ? "Ouverts" : "Fermés")
+                        .accessibilityValue(isFiltersShown ? "Ouverts" : "Fermés")
                 }
-                if showsFilters {
+                if isFiltersShown {
                     HStack(alignment: .top, spacing: Self.filterSpacing) {
                         Picker("Jeu", selection: $store.catalogueSearch.datasetID) {
                             Text("Tous les jeux").tag("")
@@ -79,10 +79,10 @@ struct CatalogueBrowserView: View {
                     }.typeRole(.small)
                 }
                 HStack(alignment: .top, spacing: Self.columnSpacing) {
-                    results.frame(minWidth: compact ? Self.compactResultsMinWidth : Self.resultsMinWidth, maxWidth: store.previewDescriptor == nil ? .infinity : Self.resultsMaxWidth)
+                    results.frame(minWidth: isCompact ? Self.compactResultsMinWidth : Self.resultsMinWidth, maxWidth: store.previewDescriptor == nil ? .infinity : Self.resultsMaxWidth)
                     if let descriptor = store.previewDescriptor {
                         previewPane(descriptor)
-                            .frame(minWidth: compact ? Self.compactPreviewMinWidth : Self.previewMinWidth, maxWidth: .infinity)
+                            .frame(minWidth: isCompact ? Self.compactPreviewMinWidth : Self.previewMinWidth, maxWidth: .infinity)
                             .transition(.opacity.combined(with: .offset(y: reduceMotion ? 0 : Self.previewOffset)))
                     }
                 }
@@ -90,8 +90,8 @@ struct CatalogueBrowserView: View {
             }
         }
         .onAppear { store.searchCatalogue() }
-        .onChange(of: store.catalogueSearch) { old, new in
-            if old.datasetID != new.datasetID { store.catalogueSearch.area = "" }
+        .onChange(of: store.catalogueSearch) { previous, current in
+            if previous.datasetID != current.datasetID { store.catalogueSearch.area = "" }
             store.searchCatalogue(); selectedID = nil
         }
         .onChange(of: store.catalogueResults.map(\.key)) { _, ids in
@@ -124,7 +124,7 @@ struct CatalogueBrowserView: View {
                     if let error = store.previewError {
                         Label(error, systemImage: "exclamationmark.triangle")
                             .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
-                        if store.previewRequiresRefresh {
+                        if store.isPreviewRefreshRequired {
                             Button("Actualiser mes repères") { Task { await store.refreshSeries() } }
                                 .buttonStyle(.borderless).disabled(store.isLoading)
                         } else {
@@ -142,7 +142,7 @@ struct CatalogueBrowserView: View {
                     }
                     Button("Ouvrir le repère") {
                         store.show(existing); store.section = .overview; store.closePreview(); close?()
-                    }.buttonStyle(.borderedProminent).disabled(store.previewRequiresRefresh)
+                    }.buttonStyle(.borderedProminent).disabled(store.isPreviewRefreshRequired)
                 } else {
                     Button {
                         isAdding = true

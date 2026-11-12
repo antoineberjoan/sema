@@ -11,14 +11,14 @@ extension AppStore {
     func setBrief(_ change: (inout BriefPreferences) -> Void) {
         var value = brief; change(&value)
         let schedule = value.isEnabled != brief.isEnabled || value.hour != brief.hour
-            || value.minute != brief.minute || value.weekdaysOnly != brief.weekdaysOnly
+            || value.minute != brief.minute || value.isWeekdaysOnly != brief.isWeekdaysOnly
         if mutatePreferences({ $0.brief = value }), schedule { rescheduleRefresh() }
     }
 
     /// Turning the brief on asks for notifications, the same way as the first alert.
     func setBriefEnabled(_ enabled: Bool) async {
-        if enabled, !preferences.notificationsEnabled { await setNotificationsEnabled(true) }
-        setBrief { $0.isEnabled = enabled && preferences.notificationsEnabled }
+        if enabled, !preferences.canNotify { await setNotificationsEnabled(true) }
+        setBrief { $0.isEnabled = enabled && preferences.canNotify }
     }
 
     /// Brief of today from local data; the agenda and the releases are loaded when their sources are on.
@@ -30,7 +30,7 @@ extension AppStore {
     }
 
     func sendBriefIfDue(now: Date = .now) async {
-        guard preferences.notificationsEnabled, brief.isDue(now: now) else { return }
+        guard preferences.canNotify, brief.isDue(now: now) else { return }
         // Recorded first: a failed delivery is not retried every minute.
         setBrief { $0.lastSentAt = now }
         let value = await morningBrief(now: now)
@@ -40,7 +40,7 @@ extension AppStore {
 
     /// Seconds until the next brief, so the refresh timer wakes in time.
     func nextBriefDelay(now: Date = .now) -> TimeInterval? {
-        guard preferences.notificationsEnabled else { return nil }
+        guard preferences.canNotify else { return nil }
         return brief.next(after: now).map { $0.timeIntervalSince(now) }
     }
 

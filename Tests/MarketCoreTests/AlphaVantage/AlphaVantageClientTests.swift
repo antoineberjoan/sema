@@ -24,7 +24,7 @@ struct AlphaVantageClientTests {
         }
     }
     @Test func decodesAlphaWeeklyClosesWithNoDailyInterpolation() throws {
-        let instrument = MarketInstrument(provider: .alphaVantage, symbol: "IBM", name: "IBM", exchange: "United States", currency: "USD", kind: "Equity", weekly: true)
+        let instrument = MarketInstrument(provider: .alphaVantage, symbol: "IBM", name: "IBM", exchange: "United States", currency: "USD", kind: "Equity", isWeekly: true)
         let data: [String: Any] = ["Meta Data": ["2. Symbol": "IBM"], "Weekly Time Series": ["2026-10-16": ["4. close": "250.1234"], "2026-10-09": ["4. close": "248.1000"]]]
         let value = try AlphaVantageMapping.series(data, instrument: instrument, now: .now)
         #expect(value.frequency == .weekly)

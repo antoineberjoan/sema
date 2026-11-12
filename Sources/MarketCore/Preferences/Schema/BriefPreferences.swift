@@ -10,14 +10,19 @@ public struct BriefPreferences: Codable, Equatable, Sendable {
     public var isEnabled = false
     public var hour = BriefPreferences.defaultHour
     public var minute = BriefPreferences.defaultMinute
-    public var weekdaysOnly = true
+    public var isWeekdaysOnly = true
     public var lastSentAt: Date?
+
+    enum CodingKeys: String, CodingKey {
+        case isEnabled, hour, minute, lastSentAt
+        case isWeekdaysOnly = "weekdaysOnly"
+    }
 
     public init() {}
 
     /// Time of the brief on the calendar day of `date`, or nil on a weekend when only weekdays are chosen.
     public func time(on date: Date, calendar: Calendar = .current) -> Date? {
-        if weekdaysOnly, calendar.isDateInWeekend(date) { return nil }
+        if isWeekdaysOnly, calendar.isDateInWeekend(date) { return nil }
         return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: date)
     }
 

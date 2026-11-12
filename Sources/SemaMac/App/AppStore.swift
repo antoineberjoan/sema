@@ -28,14 +28,14 @@ final class AppStore {
     var shortcutError: String?
     let globalShortcuts = GlobalShortcutsClient()
     let loginItem = LoginItemClient()
-    var opensAlertAfterSearch = false
+    var isAlertOpenPending = false
     var seriesErrors: [String: String] = [:]
     var historyLoadingID: String?
     var historyProgress: String?
     var catalogueSearch = WebstatSearch()
     var catalogueResults: [WebstatSeriesDescriptor] = []
     var catalogueTotal = 0
-    var catalogueHasMore = false
+    var hasMoreCatalogue = false
     var isSearchingCatalogue = false
     var catalogueError: String?
     var catalogueDatasets: [WebstatDataset] = []
@@ -75,8 +75,8 @@ final class AppStore {
     var agendaDay: Date?
     var connectingMarkets: Set<MarketProvider> = []
     var marketErrors: [MarketProvider: String] = [:]
-    var didCheckMarketKeys = false
-    var didCheckWebstatKey = false
+    var hasCheckedMarketKeys = false
+    var hasCheckedWebstatKey = false
     private var canSavePreferences = true
     var searchTask: Task<Void, Never>?
     var searchGeneration = UUID()
@@ -118,12 +118,12 @@ final class AppStore {
             statisticalCatalogues = try storage.cachedStatisticalCatalogues()
         } catch { errorMessage = "Le cache des données est illisible. Il est conservé ; une actualisation pourra le remplacer." }
         reconcileSelection()
-        isOnboardingPresented = canSavePreferences && preferences.onboardingCompleted != true
+        isOnboardingPresented = canSavePreferences && preferences.isOnboardingCompleted != true
     }
 
     @discardableResult func finishOnboarding() -> Bool {
         var next = preferences
-        next.onboardingCompleted = true
+        next.isOnboardingCompleted = true
         guard commit(next) else { return false }
         isOnboardingPresented = false
         section = .overview
@@ -185,10 +185,10 @@ final class AppStore {
         do {
             try storage.cacheWebstat(series.filter { $0.id != value.id } + [value])
             guard mutatePreferences({ next in
-                var inserted = false
+                var hasInserted = false
                 next.followedSeriesIDs = next.followedSeriesIDs.compactMap { id in
                     guard ids.contains(id) else { return id }
-                    if inserted { return nil }; inserted = true; return value.id
+                    if hasInserted { return nil }; hasInserted = true; return value.id
                 }
                 if !next.favoriteIDs.isDisjoint(with: ids) { next.favoriteIDs.subtract(ids); next.favoriteIDs.insert(value.id) }
                 next.alerts = next.alerts.map { rule in

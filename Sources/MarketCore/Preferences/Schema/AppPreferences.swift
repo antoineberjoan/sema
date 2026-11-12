@@ -7,11 +7,11 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var favoriteIDs: Set<String>
     public var followedSeriesIDs: [String]
     public var alerts: [AlertRule]
-    public var notificationsEnabled: Bool
+    public var canNotify: Bool
     public var themeID: String?
     public var appearanceID: String?
     public var ribbonPositionID: String?
-    public var onboardingCompleted: Bool?
+    public var isOnboardingCompleted: Bool?
     public var disabledSourceIDs: Set<String>?
     public var profile: LocalProfile?
     public var alertBaselineIDs: Set<UUID>?
@@ -30,19 +30,19 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var brief: BriefPreferences?
 
     public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
-                alerts: [AlertRule] = [], notificationsEnabled: Bool = false, themeID: String? = "brand", appearanceID: String? = nil,
-                followedSeriesIDs: [String] = [], onboardingCompleted: Bool? = nil,
+                alerts: [AlertRule] = [], canNotify: Bool = false, themeID: String? = "brand", appearanceID: String? = nil,
+                followedSeriesIDs: [String] = [], isOnboardingCompleted: Bool? = nil,
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = StatisticalSource.inactiveByDefault,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
                 ribbonGlass: RibbonGlassPreferences? = nil, shortcuts: ShortcutPreferences? = nil) {
         self.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.canonicalID))
         self.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.canonicalID)
         self.alerts = alerts
-        self.notificationsEnabled = notificationsEnabled
+        self.canNotify = canNotify
         self.themeID = themeID
         self.appearanceID = appearanceID
         self.ribbonPositionID = ribbonPositionID
-        self.onboardingCompleted = onboardingCompleted
+        self.isOnboardingCompleted = isOnboardingCompleted
         self.disabledSourceIDs = disabledSourceIDs
         self.profile = profile
         self.invertedCurrencyPairs = invertedCurrencyPairs
@@ -51,7 +51,9 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case schemaVersion, favoriteIDs, followedSeriesIDs, alerts, notificationsEnabled, themeID, appearanceID, onboardingCompleted, ribbonPositionID
+        case schemaVersion, favoriteIDs, followedSeriesIDs, alerts, themeID, appearanceID, ribbonPositionID
+        case canNotify = "notificationsEnabled"
+        case isOnboardingCompleted = "onboardingCompleted"
         case disabledSourceIDs, profile, alertBaselineIDs, invertedCurrencyPairs, ribbonGlass, shortcuts, periodID, moveSensitivityID, headlineSourceID, summaryWriterID, brief
     }
     public init(from decoder: any Decoder) throws {
@@ -59,11 +61,11 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         schemaVersion = try values.decode(Int.self, forKey: .schemaVersion)
         favoriteIDs = try values.decode(Set<String>.self, forKey: .favoriteIDs)
         alerts = try values.decode([AlertRule].self, forKey: .alerts)
-        notificationsEnabled = try values.decode(Bool.self, forKey: .notificationsEnabled)
+        canNotify = try values.decode(Bool.self, forKey: .canNotify)
         themeID = try values.decodeIfPresent(String.self, forKey: .themeID)
         appearanceID = try values.decodeIfPresent(String.self, forKey: .appearanceID)
         ribbonPositionID = try values.decodeIfPresent(String.self, forKey: .ribbonPositionID)
-        onboardingCompleted = try values.decodeIfPresent(Bool.self, forKey: .onboardingCompleted)
+        isOnboardingCompleted = try values.decodeIfPresent(Bool.self, forKey: .isOnboardingCompleted)
         disabledSourceIDs = try values.decodeIfPresent(Set<String>.self, forKey: .disabledSourceIDs)
         profile = try values.decodeIfPresent(LocalProfile.self, forKey: .profile)
         alertBaselineIDs = try values.decodeIfPresent(Set<UUID>.self, forKey: .alertBaselineIDs)
@@ -95,7 +97,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                 lastEvaluatedAt: rule.lastEvaluatedAt)
         }
         value.shortcuts = shortcuts?.migrated()
-        if schemaVersion == 1 { value.onboardingCompleted = true }
+        if schemaVersion == 1 { value.isOnboardingCompleted = true }
         return value
     }
 }

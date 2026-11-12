@@ -277,7 +277,7 @@ struct OnboardingScreen: View {
     }
 
     private func themeTile(_ collection: WelcomeCollection) -> some View {
-        let selected = isSelected(collection)
+        let isCollectionSelected = isSelected(collection)
         return Button { toggle(collection) } label: {
             HStack(spacing: WelcomeLayout.tileSpacing) {
                 Image(systemName: collection.symbol).typeRole(.section).foregroundStyle(accentText)
@@ -287,25 +287,25 @@ struct OnboardingScreen: View {
                     Text(collection.subtitle).typeRole(.caption).foregroundStyle(DesignColor.textMuted).lineLimit(1)
                 }
                 Spacer(minLength: 0)
-                Image(systemName: selected ? "checkmark.circle.fill" : "circle").typeRole(.section)
-                    .foregroundStyle(selected ? accent : DesignColor.textMuted)
+                Image(systemName: isCollectionSelected ? "checkmark.circle.fill" : "circle").typeRole(.section)
+                    .foregroundStyle(isCollectionSelected ? accent : DesignColor.textMuted)
                     .accessibilityHidden(true)
             }
             .padding(WelcomeLayout.tilePadding)
             .frame(maxWidth: .infinity, minHeight: WelcomeLayout.tileMinHeight, alignment: .leading)
-            .background(selected ? DesignColor.selection(palette) : DesignColor.surfaceRaised,
+            .background(isCollectionSelected ? DesignColor.selection(palette) : DesignColor.surfaceRaised,
                         in: RoundedRectangle(cornerRadius: DesignRadius.block))
             .overlay {
                 RoundedRectangle(cornerRadius: DesignRadius.block)
-                    .strokeBorder(selected ? accent : Color.clear, lineWidth: WelcomeLayout.tileBorder)
+                    .strokeBorder(isCollectionSelected ? accent : Color.clear, lineWidth: WelcomeLayout.tileBorder)
             }
             .elevation(DesignElevation.raised)
             .contentShape(RoundedRectangle(cornerRadius: DesignRadius.block))
         }
         .buttonStyle(PressStyle())
         .accessibilityLabel(collection.title)
-        .accessibilityValue(selected ? "Choisi" : "Non choisi")
-        .accessibilityAddTraits(selected ? [.isSelected] : [])
+        .accessibilityValue(isCollectionSelected ? "Choisi" : "Non choisi")
+        .accessibilityAddTraits(isCollectionSelected ? [.isSelected] : [])
         .accessibilityHint("Ajouter ou retirer ces repères de votre espace")
         .help(collection.items.map(\.title).joined(separator: ", "))
     }

@@ -28,7 +28,7 @@ extension AppStore {
     private func watch(_ items: [MarketSeries]) async {
         let watchable = items.filter(canWatch)
         guard !watchable.isEmpty else { return }
-        if !preferences.notificationsEnabled { await setNotificationsEnabled(true) }
+        if !preferences.canNotify { await setNotificationsEnabled(true) }
         mutatePreferences { value in
             value.alerts.removeAll { rule in rule.effectiveCondition == .unusualMove && watchable.contains { $0.id == rule.seriesID } }
             value.alerts += watchable.map { AlertRule.unusualMove(seriesID: $0.id, lastEvaluatedAt: $0.latest?.date) }
@@ -57,7 +57,7 @@ extension AppStore {
     func deleteAlert(_ id: UUID) { mutatePreferences { $0.alerts.removeAll { $0.id == id }; $0.alertBaselineIDs?.remove(id) } }
 
     func simulate(_ rule: AlertRule) {
-        guard preferences.notificationsEnabled,
+        guard preferences.canNotify,
               let item = series.first(where: { $0.id == rule.seriesID }), item.canAlert,
               isSourceEnabled(for: rule.seriesID) else { return }
         let now = Date()
@@ -80,7 +80,7 @@ extension AppStore {
     }
 
     func evaluateAlerts(in values: [MarketSeries]) {
-        var events: [AlertEvent] = []; var next = preferences; var advanced = false
+        var events: [AlertEvent] = []; var next = preferences; var hasAdvanced = false
         for index in next.alerts.indices {
             let rule = next.alerts[index]
             guard rule.isEnabled, rule.effectiveCondition != .relativeChange,
@@ -89,16 +89,16 @@ extension AppStore {
                   let latest = item.latest else { continue }
             if next.alertBaselineIDs?.contains(rule.id) == true {
                 next.alerts[index].lastEvaluatedAt = max(latest.date, rule.lastEvaluatedAt ?? latest.date)
-                next.alertBaselineIDs?.remove(rule.id); advanced = true
+                next.alertBaselineIDs?.remove(rule.id); hasAdvanced = true
                 continue
             }
             guard rule.lastEvaluatedAt.map({ latest.date > $0 }) ?? true else { continue }
             events += AlertEvaluator.newEvents(rule, series: item, sensitivity: moveSensitivity)
-            next.alerts[index].lastEvaluatedAt = latest.date; advanced = true
+            next.alerts[index].lastEvaluatedAt = latest.date; hasAdvanced = true
         }
-        guard advanced, commit(next) else { return }
+        guard hasAdvanced, commit(next) else { return }
         recentAlertEvents = Array((recentAlertEvents + events).suffix(Self.recentAlertLimit))
-        guard preferences.notificationsEnabled, !events.isEmpty else { return }
+        guard preferences.canNotify, !events.isEmpty else { return }
         let entries = events.compactMap { event -> (name: String, line: String)? in
             guard isSourceEnabled(for: event.seriesID), let item = values.first(where: { $0.id == event.seriesID }) else { return nil }
             return (MarketFormat.name(item), Self.notificationLine(for: event, series: item))
@@ -129,10 +129,10 @@ extension AppStore {
         var next = preferences
         if enabled {
             do {
-                next.notificationsEnabled = try await notifications.requestPermission()
-                if !next.notificationsEnabled { errorMessage = "Les notifications ne sont pas autorisées dans les Réglages Système." }
+                next.canNotify = try await notifications.requestPermission()
+                if !next.canNotify { errorMessage = "Les notifications ne sont pas autorisées dans les Réglages Système." }
             } catch { errorMessage = error.localizedDescription }
-        } else { next.notificationsEnabled = false }
+        } else { next.canNotify = false }
         commit(next)
     }
 }

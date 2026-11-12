@@ -41,7 +41,7 @@ struct RibbonSignatureView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let presentationID: UUID?
     @State private var stage = 0
-    @State private var formUnavailable = false
+    @State private var isFormUnavailable = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -93,7 +93,7 @@ struct RibbonSignatureView: View {
         .elevation(DesignElevation.floating)
         .task(id: presentationID) { await play() }
         .onChange(of: reduceMotion) { _, value in if value { stage = SignatureMotion.missionStage } }
-        .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $formUnavailable) {
+        .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $isFormUnavailable) {
             Button("Copier le lien") {
                 guard let url = FeedbackClient.formURL else { return }
                 NSPasteboard.general.clearContents()
@@ -107,7 +107,7 @@ struct RibbonSignatureView: View {
 
     private func openFeedback() {
         guard let url = FeedbackClient.formURL else { return }
-        formUnavailable = !NSWorkspace.shared.open(url)
+        isFormUnavailable = !NSWorkspace.shared.open(url)
     }
 
     private func play() async {
