@@ -21,6 +21,7 @@
   "Sources/MarketCore/ECB/": "Taux de change de référence publiés par la BCE.",
   "Sources/MarketCore/Demo/": "Séries fictives identifiées de la démonstration.",
   "Sources/MarketCore/Context/": "Contexte d’une séance : communiqués, titres, calendrier, synthèse vérifiée et brief du matin.",
+  "Sources/SemaDesign/": "Jetons de design fabriqués depuis Resources/Brand/tokens.json : rôles publics, primitives internes.",
   "Sources/SemaMac/AGENTS.md": "Règles propres à l’app native.",
   "Sources/SemaMac/App/": "Cycle de vie, commandes et état partagé de l’app ; `AppStore+Rôle.swift` regroupe ses actions par responsabilité.",
   "Sources/SemaMac/Features/Workspace/": "Fenêtre principale : sidebar, rubriques et sélecteur Focus au clavier.",

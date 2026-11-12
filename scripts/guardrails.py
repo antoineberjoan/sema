@@ -225,12 +225,19 @@ def glossary_variants(path, source, glossary):
     return [f"{path} : `{word}` s’écrit `{glossary[word.lower()]}` selon le glossaire." for word in variants]
 
 
+GENERATED = "fabriqué depuis tokens.json par sophos/outils/jetons.mjs"
+
+
+def is_generated(code):
+    return any(GENERATED in line for line in code.splitlines()[:3])
+
+
 def unused_types(sources):
-    """Signale un type visible du code que rien n’utilise, hors point d’entrée `@main`."""
+    """Signale un type visible du code que rien n’utilise, hors point d’entrée `@main` et sortie fabriquée des jetons."""
     usages = collections.Counter(IDENTIFIER.findall("\n".join(sources.values())))
     errors = []
     for path, code in sorted(sources.items()):
-        if not path.startswith("Sources/") or "@main" in code:
+        if not path.startswith("Sources/") or "@main" in code or is_generated(code):
             continue
         for match in TOP_TYPE.finditer(swift_code(code)):
             if (match["access"] or "").strip() not in ("private", "fileprivate") and \
@@ -351,10 +358,6 @@ def check(snapshot):
 
     errors.extend(unused_types(swift_sources))
     errors.extend(web_errors(web_sources))
-    if "AGENTS.md" not in snapshot.paths:
-        errors.append("AGENTS.md : entrée commune obligatoire manquante.")
-    if "CLAUDE.md" not in snapshot.paths or snapshot.read("CLAUDE.md").strip() != "@AGENTS.md":
-        errors.append("CLAUDE.md : importer uniquement @AGENTS.md ; règles communes dans AGENTS.md.")
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths

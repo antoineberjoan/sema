@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="sema : Une application macOS native pour consulter des séries économiques, suivre ses favoris et définir des seuils.">
+<!-- fabriqué depuis projet.yml par sophos/outils/carte.mjs ; ne pas modifier à la main -->
+<rect width="1280" height="320" fill="#fafafa"/>
+<svg x="80" y="88" width="144" height="144" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet"><title>Sema</title><rect x="3" y="3" width="506" height="506" rx="115" fill="#141414"/><path d="M120 368 C210 368 232 214 312 214 H392" stroke="#FAFAFA" stroke-width="36" fill="none" stroke-linecap="round"/><circle cx="312" cy="214" r="34" fill="#1F6F73" stroke="#141414" stroke-width="14"/></svg>
+<text x="272" y="150" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="64" font-weight="600" letter-spacing="-1" fill="#141414">sema</text>
+<text font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#141414" fill-opacity="0.8"><tspan x="272" y="202">Une application macOS native pour consulter des séries</tspan><tspan x="272" y="238">économiques, suivre ses favoris et définir des seuils.</tspan></text>
+<rect x="1080" y="56" width="32" height="32" rx="8" fill="#fafafa" stroke="#141414" stroke-opacity="0.2"/>
+<rect x="1124" y="56" width="32" height="32" rx="8" fill="#141414" stroke="#141414" stroke-opacity="0.2"/>
+<rect x="1168" y="56" width="32" height="32" rx="8" fill="#1f6f73" stroke="#141414" stroke-opacity="0.2"/>
+<rect y="312" width="1280" height="8" fill="#1f6f73"/>
+</svg>
