@@ -1,6 +1,6 @@
 # Site sema
 
-- Lire aussi l’entrée commune `../AGENTS.md`. Pour un design, un texte visible ou un mouvement, appliquer `../.agents/skills/sema-design/SKILL.md` ; les décisions de marque viennent de Notion via `../docs/engineering/SOURCES.md`.
+- Lire aussi l’entrée commune `../AGENTS.md`. Pour un design, un texte visible ou un mouvement, appliquer `../.agents/skills/sema-design/SKILL.md` ; les décisions de marque sont dans `../docs/fondation.md` et `../docs/decisions/`.
 
 - Le circuit de publication courant est GitHub `main` vers Vercel, décrit dans `README.md`. Une fusion ou un push vers `main` publie le site et exige une autorisation couvrant cette action.
 - Conserver l’identité `.openai/hosting.json` et l’audience du projet Sites historique. Suivre la skill Sites uniquement pour une publication explicitement demandée sur ce projet Sites ; ne pas la déclencher pour publier sur Vercel.

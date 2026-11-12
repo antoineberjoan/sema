@@ -334,7 +334,7 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual([error for error in self.errors() if "Tests/" not in error], [])
 
     def test_glossary_spelling_is_enforced(self):
-        self.write("docs/engineering/GLOSSARY.md", "| Concept | Nom dans le code | Sens |\n| --- | --- | --- |\n| Identifiant | `seriesID` | Série |\n")
+        self.write("docs/lexique.md", "| Concept | Nom dans le code | Sens |\n| --- | --- | --- |\n| Identifiant | `seriesID` | Série |\n")
         self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nimport Observation\nlet seriesId = 1\n")
         errors = self.errors()
         self.assertEqual(len(errors), 1)

@@ -1,7 +1,6 @@
 # Feuille de route
 
-Document historique à réconcilier, conservé sans suppression ni arbitrage automatique. Les priorités humaines font foi dans [Notion Stratégie](https://app.notion.com/p/3fbd18bb0dea819bad4bc31bca0ad436) ; le dépôt et ses preuves décrivent ce qui est effectivement réalisé. Les cases ci-dessous ne constituent pas un backlog à exécuter sans vérification. Voir [les sources d’autorité](../engineering/SOURCES.md).
-
+Document historique à réconcilier, conservé sans suppression ni arbitrage automatique. Depuis le 2026-11-12, les décisions vivent dans [docs/decisions/](../decisions/) ; le dépôt et ses preuves décrivent ce qui est effectivement réalisé. Les cases ci-dessous ne constituent pas un backlog à exécuter sans vérification. 
 Le [plan catalogue et distribution du 16 octobre 2026](catalogue-distribution.md) précise les prochains lots, les parcours et leurs critères de validation.
 
 ## Première version native

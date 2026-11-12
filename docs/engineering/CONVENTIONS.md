@@ -10,7 +10,7 @@ Avant d’ajouter un fichier, pouvoir écrire sa responsabilité en une phrase. 
 
 ## Noms et duplication
 
-Le [glossaire](GLOSSARY.md) fixe le vocabulaire métier partagé. `seriesID` désigne le même concept dans une vue, un calcul et une frontière JavaScript éventuelle. Respecter les noms imposés par `Identifiable`, Codable, une API ou un schéma publié ; traduire à la frontière au lieu de créer des synonymes partout.
+Le [lexique](../lexique.md) fixe le vocabulaire métier partagé. `seriesID` désigne le même concept dans une vue, un calcul et une frontière JavaScript éventuelle. Respecter les noms imposés par `Identifiable`, Codable, une API ou un schéma publié ; traduire à la frontière au lieu de créer des synonymes partout.
 
 Une fonction décrit une action ; un booléen une condition. Préférer `load`, `save`, `isEnabled` dans un contexte explicite à une abréviation obscure ou à un nom qui répète tout le type. Deux valeurs distinctes dans la même portée doivent rester distinctes : `publishedSeries` et `displayedSeries` ont un sens différent.
 

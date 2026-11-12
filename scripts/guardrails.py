@@ -47,7 +47,7 @@ LEGACY_SEMA_TYPES = {"SemaAppDelegate", "SemaAppearance", "SemaCommands", "SemaE
 PRIVATE_DECLARATION = re.compile(r"\b(?:private|fileprivate)\s+(?:(?:static|final|lazy|nonisolated|override|mutating|indirect)\s+)*"
                                  r"(?:let|var|func|struct|enum|class|actor|typealias)\s+(\w+)")
 IMPLICIT_NAMES = {"CodingKeys", "body", "init"}
-GLOSSARY = "docs/engineering/GLOSSARY.md"
+GLOSSARY = "docs/lexique.md"
 IDENTIFIER = re.compile(r"\b[A-Za-z_]\w*\b")
 TOP_EXTENSION = re.compile(r"^(?:@\w+\s+)*(?:(?:public|internal|private|fileprivate)\s+)?extension\s+(?P<name>\w+)", re.MULTILINE)
 
