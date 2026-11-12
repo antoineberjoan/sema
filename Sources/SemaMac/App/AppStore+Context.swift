@@ -32,12 +32,12 @@ extension AppStore {
     func pressReleases(from start: Date, to end: Date) async -> [PressRelease]? {
         let feeds = CentralBankFeed.allCases.filter { isSourceEnabled($0.rawValue) }
         var result: [PressRelease] = []
-        var failed = false
+        var hasFailed = false
         for feed in feeds {
             do { result += try await PressReleaseClient().releases(feed).filter { (start...end).contains($0.publishedAt) } }
-            catch { failed = true }
+            catch { hasFailed = true }
         }
-        return failed && result.isEmpty ? nil : result.sorted { $0.publishedAt > $1.publishedAt }
+        return hasFailed && result.isEmpty ? nil : result.sorted { $0.publishedAt > $1.publishedAt }
     }
 
     func headlines(from start: Date, to end: Date) async -> [Headline]? {

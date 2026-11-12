@@ -34,8 +34,8 @@ struct LocalRepository {
             guard cache.schemaVersion == WebstatCache.currentSchemaVersion else { throw PreferencesError.unsupportedVersion(cache.schemaVersion) }
             return cache.series
         }
-        let legacy = try JSONDecoder().decode([MarketSeries].self, from: data)
-        let migrated = legacy.map { $0.withID(WebstatStarter.canonicalID($0.id)) }
+        let stored = try JSONDecoder().decode([MarketSeries].self, from: data)
+        let migrated = stored.map { $0.withID(WebstatStarter.canonicalID($0.id)) }
         let backup = url.appendingPathExtension("v1-backup")
         if !FileManager.default.fileExists(atPath: backup.path) { try data.write(to: backup, options: .atomic) }
         try cacheWebstat(migrated)

@@ -1,11 +1,11 @@
-# L'écran Bandeau lit les rôles de sens et garde le blanc de la signature
+# L'écran Bandeau lit les rôles de sens, et sa signature lit on-accent
 
 Date : 2026-11-12 · Statut : proposée
 Décidé par : à confirmer par Antoine
 
 ## Contexte
 
-Le bandeau est la première des surfaces translucides de sema (liste fermée, décision sur les surfaces translucides). Ses cartes sont sur du verre. La signature est un dégradé d'accent avec du texte blanc.
+Le bandeau est la première des surfaces translucides de sema (liste fermée, décision sur les surfaces translucides). Ses cartes sont sur du verre. La signature est un dégradé d'accent avec du texte posé dessus.
 
 ## Décision
 
@@ -13,7 +13,7 @@ Le bandeau est la première des surfaces translucides de sema (liste fermée, d�
 - **Les fonds de repos** sur le verre (badge de comparaison d'une carte, bande des jours de la carte Agenda) lisent la couleur du texte à l'opacité `glass-rest`. Ce sont deux des fonds prévus par la décision sur les surfaces translucides.
 - **Le jour choisi** dans la bande de la carte Agenda lit `selection`, comme dans l'écran Brief.
 - **Le texte secondaire** des cartes garde le style système (surface translucide). Le texte très atténué (`tertiary`) devient aussi `secondary` : sur du verre, le patron n'a qu'un niveau.
-- **La signature garde ses blancs** : le texte, le tracé et le bord sont en blanc à des opacités propres au dégradé (85 %, 22 %, 3 %…). Le patron n'a pas de rôle « texte sur dégradé d'accent » : `on-accent` est un papier ou une encre selon le mode, pas un blanc. Les valeurs restent des constantes nommées de la vue. Un rôle pour ce cas est à demander à Sophos si un second écran en a besoin.
+- **La signature lit `on-accent` et des rôles d'opacité de sema.** Le texte, le tracé et le bord, posés sur un dégradé fait de pas de l'accent, lisent `on-accent`, le rôle « texte posé sur un aplat d'accent ». Les opacités du dégradé et du texte sont six rôles de `tokens.json` (`opacity.signature-…`). La mesure de contraste de Sophos ne couvre pas un dégradé : le contraste des deux extrémités est à regarder sur le Mac, en clair et en sombre.
 - **Les icônes et le texte d'accent** (étoile du bandeau vide, flèche et titres de la carte Agenda) lisent `accent-text`.
 - **Le rayon** d'une carte est `card` (16 points) ; le bord clair du verre mesure `border.width`.
 
@@ -21,8 +21,8 @@ Le bandeau est la première des surfaces translucides de sema (liste fermée, d�
 
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
-| Lire les rôles, garder le blanc de la signature | Le bandeau lit les jetons là où le verre le permet | Un blanc propre à sema dans la signature |
-| Tout lire dans les jetons | Aucun écart | Un texte de la signature sans contraste garanti sur le dégradé |
+| Garder le blanc de la signature | Aucun changement de teinte | Un blanc écrit dans une vue, refusé par Sophos |
+| Tout lire dans les jetons | Aucune couleur écrite ; le verre et la signature ont leurs rôles de sema | Un papier et une encre à la place d'un blanc et d'un noir purs ; un contraste sur dégradé non mesuré |
 
 ## Conséquences
 

@@ -14,20 +14,20 @@ struct PeriodTabs: View {
     var body: some View {
         HStack(spacing: DesignSpace.itemGap) {
             ForEach(periods) { period in
-                let selected = period == selection
+                let isSelected = period == selection
                 Button { select(period) } label: {
                     Text(period.shortTitle)
-                        .typeRole(.small).fontWeight(selected ? .semibold : .regular)
-                        .foregroundStyle(selected ? DesignColor.text : DesignColor.textMuted)
+                        .typeRole(.small).fontWeight(isSelected ? .semibold : .regular)
+                        .foregroundStyle(isSelected ? DesignColor.text : DesignColor.textMuted)
                         .padding(.bottom, DesignSpace.markInset)
                         .overlay(alignment: .bottom) {
-                            Rectangle().fill(selected ? accent : .clear).frame(height: Self.indicatorHeight)
+                            Rectangle().fill(isSelected ? accent : .clear).frame(height: Self.indicatorHeight)
                         }
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(period.title)
-                .accessibilityAddTraits(selected ? [.isSelected] : [])
+                .accessibilityAddTraits(isSelected ? [.isSelected] : [])
                 .help(period.title)
             }
         }

@@ -4,8 +4,8 @@ import MarketCore
 
 extension AppStore {
     func checkMarketKeys() async {
-        guard !didCheckMarketKeys else { return }
-        didCheckMarketKeys = true
+        guard !hasCheckedMarketKeys else { return }
+        hasCheckedMarketKeys = true
         for provider in MarketProvider.allCases {
             do { if try await marketKeychains[provider]?.read() != nil { connectedMarkets.insert(provider) } }
             catch { marketErrors[provider] = "Le Trousseau n’a pas pu lire cette clé." }

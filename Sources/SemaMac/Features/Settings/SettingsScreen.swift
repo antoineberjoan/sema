@@ -70,7 +70,7 @@ struct SettingsScreen: View {
     private static let aboutPadding = DesignSpace.menuInset
     @Environment(AppStore.self) private var store
     @State private var search = ""
-    @FocusState private var searchFocused: Bool
+    @FocusState private var isSearchFocused: Bool
 
     private var matches: [SettingsTab] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -85,9 +85,9 @@ struct SettingsScreen: View {
                 HStack(spacing: Self.searchSpacing) {
                     Image(systemName: "magnifyingglass").foregroundStyle(DesignColor.textMuted)
                     TextField("Rechercher", text: $search).textFieldStyle(.plain)
-                        .focused($searchFocused).accessibilityLabel("Rechercher un réglage")
-                        .onSubmit { if let first = matches.first { store.settingsTab = first; searchFocused = false } }
-                        .onKeyPress(.escape) { search = ""; searchFocused = false; return .handled }
+                        .focused($isSearchFocused).accessibilityLabel("Rechercher un réglage")
+                        .onSubmit { if let first = matches.first { store.settingsTab = first; isSearchFocused = false } }
+                        .onKeyPress(.escape) { search = ""; isSearchFocused = false; return .handled }
                     if !search.isEmpty {
                         Button { search = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(DesignColor.textMuted) }
                             .buttonStyle(.plain).accessibilityLabel("Effacer la recherche de réglages")
@@ -114,7 +114,7 @@ struct SettingsScreen: View {
                     }
                 }
 
-                Button { store.settingsTab = .profile; searchFocused = false } label: {
+                Button { store.settingsTab = .profile; isSearchFocused = false } label: {
                     HStack(spacing: Self.profileSpacing) {
                         ProfileAvatar(profile: store.profile, size: Self.profileAvatarSize)
                         Text("Mon espace").typeRole(.heading)
@@ -168,7 +168,7 @@ struct SettingsScreen: View {
                 Toggle("Lancer à l’ouverture de session", isOn: Binding(
                     get: { store.loginItem.isEnabled }, set: { store.loginItem.setEnabled($0) }
                 )).toggleStyle(.switch)
-                if store.loginItem.needsApproval {
+                if store.loginItem.isApprovalRequired {
                     Button("Autoriser dans les réglages macOS…") { store.loginItem.openSettings() }
                         .buttonStyle(.borderless)
                 }
@@ -178,7 +178,7 @@ struct SettingsScreen: View {
             }
             Section {
                 Toggle("Notifications des alertes", isOn: Binding(
-                    get: { store.preferences.notificationsEnabled },
+                    get: { store.preferences.canNotify },
                     set: { value in Task { await store.setNotificationsEnabled(value) } }
                 )).toggleStyle(.switch)
                 Picker(selection: Binding(get: { store.moveSensitivity }, set: { store.setMoveSensitivity($0) })) {
@@ -201,7 +201,7 @@ struct SettingsScreen: View {
                     store.setBrief { $0.hour = parts.hour ?? BriefPreferences.defaultHour; $0.minute = parts.minute ?? BriefPreferences.defaultMinute }
                 }), displayedComponents: .hourAndMinute)
                 .disabled(!store.brief.isEnabled)
-                Toggle("Jours ouvrés seulement", isOn: Binding(get: { store.brief.weekdaysOnly }, set: { value in store.setBrief { $0.weekdaysOnly = value } }))
+                Toggle("Jours ouvrés seulement", isOn: Binding(get: { store.brief.isWeekdaysOnly }, set: { value in store.setBrief { $0.isWeekdaysOnly = value } }))
                     .disabled(!store.brief.isEnabled)
             } header: { Text("Brief du matin") } footer: {
                 Text("Mouvements inhabituels de la dernière séance, seuils proches et agenda du jour. Envoyé au réveil si le Mac dormait à l’heure prévue.")
@@ -231,7 +231,7 @@ struct SettingsScreen: View {
                     Text("Mode").padding(.top, Self.choiceLabelTop)
                     Spacer(minLength: Self.modeSpacing)
                     ForEach(Appearance.allCases) { mode in
-                        SettingsChoice(title: mode.title, symbol: appearanceSymbol(mode), selected: store.appearance == mode) {
+                        SettingsChoice(title: mode.title, symbol: appearanceSymbol(mode), isSelected: store.appearance == mode) {
                             store.setAppearance(mode)
                         }
                     }
@@ -264,7 +264,7 @@ struct SettingsScreen: View {
                     Text("Position").padding(.top, Self.choiceLabelTop)
                     Spacer(minLength: Self.positionSpacing)
                     ForEach(MenuRibbonPosition.allCases) { position in
-                        SettingsChoice(title: position.title, symbol: position.symbol, selected: store.ribbonPosition == position) {
+                        SettingsChoice(title: position.title, symbol: position.symbol, isSelected: store.ribbonPosition == position) {
                             store.setRibbonPosition(position)
                         }
                     }
@@ -312,7 +312,7 @@ private struct SettingsChoice: View {
     private var accent: Color { DesignColor.accent(palette) }
     let title: String
     let symbol: String
-    let selected: Bool
+    let isSelected: Bool
     let action: () -> Void
 
     var body: some View {
@@ -320,13 +320,13 @@ private struct SettingsChoice: View {
             VStack(spacing: Self.spacing) {
                 Image(systemName: symbol).typeRole(.section)
                     .frame(maxWidth: .infinity).frame(height: Self.tileHeight)
-                    .background(selected ? DesignColor.selection(palette) : DesignColor.surface, in: RoundedRectangle(cornerRadius: Self.corner))
-                    .overlay(RoundedRectangle(cornerRadius: Self.corner).strokeBorder(selected ? accent : .clear, lineWidth: Self.selectedStroke))
+                    .background(isSelected ? DesignColor.selection(palette) : DesignColor.surface, in: RoundedRectangle(cornerRadius: Self.corner))
+                    .overlay(RoundedRectangle(cornerRadius: Self.corner).strokeBorder(isSelected ? accent : .clear, lineWidth: Self.selectedStroke))
                 Text(title).typeRole(.caption).lineLimit(1)
             }
             .frame(width: Self.width).contentShape(Rectangle())
         }
         .buttonStyle(.plain).accessibilityLabel(title)
-        .accessibilityAddTraits(selected ? [.isSelected] : [])
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }

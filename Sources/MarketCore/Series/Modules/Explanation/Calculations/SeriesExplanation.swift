@@ -62,7 +62,7 @@ public struct SeriesExplanation: Equatable, Sendable {
                   descriptor.frequencyCode == descriptor.key.split(separator: ".").dropFirst().first.map(String.init) {
             key = descriptor.key
         } else { return nil }
-        return WebstatStarter.legacyIDs.first { $0.value == key }?.key
+        return WebstatStarter.shortIDs.first { $0.value == key }?.key
     }
 
     private static func comparisonChange(_ series: MarketSeries, period: HistoryPeriod) -> Decimal? {

@@ -38,9 +38,8 @@ TOP_TYPE = re.compile(r"^(?:@\w+(?:\([^)\n]*\))?\s+)*(?P<access>(?:public|intern
 # Une adresse, une locale ou un fuseau se nomme une fois ; une durée d’un jour reste `.day` ; une taille native reste un style.
 CONFIG_LITERAL = re.compile(r'\b(?:URL|URLComponents)\(string:\s*"|\b(?:Locale|TimeZone)\(identifier:\s*"')
 DAY_SECONDS = re.compile(r"(?<![\w.])86_?400(?![\w.])")
-# Typographie 1.1 : une taille de texte écrite en chiffres vit seulement dans les rôles de `TypeRole`.
+# Typographie : une taille de texte écrite en chiffres vit seulement dans les rôles fabriqués de `SemaDesign`.
 NATIVE_TEXT_SIZE = re.compile(r"\.system\(size:\s*\d")
-TYPE_ROLES = "Sources/SemaMac/Style/TypeRole.swift"
 PRIVATE_DECLARATION = re.compile(r"\b(?:private|fileprivate)\s+(?:(?:static|final|lazy|nonisolated|override|mutating|indirect)\s+)*"
                                  r"(?:let|var|func|struct|enum|class|actor|typealias)\s+(\w+)")
 IMPLICIT_NAMES = {"CodingKeys", "body", "init"}
@@ -160,8 +159,8 @@ def hardcoded(path, source):
     depth = 0  # Une constante nommée peut s’étendre sur plusieurs lignes jusqu’à la fermeture de ses délimiteurs.
     raw_lines = source.splitlines()
     for number, line in enumerate(swift_code(source).splitlines(), 1):
-        if path.startswith("Sources/SemaMac/") and path != TYPE_ROLES and NATIVE_TEXT_SIZE.search(line):
-            errors.append(f"{path}:{number} : taille de texte en dur ; utiliser un rôle `.typeRole(…)` de Typographie 1.1.")
+        if path.startswith("Sources/SemaMac/") and NATIVE_TEXT_SIZE.search(line):
+            errors.append(f"{path}:{number} : taille de texte en dur ; utiliser un rôle `.typeRole(…)` .")
             continue  # Une seule erreur par ligne : le rôle remplace la taille entière.
         if depth > 0 or NAMED_CONSTANT.match(line):
             depth = max(0, depth + sum(line.count(c) for c in "([{") - sum(line.count(c) for c in ")]}"))
@@ -179,8 +178,8 @@ def hardcoded(path, source):
             errors.append(f"{path}:{number} : durée d’un jour en dur ; utiliser `TimeInterval.day`.")
         if "keyCode" in line and any(value not in STRUCTURAL_NUMBERS for value in NUMBER.findall(line)):
             errors.append(f"{path}:{number} : code de touche en dur ; utiliser `kVK_…` ou une constante nommée.")
-        if ".shadow(color" in line and not path.startswith("Sources/SemaMac/Style/"):
-            errors.append(f"{path}:{number} : ombre composée hors de `Style/` ; utiliser `elevation(_:)` avec une élévation de `SemaDesign`.")
+        if ".shadow(color" in line and path.startswith("Sources/SemaMac/"):
+            errors.append(f"{path}:{number} : ombre composée dans l’app ; utiliser `elevation(_:)` avec une élévation de `SemaDesign`.")
     return errors
 
 
@@ -190,9 +189,7 @@ def misplaced_types(path, source):
     stem = pathlib.PurePosixPath(path).stem
     visible = [m["name"] for m in TOP_TYPE.finditer(code) if (m["access"] or "").strip() not in ("private", "fileprivate")]
     if visible:
-        # Un type peut se déclarer dans `Type+Rôle.swift` : le nom du type ouvre toujours celui du fichier.
-        declared_in_role_file = len(visible) == 1 and "+" in stem and stem.split("+")[0] == visible[0]
-        if visible != [stem] and not declared_in_role_file:
+        if visible != [stem]:
             return [f"{path} : un seul type visible par fichier, nommé comme lui ; trouvé {', '.join(visible)}."]
         return []
     extended = {m["name"] for m in TOP_EXTENSION.finditer(code)}

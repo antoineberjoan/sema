@@ -31,7 +31,7 @@ struct HistoryChart: View {
     let series: MarketSeries
     let period: HistoryPeriod
     var height: CGFloat? = Self.defaultHeight
-    var showsReading = true
+    var isReadingShown = true
     @State private var hoveredDate: Date?
 
     private var points: [MarketObservation] { series.history(for: period) }
@@ -121,7 +121,7 @@ struct HistoryChart: View {
             .frame(minHeight: height ?? Self.defaultHeight, maxHeight: height ?? .infinity)
             .accessibilityLabel("Historique de \(series.name), en \(series.displayUnit)")
 
-            if showsReading {
+            if isReadingShown {
             HStack {
                 Text(MarketFormat.date(hovered?.date ?? series.latest?.date))
                 Spacer()

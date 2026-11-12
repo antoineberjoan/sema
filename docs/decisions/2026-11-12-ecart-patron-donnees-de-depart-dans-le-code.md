@@ -17,12 +17,12 @@ On garde ces deux listes dans le code pour l'instant. Elles ne changent pas la f
 
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
-| Passer les listes en JSON maintenant | Aucun écart | Un changement de chargement sans effet visible, non compilé, sur des valeurs que les préférences d'Antoine lisent déjà (`canonicalID`, `legacyIDs`) |
+| Passer les listes en JSON maintenant | Aucun écart | Un changement de chargement sans effet visible, non compilé, sur des valeurs que les préférences d'Antoine lisent déjà (`canonicalID`, `shortIDs`) |
 | Garder le code, dater l'écart | Aucun risque pour les identifiants déjà enregistrés | Deux fichiers hors règle jusqu'à la prochaine modification |
 
 ## Conséquences
 
-Les anciens identifiants de `WebstatStarter.legacyIDs` ne changent pas : ils servent à relire les préférences que la personne a déjà sur son disque. Une migration de ce format serait une décision d'Antoine.
+Les anciens identifiants de `WebstatStarter.shortIDs` ne changent pas : ils servent à relire les préférences que la personne a déjà sur son disque. Une migration de ce format serait une décision d'Antoine.
 
 ## Trace
 

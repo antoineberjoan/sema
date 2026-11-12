@@ -78,9 +78,9 @@ struct TwelveDataClientTests {
         let value = try TwelveDataMapping.series(payload, instrument: item, now: .now)
         let encoded = try JSONEncoder().encode(value)
         #expect(try JSONDecoder().decode(MarketSeries.self, from: encoded).marketInstrument == item)
-        var old = try JSONSerialization.jsonObject(with: encoded) as! [String: Any]
-        old.removeValue(forKey: "marketInstrument")
-        let legacy = try JSONSerialization.data(withJSONObject: old)
-        #expect(try JSONDecoder().decode(MarketSeries.self, from: legacy).marketInstrument == nil)
+        var document = try JSONSerialization.jsonObject(with: encoded) as! [String: Any]
+        document.removeValue(forKey: "marketInstrument")
+        let documentWithoutInstrument = try JSONSerialization.data(withJSONObject: document)
+        #expect(try JSONDecoder().decode(MarketSeries.self, from: documentWithoutInstrument).marketInstrument == nil)
     }
 }

@@ -241,6 +241,14 @@
   --color-accent-control: var(--primitive-color-accent-500);
   /* La teinte du verre du bandeau ; l'opacité se règle à l'usage. Pas pour un aplat d'interface. */
   --color-glass-tint: var(--primitive-color-glass-500);
+  /* Propre à sema : le voile de contraste posé sur la matière du verre du bandeau, à une opacité d'opacity.glass-veil-* ; papier en clair, encre en sombre. Pas pour un aplat d'interface. */
+  --color-glass-veil: var(--primitive-color-paper-0);
+  /* Propre à sema : le reflet clair sur le verre du bandeau, à une opacité d'opacity.glass-highlight-*. Pas pour un aplat d'interface. */
+  --color-glass-highlight: var(--primitive-color-paper-0);
+  /* Propre à sema : le bord clair du verre du bandeau, à une opacité d'opacity.glass-edge-*. Pas pour un aplat d'interface. */
+  --color-glass-edge: var(--primitive-color-paper-0);
+  /* Propre à sema : le fond sous le dégradé d'accent de la signature du bandeau ; encre dans les deux modes. */
+  --color-signature-base: var(--primitive-color-ink-900);
   /* La nuance 1 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface. */
   --color-palette-preview-1: var(--primitive-color-palette-preview-700);
   /* La nuance 2 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface. */
@@ -319,6 +327,42 @@
   --opacity-glass-rest: 0.035;
   /* Le fond d'un élément survolé posé sur le verre : la couleur du texte à cette opacité. Pas pour un fond plein. */
   --opacity-glass-hover: 0.04;
+  /* Propre à sema : l'opacité de l'accent en haut à gauche du dégradé de la signature du bandeau, posé sur un fond noir. */
+  --opacity-signature-gradient-top: 0.85;
+  /* Propre à sema : l'opacité de l'accent en bas à droite du dégradé de la signature du bandeau. */
+  --opacity-signature-gradient-bottom: 0.65;
+  /* Propre à sema : l'opacité du texte de contexte posé sur le dégradé de la signature (on-accent à cette opacité). */
+  --opacity-signature-context-text: 0.85;
+  /* Propre à sema : le fond du bouton d'idée ou de bug posé sur le dégradé de la signature (on-accent à cette opacité). */
+  --opacity-signature-feedback-fill: 0.12;
+  /* Propre à sema : l'opacité du bord clair de la signature, en haut à gauche (on-accent à cette opacité). */
+  --opacity-signature-edge-top: 0.22;
+  /* Propre à sema : l'opacité du bord clair de la signature, en bas à droite (on-accent à cette opacité). */
+  --opacity-signature-edge-bottom: 0.03;
+  /* Propre à sema : le voile de contraste du verre en mode sombre, avant le réglage de transparence. */
+  --opacity-glass-veil-dark: 0.1;
+  /* Propre à sema : le voile de contraste du verre en mode clair, avant le réglage de transparence. */
+  --opacity-glass-veil-light: 0.2;
+  /* Propre à sema : la teinte du verre en mode sombre, avant le réglage de teinte. */
+  --opacity-glass-tint-dark: 0.22;
+  /* Propre à sema : la teinte du verre en mode clair, avant le réglage de teinte. */
+  --opacity-glass-tint-light: 0.12;
+  /* Propre à sema : la teinte du verre à l'extrémité basse de son dégradé, avant le réglage de teinte. */
+  --opacity-glass-tint-end: 0.08;
+  /* Propre à sema : la teinte du repli opaque (Réduire la transparence). */
+  --opacity-glass-tint-opaque: 0.06;
+  /* Propre à sema : le reflet clair d'une carte au repos. */
+  --opacity-glass-highlight-rest: 0.025;
+  /* Propre à sema : le reflet clair d'une carte survolée. */
+  --opacity-glass-highlight-emphasized: 0.07;
+  /* Propre à sema : le bord clair du verre en mode sombre, en haut à gauche. */
+  --opacity-glass-edge-dark: 0.16;
+  /* Propre à sema : le bord clair du verre en mode clair, en haut à gauche. */
+  --opacity-glass-edge-light: 0.65;
+  /* Propre à sema : le bord clair du verre en bas à droite. */
+  --opacity-glass-edge-end: 0.025;
+  /* Propre à sema : l'opacité du grain quand son réglage est au maximum. */
+  --opacity-glass-grain-max: 0.16;
   /* Barre ou en-tête collé au défilement. */
   --layer-sticky: 10;
   /* Menu, liste déroulante, popover. */
@@ -775,6 +819,7 @@
     --color-shadow-near: color-mix(in srgb, var(--primitive-color-ink-900) 50%, transparent);
     --color-shadow-far: color-mix(in srgb, var(--primitive-color-ink-900) 40%, transparent);
     --color-scrim: color-mix(in srgb, var(--primitive-color-ink-900) 56%, transparent);
+    --color-glass-veil: var(--primitive-color-ink-900);
     color-scheme: dark;
   }
 }
@@ -802,6 +847,7 @@
   --color-shadow-near: color-mix(in srgb, var(--primitive-color-ink-900) 50%, transparent);
   --color-shadow-far: color-mix(in srgb, var(--primitive-color-ink-900) 40%, transparent);
   --color-scrim: color-mix(in srgb, var(--primitive-color-ink-900) 56%, transparent);
+  --color-glass-veil: var(--primitive-color-ink-900);
   color-scheme: dark;
 }
 :root[data-theme="light"] {

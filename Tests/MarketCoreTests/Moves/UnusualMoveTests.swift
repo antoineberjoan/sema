@@ -57,10 +57,10 @@ struct UnusualMoveTests {
     }
 
     @Test func sensitivityIsOptionalInPreferences() throws {
-        let legacy = Data("""
+        let storedV1 = Data("""
         {"schemaVersion":2,"favoriteIDs":[],"followedSeriesIDs":[],"alerts":[],"notificationsEnabled":false}
         """.utf8)
-        var value = try JSONDecoder().decode(AppPreferences.self, from: legacy)
+        var value = try JSONDecoder().decode(AppPreferences.self, from: storedV1)
         #expect(value.moveSensitivityID == nil)
         value.moveSensitivityID = MoveSensitivity.attentive.rawValue
         let restored = try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(value))

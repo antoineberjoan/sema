@@ -8,21 +8,25 @@ public struct MarketInstrument: Codable, Equatable, Identifiable, Sendable {
     public let exchange: String
     public let currency: String
     public let kind: String
-    public let weekly: Bool
+    public let isWeekly: Bool
+    enum CodingKeys: String, CodingKey {
+        case provider, symbol, name, exchange, currency, kind
+        case isWeekly = "weekly"
+    }
     public var id: String {
-        [provider.rawValue, symbol, exchange, weekly ? "weekly" : "daily"]
+        [provider.rawValue, symbol, exchange, isWeekly ? "weekly" : "daily"]
             .map { $0.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? $0 }.joined(separator: ":")
     }
     public init(provider: MarketProvider, symbol: String, name: String, exchange: String,
-                currency: String, kind: String, weekly: Bool = false) {
+                currency: String, kind: String, isWeekly: Bool = false) {
         self.provider = provider; self.symbol = symbol; self.name = name
-        self.exchange = exchange; self.currency = currency; self.kind = kind; self.weekly = weekly
+        self.exchange = exchange; self.currency = currency; self.kind = kind; self.isWeekly = isWeekly
     }
     public func usingWeekly(_ value: Bool) -> MarketInstrument {
         MarketInstrument(provider: provider, symbol: symbol, name: name, exchange: exchange,
-                         currency: currency, kind: kind, weekly: value)
+                         currency: currency, kind: kind, isWeekly: value)
     }
-    public var summary: String { [symbol, exchange, kindLabel, weekly ? "Hebdomadaire" : "Quotidien"].filter { !$0.isEmpty }.joined(separator: " · ") }
+    public var summary: String { [symbol, exchange, kindLabel, isWeekly ? "Hebdomadaire" : "Quotidien"].filter { !$0.isEmpty }.joined(separator: " · ") }
     private var kindLabel: String {
         switch kind.lowercased() {
         case "common stock", "stock", "equity": "Action"

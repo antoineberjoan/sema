@@ -54,7 +54,7 @@ struct FocusSwitcherView: View {
 
     private func tile(_ item: MarketSeries) -> some View {
         let displayed = store.displayedSeries(item)
-        let selected = item.id == selection
+        let isSelected = item.id == selection
         return Button { choose(item) } label: {
             VStack(alignment: .leading, spacing: Self.tileSpacing) {
                 Text(MarketFormat.name(displayed)).typeRole(.label)
@@ -66,10 +66,10 @@ struct FocusSwitcherView: View {
                     .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
             .foregroundStyle(DesignColor.text).frame(width: Self.tileWidth, alignment: .leading).padding(Self.tilePadding)
-            .background(selected ? DesignColor.selection(store.palette) : .clear,
+            .background(isSelected ? DesignColor.selection(store.palette) : .clear,
                 in: RoundedRectangle(cornerRadius: DesignRadius.block, style: .continuous))
             .overlay {
-                if selected {
+                if isSelected {
                     RoundedRectangle(cornerRadius: DesignRadius.block, style: .continuous)
                         .strokeBorder(DesignColor.accent(store.palette), lineWidth: DesignBorder.width)
                 }
@@ -78,6 +78,6 @@ struct FocusSwitcherView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))")
-        .accessibilityAddTraits(selected ? [.isSelected] : [])
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }

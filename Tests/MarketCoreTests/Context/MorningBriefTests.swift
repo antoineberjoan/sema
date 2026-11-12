@@ -39,7 +39,7 @@ struct MorningBriefTests {
         var brief = enabled
         #expect(!brief.isDue(now: local("2026-11-07 09:00"), calendar: paris))
         #expect(brief.next(after: local("2026-11-06 09:00"), calendar: paris) == local("2026-11-09 08:00"))
-        brief.weekdaysOnly = false
+        brief.isWeekdaysOnly = false
         #expect(brief.next(after: local("2026-11-06 09:00"), calendar: paris) == local("2026-11-07 08:00"))
         #expect(BriefPreferences().next(after: local("2026-11-06 09:00"), calendar: paris) == nil)
     }
@@ -71,6 +71,6 @@ struct MorningBriefTests {
 
     @Test func briefIsOffByDefault() {
         #expect(AppPreferences().brief == nil)
-        #expect(BriefPreferences().hour == 8 && BriefPreferences().weekdaysOnly)
+        #expect(BriefPreferences().hour == 8 && BriefPreferences().isWeekdaysOnly)
     }
 }

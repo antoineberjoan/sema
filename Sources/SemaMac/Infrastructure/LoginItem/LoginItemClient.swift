@@ -8,14 +8,14 @@ final class LoginItemClient {
     private(set) var error: String?
 
     var isEnabled: Bool { status == .enabled }
-    var needsApproval: Bool { status == .requiresApproval }
+    var isApprovalRequired: Bool { status == .requiresApproval }
 
     func refresh() { status = SMAppService.mainApp.status }
 
     func setEnabled(_ enabled: Bool) {
         refresh()
         error = nil
-        if enabled && needsApproval { openSettings(); return }
+        if enabled && isApprovalRequired { openSettings(); return }
         guard enabled != isEnabled else { return }
         do {
             if enabled { try SMAppService.mainApp.register() }
@@ -24,7 +24,7 @@ final class LoginItemClient {
             self.error = "L’ouverture de session n’a pas pu être modifiée : \(error.localizedDescription)"
         }
         refresh()
-        if needsApproval { error = nil }
+        if isApprovalRequired { error = nil }
     }
 
     func openSettings() { SMAppService.openSystemSettingsLoginItems() }

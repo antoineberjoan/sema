@@ -6,7 +6,7 @@ import UniformTypeIdentifiers
 struct ProfileSettingsView: View {
     private static let avatarSize: CGFloat = 56
     @Environment(AppStore.self) private var store
-    @State private var showsImporter = false
+    @State private var isImporterShown = false
     @State private var isImporting = false
     @State private var importError: String?
 
@@ -14,7 +14,7 @@ struct ProfileSettingsView: View {
         Form {
             Section {
                 HStack(spacing: DesignSpace.groupGap) {
-                    Button { showsImporter = true } label: {
+                    Button { isImporterShown = true } label: {
                         ProfileAvatar(profile: store.profile, size: Self.avatarSize)
                     }
                     .buttonStyle(.plain).disabled(isImporting)
@@ -24,7 +24,7 @@ struct ProfileSettingsView: View {
                             Text(store.profile.displayName).typeRole(.subheading)
                         }
                         Button(isImporting ? "Importation…" : store.profile.avatarJPEG == nil ? "Ajouter une photo…" : "Modifier la photo…") {
-                            showsImporter = true
+                            isImporterShown = true
                         }.disabled(isImporting)
                         if store.profile.avatarJPEG != nil {
                             Button("Retirer la photo", role: .destructive) {
@@ -46,7 +46,7 @@ struct ProfileSettingsView: View {
             .help("Profil conservé sur ce Mac. Les métadonnées de la photo sont retirées.")
         }
         .formStyle(.grouped)
-        .fileImporter(isPresented: $showsImporter, allowedContentTypes: [.image]) { result in
+        .fileImporter(isPresented: $isImporterShown, allowedContentTypes: [.image]) { result in
             switch result {
             case .failure(let error): importError = error.localizedDescription
             case .success(let url):

@@ -49,10 +49,10 @@ struct AppearancePreferencesTests {
     }
 
     @Test func sharedPeriodPersistsAndOlderFilesKeepOneYear() throws {
-        let legacy = Data("""
+        let storedV1 = Data("""
         {"schemaVersion":2,"favoriteIDs":[],"followedSeriesIDs":[],"alerts":[],"notificationsEnabled":false}
         """.utf8)
-        var value = try JSONDecoder().decode(AppPreferences.self, from: legacy)
+        var value = try JSONDecoder().decode(AppPreferences.self, from: storedV1)
         #expect(value.periodID == nil)
         value.periodID = HistoryPeriod.threeYears.rawValue
         let restored = try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(value))

@@ -60,11 +60,11 @@ class GuardrailsTests(unittest.TestCase):
         self.git("rm", "-f", "docs/b.md")
         self.assertTrue(any("lien local" in error for error in self.errors(staged=True)))
 
-    def test_type_may_be_declared_in_its_role_file(self):
-        self.write("Sources/MarketCore/Rule+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
+    def test_type_is_named_like_its_file(self):
+        self.write("Sources/MarketCore/Rule.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
         self.write("Sources/MarketCore/RuleUse.swift", "// Lit la règle pour qu'elle serve.\nimport Foundation\nlet rule = Rule.self\n")
         self.assertEqual(self.errors(), [])
-        self.write("Sources/MarketCore/Other+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Rule {}\n")
+        self.write("Sources/MarketCore/Other+Calculations.swift", "// Calcule une règle pure du cœur.\nimport Foundation\npublic enum Other {}\n")
         self.assertTrue(any("un seul type visible" in error for error in self.errors()))
 
     def test_generated_stylesheet_is_not_read_as_site_style(self):
@@ -270,8 +270,8 @@ class GuardrailsTests(unittest.TestCase):
         self.assertTrue(any("typeRole" in error for error in self.errors()))
         self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nlet title = Font.system(size: side * scale)\n")
         self.assertEqual(self.errors(), [])
-        self.write("Sources/SemaMac/Style/TypeRole.swift", "// Décrit les rôles.\nstatic let title = Font.system(size: 28, weight: .medium)\n")
-        self.assertFalse(any("typeRole" in error for error in self.errors()))
+        self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nlet title = Text(\"x\").typeRole(.title)\n")
+        self.assertEqual(self.errors(), [])
 
     def test_new_type_does_not_repeat_project_name(self):
         self.write("Sources/MarketCore/SemaClock.swift", "// Décrit une horloge.\npublic struct SemaClock {}\nlet clock = SemaClock()\n")
@@ -337,11 +337,10 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("DesignHand", errors[0])
 
-    def test_shadow_belongs_to_style(self):
+    def test_shadow_comes_from_elevation(self):
         source = "// Décrit une surface flottante.\n.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius)\n"
         self.write("Sources/SemaMac/Features/Panel.swift", source)
-        self.write("Sources/SemaMac/Style/Shadow.swift", source)
-        self.write("Sources/SemaMac/Features/Card.swift", "// Décrit une carte.\n.shadow(.card)\n")
+        self.write("Sources/SemaMac/Features/Card.swift", "// Décrit une carte.\n.elevation(DesignElevation.raised)\n")
         errors = self.errors()
         self.assertEqual(len(errors), 1)
         self.assertIn("Features/Panel.swift:2 : ombre", errors[0])

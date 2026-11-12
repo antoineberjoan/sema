@@ -5,9 +5,9 @@ import MarketCore
 extension AppStore {
     /// A pause after the last keystroke avoids one request per letter.
     static let searchDelay: Duration = .milliseconds(250)
-    var canLoadMoreCatalogue: Bool { catalogueHasMore && !isSearchingCatalogue }
+    var canLoadMoreCatalogue: Bool { hasMoreCatalogue && !isSearchingCatalogue }
 
-    var previewRequiresRefresh: Bool {
+    var isPreviewRefreshRequired: Bool {
         if let value = previewSeries, let next = value.statisticalDescriptor,
            let previous = followedSeries.first(where: { $0.id == value.id })?.statisticalDescriptor {
             return !previous.usesSameMeasurement(as: next)
@@ -24,7 +24,7 @@ extension AppStore {
         if let dataset = catalogueDatasets.first(where: { $0.id == search.datasetID }) { search.areaField = dataset.areaField ?? "ref_area" }
         let offset = loadMore ? catalogueResults.count : 0
         if summaryExportSearch != search { summaryExportSearch = nil; summaryExport = [] }
-        if !loadMore { catalogueResults = []; catalogueTotal = 0; catalogueHasMore = false }
+        if !loadMore { catalogueResults = []; catalogueTotal = 0; hasMoreCatalogue = false }
         catalogueError = nil
         guard hasWebstatKey, isSourceEnabled("webstat") else { isSearchingCatalogue = false; return }
         isSearchingCatalogue = true
@@ -41,7 +41,7 @@ extension AppStore {
                     let labels = try await WebstatClient().codeLabels(apiKey: key, ids: missing)
                     try Task.checkCancellation()
                     guard generation == searchGeneration else { return }
-                    catalogueLabels.merge(labels, uniquingKeysWith: { _, new in new })
+                    catalogueLabels.merge(labels, uniquingKeysWith: { _, replacement in replacement })
                     try? storage.cacheCatalogue(.init(datasets: catalogueDatasets, labels: catalogueLabels))
                 }
                 let items: [WebstatSeriesDescriptor]
@@ -79,7 +79,7 @@ extension AppStore {
                     let nonStarters = resolvedItems.filter { !starterKeys.contains($0.key) }
                     catalogueResults = starters + nonStarters
                 }
-                catalogueHasMore = hasMore
+                hasMoreCatalogue = hasMore
                 isSearchingCatalogue = false
             } catch is CancellationError { }
             catch {
@@ -114,7 +114,7 @@ extension AppStore {
                 let existing = compatible ? previewSeries?.observations ?? [] : []
                 previewSeries = value.replacing(observations: existing + value.observations,
                     completeHistory: compatible ? previewSeries?.hasCompleteHistory : false)
-                if previewRequiresRefresh {
+                if isPreviewRefreshRequired {
                     previewError = "La source a changé d’unité, d’échelle ou de base. Cet aperçu utilise les nouvelles valeurs ; actualisez vos repères avant de l’ouvrir."
                 }
                 isLoadingPreview = false
@@ -136,12 +136,12 @@ extension AppStore {
                 let value = try await statisticalConnectors().fetch(dataset: dataset, structure: structure, key: key)
                 try Task.checkCancellation()
                 guard statisticalPreviewRequest == requestID else { return }
-                if let old = series.first(where: { $0.id == value.id }),
-                   let previous = old.statisticalDescriptor, let next = value.statisticalDescriptor,
+                if let held = series.first(where: { $0.id == value.id }),
+                   let previous = held.statisticalDescriptor, let next = value.statisticalDescriptor,
                    previous.usesSameMeasurement(as: next) {
-                    previewSeries = value.replacing(observations: old.observations + value.observations, completeHistory: old.hasCompleteHistory)
+                    previewSeries = value.replacing(observations: held.observations + value.observations, completeHistory: held.hasCompleteHistory)
                 } else { previewSeries = value }
-                if previewRequiresRefresh { previewError = "L’unité, l’échelle ou la base a changé. Actualisez vos repères et vérifiez les seuils avant de l’ouvrir." }
+                if isPreviewRefreshRequired { previewError = "L’unité, l’échelle ou la base a changé. Actualisez vos repères et vérifiez les seuils avant de l’ouvrir." }
                 isLoadingPreview = false
             } catch is CancellationError { }
             catch {
@@ -181,7 +181,7 @@ extension AppStore {
         let lists = Array((dataset?.dimensionCodelists ?? [:]).values) + Array((dataset?.attributeCodelists ?? [:]).values)
         let ids = Array(Set(lists + ["CL_UNIT", "CL_UNIT_MULT", "CL_FREQ", "CL_ORGANISATION", "CL_AREA"])).filter { catalogueLabels[$0] == nil }
         if !ids.isEmpty, let labels = try? await WebstatClient().codeLabels(apiKey: apiKey, ids: ids) {
-            catalogueLabels.merge(labels, uniquingKeysWith: { _, new in new })
+            catalogueLabels.merge(labels, uniquingKeysWith: { _, replacement in replacement })
             try? storage.cacheCatalogue(.init(datasets: catalogueDatasets, labels: catalogueLabels))
         }
         return resolvedWithCachedLabels(descriptor)
