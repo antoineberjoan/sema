@@ -25,4 +25,4 @@ structure:
     depot-de-donnees: [Sources/MarketCore/Preferences]
     connecteur: [Sources/MarketCore/Webstat, Sources/MarketCore/Statistical, Sources/MarketCore/Markets, Sources/MarketCore/ECB]
     module-ecran: [Sources/SemaMac/Features/*]
-  cliquet: 85
+  cliquet: 69
