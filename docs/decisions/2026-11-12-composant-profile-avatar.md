@@ -26,8 +26,4 @@ Le composant est gardé avec cet écart à la référence (SwiftUI).
 
 ## Conséquences
 
-C'est le seul `.font(...)` écrit à la main qui reste dans l'app, avec le chevron de `RowDisclosureStyle` qui lit maintenant le rôle `caption`. Le fond du cercle lit le texte à l'opacité `glass-rest` : l'avatar est dans la barre latérale ouverte comme dans son aperçu en verre.
-
-## Trace
-
-Relecture finale de l'alignement de sema sur Sophos.
+C'est le seul `.font(...)` écrit à la main dans l'app. Le chevron de `RowDisclosureStyle` lit le rôle `caption`. Le fond du cercle lit le texte à l'opacité `glass-rest` : l'avatar est dans la barre latérale ouverte comme dans son aperçu en verre.

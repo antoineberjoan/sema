@@ -5,7 +5,6 @@ import MarketCore
 
 struct AlertsScreen: View {
     private static let sectionSpacing = DesignSpace.groupGap
-    private static let emptyMinHeight: CGFloat = 350
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
 
@@ -34,7 +33,7 @@ struct AlertsScreen: View {
                         Button("Explorer les repères") { store.section = .explorer }.buttonStyle(.borderedProminent)
                     }
                 }
-                .frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight)
+                .frame(maxWidth: .infinity, minHeight: DesignLayout.alertsEmptyMinHeight)
             } else {
                 if !watched.isEmpty {
                     section("Mouvements inhabituels") {
@@ -79,7 +78,6 @@ struct AlertsScreen: View {
 }
 
 private struct WatchRow: View {
-    private static let nameWidth: CGFloat = 220
     @Environment(AppStore.self) private var store
     let series: MarketSeries
 
@@ -87,7 +85,7 @@ private struct WatchRow: View {
         let displayed = store.displayedSeries(series)
         let move = UnusualMove(series: series)
         HStack(spacing: DesignSpace.itemGap) {
-            Text(MarketFormat.name(displayed)).typeRole(.small).lineLimit(1).frame(width: Self.nameWidth, alignment: .leading)
+            Text(MarketFormat.name(displayed)).typeRole(.small).lineLimit(1).frame(width: DesignLayout.watchRowNameWidth, alignment: .leading)
             Text(move.map { MarketFormat.sessionChange($0.change, series: series) } ?? "Historique insuffisant")
                 .typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)
             if let move { MoveBadge(ratio: move.ratio) }
@@ -101,7 +99,6 @@ private struct WatchRow: View {
 
 private struct AlertRow: View {
     private static let iconSpacing = DesignSpace.fieldGap
-    private static let iconSize: CGFloat = 30
     private static let textSpacing = DesignSpace.titleGap
     private static let actionSpacing = DesignSpace.itemGap
     private static let verticalPadding = DesignSpace.cardInset
@@ -115,7 +112,7 @@ private struct AlertRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: Self.iconSpacing) {
             Image(systemName: rule.isEnabled ? "bell" : "bell.slash").foregroundStyle(accentText)
-                .frame(width: Self.iconSize, height: Self.iconSize)
+                .frame(width: DesignLayout.alertRowIconSize, height: DesignLayout.alertRowIconSize)
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text(item.map(MarketFormat.name) ?? "Repère indisponible").typeRole(.label)
                 Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "").")

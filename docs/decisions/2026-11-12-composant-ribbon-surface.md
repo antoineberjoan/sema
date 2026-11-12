@@ -27,7 +27,3 @@ Le composant est gardé avec cet écart à la référence (SwiftUI).
 ## Conséquences
 
 Les opacités du verre (voile, teinte, grain, lumière) restent des constantes nommées de la vue : elles sont propres à cette décision. Le rayon (`radius.card`) et le contour (`border.width`) lisent le patron.
-
-## Trace
-
-Lot des composants de l'alignement de sema sur Sophos : inventaire de `DesignSystem` avant sa suppression.

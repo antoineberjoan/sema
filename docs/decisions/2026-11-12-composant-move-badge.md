@@ -27,7 +27,3 @@ Le composant est gardé avec cet écart à la référence (SwiftUI).
 ## Conséquences
 
 Le fond de la zone calme est le texte à l'opacité `glass-rest` : le même sur une page opaque et sur une carte de verre.
-
-## Trace
-
-Lot des composants de l'alignement de sema sur Sophos : inventaire de `DesignSystem` avant sa suppression.

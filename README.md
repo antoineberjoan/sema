@@ -40,7 +40,7 @@ Quand l'app s'ouvre, une icône apparaît dans la barre de menus. Les préféren
 - `scripts/` : construction, contrôles, distribution.
 - `site/` : le site statique.
 - `distribution/` : le manifeste de release et le cask public.
-- `docs/` : fondation, décisions, lexique, contrats de données, plans.
+- `docs/` : fondation, produit, décisions, lexique, sources de données, catalogues publics, personnalisation, distribution.
 
 ## Liens avec les autres projets
 
@@ -53,6 +53,7 @@ Aucun lien avec un autre dépôt.
 - Ce qu'est le projet : [docs/fondation.md](docs/fondation.md).
 - Les règles pour les agents de code : [AGENTS.md](AGENTS.md).
 - Les décisions, une par fichier daté : `docs/decisions/`.
+- Le produit et ses données : [docs/PRODUCT.md](docs/PRODUCT.md), [sources de données](docs/DATA-SOURCES.md), [catalogues publics](docs/PUBLIC-CATALOGUES.md), [personnalisation](docs/PERSONALIZATION.md).
 - Pour contribuer : [CONTRIBUTING.md](CONTRIBUTING.md). Pour signaler une faille : [SECURITY.md](SECURITY.md).
 
 ## Licence

@@ -99,30 +99,6 @@ struct MarketCoreTests {
     }
 
     @Test
-    func testECBParserReadsNamespacedDatesAndExactCurrencyUnits() throws {
-        let xml = """
-        <gesmes:Envelope xmlns:gesmes="http://www.gesmes.org/xml/2002-08-01" xmlns="http://www.ecb.int/vocabulary/2002-08-01/eurofxref">
-        <Cube><Cube time="2026-10-14"><Cube currency="USD" rate="1.1642"/><Cube currency="JPY" rate="171.46"/></Cube>
-        <Cube time="2026-10-13"><Cube currency="USD" rate="1.1600"/></Cube></Cube></gesmes:Envelope>
-        """
-        let result = try ECBExchangeRateClient.parse(Data(xml.utf8))
-        #expect(result.count == 2)
-        let dollar = try #require(result.first { $0.id == "eurusd" })
-        #expect(dollar.latest?.value == Decimal(string: "1.1642")!)
-        #expect(dollar.unit == .usd)
-        #expect(dollar.observations.count == 2)
-        #expect(dollar.observations[0].date < dollar.observations[1].date)
-    }
-
-    @Test
-    func testECBParserRejectsBrokenOrEmptyFeeds() {
-        #expect(throws: (any Error).self) { _ = try ECBExchangeRateClient.parse(Data("<Cube>".utf8)) }
-        #expect(throws: (any Error).self) { _ = try ECBExchangeRateClient.parse(Data("<Cube/>".utf8)) }
-        #expect(throws: (any Error).self) { _ = try ECBExchangeRateClient.parse(Data("<Cube time=\"2026-10-14\"><Cube currency=\"USD\" rate=\"-1\"/></Cube>".utf8)) }
-        #expect(throws: (any Error).self) { _ = try ECBExchangeRateClient.parse(Data("<Cube time=\"2026-10-14\"><Cube currency=\"USD\" rate=\"1.2invalid\"/></Cube>".utf8)) }
-    }
-
-    @Test
     func testPreferencesPersistFavoritesAndDecimalAlertThreshold() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-test-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }

@@ -11,4 +11,6 @@ public enum DesignIcon {
     public static let gap: CGFloat = DesignScale.space8
     /// Côté d'un bouton d'icône d'une fenêtre Mac au pointeur : app Mac au pointeur, cible au toucher non applicable. Une vue qui accepte le toucher lit target.min.
     public static let buttonSize: CGFloat = 26
+    /// Côté de l'image de l'icône dans la barre des menus (un modèle rendu une fois).
+    public static let menuBarSize: CGFloat = 18
 }

@@ -4,7 +4,6 @@ import SwiftUI
 import MarketCore
 
 struct AlertEditorView: View {
-    private static let sheetWidth: CGFloat = 480
     private static let inset = DesignSpace.pageInsetNarrow
     private static let blockSpacing = DesignSpace.groupGap
     private static let rowSpacing = DesignSpace.fieldGap
@@ -68,7 +67,7 @@ struct AlertEditorView: View {
                 .buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction).disabled(threshold == nil || item?.canAlert != true)
             }
         }
-        .padding(Self.inset).frame(width: Self.sheetWidth)
+        .padding(Self.inset).frame(width: DesignLayout.alertEditorSheetWidth)
         .onAppear {
             seriesID = store.alertableSeries.first(where: { $0.id == store.selectedSeriesID })?.id ?? store.alertableSeries.first?.id ?? ""
             thresholdText = item?.latest.map { NSDecimalNumber(decimal: $0.value).stringValue.replacingOccurrences(of: ".", with: ",") } ?? "3,0"

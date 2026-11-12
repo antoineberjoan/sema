@@ -8,10 +8,8 @@ import MarketCore
 
 struct ProfileAvatar: View {
     private static let placeholderFill = DesignColor.text.opacity(DesignOpacity.glassRest)
-    private static let initialsScale: CGFloat = 0.34
-    private static let symbolScale: CGFloat = 0.4
     let profile: LocalProfile
-    var size: CGFloat = 32
+    var size = DesignLayout.profileAvatarDefaultSize
 
     var body: some View {
         ZStack {
@@ -19,9 +17,9 @@ struct ProfileAvatar: View {
             if let data = profile.avatarJPEG, let image = NSImage(data: data) {
                 Image(nsImage: image).resizable().scaledToFill()
             } else if !profile.initials.isEmpty {
-                Text(profile.initials).font(.system(size: size * Self.initialsScale, weight: .medium))
+                Text(profile.initials).font(.system(size: size * CGFloat(DesignMeasure.avatarInitialsScale), weight: DesignType.labelWeight))
             } else {
-                Image(systemName: "person.fill").font(.system(size: size * Self.symbolScale)).foregroundStyle(DesignColor.textMuted)
+                Image(systemName: "person.fill").font(.system(size: size * CGFloat(DesignMeasure.avatarSymbolScale))).foregroundStyle(DesignColor.textMuted)
             }
         }
         .frame(width: size, height: size).clipShape(Circle()).accessibilityHidden(true)

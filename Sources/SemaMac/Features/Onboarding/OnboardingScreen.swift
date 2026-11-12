@@ -18,35 +18,25 @@ private enum WelcomeMotion {
 }
 
 private enum WelcomeLayout {
-    static let windowWidth: CGFloat = 640
-    static let windowHeight: CGFloat = 700
     static let windowPadding = DesignSpace.pageInsetNarrow
-    static let signalSize: CGFloat = 44
-    static let heroSignalSize: CGFloat = 88
     static let heroSpacing = DesignSpace.sectionGap
-    static let dotSize: CGFloat = 6
-    static let activeDotWidth: CGFloat = 18
     static let dotSpacing = DesignIcon.gap
     static let titleSpacing = DesignSpace.fieldGap
     static let errorSpacing = DesignSpace.fieldGap
     static let errorTopPadding = DesignSpace.menuInset
     static let stepSpacing = DesignSpace.groupGap
     static let gridSpacing = DesignSpace.itemGap
-    static let featureColumnWidth: CGFloat = 420
     static let featureSpacing = DesignSpace.groupGap
     static let featureRowSpacing = DesignSpace.itemGap
     static let featureTextSpacing = DesignSpace.titleGap
-    static let featureSymbolWidth: CGFloat = 32
     static let tileSpacing = DesignSpace.itemGap
     static let tileTextSpacing = DesignSpace.titleGap
     static let tilePadding = DesignSpace.cardInset
-    static let tileMinHeight: CGFloat = 64
     static let tileBorder = DesignBorder.width
     static let previewSpacing = DesignSpace.itemGap
-    static let previewCardWidth: CGFloat = 176
     static let footerSpacing = DesignSpace.fieldGap
-    static let signalWidth = SignalPath.stroke * signalSize / SignalPath.viewBox
-    static let heroSignalWidth = SignalPath.stroke * heroSignalSize / SignalPath.viewBox
+    static let signalWidth = SignalPath.stroke * DesignLayout.welcomeSignalSize / SignalPath.viewBox
+    static let heroSignalWidth = SignalPath.stroke * DesignLayout.welcomeHeroSignalSize / SignalPath.viewBox
 }
 
 private struct WelcomeFeature: Identifiable {
@@ -175,7 +165,7 @@ struct OnboardingScreen: View {
             }
             footer.padding(.top, DesignSpace.groupGap)
         }
-        .padding(WelcomeLayout.windowPadding).frame(width: WelcomeLayout.windowWidth, height: WelcomeLayout.windowHeight)
+        .padding(WelcomeLayout.windowPadding).frame(width: DesignLayout.welcomeWindowWidth, height: DesignLayout.welcomeWindowHeight)
         .background(DesignColor.background)
         .interactiveDismissDisabled()
         .task {
@@ -188,7 +178,7 @@ struct OnboardingScreen: View {
         HStack(alignment: .center) {
             HStack(spacing: DesignIcon.gap) {
                 WelcomeSignal(progress: reduceMotion ? 1 : drawProgress, lineWidth: WelcomeLayout.signalWidth)
-                    .foregroundStyle(accent).frame(width: WelcomeLayout.signalSize, height: WelcomeLayout.signalSize)
+                    .foregroundStyle(accent).frame(width: DesignLayout.welcomeSignalSize, height: DesignLayout.welcomeSignalSize)
                 Text("sema").typeRole(.wordmark)
             }
             .opacity(step == 0 ? 0 : 1).accessibilityHidden(step == 0)
@@ -196,7 +186,7 @@ struct OnboardingScreen: View {
             HStack(spacing: WelcomeLayout.dotSpacing) {
                 ForEach(0..<Self.stepCount, id: \.self) { index in
                     Capsule().fill(index == step ? accent : DesignColor.ruleHover)
-                        .frame(width: index == step ? WelcomeLayout.activeDotWidth : WelcomeLayout.dotSize, height: WelcomeLayout.dotSize)
+                        .frame(width: index == step ? DesignLayout.welcomeActiveDotWidth : DesignLayout.dotSize, height: DesignLayout.dotSize)
                 }
             }
             .accessibilityElement(children: .ignore)
@@ -207,7 +197,7 @@ struct OnboardingScreen: View {
     private var welcomeStep: some View {
         VStack(spacing: WelcomeLayout.heroSpacing) {
             WelcomeSignal(progress: reduceMotion ? 1 : drawProgress, lineWidth: WelcomeLayout.heroSignalWidth)
-                .foregroundStyle(accent).frame(width: WelcomeLayout.heroSignalSize, height: WelcomeLayout.heroSignalSize)
+                .foregroundStyle(accent).frame(width: DesignLayout.welcomeHeroSignalSize, height: DesignLayout.welcomeHeroSignalSize)
             VStack(spacing: WelcomeLayout.titleSpacing) {
                 Text("Bienvenue dans sema.").typeRole(.title)
                     .accessibilityAddTraits(.isHeader)
@@ -217,7 +207,7 @@ struct OnboardingScreen: View {
                 ForEach(WelcomeFeature.all) { feature in
                     HStack(alignment: .top, spacing: WelcomeLayout.featureRowSpacing) {
                         Image(systemName: feature.symbol).typeRole(.section).foregroundStyle(accentText)
-                            .frame(width: WelcomeLayout.featureSymbolWidth).accessibilityHidden(true)
+                            .frame(width: DesignLayout.welcomeFeatureSymbolWidth).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: WelcomeLayout.featureTextSpacing) {
                             Text(feature.title).typeRole(.heading)
                             Text(feature.detail).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
@@ -227,7 +217,7 @@ struct OnboardingScreen: View {
                     .accessibilityElement(children: .combine)
                 }
             }
-            .frame(maxWidth: WelcomeLayout.featureColumnWidth, alignment: .leading)
+            .frame(maxWidth: DesignLayout.welcomeFeatureColumnWidth, alignment: .leading)
         }
     }
 
@@ -249,7 +239,7 @@ struct OnboardingScreen: View {
         HStack(spacing: WelcomeLayout.previewSpacing) {
             ForEach(previewSeries) { series in
                 RibbonCard(series: store.displayedSeries(series), period: .year, action: {})
-                    .frame(width: WelcomeLayout.previewCardWidth, height: MenuRibbonLayout.cardHeight)
+                    .frame(width: DesignLayout.welcomePreviewCardWidth, height: DesignLayout.menuRibbonCardHeight)
                     .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: WelcomeMotion.previewScale)))
             }
             if previewSeries.isEmpty {
@@ -259,7 +249,7 @@ struct OnboardingScreen: View {
                     .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
             }
         }
-        .frame(maxWidth: .infinity, minHeight: MenuRibbonLayout.cardHeight, maxHeight: MenuRibbonLayout.cardHeight, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: DesignLayout.menuRibbonCardHeight, maxHeight: DesignLayout.menuRibbonCardHeight, alignment: .leading)
         .environment(\.glassSettings, store.ribbonGlass)
         .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
         .allowsHitTesting(false).accessibilityHidden(true)
@@ -281,7 +271,7 @@ struct OnboardingScreen: View {
         return Button { toggle(collection) } label: {
             HStack(spacing: WelcomeLayout.tileSpacing) {
                 Image(systemName: collection.symbol).typeRole(.section).foregroundStyle(accentText)
-                    .frame(width: WelcomeLayout.featureSymbolWidth).accessibilityHidden(true)
+                    .frame(width: DesignLayout.welcomeFeatureSymbolWidth).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: WelcomeLayout.tileTextSpacing) {
                     Text(collection.title).typeRole(.label)
                     Text(collection.subtitle).typeRole(.caption).foregroundStyle(DesignColor.textMuted).lineLimit(1)
@@ -292,7 +282,7 @@ struct OnboardingScreen: View {
                     .accessibilityHidden(true)
             }
             .padding(WelcomeLayout.tilePadding)
-            .frame(maxWidth: .infinity, minHeight: WelcomeLayout.tileMinHeight, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: DesignLayout.welcomeTileMinHeight, alignment: .leading)
             .background(isCollectionSelected ? DesignColor.selection(palette) : DesignColor.surfaceRaised,
                         in: RoundedRectangle(cornerRadius: DesignRadius.block))
             .overlay {

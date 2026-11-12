@@ -26,7 +26,3 @@ Précision d'Antoine du 17 octobre : l'exploration doit être intuitive et simpl
 ## Conséquences
 
 Les catalogues de la feuille ⌘K et d'Explorer partagent le même navigateur et le même aperçu.
-
-## Trace
-
-Repris de `docs/IDENTITY.md` à son retrait, le 2026-11-12. Le texte complet reste dans l'historique Git.

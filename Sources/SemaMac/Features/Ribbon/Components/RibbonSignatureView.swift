@@ -12,14 +12,12 @@ import SwiftUI
 private enum SignatureMotion {
     // Mouvement 1.1: the line draws in 550 ms (seen at each opening, so kept short), then the point and the
     // context fade in together, the mission follows after a 50 ms stagger. The whole sequence ends under 900 ms.
-    static let drawDelay = 100
     static let drawDuration = DesignDuration.explain
-    static let contextDelay = drawDelay + Int(drawDuration * 1_000)
+    static let contextDelay = Int(DesignDuration.signatureMotionDrawDelay * 1_000) + Int(drawDuration * 1_000)
     static let missionDelay = contextDelay + Int(DesignMotion.stagger * 1_000)
     static let textDuration = DesignDuration.standard
     static let textOffset = DesignMotion.shift
-    static let markSize: CGFloat = 72
-    static let lineWidth = SignalPath.stroke * markSize / SignalPath.viewBox
+    static let lineWidth = SignalPath.stroke * DesignLayout.signatureMotionMarkSize / SignalPath.viewBox
     static let drawStage = 1
     static let contextStage = 2
     static let missionStage = 3
@@ -27,9 +25,7 @@ private enum SignatureMotion {
 
 struct RibbonSignatureView: View {
     private static let titleTopPadding = DesignSpace.markInset
-    private static let markAreaHeight: CGFloat = 48
     private static let feedbackPadding = DesignSpace.frameInset
-    private static let feedbackHeight: CGFloat = 26
     private static let feedbackTopPadding = DesignSpace.cardInset
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -47,8 +43,8 @@ struct RibbonSignatureView: View {
                     .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
                     .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             }
-                .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
-                .frame(height: Self.markAreaHeight).accessibilityHidden(true)
+                .frame(width: DesignLayout.signatureMotionMarkSize, height: DesignLayout.signatureMotionMarkSize)
+                .frame(height: DesignLayout.ribbonSignatureMarkAreaHeight).accessibilityHidden(true)
                 .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.inOut, duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
             Spacer(minLength: DesignSpace.fieldGap)
             Text("L’économie bouge.")
@@ -63,7 +59,7 @@ struct RibbonSignatureView: View {
             Button(action: openFeedback) {
                 Label("Une idée ou un bug ?", systemImage: "bubble.left")
                     .typeRole(.overline).padding(.horizontal, Self.feedbackPadding)
-                    .frame(height: Self.feedbackHeight).background(DesignColor.onAccent.opacity(DesignOpacity.signatureFeedbackFill), in: Capsule())
+                    .frame(height: DesignLayout.ribbonSignatureFeedbackHeight).background(DesignColor.onAccent.opacity(DesignOpacity.signatureFeedbackFill), in: Capsule())
             }
             .buttonStyle(PressStyle()).padding(.top, Self.feedbackTopPadding)
             .help(FeedbackClient.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
@@ -110,9 +106,9 @@ struct RibbonSignatureView: View {
         withTransaction(transaction) { stage = reduceMotion || presentationID == nil ? SignatureMotion.missionStage : 0 }
         guard !reduceMotion, presentationID != nil else { return }
         do {
-            try await Task.sleep(for: .milliseconds(SignatureMotion.drawDelay))
+            try await Task.sleep(for: .milliseconds(Int(DesignDuration.signatureMotionDrawDelay * 1_000)))
             if !reduceMotion { stage = SignatureMotion.drawStage }
-            try await Task.sleep(for: .milliseconds(SignatureMotion.contextDelay - SignatureMotion.drawDelay))
+            try await Task.sleep(for: .milliseconds(SignatureMotion.contextDelay - Int(DesignDuration.signatureMotionDrawDelay * 1_000)))
             if !reduceMotion { stage = SignatureMotion.contextStage }
             try await Task.sleep(for: .milliseconds(SignatureMotion.missionDelay - SignatureMotion.contextDelay))
             if !reduceMotion { stage = SignatureMotion.missionStage }

@@ -5,23 +5,19 @@ import SemaDesign
 import SwiftUI
 
 struct RowDisclosureStyle: DisclosureGroupStyle {
-    private static let spacing: CGFloat = 6
-    private static let chevronWidth: CGFloat = 12
-    private static let contentSpacing: CGFloat = 8
-    private static let duration = 0.18
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func makeBody(configuration: Configuration) -> some View {
-        VStack(alignment: .leading, spacing: Self.contentSpacing) {
+        VStack(alignment: .leading, spacing: DesignLayout.rowDisclosureContentSpacing) {
             Button {
-                withAnimation(reduceMotion ? nil : .timingCurve(DesignEase.out, duration: Self.duration)) {
+                withAnimation(reduceMotion ? nil : .timingCurve(DesignEase.out, duration: DesignDuration.rowDisclosureDuration)) {
                     configuration.isExpanded.toggle()
                 }
             } label: {
-                HStack(spacing: Self.spacing) {
+                HStack(spacing: DesignLayout.rowDisclosureSpacing) {
                     Image(systemName: "chevron.right").typeRole(.caption).fontWeight(.semibold)
-                        .rotationEffect(.degrees(configuration.isExpanded ? 90 : 0))
-                        .frame(width: Self.chevronWidth).accessibilityHidden(true)
+                        .rotationEffect(.degrees(configuration.isExpanded ? DesignMeasure.disclosureExpandedAngle : 0))
+                        .frame(width: DesignLayout.rowDisclosureChevronWidth).accessibilityHidden(true)
                     configuration.label
                     Spacer(minLength: 0)
                 }

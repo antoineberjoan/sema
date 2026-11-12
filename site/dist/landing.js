@@ -1,6 +1,6 @@
 /* Copie la commande Homebrew et déclenche chaque scène animée de la landing à son entrée dans l’écran ; la scène recherche se rejoue tant qu’elle est visible. */
 (() => {
-  const COPY = { feedbackDuration: 2200 };
+  const token = (name) => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
   const button = document.querySelector('[data-copy-homebrew]');
   const command = document.querySelector('#homebrew-command');
   const status = document.querySelector('#homebrew-copy-status');
@@ -17,7 +17,7 @@
         status.textContent = 'commande copiée.';
         resetTimer = setTimeout(() => {
           button.removeAttribute('data-copied'); status.textContent = '';
-        }, COPY.feedbackDuration);
+        }, token('--copy-feedback-duration'));
       } catch {
         const range = document.createRange(); range.selectNodeContents(command);
         const selection = getSelection(); selection.removeAllRanges(); selection.addRange(range);
@@ -31,7 +31,6 @@
   const scenes = document.querySelectorAll('[data-scene]');
   if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
   const timers = new Map();
-  const duration = (name) => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
   const play = (scene) => {
     scene.removeAttribute('data-rewind');
     scene.dataset.play = '';
@@ -42,8 +41,8 @@
         delete scene.dataset.play;
         void scene.offsetWidth;
         play(scene);
-      }, duration('--scene-enter')));
-    }, duration('--scene-loop')));
+      }, token('--scene-enter')));
+    }, token('--scene-loop')));
   };
   const observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
@@ -57,7 +56,7 @@
       scene.removeAttribute('data-play'); scene.removeAttribute('data-rewind');
     }
     for (const entry of entries) if (entry.isIntersecting && !('loop' in entry.target.dataset)) observer.unobserve(entry.target);
-  }, { threshold: .35 });
+  }, { threshold: token('--scene-visible-threshold') });
   for (const scene of scenes) {
     scene.dataset.armed = '';
     observer.observe(scene);

@@ -4,7 +4,6 @@ import SwiftUI
 import MarketCore
 
 struct BriefScreen: View {
-    private static let maximumWidth: CGFloat = 640
     private static let upcomingLimit = 3
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
@@ -27,7 +26,7 @@ struct BriefScreen: View {
             DisclosureGroup("Agenda de la semaine", isExpanded: $isAgendaOpen) { AgendaView().padding(.top, DesignSpace.rowInset) }
                 .typeRole(.small).foregroundStyle(DesignColor.textMuted)
         }
-        .frame(maxWidth: Self.maximumWidth, alignment: .leading)
+        .frame(maxWidth: DesignLayout.briefMaximumWidth, alignment: .leading)
         // A day chosen in the ribbon unfolds the agenda; it reads and clears the request.
         .onChange(of: store.agendaDay, initial: true) { _, requested in
             if requested != nil { isAgendaOpen = true }

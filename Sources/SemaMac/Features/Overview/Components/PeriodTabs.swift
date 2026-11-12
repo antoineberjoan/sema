@@ -4,7 +4,6 @@ import SwiftUI
 import MarketCore
 
 struct PeriodTabs: View {
-    private static let indicatorHeight: CGFloat = 2
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
     let periods: [HistoryPeriod]
@@ -21,7 +20,7 @@ struct PeriodTabs: View {
                         .foregroundStyle(isSelected ? DesignColor.text : DesignColor.textMuted)
                         .padding(.bottom, DesignSpace.markInset)
                         .overlay(alignment: .bottom) {
-                            Rectangle().fill(isSelected ? accent : .clear).frame(height: Self.indicatorHeight)
+                            Rectangle().fill(isSelected ? accent : .clear).frame(height: DesignLayout.periodTabsIndicatorHeight)
                         }
                         .contentShape(Rectangle())
                 }

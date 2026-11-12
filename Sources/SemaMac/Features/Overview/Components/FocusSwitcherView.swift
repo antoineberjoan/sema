@@ -4,16 +4,11 @@ import SwiftUI
 import MarketCore
 
 struct FocusSwitcherView: View {
-    private static let panelMaxWidth: CGFloat = 700
     private static let panelInset = DesignSpace.pageInsetWide
     private static let tilesPadding = DesignSpace.menuInset
-    private static let tileWidth: CGFloat = 166
     private static let tilePadding = DesignSpace.cardInset
     private static let tileSpacing = DesignSpace.titleGap
     private static let tilesSpacing = DesignSpace.itemGap
-    private static let nameLines = 2
-    private static let nameHeight: CGFloat = 32
-    private static let valueMinimumScale: CGFloat = 0.75
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -36,7 +31,7 @@ struct FocusSwitcherView: View {
                 withAnimation(reduceMotion ? nil : FocusSwitcherMotion.selection) { proxy.scrollTo(id, anchor: .center) }
             }
         }
-        .frame(maxWidth: Self.panelMaxWidth)
+        .frame(maxWidth: DesignLayout.focusSwitcherPanelMaxWidth)
         .background {
             let shape = RoundedRectangle(cornerRadius: DesignRadius.window, style: .continuous)
             if reduceTransparency || contrast == .increased { shape.fill(DesignColor.surfaceRaised) }
@@ -58,14 +53,14 @@ struct FocusSwitcherView: View {
         return Button { choose(item) } label: {
             VStack(alignment: .leading, spacing: Self.tileSpacing) {
                 Text(MarketFormat.name(displayed)).typeRole(.label)
-                    .lineLimit(Self.nameLines).multilineTextAlignment(.leading).frame(height: Self.nameHeight, alignment: .topLeading)
+                    .lineLimit(Int(DesignMeasure.nameLines)).multilineTextAlignment(.leading).frame(height: DesignLayout.focusSwitcherNameHeight, alignment: .topLeading)
                 Text(MarketFormat.value(displayed)).typeRole(.figure)
-                    .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
+                    .lineLimit(1).minimumScaleFactor(CGFloat(DesignMeasure.focusSwitcherValueMinimumScale))
                 // Surface translucide : le texte secondaire garde le style système (décision surfaces-translucides).
                 Text(MarketFormat.change(displayed, period: store.period(for: item)))
                     .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
-            .foregroundStyle(DesignColor.text).frame(width: Self.tileWidth, alignment: .leading).padding(Self.tilePadding)
+            .foregroundStyle(DesignColor.text).frame(width: DesignLayout.focusSwitcherTileWidth, alignment: .leading).padding(Self.tilePadding)
             .background(isSelected ? DesignColor.selection(store.palette) : .clear,
                 in: RoundedRectangle(cornerRadius: DesignRadius.block, style: .continuous))
             .overlay {

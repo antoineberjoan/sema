@@ -38,21 +38,15 @@ private extension SettingsTab {
 }
 
 struct SettingsScreen: View {
-    private static let sidebarWidth: CGFloat = 230
     private static let searchSpacing = DesignIcon.gap
     private static let searchPadding = DesignSpace.frameInset
     private static let fieldCorner = DesignRadius.block
     private static let searchInsets = EdgeInsets(top: DesignSpace.cardInset, leading: DesignSpace.panelInsetInline, bottom: DesignSpace.menuInset, trailing: DesignSpace.panelInsetInline)
     private static let tabPadding = DesignSpace.rowInset
     private static let profileSpacing = DesignSpace.fieldGap
-    private static let profileAvatarSize: CGFloat = 28
     private static let profilePadding = DesignSpace.frameInset
     private static let profileInset = DesignSpace.menuInset
     private static let titleInsets = EdgeInsets(top: DesignSpace.pageInsetNarrow, leading: DesignSpace.pageInsetNarrow, bottom: DesignSpace.frameInset, trailing: DesignSpace.pageInsetNarrow)
-    private static let minimumWidth: CGFloat = 880
-    private static let idealWidth: CGFloat = 980
-    private static let minimumHeight: CGFloat = 660
-    private static let idealHeight: CGFloat = 740
     private static let choiceLabelTop = DesignSpace.cardInset
     private static let modeSpacing = DesignSpace.groupGap
     private static let positionSpacing = DesignSpace.itemGap
@@ -60,12 +54,7 @@ struct SettingsScreen: View {
     private static let innerSwatchCorner = DesignRadius.mark
     private static let innerSwatchInset = DesignSpace.menuInset
     private static let swatchPadding = DesignSpace.markInset
-    private static let swatchHeight: CGFloat = 58
-    private static let selectedStroke: CGFloat = 2
-    private static let paletteTitleLines = 2
-    private static let paletteTitleHeight: CGFloat = 28
     private static let aboutSpacing = DesignSpace.itemGap
-    private static let markSize: CGFloat = 48
     private static let aboutTextSpacing = DesignSpace.titleGap
     private static let aboutPadding = DesignSpace.menuInset
     @Environment(AppStore.self) private var store
@@ -116,7 +105,7 @@ struct SettingsScreen: View {
 
                 Button { store.settingsTab = .profile; isSearchFocused = false } label: {
                     HStack(spacing: Self.profileSpacing) {
-                        ProfileAvatar(profile: store.profile, size: Self.profileAvatarSize)
+                        ProfileAvatar(profile: store.profile, size: DesignLayout.settingsProfileAvatarSize)
                         Text("Mon espace").typeRole(.heading)
                         Spacer()
                     }
@@ -128,7 +117,7 @@ struct SettingsScreen: View {
                 .buttonStyle(.plain).padding(Self.profileInset)
                 .accessibilityAddTraits(store.settingsTab == .profile ? [.isSelected] : [])
             }
-            .frame(width: Self.sidebarWidth)
+            .frame(width: DesignLayout.settingsSidebarWidth)
             .background(DesignColor.surface)
             Divider()
             VStack(alignment: .leading, spacing: 0) {
@@ -144,7 +133,7 @@ struct SettingsScreen: View {
             .background(DesignColor.background)
         }
         .navigationTitle("Réglages")
-        .frame(minWidth: Self.minimumWidth, idealWidth: Self.idealWidth, minHeight: Self.minimumHeight, idealHeight: Self.idealHeight)
+        .frame(minWidth: DesignLayout.settingsMinimumWidth, idealWidth: DesignLayout.settingsIdealWidth, minHeight: DesignLayout.settingsMinimumHeight, idealHeight: DesignLayout.settingsIdealHeight)
         .task { await store.checkWebstatKey() }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             store.loginItem.refresh()
@@ -247,11 +236,11 @@ struct SettingsScreen: View {
                                     RoundedRectangle(cornerRadius: Self.innerSwatchCorner).fill(DesignColor.palettePreview2(palette))
                                         .padding(Self.innerSwatchInset)
                                 }
-                                .padding(Self.swatchPadding).frame(height: Self.swatchHeight)
+                                .padding(Self.swatchPadding).frame(height: DesignLayout.settingsSwatchHeight)
                                 .overlay(RoundedRectangle(cornerRadius: Self.swatchCorner).strokeBorder(
-                                    store.palette == palette ? DesignColor.accent(store.palette) : .clear, lineWidth: Self.selectedStroke))
-                                Text(palette.title).typeRole(.caption).lineLimit(Self.paletteTitleLines)
-                                    .frame(maxWidth: .infinity, minHeight: Self.paletteTitleHeight, alignment: .top)
+                                    store.palette == palette ? DesignColor.accent(store.palette) : .clear, lineWidth: DesignLayout.selectedStroke))
+                                Text(palette.title).typeRole(.caption).lineLimit(Int(DesignMeasure.settingsPaletteTitleLines))
+                                    .frame(maxWidth: .infinity, minHeight: DesignLayout.settingsPaletteTitleHeight, alignment: .top)
                             }.contentShape(Rectangle())
                         }
                         .buttonStyle(.plain).accessibilityLabel("Palette " + palette.title)
@@ -278,7 +267,7 @@ struct SettingsScreen: View {
         Form {
             Section {
                 HStack(spacing: Self.aboutSpacing) {
-                    Symbol().frame(width: Self.markSize, height: Self.markSize)
+                    Symbol().frame(width: DesignLayout.settingsMarkSize, height: DesignLayout.settingsMarkSize)
                     VStack(alignment: .leading, spacing: Self.aboutTextSpacing) {
                         Text("sema").typeRole(.title)
                         Text("Gardez vos repères.").foregroundStyle(DesignColor.textMuted)
@@ -304,10 +293,7 @@ struct SettingsScreen: View {
 
 private struct SettingsChoice: View {
     private static let spacing = DesignIcon.gap
-    private static let tileHeight: CGFloat = 48
     private static let corner = DesignRadius.block
-    private static let selectedStroke: CGFloat = 2
-    private static let width: CGFloat = 76
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
     let title: String
@@ -319,12 +305,12 @@ private struct SettingsChoice: View {
         Button(action: action) {
             VStack(spacing: Self.spacing) {
                 Image(systemName: symbol).typeRole(.section)
-                    .frame(maxWidth: .infinity).frame(height: Self.tileHeight)
+                    .frame(maxWidth: .infinity).frame(height: DesignLayout.settingsChoiceTileHeight)
                     .background(isSelected ? DesignColor.selection(palette) : DesignColor.surface, in: RoundedRectangle(cornerRadius: Self.corner))
-                    .overlay(RoundedRectangle(cornerRadius: Self.corner).strokeBorder(isSelected ? accent : .clear, lineWidth: Self.selectedStroke))
+                    .overlay(RoundedRectangle(cornerRadius: Self.corner).strokeBorder(isSelected ? accent : .clear, lineWidth: DesignLayout.selectedStroke))
                 Text(title).typeRole(.caption).lineLimit(1)
             }
-            .frame(width: Self.width).contentShape(Rectangle())
+            .frame(width: DesignLayout.settingsChoiceWidth).contentShape(Rectangle())
         }
         .buttonStyle(.plain).accessibilityLabel(title)
         .accessibilityAddTraits(isSelected ? [.isSelected] : [])

@@ -104,12 +104,6 @@ final class AppStore {
                 merge(cached.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
                 hasLoadedWebstat = cached.contains { $0.sourceURL?.host == "webstat.banque-france.fr" }
                 status = "Repères conservés localement · consultez la période et la date de publication."
-            } else {
-                let previousRates = try storage.cachedRates()
-                if !previousRates.isEmpty {
-                    merge(previousRates.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
-                    status = "Ancien cache BCE · connectez Webstat dans les réglages pour actualiser."
-                }
             }
             if let catalog = try storage.cachedCatalogue() {
                 catalogueDatasets = catalog.datasets

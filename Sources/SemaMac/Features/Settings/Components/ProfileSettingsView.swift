@@ -4,7 +4,6 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ProfileSettingsView: View {
-    private static let avatarSize: CGFloat = 56
     @Environment(AppStore.self) private var store
     @State private var isImporterShown = false
     @State private var isImporting = false
@@ -15,7 +14,7 @@ struct ProfileSettingsView: View {
             Section {
                 HStack(spacing: DesignSpace.groupGap) {
                     Button { isImporterShown = true } label: {
-                        ProfileAvatar(profile: store.profile, size: Self.avatarSize)
+                        ProfileAvatar(profile: store.profile, size: DesignLayout.profileSettingsAvatarSize)
                     }
                     .buttonStyle(.plain).disabled(isImporting)
                     .accessibilityLabel("Modifier la photo")

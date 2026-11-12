@@ -1,6 +1,6 @@
 # Sources, profil local et soutien
 
-Incrément local du 16 octobre 2026, demandé et validé par Antoine.
+Demandé et validé par Antoine le 16 octobre 2026.
 
 ## Réglages natifs
 
@@ -22,7 +22,7 @@ Le premier rapprochement porte sur les taux de change de référence au comptant
 
 Un seul repère apparaît dans la sélection et les favoris ; l’ordre existant détermine le représentant, sans préférence automatique pour Webstat ou la BCE. Les deux accès figurent dans « Source et définition ». Ajouter l’autre accès ne crée pas de second repère. Un choix explicite « Utiliser cette source » peut remplacer l’accès, en conservant position, favori, UUID, seuil et état des règles. Les historiques de deux accès ne sont pas fusionnés silencieusement.
 
-Les fréquences, devises, échelles, producteurs et versions différents restent distincts. Les autres familles ne sont pas rapprochées tant qu’une correspondance officielle n’a pas été vérifiée. Ce mécanisme n’est donc pas une garantie d’absence de tout doublon dans les huit catalogues. Les anciennes règles distinctes sont conservées.
+Les fréquences, devises, échelles, producteurs et versions différents restent distincts. Les autres familles ne sont pas rapprochées tant qu’une correspondance officielle n’a pas été vérifiée. Ce mécanisme n’est donc pas une garantie d’absence de tout doublon dans les huit catalogues. Les règles déjà distinctes restent distinctes.
 
 ### Profil
 
@@ -30,7 +30,7 @@ Prénom, nom et photo sont facultatifs et locaux. La sidebar montre la photo ou 
 
 La photo est choisie avec le sélecteur macOS, limitée à 25 Mo à l’entrée, redimensionnée et recadrée au centre en JPEG sRGB de 384 × 384 px. Le fichier d’origine n’est pas modifié. Une nouvelle image est encodée sans les métadonnées EXIF/GPS. Sa petite représentation est enregistrée avec le profil dans les préférences atomiques ; « Retirer » enlève ces octets du document courant. L’app ne réécrit pas les éventuelles sauvegardes faites par le système ou l’utilisateur.
 
-`profile`, `disabledSourceIDs` et `alertBaselineIDs` sont des champs optionnels des préférences v2. Leur absence conserve le comportement antérieur. Un fichier illisible n’est jamais remplacé.
+`profile`, `disabledSourceIDs` et `alertBaselineIDs` sont des champs optionnels des préférences v2. Leur absence garde le comportement par défaut. Un fichier illisible n’est jamais remplacé.
 
 ### Soutien
 

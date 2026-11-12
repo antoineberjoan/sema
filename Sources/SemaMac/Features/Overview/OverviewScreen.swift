@@ -7,7 +7,6 @@ struct OverviewScreen: View {
     private static let switcherSpacing = DesignSpace.groupGap
     private static let switcherBottomPadding = DesignSpace.frameInset
     private static let switcherInset = DesignSpace.markInset
-    private static let emptyMinHeight: CGFloat = 450
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     var isQuickSwitcherShown = false
@@ -44,7 +43,7 @@ struct OverviewScreen: View {
             } actions: {
                 Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderedProminent)
             }
-            .frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, minHeight: DesignLayout.overviewEmptyMinHeight, maxHeight: .infinity)
         } else {
             ContentUnavailableView {
                 Label("Vos repères, à votre façon.", systemImage: "chart.xyaxis.line")
@@ -53,7 +52,7 @@ struct OverviewScreen: View {
             } actions: {
                 Button("Explorer les repères") { store.section = .explorer }.buttonStyle(.borderedProminent)
             }
-            .frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight, maxHeight: .infinity)
+            .frame(maxWidth: .infinity, minHeight: DesignLayout.overviewEmptyMinHeight, maxHeight: .infinity)
         }
     }
 }

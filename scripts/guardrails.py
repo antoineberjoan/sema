@@ -48,11 +48,12 @@ IDENTIFIER = re.compile(r"\b[A-Za-z_]\w*\b")
 TOP_EXTENSION = re.compile(r"^(?:@\w+\s+)*(?:(?:public|internal|private|fileprivate)\s+)?extension\s+(?P<name>\w+)", re.MULTILINE)
 
 
-# Une valeur visuelle du site se nomme une fois dans la feuille de tokens ; les paliers `@media` ne peuvent pas utiliser de variable.
-TOKEN_SHEET = "site/dist/brand/tokens.css"
+# Une valeur visuelle du site se nomme une fois dans `site/tokens.json` ; les paliers `@media` ne peuvent pas utiliser de variable.
+TOKEN_SOURCE = "site/tokens.json"
 CSS_NOISE = re.compile(r"/\*[\s\S]*?\*/|\"[^\"\n]*\"|'[^'\n]*'|url\([^)]*\)|@(?:media|supports)[^{]*")
 RAW_STYLE = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\(|cubic-bezier\(|(?<![\w.#])(?P<number>\d*\.?\d+)(?P<unit>px|ms|s|rem)\b"
                        r"|\b(?:z-index|font-weight|letter-spacing)\s*:\s*-?[.\d]")
+SCALE_USE = re.compile(r"var\(--(scale-[\w-]+)")
 CSS_SELECTOR = re.compile(r"([^{};]+)\{")
 CSS_NAME = re.compile(r"[.#](-?[A-Za-z_][\w-]*)")
 CSS_VARIABLE_USE = re.compile(r"var\((--[\w-]+)")
@@ -252,13 +253,14 @@ def web_errors(sources):
     for path, css in sorted(styles.items()):
         if is_generated(sources[path]):
             continue  # la feuille fabriquée par `jetons.mjs` définit des variables et des classes de rôle : jetons.mjs la contrôle
-        if path != TOKEN_SHEET:
-            for number, line in enumerate(css.splitlines(), 1):
-                for match in RAW_STYLE.finditer(line):
-                    if match["unit"] == "px" and float(match["number"]) in (0, 1):
-                        continue
-                    errors.append(f"{path}:{number} : valeur visuelle en dur `{match[0]}` ; la nommer dans {TOKEN_SHEET}.")
-        errors.extend(f"{path} : `{name}` n’est défini nulle part ; l’ajouter à {TOKEN_SHEET}."
+        for number, line in enumerate(css.splitlines(), 1):
+            for match in RAW_STYLE.finditer(line):
+                if match["unit"] == "px" and float(match["number"]) in (0, 1):
+                    continue
+                errors.append(f"{path}:{number} : valeur visuelle en dur `{match[0]}` ; la nommer dans {TOKEN_SOURCE}.")
+        errors.extend(f"{path} : lit la primitive `{name}` ; lire un rôle nommé par usage dans {TOKEN_SOURCE}."
+                      for name in sorted(set(SCALE_USE.findall(css))))
+        errors.extend(f"{path} : `{name}` n’est défini nulle part ; l’ajouter à {TOKEN_SOURCE}."
                       for name in sorted(set(CSS_VARIABLE_USE.findall(css)) - defined))
         names = {name for selector in CSS_SELECTOR.findall(css) for name in CSS_NAME.findall(selector)}
         errors.extend(f"{path} : le sélecteur `{name}` n’apparaît dans aucun HTML ou JS du site ; supprimer le style mort."
@@ -282,6 +284,25 @@ def markdown_prose(source):
         if marker or fence:
             lines.append("\n")
     return re.sub(r"(?<!`)(`+)(?!`)(.*?)\1(?!`)", "", "".join(lines), flags=re.DOTALL)
+
+
+META_THEME_COLOR = re.compile(r'<meta\s+name="theme-color"\s+content="([^"]*)"', re.IGNORECASE)
+
+
+def theme_color_errors(snapshot):
+    """La couleur de la barre du navigateur est celle du rôle `page` de `site/tokens.json` : un HTML ne l'écrit pas à part."""
+    if TOKEN_SOURCE not in snapshot.paths:
+        return []
+    try:
+        page = json.loads(snapshot.read(TOKEN_SOURCE))["page"]["$value"]["hex"].lower()
+    except (ValueError, KeyError, TypeError):
+        return []  # Le JSON invalide est déjà signalé ; `jetons.mjs` contrôle la forme des jetons.
+    errors = []
+    for path in sorted(snapshot.paths):
+        if path.startswith("site/dist/") and path.endswith(".html"):
+            errors.extend(f"{path} : `theme-color` vaut `{value}` ; le rôle `page` de {TOKEN_SOURCE} vaut `{page}`."
+                          for value in META_THEME_COLOR.findall(snapshot.read(path)) if value.lower() != page)
+    return errors
 
 
 def check(snapshot):
@@ -344,6 +365,7 @@ def check(snapshot):
 
     errors.extend(unused_types(swift_sources))
     errors.extend(web_errors(web_sources))
+    errors.extend(theme_color_errors(snapshot))
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths

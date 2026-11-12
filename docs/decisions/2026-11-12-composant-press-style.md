@@ -27,7 +27,3 @@ Le composant est gardé avec cet écart à la référence (SwiftUI).
 ## Conséquences
 
 Huit fichiers le lisent (cartes, lignes, tuiles). La durée et l'échelle lisent `DesignDuration` et `DesignMotion`.
-
-## Trace
-
-Lot des composants de l'alignement de sema sur Sophos : inventaire de `DesignSystem` avant sa suppression.

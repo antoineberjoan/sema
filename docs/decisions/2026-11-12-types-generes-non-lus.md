@@ -24,4 +24,4 @@ Un type fabriqué que personne ne lit n'est pas du code mort écrit à la main :
 
 ## Trace
 
-Lot 3 de l'alignement de sema sur Sophos. Proposée par l'agent ; accord d'Antoine du 2026-11-12, rapporté par l'architecte (option B).
+Proposée par l'agent ; accord d'Antoine du 2026-11-12, rapporté par l'architecte (option B).

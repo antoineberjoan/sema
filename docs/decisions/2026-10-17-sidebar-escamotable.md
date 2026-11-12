@@ -28,7 +28,3 @@ Après la direction Focus, Antoine a demandé une sidebar à la demande : ouvert
 ## Conséquences
 
 Trois présentations locales de sidebar sont pilotées par `WorkspaceView`. La désactivation de la scène et les feuilles ferment l'aperçu. Le fond de sélection plus présent distingue le repère actif, sans bordure.
-
-## Trace
-
-Repris de `docs/IDENTITY.md` à son retrait, le 2026-11-12. Le texte complet reste dans l'historique Git.

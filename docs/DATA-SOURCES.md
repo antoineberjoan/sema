@@ -1,6 +1,6 @@
 # Sources et conventions
 
-Les catalogues publics supplémentaires sont désormais intégrés dans l’incrément local : voir [PUBLIC-CATALOGUES.md](PUBLIC-CATALOGUES.md) pour la couverture exacte, les contrats d’unité, la découverte des jeux et les limites vérifiées. Les exemples ci-dessous restent des suggestions, sans restreindre les catalogues.
+Les catalogues publics supplémentaires sont décrits dans [PUBLIC-CATALOGUES.md](PUBLIC-CATALOGUES.md) : couverture exacte, contrats d’unité, découverte des jeux et limites vérifiées. Les exemples ci-dessous sont des suggestions, sans restreindre les catalogues.
 
 ## Connexion active : Banque de France / Webstat
 
@@ -34,9 +34,9 @@ Les catalogues publics supplémentaires sont désormais intégrés dans l’incr
 | `mro` | `FM.D.U2.EUR.4F.KR.MRR_FR.LEV` | Quotidienne ; taux des opérations principales de refinancement de la BCE. Ajouté le 18 octobre 2026 ; observations non encore vérifiées par appel réel. |
 | `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage : « OAT France · 10 ans » (public de conseillers en gestion de patrimoine, décision d’Antoine, 18 octobre 2026). Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
 
-Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. Les anciens identifiants sema sont migrés vers la clé Webstat, qui devient l’identifiant stable des observations, favoris et alertes.
+Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. La clé Webstat est l’identifiant stable des observations, favoris et alertes. Un identifiant local lu dans un fichier de version 1 y est converti ([relecture des versions de fichiers](decisions/2026-11-12-relecture-des-versions-de-fichiers.md)).
 
-Les anciennes séries `ICP…` d’inflation s’arrêtent fin 2025. Le flux actuel est `HICP…`. L’IPCH harmonisé ne doit pas être confondu avec l’IPC national de l’Insee.
+Les séries d’inflation `ICP…` s’arrêtent fin 2025. Le flux publié est `HICP…`. L’IPCH harmonisé ne doit pas être confondu avec l’IPC national de l’Insee.
 
 Le repère `fr10` n’est pas le TEC 10 quotidien : celui-ci est un indice à maturité constante interpolé. [L’AFT indique des restrictions Euronext sur sa redistribution et son usage commercial](https://www.aft.gouv.fr/fr/oat-tec-10) ; il reste hors de l’app.
 
@@ -49,11 +49,9 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 - La [BCE](https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html) demande notamment l’attribution, l’identification des modifications et l’information sur la disponibilité gratuite à la source pour un contenu vendu. Les réglages sema indiquent cette disponibilité gratuite ; les variations affichées sont des calculs de sema.
 - Vérifier les conditions des producteurs pour tout ajout ou changement de source et pour la distribution commerciale finale. Aucune autorisation Morningstar, Leeway ou de place boursière n’est déduite de cet accès Webstat.
 
-## Démonstration et compatibilité
+## Démonstration
 
-Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil (décision d’Antoine, 18 octobre 2026). Aucune valeur fictive n’apparaît dans l’app (décision d’Antoine, 18 octobre 2026) : avant connexion, un repère choisi n’a pas d’observation et son détail indique « Pas encore de données » avec l’accès à la connexion Webstat. Seul l’aperçu du bandeau de l’accueil montre des exemples fictifs de `DemoCatalog`, annoncés comme tels. Après connexion, les séries choisies reçoivent les observations de Webstat. Les fonds ne sont plus exposés ; leurs anciennes règles et favoris restent conservés sans être actifs. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
-
-L’ancien client public `ECBExchangeRateClient` et son parseur restent présents pour compatibilité. Si aucun cache Webstat n’existe, les trois parités de l’ancien `ecb-cache.json` peuvent encore être consultées. L’interface actuelle n’appelle plus directement le flux BCE de 90 jours.
+Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil (décision d’Antoine, 18 octobre 2026). Aucune valeur fictive n’apparaît dans l’app (décision d’Antoine, 18 octobre 2026) : avant connexion, un repère choisi n’a pas d’observation et son détail indique « Pas encore de données » avec l’accès à la connexion Webstat. Seul l’aperçu du bandeau de l’accueil montre des exemples fictifs de `DemoCatalog`, annoncés comme tels. Après connexion, les séries choisies reçoivent les observations de Webstat. Aucun fonds n’est exposé ; une règle ou un favori de fonds déjà écrit reste lu sans être actif. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
 
 ## Dates et calculs
 
@@ -70,7 +68,7 @@ L’ancien client public `ECBExchangeRateClient` et son parseur restent présent
 
 ## Suites possibles
 
-Les séries agrégées des OPC et les autres jeux accessibles peuvent désormais être ajoutés depuis Explorer ; aucun fonds individuel n’est intégré. Les données de fonds nécessitent une part précise, une devise, un calendrier et une source autorisée. Le scraping et les actions ne font pas partie de la connexion actuelle.
+Les séries agrégées des OPC et les autres jeux accessibles peuvent être ajoutés depuis Explorer ; aucun fonds individuel n’est intégré. Les données de fonds nécessitent une part précise, une devise, un calendrier et une source autorisée. Le scraping et les actions ne font pas partie de la connexion actuelle.
 
 ## Exemples à retrouver dans le catalogue
 
@@ -105,7 +103,7 @@ Une clé personnelle ne garantit ni l’accès à tous les instruments ni les dr
 
 ## Contexte d’une séance — 8 novembre 2026
 
-Sources ajoutées par le chantier « alertes de marché et refonte », décision d’Antoine du 7 novembre. Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
+Sources de contexte, décision d’Antoine du 7 novembre. Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
 
 | Source | Usage | Accès | Limites |
 | --- | --- | --- | --- |

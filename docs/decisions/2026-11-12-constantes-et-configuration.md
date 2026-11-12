@@ -1,11 +1,11 @@
 # Chaque valeur a un seul propriétaire, nommé et lisible
 
 Date : 2026-11-12 · Statut : proposée
-Décidé par : à confirmer par Antoine (reprise d'un document retiré)
+Décidé par : à confirmer par Antoine
 
 ## Contexte
 
-Des valeurs écrites en dur dans les vues ou recopiées entre fichiers dérivent. Les conventions de code d'avant l'alignement donnaient un propriétaire à chaque famille de valeurs.
+Des valeurs écrites en dur dans les vues ou recopiées entre fichiers dérivent. Chaque famille de valeurs a un propriétaire.
 
 ## Décision
 
@@ -34,7 +34,3 @@ Des valeurs écrites en dur dans les vues ou recopiées entre fichiers dérivent
 ## Conséquences
 
 Les règles « un concept, un nom, zéro alias » et « zéro code mort » sont dans le skill `construire` de Sophos : elles ne sont pas recopiées ici.
-
-## Trace
-
-Repris de `docs/engineering/CONVENTIONS.md` à son retrait, le 2026-11-12. Le texte complet reste dans l'historique Git.

@@ -1,5 +1,6 @@
 // Bords d’écran où le bandeau peut s’ouvrir, avec leurs libellés et symboles.
 import AppKit
+import SemaDesign
 
 enum MenuRibbonPosition: String, CaseIterable, Identifiable {
     case top, bottom, left, right
@@ -20,7 +21,7 @@ enum MenuRibbonPosition: String, CaseIterable, Identifiable {
     func frame(in screen: NSScreen) -> NSRect {
         var available = screen.visibleFrame.insetBy(dx: MenuRibbonLayout.screenInset, dy: MenuRibbonLayout.screenInset)
         available.size.height = max(0, min(available.maxY, screen.frame.maxY - screen.safeAreaInsets.top) - available.minY)
-        let width = min(MenuRibbonLayout.verticalWidth, available.width)
+        let width = min(DesignLayout.menuRibbonVerticalWidth, available.width)
         let height = min(MenuRibbonLayout.height, available.height)
         switch self {
         case .top: return NSRect(x: available.minX, y: available.maxY - height, width: available.width, height: height)

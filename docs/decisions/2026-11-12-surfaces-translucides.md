@@ -24,7 +24,7 @@ Les surfaces translucides de sema sont ces quatre, et aucune autre.
 
 | Surface | Fichier, vue | Matière |
 | --- | --- | --- |
-| a | `DesignSystem/RibbonSurface.swift`, posé sur les cartes du bandeau (`RibbonCard`, `AgendaCard`, `MenuRibbonView`) et le panneau de recherche (`SearchPanelView`) | `NSVisualEffectView` et voile de contraste |
+| a | `Components/Custom/RibbonSurface.swift`, posé sur les cartes du bandeau (`RibbonCard`, `AgendaCard`, `MenuRibbonView`) et le panneau de recherche (`SearchPanelView`) | `NSVisualEffectView` et voile de contraste |
 | b | `Overview/FocusSwitcherView.swift` | `.regularMaterial` |
 | c | `Workspace/WorkspaceView.swift`, barre latérale en aperçu | `.regularMaterial` |
 | d | `Ribbon/MenuRibbonView.swift`, bouton de réglages | `.regularMaterial` dans un cercle |
@@ -37,7 +37,7 @@ Les fonds de repos et de survol concernés : le badge de comparaison de `RibbonC
 | --- | --- | --- |
 | Deux écarts bornés à une liste fermée | Un texte lisible sur le verre ; des jetons partout ailleurs | Une liste à tenir à jour |
 | Jetons fixes partout | Aucun écart | Un contraste non garanti sur le verre, un survol plein qui cache la matière |
-| Couleurs système partout | Le rendu actuel | Plus de jetons de couleur : contraire à l'alignement sur Sophos |
+| Couleurs système partout | Le rendu actuel | Plus de jetons de couleur : contraire à Sophos |
 
 ## Conséquences
 
@@ -45,4 +45,4 @@ Les opacités `glass-rest` et `glass-hover` sont des valeurs de marque de sema :
 
 ## Trace
 
-Lot 3 de l'alignement de sema sur Sophos. Règle de l'architecte du 2026-11-12, validée par Antoine ; `patron/couleur.md` 1.1 (surfaces translucides).
+Règle de l'architecte du 2026-11-12, validée par Antoine ; `patron/couleur.md` 1.1 (surfaces translucides).

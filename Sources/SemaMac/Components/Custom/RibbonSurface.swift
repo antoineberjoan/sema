@@ -25,12 +25,6 @@ private struct RibbonGlassBackdrop: NSViewRepresentable {
     }
 }
 
-private enum RibbonGlassStyle {
-    static let veilRange = 4.0
-    static let tintRange = 2.0
-    static let grainScale: CGFloat = 2
-}
-
 /// A fixed tile keeps the texture still and avoids a render loop per card.
 @MainActor
 private enum RibbonGrain {
@@ -64,8 +58,8 @@ struct RibbonSurface: ViewModifier {
         let shape = RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
         // NSVisualEffectView owns the blur. Only the contrast veil changes opacity.
         let veil = (colorScheme == .dark ? DesignOpacity.glassVeilDark : DesignOpacity.glassVeilLight)
-            * (1 - glass.transparency) * RibbonGlassStyle.veilRange
-        let tint = (colorScheme == .dark ? DesignOpacity.glassTintDark : DesignOpacity.glassTintLight) * glass.tint * RibbonGlassStyle.tintRange
+            * (1 - glass.transparency) * DesignMeasure.glassVeilRange
+        let tint = (colorScheme == .dark ? DesignOpacity.glassTintDark : DesignOpacity.glassTintLight) * glass.tint * DesignMeasure.glassTintRange
         content
             .background {
                 if isOpaque {
@@ -78,7 +72,7 @@ struct RibbonSurface: ViewModifier {
                     shape.fill(LinearGradient(colors: [glassTint.opacity(tint), glassTint.opacity(DesignOpacity.glassTintEnd * glass.tint)],
                                               startPoint: .topLeading, endPoint: .bottomTrailing))
                     if glass.grain > 0, let texture = RibbonGrain.image {
-                        Image(decorative: texture, scale: RibbonGlassStyle.grainScale)
+                        Image(decorative: texture, scale: CGFloat(DesignMeasure.glassGrainScale))
                             .resizable(resizingMode: .tile).interpolation(.none)
                             .clipShape(shape)
                             .opacity(glass.grain * DesignOpacity.glassGrainMax)

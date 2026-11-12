@@ -7,8 +7,6 @@ import MarketCore
 
 struct ShortcutSettingsView: View {
     private static let rowSpacing = DesignSpace.fieldGap
-    private static let recorderWidth: CGFloat = 142
-    private static let recorderHeight: CGFloat = 30
     @Environment(AppStore.self) private var store
 
     var body: some View {
@@ -46,13 +44,12 @@ struct ShortcutSettingsView: View {
                 begin: { store.shortcutError = nil; store.globalShortcuts.suspend() },
                 finish: { store.activateShortcuts() },
                 save: { store.setShortcut($0, for: action) })
-                .frame(width: Self.recorderWidth, height: Self.recorderHeight)
+                .frame(width: DesignLayout.shortcutSettingsRecorderWidth, height: DesignLayout.shortcutSettingsRecorderHeight)
         }.padding(.vertical, DesignSpace.controlInsetDense)
     }
 }
 
 private struct ShortcutRecorder: NSViewRepresentable {
-    private static let fontSize: CGFloat = 12
     let shortcut: AppShortcut?
     let title: String
     let begin: () -> Void
@@ -61,7 +58,7 @@ private struct ShortcutRecorder: NSViewRepresentable {
 
     func makeNSView(context: Context) -> ShortcutButton {
         let button = ShortcutButton()
-        button.bezelStyle = .rounded; button.font = .systemFont(ofSize: Self.fontSize, weight: .medium)
+        button.bezelStyle = .rounded; button.font = .systemFont(ofSize: DesignLayout.shortcutRecorderFontSize, weight: .medium)
         return button
     }
 

@@ -1,7 +1,7 @@
 # Une alerte de seuil se déclenche au franchissement strict, avec un point de départ enregistré avant l'envoi
 
 Date : 2026-11-12 · Statut : proposée
-Décidé par : à confirmer par Antoine (reprise d'un document retiré)
+Décidé par : à confirmer par Antoine
 
 ## Contexte
 
@@ -28,7 +28,3 @@ Une alerte qui se répète ou qui part sur un historique ancien perd la confianc
 ## Conséquences
 
 La règle est testée dans `Tests/MarketCoreTests` (évaluation pure). `docs/PRODUCT.md` décrit ce que la personne voit.
-
-## Trace
-
-Repris de `docs/ARCHITECTURE.md` à son retrait, le 2026-11-12. La date d'origine n'est pas écrite : le texte complet reste dans l'historique Git.

@@ -1,4 +1,4 @@
-# Catalogues publics — incrément local du 16 octobre 2026
+# Catalogues publics
 
 ## Contrat produit
 
@@ -43,7 +43,7 @@ Un aperçu charge les six dernières années lorsque la source le permet. « Tou
 
 Les valeurs restent des `Decimal`, dans l’unité et l’échelle de publication. Un volume de 100 milliards de dollars reste 100, avec l’échelle affichée ; il n’est pas multiplié une seconde fois. Les valeurs manquantes ne deviennent pas zéro. Les dates trimestrielles et annuelles conservent leur intervalle civil.
 
-Favoris, ordre, alertes et cache sont partagés avec Webstat. L’actualisation peut fonctionner sans clé Webstat pour les repères publics. Un changement d’unité, d’échelle ou de base ne fusionne pas les anciennes valeurs : les règles sont mises en pause avant toute évaluation. Le chargement d’un historique ancien ne déclenche pas rétroactivement des alertes. Le fonctionnement reste manuel, sans surveillance quand Sema est quittée ou le Mac en veille.
+Favoris, ordre, alertes et cache sont partagés avec Webstat. L’actualisation peut fonctionner sans clé Webstat pour les repères publics. Un changement d’unité, d’échelle ou de base ne fusionne pas les valeurs de l’ancienne et de la nouvelle mesure : les règles sont mises en pause avant toute évaluation. Le chargement de périodes plus anciennes ne déclenche pas rétroactivement des alertes. Le fonctionnement reste manuel, sans surveillance quand Sema est quittée ou le Mac en veille.
 
 ## Apport réel par rapport à Webstat
 

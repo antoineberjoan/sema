@@ -4,7 +4,7 @@ Ce document dit ce qu'est sema, pour une personne qui ne l'a jamais vu.
 
 ## Nom
 
-**sema**, toujours en minuscules dans les textes visibles. Le dépôt n'écrit pas l'origine du nom : à compléter par Antoine.
+**sema**, toujours en minuscules dans les textes visibles.
 
 ## Raison d'être
 
@@ -41,7 +41,7 @@ Dehors : un service serveur, la synchronisation entre appareils, une clé fourni
 
 sema doit sembler calme et précise. Les surfaces suivent l'apparence du système ; la valeur et son graphique passent d'abord.
 
-La marque tient en cinq couleurs : Encre, Graphite, Papier, Brume et Sarcelle Profonde (`Resources/Brand/sema-colors.json`). La personne choisit sa palette dans les réglages, parmi sept (la marque et six autres) ; chaque palette redistribue les valeurs des mêmes rôles. L'icône est dans `Resources/Brand/`. La typographie est celle du système (SF Pro). Les jetons de couleur, de forme, d'espace, de texte et de mouvement viennent de `Resources/Brand/tokens.json`, source unique ; `Sources/SemaDesign/` en est la sortie Swift. Les choix de direction visuelle sont des décisions datées dans `docs/decisions/`.
+La marque tient en cinq couleurs : Encre, Graphite, Papier, Brume et Sarcelle Profonde (les ancres de `Resources/Brand/tokens.json`). La personne choisit sa palette dans les réglages, parmi sept (la marque et six autres) ; chaque palette redistribue les valeurs des mêmes rôles. L'icône est dans `Resources/Brand/`. La typographie est celle du système (SF Pro). Les jetons de couleur, de forme, d'espace, de texte et de mouvement viennent de `Resources/Brand/tokens.json`, source unique ; `Sources/SemaDesign/` en est la sortie Swift, et le kit de marque téléchargeable (`site/dist/brand/tokens.json`) en est la sortie JSON résolue. Les choix de direction visuelle sont des décisions datées dans `docs/decisions/`.
 
 ## Voix
 

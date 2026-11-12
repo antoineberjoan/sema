@@ -5,11 +5,6 @@ import MarketCore
 
 /// Discovery belongs to the source. A starter selection never constrains its catalogue.
 struct SourceExplorerView: View {
-    private static let pickerWidth: CGFloat = 190
-    private static let compactCardMinWidth: CGFloat = 240
-    private static let cardMinWidth: CGFloat = 270
-    private static let cardMinHeight: CGFloat = 66
-    private static let topicLines = 2
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     @State private var sourceID = ""
@@ -26,7 +21,7 @@ struct SourceExplorerView: View {
                         .buttonStyle(.borderless)
                     Picker("Source", selection: $sourceID) {
                         ForEach(enabledIDs, id: \.self) { id in Text(store.sourceName(id)).tag(id) }
-                    }.labelsHidden().pickerStyle(.menu).frame(width: Self.pickerWidth)
+                    }.labelsHidden().pickerStyle(.menu).frame(width: DesignLayout.sourceExplorerPickerWidth)
                 }
                 Spacer()
                 if sourceID.isEmpty && !enabledIDs.isEmpty {
@@ -45,7 +40,7 @@ struct SourceExplorerView: View {
                 MarketExplorerView(provider: provider, close: close).id(sourceID)
             } else if sourceID.isEmpty {
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: isCompact ? Self.compactCardMinWidth : Self.cardMinWidth), spacing: DesignSpace.groupGap)], spacing: DesignSpace.groupGap) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: isCompact ? DesignLayout.sourceExplorerCompactCardMinWidth : DesignLayout.sourceExplorerCardMinWidth), spacing: DesignSpace.groupGap)], spacing: DesignSpace.groupGap) {
                         ForEach(enabledIDs, id: \.self) { id in
                             Button { sourceID = id } label: {
                                 VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
@@ -55,9 +50,9 @@ struct SourceExplorerView: View {
                                         Image(systemName: "chevron.right").typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                                     }
                                     Text(sourceTopics(id)).typeRole(.small).foregroundStyle(DesignColor.textMuted)
-                                        .lineLimit(Self.topicLines).multilineTextAlignment(.leading)
+                                        .lineLimit(Int(DesignMeasure.sourceExplorerTopicLines)).multilineTextAlignment(.leading)
                                 }
-                                .frame(maxWidth: .infinity, minHeight: Self.cardMinHeight, alignment: .leading)
+                                .frame(maxWidth: .infinity, minHeight: DesignLayout.sourceExplorerCardMinHeight, alignment: .leading)
                                 .padding(DesignSpace.cardInset).foregroundStyle(DesignColor.text)
                                 .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
                                 .contentShape(RoundedRectangle(cornerRadius: DesignRadius.block))
@@ -93,16 +88,7 @@ struct SourceExplorerView: View {
 }
 
 private struct StatisticalExplorerView: View {
-    private static let datasetsMinWidth: CGFloat = 230
-    private static let datasetsIdealWidth: CGFloat = 280
-    private static let datasetsMaxWidth: CGFloat = 310
-    private static let compactSeriesMinWidth: CGFloat = 340
-    private static let seriesMinWidth: CGFloat = 350
-    private static let advancedLabelMaxWidth: CGFloat = 140
-    private static let advancedMaxHeight: CGFloat = 250
     private static let formSpacing = DesignSpace.fieldGap
-    private static let seriesTitleLines = 4
-    private static let valueLines = 2
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
     let source: StatisticalSource
@@ -156,12 +142,12 @@ private struct StatisticalExplorerView: View {
             CatalogueSearchField(query: $query, prompt: "Rechercher dans \(source.title)…", isSearching: isLoadingCatalogue,
                 submit: { selectedID = keyboardID ?? matches.first?.id }, move: moveSelection)
             HStack(alignment: .top, spacing: DesignSpace.groupGap) {
-                datasetsList.frame(minWidth: Self.datasetsMinWidth, idealWidth: Self.datasetsIdealWidth, maxWidth: selected == nil ? .infinity : Self.datasetsMaxWidth)
+                datasetsList.frame(minWidth: DesignLayout.statisticalExplorerDatasetsMinWidth, idealWidth: DesignLayout.statisticalExplorerDatasetsIdealWidth, maxWidth: selected == nil ? .infinity : DesignLayout.statisticalExplorerDatasetsMaxWidth)
                 if let selected {
                     if selectedSeriesKey != nil {
-                        previewPane.frame(minWidth: isCompact ? Self.compactSeriesMinWidth : Self.seriesMinWidth, maxWidth: .infinity)
+                        previewPane.frame(minWidth: isCompact ? DesignLayout.statisticalExplorerCompactSeriesMinWidth : DesignLayout.statisticalExplorerSeriesMinWidth, maxWidth: .infinity)
                     } else {
-                        seriesList(selected).frame(minWidth: isCompact ? Self.compactSeriesMinWidth : Self.seriesMinWidth, maxWidth: .infinity)
+                        seriesList(selected).frame(minWidth: isCompact ? DesignLayout.statisticalExplorerCompactSeriesMinWidth : DesignLayout.statisticalExplorerSeriesMinWidth, maxWidth: .infinity)
                     }
                 }
             }
@@ -200,7 +186,7 @@ private struct StatisticalExplorerView: View {
                         ForEach(Array(matches.prefix(visibleCount))) { dataset in
                             Button { pendingStarter = nil; starterError = nil; keyboardID = dataset.id; selectedID = dataset.id } label: {
                                 VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
-                                    Text(dataset.title).typeRole(.heading).lineLimit(ExplorerLayout.rowTitleLines)
+                                    Text(dataset.title).typeRole(.heading).lineLimit(Int(DesignMeasure.explorerRowTitleLines))
                                     Text(dataset.code).typeRole(.micro).foregroundStyle(DesignColor.textMuted).lineLimit(1)
                                 }.foregroundStyle(DesignColor.text).frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
                                     .background(keyboardID == dataset.id ? DesignColor.selection(palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))
@@ -237,7 +223,7 @@ private struct StatisticalExplorerView: View {
                         ForEach(Array(seriesMatches.prefix(visibleSeriesCount)), id: \.id) { item in
                             Button { openSeries(item.key) } label: {
                                 VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
-                                    Text(item.title).typeRole(.heading).lineLimit(Self.seriesTitleLines)
+                                    Text(item.title).typeRole(.heading).lineLimit(Int(DesignMeasure.statisticalExplorerSeriesTitleLines))
                                     let context = [item.frequency == .unknown ? nil : item.frequency.title, item.unitCode == nil ? nil : item.displayUnit].compactMap { $0 }.joined(separator: " · ")
                                     if !context.isEmpty { Text(context).typeRole(.micro).foregroundStyle(DesignColor.textMuted) }
                                 }
@@ -262,7 +248,7 @@ private struct StatisticalExplorerView: View {
                         VStack(alignment: .leading, spacing: Self.formSpacing) {
                             ForEach(structure.dimensions) { dimension in
                                 HStack(alignment: .firstTextBaseline) {
-                                    Text(dimension.title).foregroundStyle(DesignColor.textMuted).frame(maxWidth: Self.advancedLabelMaxWidth, alignment: .leading)
+                                    Text(dimension.title).foregroundStyle(DesignColor.textMuted).frame(maxWidth: DesignLayout.statisticalExplorerAdvancedLabelMaxWidth, alignment: .leading)
                                     Spacer(minLength: DesignSpace.fieldGap)
                                     if dimension.codes.count == 1, let code = dimension.codes.first { Text(code.title).multilineTextAlignment(.trailing) }
                                     else if dimension.codes.isEmpty {
@@ -271,7 +257,7 @@ private struct StatisticalExplorerView: View {
                                     } else {
                                         Button { choosingDimension = dimension } label: {
                                             HStack(spacing: DesignSpace.fieldGap) {
-                                                Text(dimension.codes.first { $0.id == values[dimension.id] }?.title ?? "Choisir…").lineLimit(Self.valueLines).multilineTextAlignment(.trailing)
+                                                Text(dimension.codes.first { $0.id == values[dimension.id] }?.title ?? "Choisir…").lineLimit(Int(DesignMeasure.statisticalExplorerValueLines)).multilineTextAlignment(.trailing)
                                                 Image(systemName: "chevron.up.chevron.down").typeRole(.micro)
                                             }
                                         }.buttonStyle(.borderless).accessibilityLabel("\(dimension.title) : \(values[dimension.id] ?? "à choisir")")
@@ -283,7 +269,7 @@ private struct StatisticalExplorerView: View {
                             Button("Afficher le repère") { openSeries(key) }.buttonStyle(.bordered).disabled(!canPreview)
                             if !dataset.detail.isEmpty { Text(dataset.detail).typeRole(.micro).foregroundStyle(DesignColor.textMuted).textSelection(.enabled) }
                         }.padding(.top, Self.formSpacing)
-                    }.frame(maxHeight: Self.advancedMaxHeight)
+                    }.frame(maxHeight: DesignLayout.statisticalExplorerAdvancedMaxHeight)
                 }.typeRole(.small).disclosureGroupStyle(RowDisclosureStyle())
             }
         }
@@ -324,9 +310,9 @@ private struct StatisticalExplorerView: View {
     private func starterRow(_ starter: StatisticalStarter) -> some View {
         Button { chooseStarter(starter) } label: {
             VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
-                Text(starter.title).typeRole(.heading).lineLimit(ExplorerLayout.rowTitleLines)
+                Text(starter.title).typeRole(.heading).lineLimit(Int(DesignMeasure.explorerRowTitleLines))
                 Text(datasets.first(where: starter.matches)?.title ?? starter.datasetCode)
-                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted).lineLimit(ExplorerLayout.rowTitleLines)
+                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted).lineLimit(Int(DesignMeasure.explorerRowTitleLines))
             }.foregroundStyle(DesignColor.text).frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
                 .contentShape(Rectangle())
         }.buttonStyle(PressStyle()).accessibilityLabel("\(starter.title), \(source.title)")
@@ -405,7 +391,7 @@ private struct StatisticalExplorerView: View {
 }
 
 private struct StatisticalCodePicker: View {
-    private static let size = CGSize(width: 490, height: 470)
+    private static let size = CGSize(width: DesignLayout.codePickerWidth, height: DesignLayout.codePickerHeight)
     @Environment(\.dismiss) private var dismiss
     let dimension: StatisticalDimension
     let selected: String?

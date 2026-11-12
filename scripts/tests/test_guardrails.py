@@ -13,6 +13,9 @@ guardrails = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(guardrails)
 
 
+GENERATED = "/* fabriqué depuis tokens.json par sophos/outils/jetons.mjs ; ne pas modifier à la main */\n"
+
+
 class GuardrailsTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -69,7 +72,7 @@ class GuardrailsTests(unittest.TestCase):
 
     def test_generated_stylesheet_is_not_read_as_site_style(self):
         generated = "/* fabriqué depuis tokens.json par sophos/outils/jetons.mjs ; ne pas modifier à la main */\n:root { --c: #fff; }\n.type-title { font-size: 28px; }\n"
-        self.write("site/dist/brand/tokens.css", ":root { --space-1: 4px; }\n")
+        self.write("site/dist/brand/site-tokens.css", GENERATED + ":root { --space-1: 4px; }\n")
         self.write("site/dist/brand/sophos-tokens.css", generated)
         self.write("site/dist/brand/page.css", "a { padding: 7px; }\n")
         errors = self.errors()
@@ -295,7 +298,7 @@ class GuardrailsTests(unittest.TestCase):
         self.assertIn("`seriesId` s’écrit `seriesID`", errors[0])
 
     def write_site(self, css, tokens="--space-1: 4px; --ink: #141414;"):
-        self.write("site/dist/brand/tokens.css", f"/* Déclare les valeurs du site. */\n:root {{ {tokens} }}\n")
+        self.write("site/dist/brand/site-tokens.css", GENERATED + f":root {{ {tokens} }}\n")
         self.write("site/dist/page.css", "/* Compose une page. */\n" + css + "\n")
         self.write("site/dist/index.html", "<!-- Page de test. -->\n<p class=\"card\" id=\"top\"></p>\n")
 
@@ -315,6 +318,22 @@ class GuardrailsTests(unittest.TestCase):
                         ".card::after { content: '12px #fff'; background: url('a-1px.svg'); }\n"
                         "/* 12px #fff reste un commentaire */\n#top { opacity: .7; }")
         self.assertEqual(self.errors(), [])
+
+    def test_theme_color_follows_the_page_token(self):
+        self.write("site/tokens.json", json.dumps({"page": {"$type": "color", "$value": {"colorSpace": "srgb", "hex": "#0E0E0E"}}}))
+        self.write_site(".card { margin: 0; }")
+        self.write("site/dist/index.html", '<!-- Page de test. -->\n<meta name="theme-color" content="#0e0e0e"><p class="card" id="top"></p>\n')
+        self.assertEqual(self.errors(), [])
+        self.write("site/dist/index.html", '<!-- Page de test. -->\n<meta name="theme-color" content="#111111"><p class="card" id="top"></p>\n')
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`theme-color` vaut `#111111`", errors[0])
+
+    def test_site_css_reads_roles_not_scale_steps(self):
+        self.write_site(".card { padding: var(--scale-space-1); }", tokens="--scale-space-1: 4px; --ink: #141414;")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("lit la primitive `scale-space-1`", errors[0])
 
     def test_site_variable_must_be_defined(self):
         self.write_site(".card { padding: var(--space-9); margin: var(--wrap-max, var(--space-1)); }\n.card { --wrap-max: var(--space-1); }")

@@ -15,4 +15,8 @@ public enum DesignDuration {
     public static let wide: Double = DesignScale.duration300
     /// Explication, accueil, page vue une fois ; jamais sur une interface fréquente.
     public static let explain: Double = DesignScale.duration550
+    /// Propre à sema : draw delay, SignatureMotion (durée).
+    public static let signatureMotionDrawDelay: Double = 0.1
+    /// Propre à sema : duration, RowDisclosure (durée).
+    public static let rowDisclosureDuration: Double = 0.18
 }

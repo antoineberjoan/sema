@@ -4,13 +4,8 @@ import SwiftUI
 import MarketCore
 
 struct SeriesSearchView: View {
-    private static let sheetWidth: CGFloat = 880
-    private static let sheetHeight: CGFloat = 560
     private static let sheetPadding = DesignSpace.cardInset
     private static let sectionSpacing = DesignSpace.itemGap
-    private static let modePickerWidth: CGFloat = 300
-    private static let catalogueHeight: CGFloat = 420
-    private static let resultsHeight: CGFloat = 320
     private static let searchSpacing = DesignSpace.fieldGap
     private static let searchTopPadding = DesignSpace.controlInsetDense
     @Environment(AppStore.self) private var store
@@ -27,9 +22,9 @@ struct SeriesSearchView: View {
             Picker("Où rechercher", selection: $isCatalogueSearch) {
                 Text("Mes repères").tag(false)
                 Text("Catalogues").tag(true)
-            }.pickerStyle(.segmented).frame(width: Self.modePickerWidth)
+            }.pickerStyle(.segmented).frame(width: DesignLayout.seriesSearchModePickerWidth)
             if isCatalogueSearch {
-                SourceExplorerView(isCompact: true, close: { dismiss() }).frame(height: Self.catalogueHeight)
+                SourceExplorerView(isCompact: true, close: { dismiss() }).frame(height: DesignLayout.seriesSearchCatalogueHeight)
                 HStack { Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
             } else {
             HStack(spacing: Self.searchSpacing) {
@@ -43,7 +38,7 @@ struct SeriesSearchView: View {
                 Text("⌘K").typeRole(.small).foregroundStyle(DesignColor.textMuted)
             }
             .padding(.horizontal, DesignSpace.rowInset).padding(.top, Self.searchTopPadding)
-            SeriesResultsView(results: results, selectedID: $selectedID, height: Self.resultsHeight, open: open)
+            SeriesResultsView(results: results, selectedID: $selectedID, height: DesignLayout.seriesSearchResultsHeight, open: open)
             HStack {
                 Text("↑ ↓ choisir · ↩ ouvrir").typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 Spacer()
@@ -54,7 +49,7 @@ struct SeriesSearchView: View {
             .padding(.horizontal, DesignSpace.rowInset)
         }
             }
-        .padding(Self.sheetPadding).frame(width: Self.sheetWidth, height: Self.sheetHeight).background(DesignColor.surface)
+        .padding(Self.sheetPadding).frame(width: DesignLayout.seriesSearchSheetWidth, height: DesignLayout.seriesSearchSheetHeight).background(DesignColor.surface)
         .onAppear {
             // The search panel hands over its text and asks for the catalogues tab.
             if let seed = store.catalogueSeed { query = seed; isCatalogueSearch = true; store.catalogueSeed = nil }

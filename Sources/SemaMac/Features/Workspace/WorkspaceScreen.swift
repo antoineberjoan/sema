@@ -7,12 +7,9 @@ import MarketCore
 
 struct WorkspaceScreen: View {
     private static let searchCorner = DesignRadius.control
-    private static let minimumWidth: CGFloat = 980
-    private static let minimumHeight: CGFloat = 680
     private static let focusHorizontalMargin = DesignSpace.pageInsetWide
     private static let statusPadding = DesignSpace.menuInset
     static let statusSpacing = DesignSpace.fieldGap
-    static let statusLines = 2
     private static let previewInset = DesignSpace.frameInset
     private static let previewVerticalInset = DesignSpace.controlInsetDense
     private static let switcherScrim = DesignColor.scrim
@@ -58,7 +55,7 @@ struct WorkspaceScreen: View {
         NavigationSplitView(columnVisibility: sidebarVisibilityBinding) {
             sidebarContent
                 .toolbar(removing: .sidebarToggle)
-                .navigationSplitViewColumnWidth(min: FocusMotion.sidebarMinWidth, ideal: FocusMotion.sidebarWidth, max: FocusMotion.sidebarMaxWidth)
+                .navigationSplitViewColumnWidth(min: DesignLayout.focusMotionSidebarMinWidth, ideal: DesignLayout.focusMotionSidebarWidth, max: DesignLayout.focusMotionSidebarMaxWidth)
         } detail: {
             VStack(spacing: 0) {
                 if store.section == .explorer {
@@ -117,7 +114,7 @@ struct WorkspaceScreen: View {
         .overlay(alignment: .topLeading) {
             if sidebarPresentation == .preview {
                 sidebarContent
-                    .frame(width: FocusMotion.sidebarWidth)
+                    .frame(width: DesignLayout.focusMotionSidebarWidth)
                     .frame(maxHeight: .infinity)
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: DesignRadius.window, style: .continuous))
                     .elevation(DesignElevation.floating)
@@ -126,7 +123,7 @@ struct WorkspaceScreen: View {
                     .transition(.move(edge: .leading).combined(with: .opacity))
             }
         }
-        .frame(minWidth: Self.minimumWidth, minHeight: Self.minimumHeight)
+        .frame(minWidth: DesignLayout.workspaceMinimumWidth, minHeight: DesignLayout.workspaceMinimumHeight)
     }
 
     private var overviewContent: some View {
@@ -350,7 +347,7 @@ struct WorkspaceScreen: View {
             HStack(spacing: DesignIcon.gap) {
                 if let status = store.status {
                     Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
-                    Text(status).lineLimit(WorkspaceScreen.statusLines).help(status)
+                    Text(status).lineLimit(Int(DesignMeasure.workspaceStatusLines)).help(status)
                 }
                 Spacer(minLength: WorkspaceScreen.statusSpacing)
                 if !store.hasWebstatKey, store.connectedMarkets.isEmpty {
@@ -367,7 +364,6 @@ struct WorkspaceScreen: View {
 
     private struct SidebarSeriesRow: View {
     private static let textSpacing = DesignSpace.titleGap
-    private static let nameLines = 2
     @Environment(AppStore.self) private var store
     let series: MarketSeries
     private var isSelected: Bool { store.section == .overview && store.selectedSeries?.id == series.id }
@@ -377,7 +373,7 @@ struct WorkspaceScreen: View {
         Button { store.show(series); store.section = .overview } label: {
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text(MarketFormat.name(displayed)).typeRole(.small).fontWeight(isSelected ? .semibold : .regular)
-                    .foregroundStyle(DesignColor.text).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
+                    .foregroundStyle(DesignColor.text).lineLimit(Int(DesignMeasure.nameLines)).multilineTextAlignment(.leading)
                 if displayed.latest != nil {
                     Text(MarketFormat.value(displayed)).typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)
                 }
@@ -394,8 +390,6 @@ struct WorkspaceScreen: View {
 
 private struct SidebarItem: View {
     private static let iconSpacing = DesignIcon.gap
-    /// Interface icon size from Espace et forme 1.1.
-    private static let iconWidth: CGFloat = 16
     private static let countSpacing = DesignSpace.markInset
     private static let verticalPadding = DesignSpace.rowInset
     @Environment(AppStore.self) private var store
@@ -407,7 +401,7 @@ private struct SidebarItem: View {
     var body: some View {
         Button { store.section = section } label: {
             HStack(spacing: Self.iconSpacing) {
-                Image(systemName: section.symbol).frame(width: Self.iconWidth)
+                Image(systemName: section.symbol).frame(width: DesignLayout.iconWidth)
                 Text(section.title)
                 Spacer(minLength: Self.countSpacing)
                 if section == .favorites { Text("\(store.favorites.count)").foregroundStyle(DesignColor.textMuted) }
@@ -435,9 +429,6 @@ private enum SidebarHoverZone { case control, panel }
 // Survol de l’icône → aperçu superposé ; sortie de l’icône ET du panneau → fermeture.
 // Le délai couvre le passage du pointeur entre la barre d’outils et la sidebar.
 private enum FocusMotion {
-    static let sidebarMinWidth: CGFloat = 220
-    static let sidebarMaxWidth: CGFloat = 280
-    static let sidebarWidth: CGFloat = 240
     static let sidebar = Animation.timingCurve(DesignEase.drawer, duration: DesignDuration.wide)
     static let hoverExitDelay: Duration = .milliseconds(220)
 }

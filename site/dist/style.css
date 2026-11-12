@@ -5,7 +5,7 @@
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
-  scroll-padding-top: var(--space-8);
+  scroll-padding-top: var(--root-scroll-padding-top);
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--page); color: var(--text); }
@@ -14,24 +14,24 @@ button:disabled { cursor: default; }
 button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 a { color: inherit; text-decoration: none; }
 button:focus-visible, a:focus-visible, summary:focus-visible {
-  outline: var(--focus-width) solid var(--signal); outline-offset: var(--space-1);
+  outline: var(--focus-width) solid var(--signal); outline-offset: var(--button-focus-outline-offset);
 }
 ::selection { background: var(--selection); color: var(--bright); }
 .wrap { width: min(var(--wrap-max, var(--width-content)), var(--wrap-fill)); margin-inline: auto; }
-.skip-link { position: absolute; left: var(--space-4); top: var(--space-3); padding: var(--space-3); z-index: var(--layer-skip); background: var(--text); color: var(--page); border-radius: var(--radius-control); transform: translateY(-200%); }
+.skip-link { position: absolute; left: var(--skip-link-left); top: var(--skip-link-top); padding: var(--skip-link-padding); z-index: var(--layer-skip); background: var(--text); color: var(--page); border-radius: var(--radius-control); transform: translateY(-200%); }
 .skip-link:focus { transform: none; }
-.button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--control-height); padding-inline: var(--space-6); border-radius: var(--radius-pill); background: var(--button); color: var(--button-ink); font-size: var(--text-6); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); box-shadow: var(--shadow-button); transition: background var(--motion-selection) ease; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: var(--button-gap); min-height: var(--control-height); padding-inline: var(--button-padding-inline); border-radius: var(--radius-pill); background: var(--button); color: var(--button-ink); font-size: var(--button-text-size); font-weight: var(--button-weight); letter-spacing: var(--tracking-tight); box-shadow: var(--shadow-button); transition: background var(--motion-selection) ease; }
 .button:hover { background: var(--bright); }
-.button svg { width: var(--space-4); height: var(--space-4); }
+.button svg { width: var(--button-svg-width); height: var(--button-svg-height); }
 figure { margin: 0; }
-details summary { cursor: pointer; list-style: none; padding: var(--space-5) 0; display: flex; justify-content: space-between; align-items: center; gap: var(--space-5); font-size: var(--text-5); letter-spacing: var(--tracking-tight); color: var(--text-soft); transition: color var(--motion-selection) ease; }
+details summary { cursor: pointer; list-style: none; padding: var(--details-summary-padding); display: flex; justify-content: space-between; align-items: center; gap: var(--details-summary-gap); font-size: var(--details-summary-text-size); letter-spacing: var(--tracking-tight); color: var(--text-soft); transition: color var(--motion-selection) ease; }
 details summary::-webkit-details-marker { display: none; }
 details summary:hover { color: var(--bright); }
-.plus { display: grid; width: var(--space-3); height: var(--space-3); flex-shrink: 0; opacity: .7; }
-.plus::before, .plus::after { content: ""; grid-area: 1 / 1; align-self: center; height: 1px; background: currentColor; }
+.plus { display: grid; width: var(--plus-width); height: var(--plus-height); flex-shrink: 0; opacity: var(--plus-opacity); }
+.plus::before, .plus::after { content: ""; grid-area: 1 / 1; align-self: center; height: var(--hairline); background: currentColor; }
 .plus::after { transform: rotate(90deg); transition: transform var(--motion-selection) ease; }
 details[open] .plus::after { transform: rotate(0); }
-details p { margin: 0 var(--space-6) var(--space-5) 0; color: var(--muted); font-size: var(--text-5); line-height: 1.65; }
+details p { margin: var(--details-p-margin); color: var(--muted); font-size: var(--details-p-text-size); line-height: var(--leading-prose); }
 details p a { text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: var(--underline-offset); }
 details p a:hover { color: var(--text); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

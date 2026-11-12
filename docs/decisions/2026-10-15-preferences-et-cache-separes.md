@@ -25,7 +25,3 @@ Un fichier de préférences illisible, ou d'une version inconnue, est préservé
 La persistance suppose une seule instance de l'app : pas de synchronisation, de requête complexe ni de catalogue massif. Si ces besoins apparaissent, on ajoute SwiftData avec une migration explicite de la version actuelle.
 
 Les noms de fichiers, les clés et les valeurs de ces documents sont un contrat avec la personne qui les a sur son disque. Ils ne changent pas, même si un type Swift est renommé. Une migration de format est une décision d'Antoine.
-
-## Trace
-
-Reprise d'ADR 002 (statut « retenu pour la version 0.1 »). Date : celle du premier commit qui la porte. Renommée au format de Sophos lors de l'alignement.

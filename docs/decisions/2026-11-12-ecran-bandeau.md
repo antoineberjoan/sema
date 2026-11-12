@@ -12,7 +12,7 @@ Le bandeau est la première des surfaces translucides de sema (liste fermée, d�
 - **Les écarts et les marges** lisent les rôles de sens. L'écart entre deux cartes reste de 12 points (`field-gap`) : il entre dans le calcul du nombre de cartes visibles, et un écart de 16 points en ferait perdre une sur un petit écran. Le rôle `item-gap` (16 points) aurait été le plus proche du sens ; il n'est pas choisi pour ne pas changer ce nombre.
 - **Les fonds de repos** sur le verre (badge de comparaison d'une carte, bande des jours de la carte Agenda) lisent la couleur du texte à l'opacité `glass-rest`. Ce sont deux des fonds prévus par la décision sur les surfaces translucides.
 - **Le jour choisi** dans la bande de la carte Agenda lit `selection`, comme dans l'écran Brief.
-- **Le texte secondaire** des cartes garde le style système (surface translucide). Le texte très atténué (`tertiary`) devient aussi `secondary` : sur du verre, le patron n'a qu'un niveau.
+- **Le texte secondaire** des cartes garde le style système (surface translucide). Le texte très atténué (`tertiary`) n'existe pas : sur du verre, le patron n'a qu'un niveau (`secondary`).
 - **La signature lit `on-accent` et des rôles d'opacité de sema.** Le texte, le tracé et le bord, posés sur un dégradé fait de pas de l'accent, lisent `on-accent`, le rôle « texte posé sur un aplat d'accent ». Les opacités du dégradé et du texte sont six rôles de `tokens.json` (`opacity.signature-…`). La mesure de contraste de Sophos ne couvre pas un dégradé : le contraste des deux extrémités est à regarder sur le Mac, en clair et en sombre.
 - **Les icônes et le texte d'accent** (étoile du bandeau vide, flèche et titres de la carte Agenda) lisent `accent-text`.
 - **Le rayon** d'une carte est `card` (16 points) ; le bord clair du verre mesure `border.width`.
@@ -21,13 +21,9 @@ Le bandeau est la première des surfaces translucides de sema (liste fermée, d�
 
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
-| Garder le blanc de la signature | Aucun changement de teinte | Un blanc écrit dans une vue, refusé par Sophos |
-| Tout lire dans les jetons | Aucune couleur écrite ; le verre et la signature ont leurs rôles de sema | Un papier et une encre à la place d'un blanc et d'un noir purs ; un contraste sur dégradé non mesuré |
+| Un blanc écrit pour la signature | Un blanc pur | Un blanc écrit dans une vue, refusé par Sophos |
+| Tout lire dans les jetons | Aucune couleur écrite ; le verre et la signature ont leurs rôles de sema | Un papier et une encre, pas un blanc et un noir purs ; un contraste sur dégradé non mesuré |
 
 ## Conséquences
 
-La carte Agenda change d'apparence en même temps que l'écran Brief : les deux lisent les mêmes fonctions de ligne. Le composant de verre (`RibbonSurface`) lit les rayons et le contour du patron mais garde ses opacités de verre, propres à la décision sur le verre du bandeau.
-
-## Trace
-
-Septième lot d'écran de l'alignement de sema sur Sophos.
+La carte Agenda et l'écran Brief lisent les mêmes fonctions de ligne. Le composant de verre (`RibbonSurface`) lit les rayons et le contour du patron mais garde ses opacités de verre, propres à la décision sur le verre du bandeau.

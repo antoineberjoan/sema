@@ -96,6 +96,8 @@ public enum DesignColor {
     public static func palettePreview4(_ variant: DesignPalette) -> Color {
         makeColor(DesignPrimitive.palettePreview100(variant))
     }
+    /// Propre à sema : le fond sur lequel une photo de profil à fond transparent est aplatie avant l'enregistrement en JPEG ; papier dans les deux modes, car l'image enregistrée ne suit pas l'apparence.
+    public static let photoMatte: Color = makeColor(DesignPrimitive.paper0)
 
     /// The color of a 0xRRGGBB sRGB value, the same in light and dark.
     static func makeColor(_ value: UInt32) -> Color {
