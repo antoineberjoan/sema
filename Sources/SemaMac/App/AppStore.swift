@@ -11,7 +11,7 @@ final class AppStore {
     var section: WorkspaceSection = .overview
     var settingsTab: SettingsTab = .general
     var category: SeriesCategory = .markets
-    var selectedSeriesID = WebstatStarter.canonicalID("eurusd")
+    var selectedSeriesID = WebstatStarter.starterKey("eurusd")
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -101,7 +101,7 @@ final class AppStore {
         do {
             let cached = try storage.cachedWebstat()
             if !cached.isEmpty {
-                merge(cached.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
+                merge(cached)
                 hasLoadedWebstat = cached.contains { $0.sourceURL?.host == "webstat.banque-france.fr" }
                 status = "Repères conservés localement · consultez la période et la date de publication."
             }
@@ -140,7 +140,7 @@ final class AppStore {
     @discardableResult func followStarterSeries(ids: [String]) -> Bool {
         let allowed = Set(WebstatStarter.ids)
         var seen: Set<String> = []
-        let chosen = ids.map(WebstatStarter.canonicalID).filter { allowed.contains($0) && seen.insert($0).inserted }
+        let chosen = ids.map(WebstatStarter.starterKey).filter { allowed.contains($0) && seen.insert($0).inserted }
         let result = mutatePreferences { value in
             value.followedSeriesIDs = chosen + value.followedSeriesIDs.filter { !allowed.contains($0) }
             for index in value.alerts.indices where allowed.contains(value.alerts[index].seriesID) && !chosen.contains(value.alerts[index].seriesID) {

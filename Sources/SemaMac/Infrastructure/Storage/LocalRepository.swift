@@ -21,7 +21,7 @@ struct LocalRepository {
         let data = try Data(contentsOf: url)
         if let cache = try? JSONDecoder().decode(WebstatCache.self, from: data) {
             guard cache.schemaVersion == WebstatCache.currentSchemaVersion else { throw PreferencesError.unsupportedVersion(cache.schemaVersion) }
-            return cache.series
+            return WebstatCacheMigration.upgrade(cache.series)
         }
         // Cache de schéma 1 : une liste de séries sans version (`WebstatCacheMigration`).
         let stored = try JSONDecoder().decode([MarketSeries].self, from: data)

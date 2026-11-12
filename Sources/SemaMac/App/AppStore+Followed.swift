@@ -7,7 +7,7 @@ extension AppStore {
         followedSeries.first { SeriesEquivalence.matches($0, value) }
     }
 
-    func isFollowing(_ id: String) -> Bool { preferences.followedSeriesIDs.contains(WebstatStarter.canonicalID(id)) }
+    func isFollowing(_ id: String) -> Bool { preferences.followedSeriesIDs.contains(WebstatStarter.starterKey(id)) }
 
     func isFavorite(_ id: String) -> Bool {
         guard let item = series.first(where: { $0.id == id }) else { return preferences.favoriteIDs.contains(id) }

@@ -13,11 +13,11 @@ public enum PreferencesMigration {
         }
         var value = preferences
         value.schemaVersion = AppPreferences.currentSchemaVersion
-        value.favoriteIDs = Set(preferences.favoriteIDs.map(WebstatStarter.canonicalID))
+        value.favoriteIDs = Set(preferences.favoriteIDs.map(IdentifierMigration.upgrade))
         var seen: Set<String> = []
-        value.followedSeriesIDs = preferences.followedSeriesIDs.map(WebstatStarter.canonicalID).filter { seen.insert($0).inserted }
+        value.followedSeriesIDs = preferences.followedSeriesIDs.map(IdentifierMigration.upgrade).filter { seen.insert($0).inserted }
         value.alerts = preferences.alerts.map { rule in
-            AlertRule(id: rule.id, seriesID: WebstatStarter.canonicalID(rule.seriesID), direction: rule.direction,
+            AlertRule(id: rule.id, seriesID: IdentifierMigration.upgrade(rule.seriesID), direction: rule.direction,
                 threshold: rule.threshold, isEnabled: rule.isEnabled, condition: rule.effectiveCondition,
                 lastEvaluatedAt: rule.lastEvaluatedAt)
         }

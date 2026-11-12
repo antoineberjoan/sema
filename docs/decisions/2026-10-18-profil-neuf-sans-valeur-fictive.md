@@ -14,13 +14,6 @@ Un repère sans donnée réelle ne doit pas ressembler à une mesure. Une sélec
 - Avant connexion, un repère choisi n'a pas d'observation : son détail dit « Pas encore de données » et mène à la connexion Webstat.
 - La landing du site n'affiche aucune légende « illustration ».
 
-## Options
-
-| Option | Ce qu'elle donne | Ce qu'elle coûte |
-| --- | --- | --- |
-| Rien de suivi, aucune valeur inventée | Aucune confusion entre exemple et mesure | Un premier écran vide tant que Webstat n'est pas connecté |
-| Une sélection suivie d'office, avec des valeurs d'exemple | Un premier écran plein | Des chiffres qui ne sont pas des mesures |
-
 ## Conséquences
 
 Les exemples du bandeau d'accueil sont identifiés dans le texte et dans le libellé d'accessibilité.
