@@ -86,7 +86,7 @@ struct AgendaCard: View {
 
     private func row(_ line: AgendaLine) -> some View {
         HStack(spacing: Spacing.s8) {
-            Rectangle().fill(line.bar(accent: accent)).frame(width: AgendaLine.barWidth)
+            Rectangle().fill(line.bar(palette: palette)).frame(width: AgendaLine.barWidth)
             VStack(alignment: .leading, spacing: 0) {
                 Text(line.title).typeRole(.small).lineLimit(1)
                 Text(line.subtitle).typeRole(.micro).foregroundStyle(.secondary).lineLimit(1)
@@ -95,7 +95,7 @@ struct AgendaCard: View {
         }
         .padding(.trailing, Spacing.s8)
         .frame(height: Self.lineHeight)
-        .background(line.tint(accent: accent), in: RoundedRectangle(cornerRadius: Radius.control))
+        .background(line.tint(palette: palette), in: RoundedRectangle(cornerRadius: Radius.control))
         .clipShape(RoundedRectangle(cornerRadius: Radius.control))
         .contentShape(RoundedRectangle(cornerRadius: Radius.control))
     }
