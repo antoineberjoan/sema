@@ -3,7 +3,7 @@ import SemaDesign
 import SwiftUI
 import MarketCore
 
-struct SearchPanelView: View {
+struct SearchScreen: View {
     static let size = CGSize(width: 600, height: 460)
     private static let resultsHeight: CGFloat = 280
     private static let panelPadding = DesignSpace.cardInset
