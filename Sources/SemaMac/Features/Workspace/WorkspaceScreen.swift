@@ -15,7 +15,7 @@ struct WorkspaceScreen: View {
     static let statusLines = 2
     private static let previewInset = DesignSpace.frameInset
     private static let previewVerticalInset = DesignSpace.controlInsetDense
-    private static let switcherScrim = DesignColor.text.opacity(DesignOpacity.glassRest)
+    private static let switcherScrim = DesignColor.scrim
     // Every sidebar text starts on one edge: an 8 pt block inset plus an 8 pt inner padding equals the 16 pt margin.
     private static let sidebarSpacing = DesignSpace.itemGap
     private static let sidebarMargin = DesignSpace.cardInset
