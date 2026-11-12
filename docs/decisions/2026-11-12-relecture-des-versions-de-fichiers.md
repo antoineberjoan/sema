@@ -13,7 +13,7 @@ La relecture est une étape nommée, isolée, avec ses tests. Elle ne se mêle �
 
 - **Préférences de schéma 1.** `PreferencesMigration.upgrade` (`Sources/MarketCore/Preferences/Schema/`) les fait passer en schéma 2 : identifiants locaux convertis en clés Webstat, règles et points de départ gardés, accueil marqué comme déjà vu. `PreferencesRepository` copie le document d'origine en `preferences.json.v1-backup` avant d'écrire le schéma 2.
 - **Raccourci d'espace de travail ⌃⌥H.** La même étape le remplace par la valeur standard. Un choix personnel et une action désactivée restent intacts.
-- **Cache Webstat de schéma 1.** `LocalRepository.cachedWebstat` le lit, convertit les identifiants et le réécrit en copiant l'original en `webstat-cache.json.v1-backup`.
+- **Cache Webstat de schéma 1.** `WebstatCacheMigration.upgrade` (`Sources/SemaMac/Infrastructure/Storage/Schema/`) convertit les identifiants. `LocalRepository.cachedWebstat` le lit, applique l'étape et réécrit le cache en copiant l'original en `webstat-cache.json.v1-backup`.
 - **Règles d'alerte de fonds.** Une règle sans condition garde la variation relative (`AlertRule.effectiveCondition`). Aucun écran n'expose de fonds.
 
 Le test `versionOneUpgradePreservesAlertIdentityCheckpointAndFundFavorites`, le test `migrationIsAtomicAndKeepsOriginalFile` et le test `originalWorkspaceShortcutChangesWithoutReplacingCustomBindings` couvrent l'étape.
@@ -29,4 +29,4 @@ Le test `versionOneUpgradePreservesAlertIdentityCheckpointAndFundFavorites`, le 
 
 ## Conséquences
 
-**Condition de retrait.** Antoine confirme que (1) aucun fichier de schéma 1 ni aucune règle de fonds n'existe sur ses disques et (2) la version publiée qui écrit le schéma 2 est installée chez toutes les personnes concernées. Alors un seul lot supprime `PreferencesMigration`, la branche schéma 1 de `AppPreferences.init(from:)`, la branche schéma 1 de `cachedWebstat`, la catégorie `funds` et `AlertCondition.relativeChange`, avec leurs tests.
+**Condition de retrait.** Antoine confirme que (1) aucun fichier de schéma 1 ni aucune règle de fonds n'existe sur ses disques et (2) la version publiée qui écrit le schéma 2 est installée chez toutes les personnes concernées. Alors un seul lot supprime `PreferencesMigration`, `WebstatCacheMigration`, la branche schéma 1 de `AppPreferences.init(from:)`, la branche schéma 1 de `cachedWebstat`, la catégorie `funds` et `AlertCondition.relativeChange`, avec leurs tests.

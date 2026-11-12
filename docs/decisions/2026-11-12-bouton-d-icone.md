@@ -23,7 +23,3 @@ C'est une app Mac au pointeur : la cible au toucher n'est pas applicable. Si une
 ## Conséquences
 
 Le rôle `icon.button-size` est lu par les huit endroits qui dessinent un bouton d'icône. Si le patron crée un rôle de taille de bouton d'icône, sema le lira et retire celui-ci.
-
-## Trace
-
-Interprétation de l'architecte du 2026-11-12, validée par Antoine.

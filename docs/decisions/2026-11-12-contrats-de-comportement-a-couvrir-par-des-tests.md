@@ -1,7 +1,7 @@
 # Les contrats de comportement qui comptent ont chacun un test
 
 Date : 2026-11-12 · Statut : proposée
-Décidé par : à confirmer par Antoine (arbitrage de l'architecte du 2026-11-12)
+Décidé par : à confirmer par Antoine
 
 ## Contexte
 
@@ -30,7 +30,3 @@ Le seuil de 9 950 et le découpage en tranches sont des calculs de `MarketCore`,
 ## Conséquences
 
 Les tests de comportement protègent les déplacements de code.
-
-## Trace
-
-Les valeurs viennent du code au 2026-11-12 ; les tests sont dans `Tests/MarketCoreTests`.

@@ -26,7 +26,7 @@ Une recherche de fond avec des sources ne reste pas dans une conversation. Avant
 
 sema est une app macOS native (SwiftUI, Swift 6, macOS 14 et plus) pour consulter des séries économiques publiques, suivre ses favoris et définir des seuils. Le détail est dans `docs/fondation.md` et `docs/PRODUCT.md`.
 
-- Dedans : le cœur (`Sources/MarketCore`), l'app (`Sources/SemaMac`), ses tests (`Tests/`), le site (`site/`), la distribution (`distribution/`).
+- Dedans : le cœur (`Sources/MarketCore`), les jetons de design (`Sources/SemaDesign`), l'app (`Sources/SemaMac`), leurs tests (`Tests/MarketCoreTests`, `Tests/SemaDesignTests`, `Tests/SemaMacTests`), le site (`site/`), la distribution (`distribution/`).
 - Dehors : un serveur, un compte, une clé fournisseur partagée.
 - Nom : **sema**, en minuscules dans les textes visibles. Français pour l'interface et la documentation ; anglais pour les identifiants et les rôles. Aucun préfixe de projet dans un identifiant (les noms de cibles `SemaMac` et `SemaDesign` sont les seuls).
 
@@ -49,7 +49,7 @@ Référence : `patron/structure.md` de Sophos. Chaque sorte de code a une forme 
 | Connecteur | `Sources/MarketCore/Webstat`, `Sdmx`, `NewYorkFed`, `WorldBank`, `Fred`, `TwelveData`, `AlphaVantage`, `Claude`, `Gdelt`, `CentralBankFeeds` ; `Sources/SemaMac/Infrastructure/Keychain`, `Notifications`, `LoginItem`, `GlobalShortcuts`, `AppleIntelligence`, `Feedback` |
 | Module d'écran | `Sources/SemaMac/Features/*` |
 
-En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Cette forme est décrite dans `docs/decisions/2026-11-12-forme-swift-des-unites.md` (statut : proposée). La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés. Les dossiers `Common/` de `MarketCore` et de `SemaMac` sont au niveau du domaine, hors unité : ils portent ce que plusieurs unités partagent.
+En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Cette forme est celle de `patron/structure.md` de Sophos. La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés. Les dossiers `Common/` de `MarketCore` et de `SemaMac` sont au niveau du domaine, hors unité : ils portent ce que plusieurs unités partagent.
 
 ## Bibliothèque de composants
 
@@ -68,6 +68,7 @@ Une information vit à un seul endroit. Si deux sources se contredisent, arrête
 | Périmètre du produit | `docs/PRODUCT.md` |
 | Décisions | `docs/decisions/` |
 | Sources de données, catalogues publics, personnalisation | `docs/DATA-SOURCES.md`, `docs/PUBLIC-CATALOGUES.md`, `docs/PERSONALIZATION.md` |
+| Mentions légales, retours, distribution | `docs/LEGAL.md`, `docs/FEEDBACK.md`, `docs/DISTRIBUTION.md` |
 | Mots du métier | `docs/lexique.md` |
 | Marque | `Resources/Brand/` |
 | Carte du dépôt | `projet.yml` |

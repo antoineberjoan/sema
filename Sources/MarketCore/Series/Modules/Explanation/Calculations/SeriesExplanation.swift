@@ -34,7 +34,7 @@ public struct SeriesExplanation: Equatable, Sendable {
                 if let delta = Self.comparisonChange(series, period: period) {
                     reading = (reading ?? "") + " " + Self.rateMovement(delta)
                 }
-                self.init(definition: rule.definition, reading: Self.identifyingDemo(reading, series: series),
+                self.init(definition: rule.definition, reading: reading,
                     implication: rule.implication, referenceURL: rule.referenceURL ?? series.sourceURL)
                 return
             }
@@ -72,10 +72,6 @@ public struct SeriesExplanation: Equatable, Sendable {
         return change
     }
 
-    private static func identifyingDemo(_ reading: String?, series: MarketSeries) -> String? {
-        reading
-    }
-
     private static func exchangeRate(_ series: MarketSeries, pair: ExchangeRatePair, period: HistoryPeriod,
                                      inverted: Bool, format: (Decimal, Int) -> String) -> Self {
         let displayed = inverted ? series.invertedExchangeRateForDisplay() ?? series : series
@@ -102,7 +98,7 @@ public struct SeriesExplanation: Equatable, Sendable {
             reading = text
         }
         return Self(definition: "Ce taux de référence indique combien de \(quote) correspondent à 1 \(base).",
-            reading: identifyingDemo(reading, series: series), implication: implication,
+            reading: reading, implication: implication,
             referenceURL: Reference.ecbExchangeRates)
     }
 
@@ -140,7 +136,7 @@ public struct SeriesExplanation: Equatable, Sendable {
             reading = text
         }
         return Self(definition: "Ce taux d’inflation mesure la variation sur douze mois de l’indice des prix à la consommation harmonisé (IPCH).",
-            reading: identifyingDemo(reading, series: series), implication: implication,
+            reading: reading, implication: implication,
             referenceURL: Reference.ecbInflation)
     }
 

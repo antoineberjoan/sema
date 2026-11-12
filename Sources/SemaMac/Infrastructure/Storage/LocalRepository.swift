@@ -23,9 +23,9 @@ struct LocalRepository {
             guard cache.schemaVersion == WebstatCache.currentSchemaVersion else { throw PreferencesError.unsupportedVersion(cache.schemaVersion) }
             return cache.series
         }
-        // Cache de schéma 1 : une liste de séries sans version. Retrait : `docs/decisions/2026-11-12-relecture-des-versions-de-fichiers.md`.
+        // Cache de schéma 1 : une liste de séries sans version (`WebstatCacheMigration`).
         let stored = try JSONDecoder().decode([MarketSeries].self, from: data)
-        let migrated = stored.map { $0.withID(WebstatStarter.canonicalID($0.id)) }
+        let migrated = WebstatCacheMigration.upgrade(stored)
         let backup = url.appendingPathExtension("v1-backup")
         if !FileManager.default.fileExists(atPath: backup.path) { try data.write(to: backup, options: .atomic) }
         try cacheWebstat(migrated)

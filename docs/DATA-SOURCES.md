@@ -29,10 +29,10 @@ Les catalogues publics supplémentaires sont décrits dans [PUBLIC-CATALOGUES.md
 | `eurchf` | `EXR.D.CHF.EUR.SP00.A` | Référence quotidienne ; CHF pour 1 EUR. |
 | `eurgbp` | `EXR.D.GBP.EUR.SP00.A` | Référence quotidienne ; GBP pour 1 EUR. |
 | `mortgage-fr` | `MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N` | Mensuelle ; nouveaux crédits à l’habitat hors renégociations, pas un TAEG ni une offre bancaire. |
-| `de10` | `FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD` | Bund à 10 ans : même définition que `fr10` pour l’Allemagne, moyenne mensuelle du rendement de l’obligation de référence. Ajouté le 18 octobre 2026 à la sélection de départ pour comparer avec la France. |
-| `us10` | `FM.M.US.USD.FR2.BB.US10YT_RR.YLD` | Treasury américain à 10 ans, même définition, rendement en % annuel. Ajouté le 18 octobre 2026 ; observations non encore vérifiées par appel réel. |
-| `mro` | `FM.D.U2.EUR.4F.KR.MRR_FR.LEV` | Quotidienne ; taux des opérations principales de refinancement de la BCE. Ajouté le 18 octobre 2026 ; observations non encore vérifiées par appel réel. |
-| `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage : « OAT France · 10 ans » (public de conseillers en gestion de patrimoine, décision d’Antoine, 18 octobre 2026). Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
+| `de10` | `FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD` | Bund à 10 ans : même définition que `fr10` pour l’Allemagne, moyenne mensuelle du rendement de l’obligation de référence. Sert à comparer avec la France. |
+| `us10` | `FM.M.US.USD.FR2.BB.US10YT_RR.YLD` | Treasury américain à 10 ans, même définition, rendement en % annuel. Observations non vérifiées par un appel réel. |
+| `mro` | `FM.D.U2.EUR.4F.KR.MRR_FR.LEV` | Quotidienne ; taux des opérations principales de refinancement de la BCE. Observations non vérifiées par un appel réel. |
+| `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage : « OAT France · 10 ans » (public de conseillers en gestion de patrimoine). Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
 
 Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. La clé Webstat est l’identifiant stable des observations, favoris et alertes. Un identifiant local lu dans un fichier de version 1 y est converti ([relecture des versions de fichiers](decisions/2026-11-12-relecture-des-versions-de-fichiers.md)).
 
@@ -49,9 +49,9 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 - La [BCE](https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html) demande notamment l’attribution, l’identification des modifications et l’information sur la disponibilité gratuite à la source pour un contenu vendu. Les réglages sema indiquent cette disponibilité gratuite ; les variations affichées sont des calculs de sema.
 - Vérifier les conditions des producteurs pour tout ajout ou changement de source et pour la distribution commerciale finale. Aucune autorisation Morningstar, Leeway ou de place boursière n’est déduite de cet accès Webstat.
 
-## Démonstration
+## Origine des valeurs
 
-Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil (décision d’Antoine, 18 octobre 2026). Aucune valeur fictive n’apparaît dans l’app (décision d’Antoine, 18 octobre 2026) : avant connexion, un repère choisi n’a pas d’observation et son détail indique « Pas encore de données » avec l’accès à la connexion Webstat. Seul l’aperçu du bandeau de l’accueil montre des exemples fictifs de `DemoCatalog`, annoncés comme tels. Après connexion, les séries choisies reçoivent les observations de Webstat. Aucun fonds n’est exposé ; une règle ou un favori de fonds déjà écrit reste lu sans être actif. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
+Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil ([décision](decisions/2026-10-18-profil-neuf-sans-valeur-fictive.md)). Aucune valeur fictive n’apparaît dans l’app, sauf l’aperçu du bandeau de l’accueil, annoncé comme exemples fictifs : avant connexion, un repère choisi n’a pas d’observation et son détail indique « Pas encore de données » avec l’accès à la connexion Webstat. Après connexion, les séries choisies reçoivent les observations de Webstat. Aucun fonds n’est exposé ; une règle ou un favori de fonds déjà écrit reste lu sans être actif. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
 
 ## Dates et calculs
 
@@ -93,17 +93,17 @@ L’EFFR (taux effectif des fonds fédéraux) et le SOFR sont accessibles direct
 
 Le TEC 10 quotidien est distinct de l’emprunt phare mensuel actuellement intégré : [l’AFT rappelle qu’Euronext calcule et administre les indices CNO-TEC](https://www.aft.gouv.fr/fr/oat-tec-10). Aucun ajout du TEC 10 n’est décidé dans ce repérage. Le PIB, le chômage, l’inflation américaine et les prix immobiliers peuvent compléter une vue macro ensuite, avec une source officielle et des définitions vérifiées pour chaque série.
 
-## Cours Twelve Data et Alpha Vantage — 18 octobre 2026
+## Cours Twelve Data et Alpha Vantage
 
-Antoine lève le 18 octobre l’exclusion des cotations individuelles (décision du 17) pour obtenir des cours avec une clé personnelle. sema intègre les connexions personnelles Twelve Data et Alpha Vantage . Le catalogue s’affiche à l’ouverture de la source ; son filtre par nom, symbole ou place fonctionne localement. Twelve Data filtre actions, ETF et indices selon le forfait et les droits de métadonnées publiés. Alpha Vantage présente son catalogue officiel d’actions et ETF américains ; il ne fournit pas de liste de droits instrument par instrument. L’aperçu vérifie les cours avant ajout. Les séries quotidiennes et hebdomadaires ont des identifiants différents ; les valeurs restent en Decimal et portent leur devise et leur origine. Les cours sont non ajustés (Twelve Data `adjust=none`, endpoints bruts Alpha Vantage).
+sema intègre les connexions personnelles Twelve Data et Alpha Vantage pour obtenir des cours avec une clé personnelle ([décision](decisions/2026-10-18-cotations-avec-cle-personnelle.md)). Le catalogue s’affiche à l’ouverture de la source ; son filtre par nom, symbole ou place fonctionne localement. Twelve Data filtre actions, ETF et indices selon le forfait et les droits de métadonnées publiés. Alpha Vantage présente son catalogue officiel d’actions et ETF américains ; il ne fournit pas de liste de droits instrument par instrument. L’aperçu vérifie les cours avant ajout. Les séries quotidiennes et hebdomadaires ont des identifiants différents ; les valeurs restent en Decimal et portent leur devise et leur origine. Les cours sont non ajustés (Twelve Data `adjust=none`, endpoints bruts Alpha Vantage).
 
 Liens officiels : [Twelve Data](https://twelvedata.com/account/api-keys), [clé Alpha Vantage](https://www.alphavantage.co/support/#api-key), [documentation Twelve Data](https://twelvedata.com/docs), [documentation Alpha Vantage](https://www.alphavantage.co/documentation/).
 
 Une clé personnelle ne garantit ni l’accès à tous les instruments ni les droits d’affichage dans une application tierce. Les accès refusés ne sont pas contournés. Les indices premium, les fondamentaux et les autres API ne sont pas annoncés comme gratuits. Tiingo n’est pas intégré : les [conditions Starter](https://app.tiingo.com/tos/) interdisent le stockage durable de données.
 
-## Contexte d’une séance — 8 novembre 2026
+## Contexte d’une séance
 
-Sources de contexte, décision d’Antoine du 7 novembre. Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
+Sources de contexte. Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
 
 | Source | Usage | Accès | Limites |
 | --- | --- | --- | --- |

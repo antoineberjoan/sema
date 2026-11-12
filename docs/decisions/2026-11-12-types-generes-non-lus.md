@@ -21,7 +21,3 @@ Le contrôle des types inutilisés ne lit pas un fichier dont l'une des trois pr
 ## Conséquences
 
 Un type fabriqué que personne ne lit n'est pas du code mort écrit à la main : il vient d'un outil. Ce qui reste à vérifier : que `jetons.mjs --verifier` passe, car c'est lui qui garde ces fichiers.
-
-## Trace
-
-Proposée par l'agent ; accord d'Antoine du 2026-11-12, rapporté par l'architecte (option B).

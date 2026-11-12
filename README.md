@@ -34,13 +34,14 @@ Quand l'app s'ouvre, une icône apparaît dans la barre de menus. Les préféren
 ## Organisation du dépôt
 
 - `Sources/MarketCore/` : le cœur. Séries, alertes, préférences, connecteurs aux sources de données.
-- `Sources/SemaMac/` : l'app macOS. Écrans, état, design, adaptation au système.
-- `Tests/MarketCoreTests/` : les preuves du cœur.
+- `Sources/SemaDesign/` : les jetons de design, fabriqués depuis `Resources/Brand/tokens.json`.
+- `Sources/SemaMac/` : l'app macOS. Écrans, état, adaptation au système.
+- `Tests/MarketCoreTests/`, `Tests/SemaDesignTests/`, `Tests/SemaMacTests/` : les preuves du cœur, des jetons et de l'app.
 - `Resources/` : métadonnées du bundle et marque.
 - `scripts/` : construction, contrôles, distribution.
 - `site/` : le site statique.
 - `distribution/` : le manifeste de release et le cask public.
-- `docs/` : fondation, produit, décisions, lexique, sources de données, catalogues publics, personnalisation, distribution.
+- `docs/` : fondation, produit, décisions, lexique, sources de données, catalogues publics, personnalisation, distribution, mentions légales ([LEGAL.md](docs/LEGAL.md)), retours ([FEEDBACK.md](docs/FEEDBACK.md)).
 
 ## Liens avec les autres projets
 
