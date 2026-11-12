@@ -25,15 +25,23 @@ public enum DesignColor {
     /// Fond d'une ligne ou d'un contrôle au survol ; pas pour la sélection.
     public static let hover: Color = makeAdaptive(light: DesignPrimitive.paper50, dark: DesignPrimitive.ink700)
     /// Fond d'un élément sélectionné, accent très léger ; pas pour le survol.
-    public static let selection: Color = makeAdaptive(light: DesignPrimitive.teal500, dark: DesignPrimitive.teal200, lightOpacity: 0.12, darkOpacity: 0.24)
+    public static func selection(_ variant: DesignPalette) -> Color {
+        makeAdaptive(light: DesignPrimitive.accent500(variant), dark: DesignPrimitive.accent200(variant), lightOpacity: 0.12, darkOpacity: 0.24)
+    }
     /// La seule couleur d'accent : action principale, sélection, repère. Pas pour décorer.
-    public static let accent: Color = makeAdaptive(light: DesignPrimitive.teal500, dark: DesignPrimitive.teal200)
+    public static func accent(_ variant: DesignPalette) -> Color {
+        makeAdaptive(light: DesignPrimitive.accent500(variant), dark: DesignPrimitive.accent200(variant))
+    }
     /// L'accent quand il est un texte ou une petite icône (lien) : la nuance de l'accent qui atteint 4,5:1 sur le fond.
-    public static let accentText: Color = makeAdaptive(light: DesignPrimitive.teal500, dark: DesignPrimitive.teal200)
+    public static func accentText(_ variant: DesignPalette) -> Color {
+        makeAdaptive(light: DesignPrimitive.accent500(variant), dark: DesignPrimitive.accent200(variant))
+    }
     /// Texte et icône posés sur un aplat d'accent ; jamais ailleurs.
     public static let onAccent: Color = makeAdaptive(light: DesignPrimitive.paper0, dark: DesignPrimitive.ink800)
     /// L'anneau de focus au clavier : 3:1 au moins sur le fond ; jamais retiré.
-    public static let focus: Color = makeAdaptive(light: DesignPrimitive.teal500, dark: DesignPrimitive.teal200)
+    public static func focus(_ variant: DesignPalette) -> Color {
+        makeAdaptive(light: DesignPrimitive.accent500(variant), dark: DesignPrimitive.accent200(variant))
+    }
     /// L'erreur et la suppression, en texte, icône ou aplat ; jamais une décoration.
     public static let danger: Color = makeAdaptive(light: DesignPrimitive.red500, dark: DesignPrimitive.red300)
     /// Texte posé sur un aplat danger.
@@ -56,6 +64,30 @@ public enum DesignColor {
     public static let shadowFar: Color = makeAdaptive(light: DesignPrimitive.ink900, dark: DesignPrimitive.ink900, lightOpacity: 0.08, darkOpacity: 0.4)
     /// Voile derrière une fenêtre modale ; pas derrière un panneau parallèle.
     public static let scrim: Color = makeAdaptive(light: DesignPrimitive.ink900, dark: DesignPrimitive.ink900, lightOpacity: 0.32, darkOpacity: 0.56)
+    /// L'accent d'un contrôle natif (interrupteur, case) dont le libellé est blanc : toujours la nuance claire, même en sombre. Pas pour du texte.
+    public static func accentControl(_ variant: DesignPalette) -> Color {
+        makeColor(DesignPrimitive.accent500(variant))
+    }
+    /// La teinte du verre du bandeau ; l'opacité se règle à l'usage. Pas pour un aplat d'interface.
+    public static func glassTint(_ variant: DesignPalette) -> Color {
+        makeColor(DesignPrimitive.glass500(variant))
+    }
+    /// La nuance 1 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface.
+    public static func palettePreview1(_ variant: DesignPalette) -> Color {
+        makeColor(DesignPrimitive.palettePreview700(variant))
+    }
+    /// La nuance 2 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface.
+    public static func palettePreview2(_ variant: DesignPalette) -> Color {
+        makeColor(DesignPrimitive.palettePreview500(variant))
+    }
+    /// La nuance 3 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface.
+    public static func palettePreview3(_ variant: DesignPalette) -> Color {
+        makeColor(DesignPrimitive.palettePreview300(variant))
+    }
+    /// La nuance 4 de l'aperçu d'une palette dans le sélecteur ; pas pour l'interface.
+    public static func palettePreview4(_ variant: DesignPalette) -> Color {
+        makeColor(DesignPrimitive.palettePreview100(variant))
+    }
 
     /// The color of a 0xRRGGBB sRGB value, the same in light and dark.
     static func makeColor(_ value: UInt32) -> Color {

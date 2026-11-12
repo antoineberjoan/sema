@@ -6,6 +6,6 @@
 <text font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#eeeeee" fill-opacity="0.8"><tspan x="272" y="202">Une application macOS native pour consulter des séries</tspan><tspan x="272" y="238">économiques, suivre ses favoris et définir des seuils.</tspan></text>
 <rect x="1080" y="56" width="32" height="32" rx="8" fill="#141414" stroke="#eeeeee" stroke-opacity="0.2"/>
 <rect x="1124" y="56" width="32" height="32" rx="8" fill="#eeeeee" stroke="#eeeeee" stroke-opacity="0.2"/>
-<rect x="1168" y="56" width="32" height="32" rx="8" fill="#82cdd1" stroke="#eeeeee" stroke-opacity="0.2"/>
-<rect y="312" width="1280" height="8" fill="#82cdd1"/>
+<rect x="1168" y="56" width="32" height="32" rx="8" fill="#7cc2c0" stroke="#eeeeee" stroke-opacity="0.2"/>
+<rect y="312" width="1280" height="8" fill="#7cc2c0"/>
 </svg>
