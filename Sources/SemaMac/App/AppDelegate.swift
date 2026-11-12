@@ -51,7 +51,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
-    private var shortcuts: GlobalShortcuts?
+    private var shortcuts: GlobalShortcutsClient?
 
     func applicationWillTerminate(_ notification: Notification) {
         refreshController?.stop()

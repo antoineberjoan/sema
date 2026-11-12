@@ -2,15 +2,15 @@
 import Foundation
 import MarketCore
 
-struct LocalStorage {
+struct LocalRepository {
     let directory: URL
 
-    static func applicationDefault() -> LocalStorage {
+    static func applicationDefault() -> LocalRepository {
         if let path = Bundle.main.object(forInfoDictionaryKey: "SemaDevelopmentDataDirectory") as? String {
-            return LocalStorage(directory: URL(fileURLWithPath: path, isDirectory: true))
+            return LocalRepository(directory: URL(fileURLWithPath: path, isDirectory: true))
         }
         let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        return LocalStorage(directory: root.appendingPathComponent("Sema", isDirectory: true))
+        return LocalRepository(directory: root.appendingPathComponent("Sema", isDirectory: true))
     }
 
     var preferences: PreferencesRepository { PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json")) }

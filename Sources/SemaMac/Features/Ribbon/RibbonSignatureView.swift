@@ -72,9 +72,9 @@ struct RibbonSignatureView: View {
                     .frame(height: Self.feedbackHeight).background(.white.opacity(Self.feedbackFillOpacity), in: Capsule())
             }
             .buttonStyle(PressStyle()).padding(.top, Self.feedbackTopPadding)
-            .help(Feedback.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
+            .help(FeedbackClient.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
             .accessibilityLabel("Une idée ou un bug ? Ouvrir le formulaire Notion")
-            .disabled(Feedback.formURL == nil)
+            .disabled(FeedbackClient.formURL == nil)
         }
         .foregroundStyle(.white)
         .padding(MenuRibbonLayout.cardPadding).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
@@ -95,7 +95,7 @@ struct RibbonSignatureView: View {
         .onChange(of: reduceMotion) { _, value in if value { stage = SignatureMotion.missionStage } }
         .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $formUnavailable) {
             Button("Copier le lien") {
-                guard let url = Feedback.formURL else { return }
+                guard let url = FeedbackClient.formURL else { return }
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(url.absoluteString, forType: .string)
             }
@@ -106,7 +106,7 @@ struct RibbonSignatureView: View {
     }
 
     private func openFeedback() {
-        guard let url = Feedback.formURL else { return }
+        guard let url = FeedbackClient.formURL else { return }
         formUnavailable = !NSWorkspace.shared.open(url)
     }
 

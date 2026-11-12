@@ -3,7 +3,7 @@ import Observation
 import ServiceManagement
 
 @Observable @MainActor
-final class LoginItem {
+final class LoginItemClient {
     private(set) var status = SMAppService.mainApp.status
     private(set) var error: String?
 
