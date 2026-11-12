@@ -1,4 +1,5 @@
 // Une ligne d’agenda prête à afficher (titre, détail, ton, destination) : le hub et le bandeau la dessinent chacun à leur taille.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -10,9 +11,6 @@ struct AgendaLine: Identifiable {
     }
 
     static let barWidth: CGFloat = 3
-    private static let tintOpacity = 0.08
-    private static let quietTintOpacity = 0.04
-    private static let quietBarOpacity = 0.5
     private static let releaseURL = "https://fred.stlouisfed.org/release?rid="
 
     let id: String
@@ -55,16 +53,17 @@ struct AgendaLine: Identifiable {
     /// What the line says under its title: the figure or source, else its kind.
     var subtitle: String { detail.isEmpty ? kind : detail }
 
-    func bar(accent: Color) -> Color {
+    func bar(palette: DesignPalette) -> Color {
         switch tone {
-        case .move: accent
-        case .release: Color.secondary
-        case .quiet: Color.secondary.opacity(Self.quietBarOpacity)
+        case .move: DesignColor.accent(palette)
+        case .release: DesignColor.textMuted
+        case .quiet: DesignColor.ruleHover
         }
     }
 
-    func tint(accent: Color) -> Color {
-        tone == .move ? accent.opacity(Self.tintOpacity) : Color.primary.opacity(Self.quietTintOpacity)
+    /// The same fill on an opaque page and on a glass card: the quiet tint is the glass-rest opacity of the text color.
+    func tint(palette: DesignPalette) -> Color {
+        tone == .move ? DesignColor.selection(palette) : DesignColor.text.opacity(DesignOpacity.glassRest)
     }
 
     /// Said when a day has no line; the FRED key is the only way to get releases.

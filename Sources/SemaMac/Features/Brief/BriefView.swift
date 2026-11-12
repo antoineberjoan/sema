@@ -1,4 +1,5 @@
 // Rubrique Aujourd’hui : une phrase sur la séance, les repères sortis de l’habituel avec leurs chiffres, les faits du jour et ce qui est publié à l’avance.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -14,7 +15,7 @@ struct BriefView: View {
     private var sessionDay: Date { store.followedSeries.compactMap(\.latest?.date).max() ?? .now }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.s32) {
+        VStack(alignment: .leading, spacing: DesignSpace.sectionGap) {
             if store.brief.isEnabled { schedule } else { offer }
             if let brief {
                 header(brief)
@@ -23,8 +24,8 @@ struct BriefView: View {
                 facts
                 coming
             } else { ProgressView().controlSize(.small) }
-            DisclosureGroup("Agenda de la semaine", isExpanded: $isAgendaOpen) { AgendaView().padding(.top, Spacing.s8) }
-                .typeRole(.small).foregroundStyle(.secondary)
+            DisclosureGroup("Agenda de la semaine", isExpanded: $isAgendaOpen) { AgendaView().padding(.top, DesignSpace.rowInset) }
+                .typeRole(.small).foregroundStyle(DesignColor.textMuted)
         }
         .frame(maxWidth: Self.maximumWidth, alignment: .leading)
         // A day chosen in the ribbon unfolds the agenda; it reads and clears the request.
@@ -42,31 +43,31 @@ struct BriefView: View {
     private var schedule: some View {
         HStack(alignment: .firstTextBaseline) {
             Text("Notification \(store.brief.weekdaysOnly ? "chaque jour ouvré" : "chaque jour") à \(Self.time(store.brief)).")
-                .typeRole(.small).foregroundStyle(.secondary)
-            Spacer(minLength: Spacing.s8)
+                .typeRole(.small).foregroundStyle(DesignColor.textMuted)
+            Spacer(minLength: DesignSpace.fieldGap)
             Button("Réglages du brief") { store.settingsTab = .general; openSettings() }.buttonStyle(.borderless).typeRole(.small)
         }
     }
 
     private var offer: some View {
-        HStack(spacing: Spacing.s16) {
-            VStack(alignment: .leading, spacing: Spacing.s2) {
+        HStack(spacing: DesignSpace.fieldGap) {
+            VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                 Text("Recevoir ce résumé chaque matin ?").typeRole(.heading)
-                Text("Une notification à \(Self.time(store.brief)) les jours ouvrés, ou au réveil du Mac.").typeRole(.small).foregroundStyle(.secondary)
+                Text("Une notification à \(Self.time(store.brief)) les jours ouvrés, ou au réveil du Mac.").typeRole(.small).foregroundStyle(DesignColor.textMuted)
             }
-            Spacer(minLength: Spacing.s8)
+            Spacer(minLength: DesignSpace.fieldGap)
             Button("Activer") { Task { await store.setBriefEnabled(true) } }.buttonStyle(.borderedProminent)
         }
-        .padding(Spacing.s16)
-        .background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Radius.block))
+        .padding(DesignSpace.cardInset)
+        .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
     }
 
     private func header(_ brief: MorningBrief) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.s16) {
+        VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
             Text(Self.text(sessionDay, "EEEE d MMMM").capitalized).typeRole(.title)
             Text(SessionSentence.text(moves: brief.moves) { MarketFormat.name(store.displayedSeries($0)) }).typeRole(.lede)
             Text("Phrase construite à partir de vos repères, sans modèle de langage. Aucune cause n’est affirmée.")
-                .typeRole(.caption).foregroundStyle(.secondary)
+                .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
         }
     }
 
@@ -75,17 +76,17 @@ struct BriefView: View {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(brief.moves) { move in
                     Button { store.show(move.series); store.section = .overview } label: {
-                        VStack(alignment: .leading, spacing: Spacing.s2) {
-                            HStack(spacing: Spacing.s16) {
+                        VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
+                            HStack(spacing: DesignSpace.fieldGap) {
                                 Text(MarketFormat.name(store.displayedSeries(move.series))).typeRole(.body)
-                                Spacer(minLength: Spacing.s8)
-                                Text(MarketFormat.sessionChange(move.change, series: move.series)).foregroundStyle(.secondary)
-                                if let ratio = move.ratio { Text(MarketFormat.ratio(ratio)).foregroundStyle(.tertiary) }
+                                Spacer(minLength: DesignSpace.fieldGap)
+                                Text(MarketFormat.sessionChange(move.change, series: move.series)).foregroundStyle(DesignColor.textMuted)
+                                if let ratio = move.ratio { Text(MarketFormat.ratio(ratio)).foregroundStyle(DesignColor.textMuted) }
                             }
                             .monospacedDigit()
-                            if let rank = SessionRank(series: move.series) { Text(rank.text).typeRole(.caption).foregroundStyle(.tertiary) }
+                            if let rank = SessionRank(series: move.series) { Text(rank.text).typeRole(.caption).foregroundStyle(DesignColor.textMuted) }
                         }
-                        .padding(.vertical, Spacing.s12)
+                        .padding(.vertical, DesignSpace.rowInset)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -116,7 +117,7 @@ struct BriefView: View {
                     default: EmptyView()
                     }
                 }
-                if feedsOn, !hasPress { Text("Aucun communiqué de la Fed ni de la BCE.").typeRole(.body).foregroundStyle(.secondary) }
+                if feedsOn, !hasPress { Text("Aucun communiqué de la Fed ni de la BCE.").typeRole(.body).foregroundStyle(DesignColor.textMuted) }
             }
         }
     }
@@ -128,7 +129,7 @@ struct BriefView: View {
                 if releases.isEmpty {
                     Text(store.hasFREDKey ? "Rien n’est inscrit au calendrier pour \(Self.text(upcoming.day, "EEEE").lowercased())."
                          : "Connectez FRED dans Réglages, Sources, pour voir le calendrier.")
-                        .typeRole(.body).foregroundStyle(.secondary)
+                        .typeRole(.body).foregroundStyle(DesignColor.textMuted)
                 }
                 ForEach(releases.prefix(Self.upcomingLimit)) { release in
                     Text(Self.text(upcoming.day, "EEEE").capitalized + " · " + release.name).typeRole(.body)
@@ -153,17 +154,17 @@ struct BriefView: View {
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: Spacing.s8) {
-            Text(title).typeRole(.small).foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
+            Text(title).typeRole(.small).foregroundStyle(DesignColor.textMuted)
             content()
         }
     }
 
     private func link(_ title: String, detail: String, url: URL) -> some View {
         Link(destination: url) {
-            VStack(alignment: .leading, spacing: Spacing.s2) {
-                Text(title).typeRole(.body).multilineTextAlignment(.leading).foregroundStyle(.primary)
-                Text(detail).typeRole(.caption).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
+                Text(title).typeRole(.body).multilineTextAlignment(.leading).foregroundStyle(DesignColor.text)
+                Text(detail).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
         }
         .buttonStyle(.plain).help(url.absoluteString)
