@@ -56,7 +56,7 @@ Notion ne pilote plus sema (`docs/decisions/2026-11-12-alignement-sur-sophos.md`
 
 ## Validation et autonomie
 
-- `./scripts/check.sh` : contrôles du dépôt et tests Swift. `./scripts/build-app.sh` : le bundle. Ces commandes demandent macOS et un Swift complet.
+- `./controler.sh` : contrôles rapides, sur toute machine. `./scripts/check.sh` : suite Swift. `./scripts/build-app.sh` : le bundle. La suite Swift et le bundle demandent macOS et un Swift complet ; la CI les lance.
 - Après une modification d'interface, vérifie le parcours dans l'app native : clavier, états utiles, accessibilité, interruption des animations. Sépare ce qui est observé de ce qui reste à vérifier.
 - Les réparations et validations locales dans le périmètre demandé sont autonomes. Ne contourne jamais un contrôle ni un hook.
 - La publication, la fusion vers `main` (qui déploie le site), une dépense et une suppression irréversible demandent une autorisation qui couvre l'action.

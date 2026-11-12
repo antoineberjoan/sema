@@ -1,0 +1,52 @@
+# Contrôles — la suite du projet, une fois par envoi sur une PR prête, et chaque lundi.
+# Source : sophos (construire, « Chaque contrôle une fois »). Identique dans tous les dépôts :
+# ce qui est propre au projet vit dans son lanceur, nommé dans projet.yml (politique.controle),
+# et dans le bloc « projet » ci-dessous.
+#
+# - Pas sur un brouillon : la preuve se fait quand la PR est prête.
+# - Pas après la fusion : la PR vient d'être prouvée.
+# - Le lundi : la suite complète, pour ce qui ne dépend pas d'un changement.
+# - Le runner se choisit sans toucher ce fichier : la variable RUNNER du dépôt, en JSON. Sans elle,
+#   le runner hébergé de GitHub. Avec un forfait épuisé : ["self-hosted", "macOS"] (outils/runner.sh).
+
+name: Contrôles
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  schedule:
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: controles-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  controles:
+    name: Contrôles du projet
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: ${{ fromJSON(vars.RUNNER || '"ubuntu-latest"') }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0
+      # projet:debut — l'installation propre au projet (langage, dépendances, clone de Sophos)
+      - name: Chaîne d'outils Swift
+        run: swift --version
+      - name: Suite Swift
+        run: ./scripts/check.sh
+      - name: Bundle local de l'app
+        run: SEMA_CONFIGURATION=debug ./scripts/build-app.sh
+      # projet:fin
+      # Le lanceur lit la branche de base dans BASE, pour ne lancer que ce que les fichiers touchés demandent.
+      - name: Lancer le lanceur du projet
+        env:
+          BASE: ${{ github.base_ref || github.event.repository.default_branch }}
+        run: |
+          lanceur="$(sed -n 's/^  controle:[[:space:]]*//p' projet.yml)"
+          [ -n "$lanceur" ] || { echo "projet.yml n'a pas de politique.controle."; exit 1; }
+          sh -c "$lanceur"
