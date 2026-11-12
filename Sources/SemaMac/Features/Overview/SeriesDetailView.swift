@@ -288,7 +288,7 @@ struct SeriesDetailView: View {
         if let descriptor = series.descriptor {
             DisclosureGroup("Métadonnées de Webstat") {
                 VStack(alignment: .leading, spacing: Self.metadataFieldSpacing) {
-                    Text(descriptor.key).font(.system(.caption, design: .monospaced)).textSelection(.enabled)
+                    Text(descriptor.key).typeRole(.code).textSelection(.enabled)
                     ForEach(descriptor.raw.keys.sorted(), id: \.self) { key in
                         if let text = descriptor.raw[key]?.text {
                             VStack(alignment: .leading, spacing: Self.metadataLabelSpacing) {
@@ -303,7 +303,7 @@ struct SeriesDetailView: View {
         if let descriptor = series.statisticalDescriptor {
             DisclosureGroup("Métadonnées de la source") {
                 VStack(alignment: .leading, spacing: Self.metadataFieldSpacing) {
-                    Text(descriptor.key).font(.system(.caption, design: .monospaced)).textSelection(.enabled)
+                    Text(descriptor.key).typeRole(.code).textSelection(.enabled)
                     ForEach(descriptor.fields.keys.sorted(), id: \.self) { key in
                         VStack(alignment: .leading, spacing: Self.metadataLabelSpacing) {
                             Text(key).fontWeight(.medium)

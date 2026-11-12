@@ -1,11 +1,11 @@
-# L'écran Aperçu lit les rôles de sens, avec huit choix à relire
+# L'écran Aperçu lit les rôles de sens, avec neuf choix à relire
 
 Date : 2026-11-12 · Statut : proposée
 Décidé par : à confirmer par Antoine
 
 ## Contexte
 
-L'écran Aperçu est le troisième à lire les jetons de Sophos. Il contient le détail d'une série, le sélecteur Focus, l'inspecteur « Pourquoi ce mouvement ? », les onglets de période et les deux boutons d'icône (favori, sens de la parité). Huit lectures n'ont pas de rôle exact.
+L'écran Aperçu est le troisième à lire les jetons de Sophos. Il contient le détail d'une série, le sélecteur Focus, l'inspecteur « Pourquoi ce mouvement ? », les onglets de période et les deux boutons d'icône (favori, sens de la parité). Neuf lectures n'ont pas de rôle exact.
 
 ## Décision
 
