@@ -135,31 +135,31 @@ enum DesignPrimitive {
     static let blue800: UInt32 = 0x001533
     /// oklch(0.0988 0.0330 255.4) · Bleu : l'information neutre ; jamais l'accent de la marque.
     static let blue900: UInt32 = 0x00030D
-    /// oklch(0.9499 0.0629 199.8) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.9499 0.0629 199.8) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent50(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0xBDFCFF
         case .graphite: return 0xEEEEEE
         case .teal: return 0xBDFCFF
-        case .mint: return 0xBFFFE4
+        case .mint: return 0xBFFFE5
         case .lavender: return 0xF4E9FF
         case .sky: return 0xE0F1FF
         case .polar: return 0xDEF2FF
         }
     }
-    /// oklch(0.9008 0.0748 199.0) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.9008 0.0748 199.0) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent100(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0xA2EEF1
         case .graphite: return 0xDEDEDE
         case .teal: return 0xA2EEF1
-        case .mint: return 0xADEFD4
+        case .mint: return 0xABEFD4
         case .lavender: return 0xE9D4FF
         case .sky: return 0xBFE3FF
         case .polar: return 0xBCE4FF
         }
     }
-    /// oklch(0.7673 0.0706 193.5) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.7673 0.0706 193.5) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent200(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0x7CC2C0
@@ -171,67 +171,67 @@ enum DesignPrimitive {
         case .polar: return 0x90D2F5
         }
     }
-    /// oklch(0.7007 0.0749 200.0) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.7007 0.0749 200.0) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent300(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0x62ADB1
         case .graphite: return 0x9E9E9E
         case .teal: return 0x62ADB1
-        case .mint: return 0x6EAE95
+        case .mint: return 0x6CAE95
         case .lavender: return 0xB686E0
-        case .sky: return 0x53A7E1
-        case .polar: return 0x55A8D9
+        case .sky: return 0x4AA7E6
+        case .polar: return 0x4AA9DF
         }
     }
-    /// oklch(0.6009 0.0743 200.0) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.6009 0.0743 200.0) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent400(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0x438E92
         case .graphite: return 0x808080
         case .teal: return 0x438E92
-        case .mint: return 0x4F8F77
+        case .mint: return 0x4D8F77
         case .lavender: return 0x9767BF
-        case .sky: return 0x3088C0
-        case .polar: return 0x3489B9
+        case .sky: return 0x2488C5
+        case .polar: return 0x2589BE
         }
     }
-    /// oklch(0.4969 0.0744 199.9) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.4969 0.0744 199.9) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent500(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0x1F6F73
         case .graphite: return 0x474747
         case .teal: return 0x1F6F73
-        case .mint: return 0x2F7059
+        case .mint: return 0x32755E
         case .lavender: return 0x78499E
-        case .sky: return 0x006BA1
-        case .polar: return 0x076C9A
+        case .sky: return 0x097AB6
+        case .polar: return 0x097BAF
         }
     }
-    /// oklch(0.3988 0.0678 200.5) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.3988 0.0678 200.5) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent600(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0x005256
         case .graphite: return 0x484848
         case .teal: return 0x005256
-        case .mint: return 0x0C553F
+        case .mint: return 0x07553F
         case .lavender: return 0x5C2C7F
         case .sky: return 0x004C75
         case .polar: return 0x004D71
         }
     }
-    /// oklch(0.2992 0.0509 200.9) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.2992 0.0509 200.9) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent700(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0x003538
         case .graphite: return 0x2E2E2E
         case .teal: return 0x003538
-        case .mint: return 0x003727
+        case .mint: return 0x003728
         case .lavender: return 0x410C61
-        case .sky: return 0x00314D
-        case .polar: return 0x00324A
+        case .sky: return 0x00314E
+        case .polar: return 0x00324B
         }
     }
-    /// oklch(0.2016 0.0343 198.1) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.2016 0.0343 198.1) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent800(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0x001B1C
@@ -243,7 +243,7 @@ enum DesignPrimitive {
         case .polar: return 0x001827
         }
     }
-    /// oklch(0.0976 0.0168 208.0) (brand) · L'accent de la palette choisie : clair au pas 500, sombre au pas 200.
+    /// oklch(0.0976 0.0168 208.0) (brand) · L'accent des aplats de la palette choisie : clair au pas 500, sombre au pas 200.
     static func accent900(_ variant: DesignPalette) -> UInt32 {
         switch variant {
         case .brand: return 0x000405
@@ -493,6 +493,126 @@ enum DesignPrimitive {
         case .lavender: return 0x07000F
         case .sky: return 0x000409
         case .polar: return 0x000409
+        }
+    }
+    /// oklch(0.9499 0.0629 199.8) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk50(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0xBDFCFF
+        case .graphite: return 0xEEEEEE
+        case .teal: return 0xBDFCFF
+        case .mint: return 0xBFFFE5
+        case .lavender: return 0xF4E9FF
+        case .sky: return 0xE0F1FF
+        case .polar: return 0xDEF2FF
+        }
+    }
+    /// oklch(0.9008 0.0748 199.0) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk100(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0xA2EEF1
+        case .graphite: return 0xDEDEDE
+        case .teal: return 0xA2EEF1
+        case .mint: return 0xABEFD4
+        case .lavender: return 0xE9D4FF
+        case .sky: return 0xC0E3FF
+        case .polar: return 0xBCE4FF
+        }
+    }
+    /// oklch(0.8009 0.0747 200.1) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk200(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0x82CDD1
+        case .graphite: return 0xBEBEBE
+        case .teal: return 0x82CDD1
+        case .mint: return 0x8BCEB4
+        case .lavender: return 0xD5A6FF
+        case .sky: return 0x7AC6FF
+        case .polar: return 0x74C8FC
+        }
+    }
+    /// oklch(0.7007 0.0749 200.0) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk300(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0x62ADB1
+        case .graphite: return 0x9E9E9E
+        case .teal: return 0x62ADB1
+        case .mint: return 0x6CAE95
+        case .lavender: return 0xB686E0
+        case .sky: return 0x53A7E1
+        case .polar: return 0x54A8DA
+        }
+    }
+    /// oklch(0.6009 0.0743 200.0) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk400(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0x438E92
+        case .graphite: return 0x808080
+        case .teal: return 0x438E92
+        case .mint: return 0x4D8F77
+        case .lavender: return 0x9767BF
+        case .sky: return 0x3288C0
+        case .polar: return 0x3289BA
+        }
+    }
+    /// oklch(0.5003 0.0746 199.9) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk500(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0x207074
+        case .graphite: return 0x636363
+        case .teal: return 0x207074
+        case .mint: return 0x2E715A
+        case .lavender: return 0x794A9F
+        case .sky: return 0x0069A0
+        case .polar: return 0x006B9A
+        }
+    }
+    /// oklch(0.4969 0.0744 199.9) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk600(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0x1F6F73
+        case .graphite: return 0x474747
+        case .teal: return 0x1F6F73
+        case .mint: return 0x2F725B
+        case .lavender: return 0x78499E
+        case .sky: return 0x066CA3
+        case .polar: return 0x056D9C
+        }
+    }
+    /// oklch(0.2992 0.0509 200.9) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk700(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0x003538
+        case .graphite: return 0x2E2E2E
+        case .teal: return 0x003538
+        case .mint: return 0x003728
+        case .lavender: return 0x410C61
+        case .sky: return 0x00314E
+        case .polar: return 0x00324B
+        }
+    }
+    /// oklch(0.2016 0.0343 198.1) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk800(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0x001B1C
+        case .graphite: return 0x161616
+        case .teal: return 0x001B1C
+        case .mint: return 0x001C12
+        case .lavender: return 0x230038
+        case .sky: return 0x001829
+        case .polar: return 0x001827
+        }
+    }
+    /// oklch(0.0976 0.0168 208.0) (brand) · L'accent quand il est un texte sur un fond clair : au pas 600, la couleur de l'accent ou la plus claire de sa teinte qui tient 4,5:1.
+    static func accentInk900(_ variant: DesignPalette) -> UInt32 {
+        switch variant {
+        case .brand: return 0x000405
+        case .graphite: return 0x030303
+        case .teal: return 0x000405
+        case .mint: return 0x000503
+        case .lavender: return 0x070010
+        case .sky: return 0x000409
+        case .polar: return 0x000408
         }
     }
 }

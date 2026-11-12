@@ -34,7 +34,7 @@ public enum DesignColor {
     }
     /// L'accent quand il est un texte ou une petite icône (lien) : la nuance de l'accent qui atteint 4,5:1 sur le fond.
     public static func accentText(_ variant: DesignPalette) -> Color {
-        makeAdaptive(light: DesignPrimitive.accent500(variant), dark: DesignPrimitive.accent200(variant))
+        makeAdaptive(light: DesignPrimitive.accentInk600(variant), dark: DesignPrimitive.accent200(variant))
     }
     /// Texte et icône posés sur un aplat d'accent ; jamais ailleurs.
     public static let onAccent: Color = makeAdaptive(light: DesignPrimitive.paper0, dark: DesignPrimitive.ink800)
