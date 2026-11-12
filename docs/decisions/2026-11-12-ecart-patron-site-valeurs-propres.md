@@ -22,6 +22,8 @@ Le site est un site statique sombre, avec sa feuille de valeurs écrite à la ma
 | Tout lire dans `tokens.json` | Le site entier sur les jetons | Des gris, des tailles et des largeurs qui changent : une décision de mise en page d'Antoine |
 | Ne rien changer | Aucun risque | Les couleurs de la marque écrites en deux endroits |
 
+**Ce qui retire l'écart** : Antoine ouvre un chantier visuel du site. Ce chantier décide alors de ses gris et de son échelle.
+
 ## Conséquences
 
 Un écart reste : le kit de marque téléchargeable (`site/dist/brand/tokens.json`) garde sa propre liste de couleurs, dans un autre format. Il se règle quand le kit est fabriqué depuis la sortie `resolved-json` des jetons. Ce qui retire l'écart du site : une décision d'Antoine sur ses gris et son échelle, puis leur passage dans `tokens.json` (rôles de couleur, jetons de type `css` pour les tailles fluides et les durées).
