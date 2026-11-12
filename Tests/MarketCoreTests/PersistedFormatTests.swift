@@ -34,24 +34,24 @@ struct PersistedFormatTests {
     @Test func fullCurrentDocumentKeepsEveryValue() throws {
         let stored = try makeFile(Self.fullDocument)
         defer { try? FileManager.default.removeItem(at: stored.directory) }
-        let value = try PreferencesStore(fileURL: stored.file).load()
+        let value = try PreferencesRepository(fileURL: stored.file).load()
         let date = Date(timeIntervalSinceReferenceDate: 800_000_000)
         #expect(value.schemaVersion == 2)
-        #expect(value.favoriteIDs == [WebstatClient.canonicalID("eurusd")])
-        #expect(value.followedSeriesIDs == ["eurusd", "fr10"].map(WebstatClient.canonicalID))
+        #expect(value.favoriteIDs == [WebstatStarter.canonicalID("eurusd")])
+        #expect(value.followedSeriesIDs == ["eurusd", "fr10"].map(WebstatStarter.canonicalID))
         #expect(value.alerts.count == 1)
         #expect(value.alerts.first?.id == UUID(uuidString: Self.ruleID))
-        #expect(value.alerts.first?.seriesID == WebstatClient.canonicalID("fr10"))
+        #expect(value.alerts.first?.seriesID == WebstatStarter.canonicalID("fr10"))
         #expect(value.alerts.first?.direction == .rise)
         #expect(value.alerts.first?.threshold == Decimal(string: "2.5"))
         #expect(value.alerts.first?.isEnabled == true)
         #expect(value.alerts.first?.condition == .level)
         #expect(value.alerts.first?.lastEvaluatedAt == date)
-        #expect(value.notificationsEnabled)
+        #expect(value.canNotify)
         #expect(value.themeID == "polar")
         #expect(value.appearanceID == "dark")
         #expect(value.ribbonPositionID == "left")
-        #expect(value.onboardingCompleted == true)
+        #expect(value.isOnboardingCompleted == true)
         #expect(value.disabledSourceIDs == ["fred"])
         #expect(value.profile == LocalProfile(firstName: "Ada", lastName: "Lovelace"))
         #expect(value.alertBaselineIDs == [UUID(uuidString: "1B4E28BA-2FA1-11D2-883F-0016D3CCA427")!])
@@ -74,7 +74,7 @@ struct PersistedFormatTests {
     @Test func savedDocumentKeepsEveryKeyName() throws {
         let stored = try makeFile(Self.fullDocument)
         defer { try? FileManager.default.removeItem(at: stored.directory) }
-        let store = PreferencesStore(fileURL: stored.file)
+        let store = PreferencesRepository(fileURL: stored.file)
         try store.save(try store.load())
         let saved = try Data(contentsOf: stored.file)
         #expect(try keys(of: saved) == [
@@ -100,11 +100,11 @@ struct PersistedFormatTests {
     @Test func versionOneDocumentIsMigratedAndKeptBesideTheNewFile() throws {
         let stored = try makeFile(#"{"schemaVersion":1,"favoriteIDs":["fr10"],"notificationsEnabled":false,"alerts":[]}"#)
         defer { try? FileManager.default.removeItem(at: stored.directory) }
-        let store = PreferencesStore(fileURL: stored.file)
+        let store = PreferencesRepository(fileURL: stored.file)
         let value = try store.load()
         #expect(value.schemaVersion == AppPreferences.currentSchemaVersion)
-        #expect(value.onboardingCompleted == true)
-        #expect(value.followedSeriesIDs == WebstatClient.starterIDs.map(WebstatClient.canonicalID))
+        #expect(value.isOnboardingCompleted == true)
+        #expect(value.followedSeriesIDs == WebstatStarter.ids.map(WebstatStarter.canonicalID))
         let backup = stored.file.appendingPathExtension("v1-backup")
         #expect(try Data(contentsOf: backup) == stored.data)
         let migrated = try JSONDecoder().decode(AppPreferences.self, from: Data(contentsOf: stored.file))
@@ -124,5 +124,27 @@ struct PersistedFormatTests {
         let observation = try #require((first["observations"] as? [[String: Any]])?.first)
         #expect(Set(observation.keys) == ["date", "value"])
         #expect(try JSONDecoder().decode([MarketSeries].self, from: data) == [series])
+    }
+
+    @Test func renamedPropertiesKeepTheKeysOfTheFile() throws {
+        let preferences = AppPreferences(canNotify: true, isOnboardingCompleted: true)
+        let object = try #require(try JSONSerialization.jsonObject(with: JSONEncoder().encode(preferences)) as? [String: Any])
+        #expect(object["notificationsEnabled"] as? Bool == true)
+        #expect(object["onboardingCompleted"] as? Bool == true)
+        #expect(object["canNotify"] == nil && object["isOnboardingCompleted"] == nil)
+        var brief = BriefPreferences()
+        brief.isWeekdaysOnly = false
+        let briefObject = try #require(try JSONSerialization.jsonObject(with: JSONEncoder().encode(brief)) as? [String: Any])
+        #expect(briefObject["weekdaysOnly"] as? Bool == false)
+        #expect(briefObject["isWeekdaysOnly"] == nil)
+    }
+
+    @Test func instrumentKeepsItsWeeklyKeyAndReadsAnOldFile() throws {
+        let instrument = MarketInstrument(provider: .alphaVantage, symbol: "IBM", name: "IBM", exchange: "NYSE", currency: "USD", kind: "Stock", isWeekly: true)
+        let object = try #require(try JSONSerialization.jsonObject(with: JSONEncoder().encode(instrument)) as? [String: Any])
+        #expect(object["weekly"] as? Bool == true)
+        #expect(object["isWeekly"] == nil)
+        let stored = Data(#"{"provider":"alpha-vantage","symbol":"IBM","name":"IBM","exchange":"NYSE","currency":"USD","kind":"Stock","weekly":true}"#.utf8)
+        #expect(try JSONDecoder().decode(MarketInstrument.self, from: stored).isWeekly)
     }
 }
