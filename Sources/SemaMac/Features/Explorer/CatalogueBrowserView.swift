@@ -1,4 +1,5 @@
 // Présente le catalogue Webstat et la prévisualisation d’une série avant son ajout, depuis Explorer comme depuis ⌘K.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -25,7 +26,8 @@ struct CatalogueBrowserView: View {
     private static let messagePadding = Spacing.s16
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let selectionDuration = Motion.fast
     private let previewDuration = Motion.standard
@@ -43,7 +45,7 @@ struct CatalogueBrowserView: View {
                     Label("Clé personnelle requise", systemImage: "key").foregroundStyle(.secondary)
                     Spacer()
                     Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }
-                        .buttonStyle(.borderedProminent).tint(store.palette.controlAccent)
+                        .buttonStyle(.borderedProminent).tint(DesignColor.accentControl(store.palette))
                 }.padding(Theme.majorSpacing).background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cardCorner))
                 Spacer(minLength: 0)
             } else {

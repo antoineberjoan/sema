@@ -1,4 +1,5 @@
 // Agenda de la semaine : une bande de cinq jours, et pour le jour choisi ses trois lignes les plus importantes, chacune avec son lien.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -6,7 +7,8 @@ struct AgendaView: View {
     private static let maximumWidth: CGFloat = 520
     private static let titleLines = 2
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     @State private var day = DayAgenda.currentDay(now: .now) ?? .now
     @State private var agenda: DayAgenda?
     @State private var showsAll = false

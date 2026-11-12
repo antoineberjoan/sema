@@ -36,6 +36,7 @@
   "Sources/SemaMac/DesignSystem/": "Composants, formatage et choix visuels réutilisés.",
   "Sources/SemaMac/Infrastructure/": "Effets dépendants de macOS et adaptation aux services système.",
   "Tests/MarketCoreTests/": "Preuves exécutables des règles métier et contrats de données.",
+  "Tests/SemaDesignTests/": "Preuves de la palette : noms enregistrés et couleurs que chaque palette donne.",
   "Resources/": "Métadonnées du bundle et ressources graphiques livrées.",
   "scripts/": "Construction, contrôles et distribution ; scripts/tests vérifie ces outils.",
   "docs/": "Fondation, décisions, lexique, contrats implémentés, plans et preuves ; engineering porte les conventions de code.",

@@ -1,4 +1,5 @@
 // Règle le verre du bandeau avec l’aperçu d’un favori et une remise à zéro limitée.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -18,8 +19,7 @@ struct RibbonGlassSettingsView: View {
                 RibbonCard(series: store.displayedSeries(series), period: .year, action: {})
                     .frame(height: MenuRibbonLayout.cardHeight)
                     .allowsHitTesting(false).accessibilityHidden(true)
-                    .environment(\.semaAccent, store.palette.accent)
-                    .environment(\.semaGlassTint, store.palette.glassTint)
+                    .environment(\.palette, store.palette)
                     .environment(\.semaGlassSettings, store.ribbonGlass)
             }
 

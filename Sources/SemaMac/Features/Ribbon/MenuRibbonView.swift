@@ -1,4 +1,5 @@
 // Présente les favoris et leurs historiques dans le bandeau partagé avec le hub.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -105,7 +106,7 @@ struct MenuRibbonView: View {
 
     private var emptyState: some View {
         VStack(spacing: Self.emptySpacing) {
-            Image(systemName: "star").typeRole(.figure).foregroundStyle(store.palette.accent)
+            Image(systemName: "star").typeRole(.figure).foregroundStyle(DesignColor.accent(store.palette))
             Text("Vos repères, en un coup d’œil.").typeRole(.section)
             Text("Épinglez les repères à retrouver dans ce bandeau.").typeRole(.small).foregroundStyle(.secondary)
             Button("Choisir mes favoris") { store.section = .overview; openWorkspace() }

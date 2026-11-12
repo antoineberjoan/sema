@@ -1,5 +1,6 @@
 // Assemble les scènes SwiftUI et le cycle de vie de l’app accessible depuis la barre de menus.
 import AppKit
+import SemaDesign
 import SwiftUI
 
 @main
@@ -11,8 +12,8 @@ struct MacApp: App {
 
     var body: some Scene {
         Window("sema", id: "workspace") {
-            WorkspaceView().environment(store).tint(store.palette.controlAccent)
-                .environment(\.semaAccent, store.palette.accent)
+            WorkspaceView().environment(store).tint(DesignColor.accentControl(store.palette))
+                .environment(\.palette, store.palette)
                 .environment(\.locale, .french)
                 .preferredColorScheme(store.appearance.colorScheme)
                 .background {
@@ -21,8 +22,8 @@ struct MacApp: App {
                 .sheet(isPresented: $store.isOnboardingPresented) {
                     OnboardingView(initialSelection: store.preferences.followedSeriesIDs,
                         selectSeries: store.followStarterSeries, finish: store.finishOnboarding)
-                        .environment(store).tint(store.palette.controlAccent)
-                        .environment(\.semaAccent, store.palette.accent)
+                        .environment(store).tint(DesignColor.accentControl(store.palette))
+                        .environment(\.palette, store.palette)
                         .environment(\.locale, .french)
                 }
         }
@@ -34,8 +35,8 @@ struct MacApp: App {
         }
 
         Settings {
-            SettingsView().environment(store).tint(store.palette.controlAccent)
-                .environment(\.semaAccent, store.palette.accent)
+            SettingsView().environment(store).tint(DesignColor.accentControl(store.palette))
+                .environment(\.palette, store.palette)
                 .preferredColorScheme(store.appearance.colorScheme)
         }
     }

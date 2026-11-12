@@ -1,4 +1,5 @@
 // Permet de parcourir visuellement les repères en cache sans changer le graphique avant validation.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -69,12 +70,12 @@ struct FocusSwitcherView: View {
                     .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
             .foregroundStyle(.primary).frame(width: Self.tileWidth, alignment: .leading).padding(Self.tilePadding)
-            .background(selected ? store.palette.accent.opacity(Theme.selectionOpacity) : .clear,
+            .background(selected ? DesignColor.accent(store.palette).opacity(Theme.selectionOpacity) : .clear,
                 in: RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous))
             .overlay {
                 if selected {
                     RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous)
-                        .strokeBorder(store.palette.accent.opacity(Self.selectedStrokeOpacity), lineWidth: 1)
+                        .strokeBorder(DesignColor.accent(store.palette).opacity(Self.selectedStrokeOpacity), lineWidth: 1)
                 }
             }
             .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))

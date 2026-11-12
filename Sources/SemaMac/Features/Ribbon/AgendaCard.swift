@@ -1,4 +1,5 @@
 // Carte Agenda du bandeau : la bande des jours de la semaine, jusqu’à trois lignes du jour choisi, et une flèche vers son détail dans le hub.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -7,7 +8,8 @@ struct AgendaCard: View {
     private static let lineHeight: CGFloat = 42
     private static let emptyLines = 4
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     @State private var day = DayAgenda.currentDay(now: .now) ?? .now
     @State private var agenda: DayAgenda?
     let openWorkspace: () -> Void

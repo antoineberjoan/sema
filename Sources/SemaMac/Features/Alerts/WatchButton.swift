@@ -1,4 +1,5 @@
 // Cloche « Me prévenir » : un clic surveille les mouvements inhabituels d’un repère, le menu ajoute un seuil.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -17,7 +18,7 @@ struct WatchButton: View {
             Label(watched ? "Surveillé" : "Me prévenir", systemImage: watched ? "bell.fill" : "bell")
         } primaryAction: { toggle() }
         .menuStyle(.button).buttonStyle(.bordered).controlSize(.small)
-        .tint(watched ? store.palette.accent : nil)
+        .tint(watched ? DesignColor.accent(store.palette) : nil)
         .fixedSize()
         .disabled(!store.canWatch(series))
         .help(watched ? "Surveillé : sema vous prévient si ce repère bouge plus que d’habitude."

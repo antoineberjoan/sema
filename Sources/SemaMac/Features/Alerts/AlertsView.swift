@@ -1,4 +1,5 @@
 // Réunit les repères surveillés pour leurs mouvements inhabituels et les seuils, avec leurs actions.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -105,7 +106,8 @@ private struct AlertRow: View {
     private static let actionSpacing = Spacing.s16
     private static let verticalPadding = Spacing.s16
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     let rule: AlertRule
     private var item: MarketSeries? { store.series.first { $0.id == rule.seriesID } }
     private var lastEvent: AlertEvent? { store.recentAlertEvents.last { $0.ruleID == rule.id } }

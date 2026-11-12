@@ -1,4 +1,5 @@
 // Panneau de recherche rapide : un champ, les repères trouvés, puis le détail du repère choisi sans ouvrir le hub.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -9,7 +10,8 @@ struct SearchPanelView: View {
     private static let fieldSpacing = Spacing.s12
     private static let escapeRadius = Radius.control
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     @FocusState private var isFieldFocused: Bool
     @State private var query = ""
     @State private var selectedID: String?

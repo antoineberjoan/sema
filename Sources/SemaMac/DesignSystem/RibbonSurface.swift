@@ -61,7 +61,8 @@ private enum RibbonGrain {
 /// A thin highlight describes the glass edge; labels stay outside its vibrancy.
 struct RibbonSurface: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.semaGlassTint) private var glassTint
+    @Environment(\.palette) private var palette
+    private var glassTint: Color { DesignColor.glassTint(palette) }
     @Environment(\.semaGlassSettings) private var glass
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast

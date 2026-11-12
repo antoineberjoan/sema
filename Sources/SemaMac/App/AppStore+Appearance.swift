@@ -1,9 +1,10 @@
 // Applique palette, apparence, période partagée, position et verre du bandeau, et le sens d’affichage des parités.
 import AppKit
 import MarketCore
+import SemaDesign
 
 extension AppStore {
-    var palette: Palette { Palette(rawValue: preferences.themeID ?? "") ?? .standard }
+    var palette: DesignPalette { DesignPalette(rawValue: preferences.themeID ?? "") ?? .brand }
 
     var appearance: Appearance { Appearance(rawValue: preferences.appearanceID ?? "") ?? .system }
 
@@ -11,7 +12,7 @@ extension AppStore {
 
     var ribbonGlass: RibbonGlassPreferences { preferences.ribbonGlass ?? .standard }
 
-    func setPalette(_ palette: Palette) { mutatePreferences { $0.themeID = palette.rawValue } }
+    func setPalette(_ palette: DesignPalette) { mutatePreferences { $0.themeID = palette.rawValue } }
 
     func setAppearance(_ appearance: Appearance) {
         guard mutatePreferences({ $0.appearanceID = appearance.rawValue }) else { return }

@@ -1,4 +1,5 @@
 // Liste des résultats de recherche d’un repère, avec sa sélection : la feuille ⌘K et le panneau global la partagent.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -8,7 +9,8 @@ struct SeriesResultsView: View {
     private static let textSpacing = Spacing.s4
     private static let emptyTopPadding = Spacing.s32
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     let results: [MarketSeries]
     @Binding var selectedID: String?
     let height: CGFloat

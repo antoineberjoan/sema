@@ -1,10 +1,12 @@
 // Inverse le sens d’affichage d’une parité de change.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
 struct ExchangeDirectionButton: View {
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     let series: MarketSeries
 
     var body: some View {

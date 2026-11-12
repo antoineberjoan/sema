@@ -1,4 +1,5 @@
 // Carte d’un favori dans le bandeau : nom et source, variation de la période, valeur, séance et courbe pleine largeur avec lecture au survol.
+import SemaDesign
 import SwiftUI
 import Charts
 import MarketCore
@@ -11,7 +12,8 @@ struct RibbonCard: View {
     private static let areaOpacity = 0.14
     private static let selectionPointSize: CGFloat = 36
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hovered = false
     @State private var selectedDate: Date?
