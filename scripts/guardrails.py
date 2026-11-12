@@ -40,7 +40,7 @@ CONFIG_LITERAL = re.compile(r'\b(?:URL|URLComponents)\(string:\s*"|\b(?:Locale|T
 DAY_SECONDS = re.compile(r"(?<![\w.])86_?400(?![\w.])")
 # Typographie 1.1 : une taille de texte écrite en chiffres vit seulement dans les rôles de `TypeRole`.
 NATIVE_TEXT_SIZE = re.compile(r"\.system\(size:\s*\d")
-TYPE_ROLES = "Sources/SemaMac/DesignSystem/TypeRole.swift"
+TYPE_ROLES = "Sources/SemaMac/Style/TypeRole.swift"
 # Noms antérieurs à la règle « pas de préfixe Sema » ; aucun nouveau type ne s’y ajoute.
 LEGACY_SEMA_TYPES = {"SemaAppDelegate", "SemaAppearance", "SemaCommands", "SemaElevation", "SemaFeedback", "SemaMacApp", "SemaMark",
                      "SemaPalette", "SemaPressStyle", "SemaSettingsTab", "SemaSettingsView", "SemaSignalPath", "SemaSupport", "SemaSymbol", "SemaTheme"}
@@ -173,7 +173,7 @@ def hardcoded(path, source):
             arguments = VISUAL_ARGUMENT.findall(line) + [argument for call in VISUAL_CALL.finditer(line)
                                                          for argument in call_arguments(line, call.end() - 1)]
             if any(literal_values(argument) for argument in arguments):
-                errors.append(f"{path}:{number} : valeur visuelle en dur ; la nommer dans un rôle de `SemaTheme` "
+                errors.append(f"{path}:{number} : valeur visuelle en dur ; la nommer dans un rôle de `SemaDesign` "
                               "ou un `static let` de son propriétaire.")
         raw = raw_lines[number - 1] if number <= len(raw_lines) else ""
         if any(line[m.start():m.start() + 6] == raw[m.start():m.start() + 6] for m in CONFIG_LITERAL.finditer(raw)):
@@ -182,8 +182,8 @@ def hardcoded(path, source):
             errors.append(f"{path}:{number} : durée d’un jour en dur ; utiliser `TimeInterval.day`.")
         if "keyCode" in line and any(value not in STRUCTURAL_NUMBERS for value in NUMBER.findall(line)):
             errors.append(f"{path}:{number} : code de touche en dur ; utiliser `kVK_…` ou une constante nommée.")
-        if ".shadow(color" in line and not path.startswith("Sources/SemaMac/DesignSystem/"):
-            errors.append(f"{path}:{number} : ombre composée hors DesignSystem ; utiliser une `SemaTheme.Shadow`.")
+        if ".shadow(color" in line and not path.startswith("Sources/SemaMac/Style/"):
+            errors.append(f"{path}:{number} : ombre composée hors de `Style/` ; utiliser `elevation(_:)` avec une élévation de `SemaDesign`.")
     return errors
 
 

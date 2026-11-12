@@ -1,4 +1,6 @@
 // Compose les cartes en matière macOS et leur repli opaque pour les réglages d’accessibilité.
+// @documentation aucune
+// @decision docs/decisions/2026-11-12-composant-ribbon-surface.md
 import AppKit
 import SemaDesign
 import SwiftUI

@@ -1,4 +1,6 @@
 // Déplie ou replie une section en cliquant sur toute sa ligne, pas seulement sur la flèche.
+// @documentation https://developer.apple.com/documentation/swiftui/disclosuregroupstyle
+// @decision docs/decisions/2026-11-12-composant-row-disclosure-style.md
 import SemaDesign
 import SwiftUI
 

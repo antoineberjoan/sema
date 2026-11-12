@@ -1,7 +1,8 @@
 // Pastille de l’écart à l’habituel : sa teinte s’intensifie avec le multiple, sans jamais coder hausse ou baisse.
+// @documentation aucune
+// @decision docs/decisions/2026-11-12-composant-move-badge.md
 import SemaDesign
 import SwiftUI
-import AppKit
 import MarketCore
 
 struct MoveBadge: View {
@@ -18,17 +19,27 @@ struct MoveBadge: View {
     var body: some View {
         Text(prefix + MarketFormat.ratio(ratio) + suffix)
             .typeRole(.tag).fontWeight(zone >= 2 ? .medium : .regular).monospacedDigit()
-            .foregroundStyle(zone >= 3 ? Color(nsColor: .textBackgroundColor) : Color.primary)
-            .padding(.horizontal, Spacing.s6).padding(.vertical, Spacing.s2)
-            .background(background, in: RoundedRectangle(cornerRadius: Radius.mark))
+            .foregroundStyle(textColor)
+            .padding(.horizontal, DesignSpace.markInsetInline).padding(.vertical, DesignSpace.markInset)
+            .background(background, in: RoundedRectangle(cornerRadius: DesignRadius.mark))
             .accessibilityLabel(MarketFormat.ratio(ratio) + " la variation habituelle")
     }
 
+    /// The same fill on an opaque page and on a glass card: the calmest zone is the glass-rest opacity of the text color.
     private var background: Color {
         switch zone {
-        case 0: Theme.quietFill
-        case 4: Color.primary
+        case 0: DesignColor.text.opacity(DesignOpacity.glassRest)
+        case 4: DesignColor.text
         default: accent.opacity(Self.zones[zone].opacity)
+        }
+    }
+
+    /// Dark text on the two strongest zones: the accent plate takes the on-accent text, the full plate takes the page color.
+    private var textColor: Color {
+        switch zone {
+        case 0, 1, 2: DesignColor.text
+        case 3: DesignColor.onAccent
+        default: DesignColor.background
         }
     }
 }

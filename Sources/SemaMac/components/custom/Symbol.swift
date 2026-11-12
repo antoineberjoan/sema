@@ -1,4 +1,6 @@
 // Trace le logo repère : la ligne, l’écart qui la détache du point, puis le point sarcelle.
+// @documentation aucune
+// @decision docs/decisions/2026-11-12-composant-signe-de-la-marque.md
 import SemaDesign
 import SwiftUI
 
