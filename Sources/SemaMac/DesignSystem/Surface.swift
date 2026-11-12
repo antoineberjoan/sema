@@ -1,4 +1,5 @@
 // Conteneur élevé standard : marge, fond et ombre partagés.
+import SemaDesign
 import SwiftUI
 
 struct Surface<Content: View>: View {
@@ -7,6 +8,6 @@ struct Surface<Content: View>: View {
         content
             .padding(Theme.contentPadding)
             .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner))
-            .modifier(Elevation())
+            .shadow(DesignElevation.raised)
     }
 }

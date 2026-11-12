@@ -120,7 +120,7 @@ struct WorkspaceView: View {
                     .frame(width: FocusMotion.sidebarWidth)
                     .frame(maxHeight: .infinity)
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous))
-                    .shadow(.sidebar)
+                    .shadow(DesignElevation.floating)
                     .padding(.leading, Self.previewInset).padding(.vertical, Self.previewVerticalInset)
                     .onHover { sidebarHover(.panel, inside: $0) }
                     .transition(.move(edge: .leading).combined(with: .opacity))

@@ -90,7 +90,7 @@ struct RibbonSignatureView: View {
                                               startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: Theme.hairline)
                 .allowsHitTesting(false).accessibilityHidden(true)
         }
-        .shadow(.card)
+        .shadow(DesignElevation.floating)
         .task(id: presentationID) { await play() }
         .onChange(of: reduceMotion) { _, value in if value { stage = SignatureMotion.missionStage } }
         .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $formUnavailable) {
