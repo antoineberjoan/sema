@@ -6,7 +6,13 @@ Lis ce fichier en entier avant toute action. En cas de doute ou de contradiction
 
 Référence : dépôt `antoineberjoan/sophos`. Lire le `SKILL.md` d'un skill à sa source avant le travail correspondant. Ne pas recopier ses règles ici.
 
-<!-- carte:skills:debut -->
+<!-- carte:skills:debut — fabriqué depuis projet.yml par sophos/outils/carte.mjs ; ne pas modifier à la main -->
+| Skill | Version |
+| --- | --- |
+| [penser](https://antoineberjoan.github.io/sophos/skills/penser/SKILL.html) | 1.4.0 |
+| [construire](https://antoineberjoan.github.io/sophos/skills/construire/SKILL.html) | 0.9.0 |
+| [expliquer](https://antoineberjoan.github.io/sophos/skills/expliquer/SKILL.html) | 0.3.0 |
+| [concevoir](https://antoineberjoan.github.io/sophos/skills/concevoir/SKILL.html) | 0.5.0 |
 <!-- carte:skills:fin -->
 
 - `penser` : la façon de travailler avec Antoine. Une direction qu'il tranche est une décision de ce dépôt, dans `docs/decisions/`.

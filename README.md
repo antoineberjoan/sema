@@ -1,4 +1,14 @@
-<!-- carte:en-tete:debut -->
+<!-- carte:en-tete:debut — fabriqué depuis projet.yml par sophos/outils/carte.mjs ; ne pas modifier à la main -->
+# sema
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/carte/banniere-sombre.svg">
+  <img alt="sema : Une application macOS native pour consulter des séries économiques, suivre ses favoris et définir des seuils." src=".github/carte/banniere-claire.svg" width="100%">
+</picture>
+
+**Raison d'être** Que chacun garde à portée de main les repères économiques publics qui comptent pour lui, avec leur source, leur unité et leur date.
+
+**État** actif · **Sorte** application macOS · **Adresse** [getsema.app](https://getsema.app)
 <!-- carte:en-tete:fin -->
 
 ## Ce que c'est
@@ -34,7 +44,8 @@ Quand l'app s'ouvre, une icône apparaît dans la barre de menus. Les préféren
 
 ## Liens avec les autres projets
 
-<!-- carte:liens:debut -->
+<!-- carte:liens:debut — fabriqué depuis projet.yml par sophos/outils/carte.mjs ; ne pas modifier à la main -->
+Aucun lien avec un autre dépôt.
 <!-- carte:liens:fin -->
 
 ## Règles et décisions

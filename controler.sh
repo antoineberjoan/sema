@@ -6,3 +6,4 @@ cd "$(dirname "$0")"
 python3 scripts/guardrails.py
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/tests -p 'test_*.py'
 node .claude/sophos/garde.mjs --verifier
+node .claude/sophos/politique.mjs --verifier
