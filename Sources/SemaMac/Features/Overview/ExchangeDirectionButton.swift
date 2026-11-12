@@ -6,7 +6,7 @@ import MarketCore
 struct ExchangeDirectionButton: View {
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
-    private var accent: Color { DesignColor.accent(palette) }
+    private var accentText: Color { DesignColor.accentText(palette) }
     let series: MarketSeries
 
     var body: some View {
@@ -15,8 +15,8 @@ struct ExchangeDirectionButton: View {
             let target = inverted ? pair.publishedDescription : pair.inverseDescription
             Button { store.toggleExchangeRateDirection(series) } label: {
                 Image(systemName: "arrow.left.arrow.right")
-                    .typeRole(.small).foregroundStyle(inverted ? accent : Color.secondary)
-                    .frame(width: Theme.iconButtonSize, height: Theme.iconButtonSize).contentShape(Rectangle())
+                    .typeRole(.small).foregroundStyle(inverted ? accentText : DesignColor.textMuted)
+                    .frame(width: DesignIcon.buttonSize, height: DesignIcon.buttonSize).contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .disabled(!series.canInvertExchangeRate)

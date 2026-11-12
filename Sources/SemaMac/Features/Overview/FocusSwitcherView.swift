@@ -5,15 +5,12 @@ import MarketCore
 
 struct FocusSwitcherView: View {
     private static let panelMaxWidth: CGFloat = 700
-    private static let panelInset = Spacing.s48
-    private static let panelSpacing = Spacing.s12
-    private static let tilesPadding = Spacing.s12
-    private static let strokeOpacity = 0.08
-    private static let contrastStrokeOpacity = 0.6
-    private static let selectedStrokeOpacity = 0.6
+    private static let panelInset = DesignSpace.pageInsetWide
+    private static let tilesPadding = DesignSpace.menuInset
     private static let tileWidth: CGFloat = 166
-    private static let tilePadding = Spacing.s16
-    private static let tileSpacing = Spacing.s16
+    private static let tilePadding = DesignSpace.cardInset
+    private static let tileSpacing = DesignSpace.titleGap
+    private static let tilesSpacing = DesignSpace.itemGap
     private static let nameLines = 2
     private static let nameHeight: CGFloat = 32
     private static let valueMinimumScale: CGFloat = 0.75
@@ -25,31 +22,29 @@ struct FocusSwitcherView: View {
     let choose: (MarketSeries) -> Void
 
     var body: some View {
-        VStack(spacing: Self.panelSpacing) {
-            ScrollViewReader { proxy in
-                ScrollView(.horizontal) {
-                    HStack(spacing: Theme.minorSpacing) {
-                        ForEach(store.followedSeries) { item in
-                            tile(item).id(item.id)
-                        }
-                    }.padding(Self.tilesPadding)
-                }
-                .scrollIndicators(.hidden)
-                .onAppear { proxy.scrollTo(selection, anchor: .center) }
-                .onChange(of: selection) { _, id in
-                    withAnimation(reduceMotion ? nil : FocusSwitcherMotion.selection) { proxy.scrollTo(id, anchor: .center) }
-                }
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal) {
+                HStack(spacing: Self.tilesSpacing) {
+                    ForEach(store.followedSeries) { item in
+                        tile(item).id(item.id)
+                    }
+                }.padding(Self.tilesPadding)
+            }
+            .scrollIndicators(.hidden)
+            .onAppear { proxy.scrollTo(selection, anchor: .center) }
+            .onChange(of: selection) { _, id in
+                withAnimation(reduceMotion ? nil : FocusSwitcherMotion.selection) { proxy.scrollTo(id, anchor: .center) }
             }
         }
         .frame(maxWidth: Self.panelMaxWidth)
         .background {
-            let shape = RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
-            if reduceTransparency || contrast == .increased { shape.fill(Theme.surface) }
+            let shape = RoundedRectangle(cornerRadius: DesignRadius.window, style: .continuous)
+            if reduceTransparency || contrast == .increased { shape.fill(DesignColor.surfaceRaised) }
             else { shape.fill(.regularMaterial) }
         }
         .overlay {
-            RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
-                .strokeBorder(Color.primary.opacity(contrast == .increased ? Self.contrastStrokeOpacity : Self.strokeOpacity), lineWidth: Theme.hairline)
+            RoundedRectangle(cornerRadius: DesignRadius.window, style: .continuous)
+                .strokeBorder(DesignColor.rule, lineWidth: DesignBorder.width)
                 .allowsHitTesting(false)
         }
         .elevation(DesignElevation.window)
@@ -66,19 +61,20 @@ struct FocusSwitcherView: View {
                     .lineLimit(Self.nameLines).multilineTextAlignment(.leading).frame(height: Self.nameHeight, alignment: .topLeading)
                 Text(MarketFormat.value(displayed)).typeRole(.figure)
                     .lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
+                // Surface translucide : le texte secondaire garde le style système (décision surfaces-translucides).
                 Text(MarketFormat.change(displayed, period: store.period(for: item)))
                     .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
             }
-            .foregroundStyle(.primary).frame(width: Self.tileWidth, alignment: .leading).padding(Self.tilePadding)
-            .background(selected ? DesignColor.accent(store.palette).opacity(Theme.selectionOpacity) : .clear,
-                in: RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous))
+            .foregroundStyle(DesignColor.text).frame(width: Self.tileWidth, alignment: .leading).padding(Self.tilePadding)
+            .background(selected ? DesignColor.selection(store.palette) : .clear,
+                in: RoundedRectangle(cornerRadius: DesignRadius.block, style: .continuous))
             .overlay {
                 if selected {
-                    RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous)
-                        .strokeBorder(DesignColor.accent(store.palette).opacity(Self.selectedStrokeOpacity), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: DesignRadius.block, style: .continuous)
+                        .strokeBorder(DesignColor.accent(store.palette), lineWidth: DesignBorder.width)
                 }
             }
-            .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
+            .contentShape(RoundedRectangle(cornerRadius: DesignRadius.block))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))")

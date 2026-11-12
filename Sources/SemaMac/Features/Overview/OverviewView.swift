@@ -1,11 +1,12 @@
 // Rubrique Panorama : le repère sélectionné en mode Focus et le passage rapide aux autres.
+import SemaDesign
 import SwiftUI
 
 struct OverviewView: View {
-    private static let sectionSpacing = Spacing.s32
-    private static let switcherSpacing = Spacing.s24
-    private static let switcherBottomPadding = Spacing.s10
-    private static let switcherInset = Spacing.s2
+    private static let sectionSpacing = DesignSpace.sectionGap
+    private static let switcherSpacing = DesignSpace.groupGap
+    private static let switcherBottomPadding = DesignSpace.frameInset
+    private static let switcherInset = DesignSpace.markInset
     private static let emptyMinHeight: CGFloat = 450
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
@@ -22,10 +23,10 @@ struct OverviewView: View {
                                 let current = item.id == selected.id
                                 Button { store.show(item) } label: {
                                     Text(MarketFormat.name(store.displayedSeries(item)))
-                                        .typeRole(.small).foregroundStyle(current ? .primary : .secondary)
+                                        .typeRole(.small).foregroundStyle(current ? DesignColor.text : DesignColor.textMuted)
                                         .padding(.bottom, Self.switcherBottomPadding)
                                         .overlay(alignment: .bottom) {
-                                            if current { Rectangle().frame(height: 1).foregroundStyle(.primary) }
+                                            if current { Rectangle().frame(height: DesignBorder.width).foregroundStyle(DesignColor.text) }
                                         }
                                 }
                                 .buttonStyle(.plain).accessibilityAddTraits(current ? [.isSelected] : [])
