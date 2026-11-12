@@ -20,32 +20,31 @@ private enum WelcomeMotion {
 private enum WelcomeLayout {
     static let windowWidth: CGFloat = 640
     static let windowHeight: CGFloat = 700
-    static let windowPadding = Spacing.s32
+    static let windowPadding = DesignSpace.pageInsetNarrow
     static let signalSize: CGFloat = 44
     static let heroSignalSize: CGFloat = 88
-    static let heroSpacing = Spacing.s32
+    static let heroSpacing = DesignSpace.sectionGap
     static let dotSize: CGFloat = 6
     static let activeDotWidth: CGFloat = 18
-    static let dotSpacing = Spacing.s6
-    static let dotOpacity = 0.2
-    static let titleSpacing = Spacing.s10
-    static let errorSpacing = Spacing.s12
-    static let errorTopPadding = Spacing.s12
-    static let stepSpacing = Spacing.s24
-    static let gridSpacing = Spacing.s12
+    static let dotSpacing = DesignIcon.gap
+    static let titleSpacing = DesignSpace.fieldGap
+    static let errorSpacing = DesignSpace.fieldGap
+    static let errorTopPadding = DesignSpace.menuInset
+    static let stepSpacing = DesignSpace.groupGap
+    static let gridSpacing = DesignSpace.itemGap
     static let featureColumnWidth: CGFloat = 420
-    static let featureSpacing = Spacing.s24
-    static let featureRowSpacing = Spacing.s16
-    static let featureTextSpacing = Spacing.s4
+    static let featureSpacing = DesignSpace.groupGap
+    static let featureRowSpacing = DesignSpace.itemGap
+    static let featureTextSpacing = DesignSpace.titleGap
     static let featureSymbolWidth: CGFloat = 32
-    static let tileSpacing = Spacing.s12
-    static let tileTextSpacing = Spacing.s4
-    static let tilePadding = Spacing.s16
+    static let tileSpacing = DesignSpace.itemGap
+    static let tileTextSpacing = DesignSpace.titleGap
+    static let tilePadding = DesignSpace.cardInset
     static let tileMinHeight: CGFloat = 64
-    static let tileBorder: CGFloat = 1.5
-    static let previewSpacing = Spacing.s12
+    static let tileBorder = DesignBorder.width
+    static let previewSpacing = DesignSpace.itemGap
     static let previewCardWidth: CGFloat = 176
-    static let footerSpacing = Spacing.s12
+    static let footerSpacing = DesignSpace.fieldGap
     static let signalWidth = SignalPath.stroke * signalSize / SignalPath.viewBox
     static let heroSignalWidth = SignalPath.stroke * heroSignalSize / SignalPath.viewBox
 }
@@ -93,6 +92,7 @@ struct OnboardingView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
+    private var accentText: Color { DesignColor.accentText(palette) }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let initialSelection: [String]
     let selectSeries: ([String]) -> Bool
@@ -139,16 +139,16 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            header.padding(.bottom, Theme.majorSpacing)
+            header.padding(.bottom, DesignSpace.groupGap)
 
             if step > 0 {
                 VStack(alignment: .leading, spacing: WelcomeLayout.titleSpacing) {
                     Text(title).typeRole(.title)
                         .accessibilityAddTraits(.isHeader)
-                    Text(detail).typeRole(.body).foregroundStyle(.secondary)
+                    Text(detail).typeRole(.body).foregroundStyle(DesignColor.textMuted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(.bottom, Theme.majorSpacing)
+                .padding(.bottom, DesignSpace.groupGap)
             }
 
             Group {
@@ -164,7 +164,7 @@ struct OnboardingView: View {
 
             if let selectionError {
                 HStack(alignment: .top, spacing: WelcomeLayout.errorSpacing) {
-                    Text(selectionError).typeRole(.caption).foregroundStyle(.red)
+                    Text(selectionError).typeRole(.caption).foregroundStyle(DesignColor.danger)
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 0)
                     Button("Fermer") { store.isOnboardingPresented = false }
@@ -173,10 +173,10 @@ struct OnboardingView: View {
                 }
                 .padding(.top, WelcomeLayout.errorTopPadding)
             }
-            footer.padding(.top, Theme.majorSpacing)
+            footer.padding(.top, DesignSpace.groupGap)
         }
         .padding(WelcomeLayout.windowPadding).frame(width: WelcomeLayout.windowWidth, height: WelcomeLayout.windowHeight)
-        .background(Theme.background)
+        .background(DesignColor.background)
         .interactiveDismissDisabled()
         .task {
             await store.checkWebstatKey()
@@ -186,7 +186,7 @@ struct OnboardingView: View {
 
     private var header: some View {
         HStack(alignment: .center) {
-            HStack(spacing: Theme.minorSpacing) {
+            HStack(spacing: DesignIcon.gap) {
                 WelcomeSignal(progress: reduceMotion ? 1 : drawProgress, lineWidth: WelcomeLayout.signalWidth)
                     .foregroundStyle(accent).frame(width: WelcomeLayout.signalSize, height: WelcomeLayout.signalSize)
                 Text("sema").typeRole(.wordmark)
@@ -195,7 +195,7 @@ struct OnboardingView: View {
             Spacer()
             HStack(spacing: WelcomeLayout.dotSpacing) {
                 ForEach(0..<Self.stepCount, id: \.self) { index in
-                    Capsule().fill(index == step ? accent : Color.secondary.opacity(WelcomeLayout.dotOpacity))
+                    Capsule().fill(index == step ? accent : DesignColor.ruleHover)
                         .frame(width: index == step ? WelcomeLayout.activeDotWidth : WelcomeLayout.dotSize, height: WelcomeLayout.dotSize)
                 }
             }
@@ -211,16 +211,16 @@ struct OnboardingView: View {
             VStack(spacing: WelcomeLayout.titleSpacing) {
                 Text("Bienvenue dans sema.").typeRole(.title)
                     .accessibilityAddTraits(.isHeader)
-                Text("L’économie bouge. Gardez vos repères.").typeRole(.body).foregroundStyle(.secondary)
+                Text("L’économie bouge. Gardez vos repères.").typeRole(.body).foregroundStyle(DesignColor.textMuted)
             }
             VStack(alignment: .leading, spacing: WelcomeLayout.featureSpacing) {
                 ForEach(WelcomeFeature.all) { feature in
                     HStack(alignment: .top, spacing: WelcomeLayout.featureRowSpacing) {
-                        Image(systemName: feature.symbol).typeRole(.section).foregroundStyle(accent)
+                        Image(systemName: feature.symbol).typeRole(.section).foregroundStyle(accentText)
                             .frame(width: WelcomeLayout.featureSymbolWidth).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: WelcomeLayout.featureTextSpacing) {
                             Text(feature.title).typeRole(.heading)
-                            Text(feature.detail).typeRole(.caption).foregroundStyle(.secondary)
+                            Text(feature.detail).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -239,7 +239,7 @@ struct OnboardingView: View {
             }
             VStack(alignment: .leading, spacing: WelcomeLayout.previewSpacing) {
                 Text("Aperçu du bandeau, avec des exemples fictifs.")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 preview
             }
         }
@@ -254,9 +254,9 @@ struct OnboardingView: View {
             }
             if previewSeries.isEmpty {
                 Text("Choisissez un thème pour composer votre bandeau.")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner))
+                    .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
             }
         }
         .frame(maxWidth: .infinity, minHeight: MenuRibbonLayout.cardHeight, maxHeight: MenuRibbonLayout.cardHeight, alignment: .leading)
@@ -280,27 +280,27 @@ struct OnboardingView: View {
         let selected = isSelected(collection)
         return Button { toggle(collection) } label: {
             HStack(spacing: WelcomeLayout.tileSpacing) {
-                Image(systemName: collection.symbol).typeRole(.section).foregroundStyle(accent)
+                Image(systemName: collection.symbol).typeRole(.section).foregroundStyle(accentText)
                     .frame(width: WelcomeLayout.featureSymbolWidth).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: WelcomeLayout.tileTextSpacing) {
                     Text(collection.title).typeRole(.label)
-                    Text(collection.subtitle).typeRole(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    Text(collection.subtitle).typeRole(.caption).foregroundStyle(DesignColor.textMuted).lineLimit(1)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: selected ? "checkmark.circle.fill" : "circle").typeRole(.section)
-                    .foregroundStyle(selected ? accent : Color.secondary.opacity(WelcomeLayout.dotOpacity))
+                    .foregroundStyle(selected ? accent : DesignColor.textMuted)
                     .accessibilityHidden(true)
             }
             .padding(WelcomeLayout.tilePadding)
             .frame(maxWidth: .infinity, minHeight: WelcomeLayout.tileMinHeight, alignment: .leading)
-            .background(selected ? accent.opacity(Theme.selectionOpacity) : Theme.surface,
-                        in: RoundedRectangle(cornerRadius: Theme.cardCorner))
+            .background(selected ? DesignColor.selection(palette) : DesignColor.surfaceRaised,
+                        in: RoundedRectangle(cornerRadius: DesignRadius.block))
             .overlay {
-                RoundedRectangle(cornerRadius: Theme.cardCorner)
+                RoundedRectangle(cornerRadius: DesignRadius.block)
                     .strokeBorder(selected ? accent : Color.clear, lineWidth: WelcomeLayout.tileBorder)
             }
             .elevation(DesignElevation.raised)
-            .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
+            .contentShape(RoundedRectangle(cornerRadius: DesignRadius.block))
         }
         .buttonStyle(PressStyle())
         .accessibilityLabel(collection.title)
@@ -323,7 +323,7 @@ struct OnboardingView: View {
             switch step {
             case 0:
                 Button("Passer", action: complete).keyboardShortcut(.cancelAction)
-                    .buttonStyle(.borderless).foregroundStyle(.secondary)
+                    .buttonStyle(.borderless).foregroundStyle(DesignColor.textMuted)
                 Spacer()
                 Button("Continuer") { go(to: 1) }
                     .keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
