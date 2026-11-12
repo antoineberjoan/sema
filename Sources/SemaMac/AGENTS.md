@@ -2,7 +2,7 @@
 
 - macOS 14+, Swift 6, SwiftUI natif ; AppKit uniquement pour un comportement macOS précis. Préférer les composants Apple.
 - Les mises à jour UI ont lieu sur le `MainActor`. Fenêtre et bandeau partagent `AppStore`, sans deuxième état métier.
-- `App` orchestre, `Features` présente et émet les actions, `Style` adapte les jetons de `SemaDesign` à SwiftUI, `components` porte les composants partagés, `Infrastructure` porte les effets macOS. Ne pas déplacer un calcul métier dans une vue.
+- `App` orchestre, `Features` présente et émet les actions, `Components` porte les composants partagés, `Common` porte ce que plusieurs écrans partagent (formats d'affichage), `Infrastructure` porte les effets macOS. Les jetons de design viennent du module `SemaDesign`. Ne pas déplacer un calcul métier dans une vue.
 - Pour le design, les textes visibles et le mouvement, appliquer le skill `concevoir` de Sophos et lire les décisions de direction visuelle dans `docs/decisions/`. Interface Craft s’applique sans importer ses dépendances React dans Swift.
 - Animations à constantes nommées, interruptibles, compatibles avec Réduire les animations. Respecter aussi Réduire la transparence et Augmenter le contraste.
 - Notifications désactivées jusqu’à activation par l’utilisateur. La démonstration des alertes n’est pas un service de surveillance ; aucune promesse de suivi app quittée ou Mac en veille.

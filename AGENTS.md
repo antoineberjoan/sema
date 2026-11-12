@@ -49,7 +49,7 @@ Référence : `patron/structure.md` de Sophos. Chaque sorte de code a une forme 
 | Connecteur | `Sources/MarketCore/Webstat`, `Sdmx`, `NewYorkFed`, `WorldBank`, `Fred`, `TwelveData`, `AlphaVantage`, `Claude`, `Gdelt`, `CentralBankFeeds` ; `Sources/SemaMac/Infrastructure/Keychain`, `Notifications`, `LoginItem`, `GlobalShortcuts`, `AppleIntelligence`, `Feedback` |
 | Module d'écran | `Sources/SemaMac/Features/*` |
 
-En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Le détail est dans `docs/decisions/2026-11-12-forme-swift-des-unites.md`. La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés.
+En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Cette forme est décrite dans `docs/decisions/2026-11-12-forme-swift-des-unites.md` (statut : proposée). La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés. Les dossiers `Common/` de `MarketCore` et de `SemaMac` sont au niveau du domaine, hors unité : ils portent ce que plusieurs unités partagent.
 
 ## Bibliothèque de composants
 
@@ -67,6 +67,7 @@ Une information vit à un seul endroit. Si deux sources se contredisent, arrête
 | Ce qu'est le projet | `docs/fondation.md` |
 | Périmètre du produit | `docs/PRODUCT.md` |
 | Décisions | `docs/decisions/` |
+| Sources de données, catalogues publics, personnalisation | `docs/DATA-SOURCES.md`, `docs/PUBLIC-CATALOGUES.md`, `docs/PERSONALIZATION.md` |
 | Mots du métier | `docs/lexique.md` |
 | Marque | `Resources/Brand/` |
 | Carte du dépôt | `projet.yml` |

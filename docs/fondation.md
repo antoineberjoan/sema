@@ -4,7 +4,7 @@ Ce document dit ce qu'est sema, pour une personne qui ne l'a jamais vu.
 
 ## Nom
 
-**sema**, toujours en minuscules dans les textes visibles. Le dépôt n'écrit pas l'origine du nom : à compléter par Antoine.
+**sema**, toujours en minuscules dans les textes visibles.
 
 ## Raison d'être
 
