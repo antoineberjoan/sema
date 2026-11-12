@@ -109,7 +109,7 @@ struct WebstatCatalogTests {
         let filter = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "where" }?.value
         #expect(filter == "series_key = 'HICP.M.FR.N.000000.4D0.INX'")
         let data = Data("{\"total_count\":3,\"results\":[{\"series_key\":\"TEST.M.FR\",\"unit\":\"IX\"}]}".utf8)
-        let page = try WebstatClient.parseSeriesPage(data, offset: 1)
+        let page = try WebstatMapping.seriesPage(data, offset: 1)
         #expect(page.total == 3)
         #expect(page.hasMore)
         #expect(page.items[0].unit == .index)
@@ -127,10 +127,10 @@ struct WebstatCatalogTests {
         #expect(!parameters.contains { ["limit", "offset"].contains($0.name) })
         #expect(!url.absoluteString.contains("fixture-key"))
         let rows = Data("[{\"series_key\":\"TEST.M.B\",\"title_fr\":\"B\",\"unit\":\"IX\"},{\"series_key\":\"TEST.M.A\",\"title_fr\":\"A\",\"freq\":\"M\"}]".utf8)
-        let summaries = try WebstatClient.parseSummaryExport(rows)
+        let summaries = try WebstatMapping.summaryExport(rows)
         #expect(summaries.map(\.key) == ["TEST.M.B", "TEST.M.A"])
         #expect(summaries[1].definition == "A")
-        #expect(throws: (any Error).self) { _ = try WebstatClient.parseSummaryExport(Data("[{\"series_key\":\"TEST.M.A\"},{\"series_key\":\"TEST.M.A\"}]".utf8)) }
+        #expect(throws: (any Error).self) { _ = try WebstatMapping.summaryExport(Data("[{\"series_key\":\"TEST.M.A\"},{\"series_key\":\"TEST.M.A\"}]".utf8)) }
     }
 
     @Test func observationsKeepSourcePeriodsAndNewestRevisionWithMissingValuesExcluded() throws {
@@ -140,7 +140,7 @@ struct WebstatCatalogTests {
          {"series_key":"TEST.Q.FR.A","time_period_start":"2026-04-01","time_period_end":"2026-06-30","obs_value":null,"obs_status":"M"},
          {"series_key":"OTHER.M.FR","time_period_start":"2026-04-01","time_period_end":"2026-04-30","obs_value":999}]
         """.utf8)
-        let points = try WebstatClient.parseObservations(data, expectedKey: "TEST.Q.FR.A", now: Date(timeIntervalSince1970: 1_800_000_000))
+        let points = try WebstatMapping.observations(data, expectedKey: "TEST.Q.FR.A", now: Date(timeIntervalSince1970: 1_800_000_000))
         let value = try descriptor().series(observations: points)
         #expect(value.observations.count == 1)
         #expect(value.latest?.value == Decimal(string: "-1.25"))
@@ -153,19 +153,19 @@ struct WebstatCatalogTests {
         legacy.schemaVersion = 1
         let migrated = try legacy.migrated()
         #expect(migrated.schemaVersion == 2)
-        #expect(migrated.favoriteIDs.contains(WebstatClient.canonicalID("fr10")))
+        #expect(migrated.favoriteIDs.contains(WebstatStarter.canonicalID("fr10")))
         #expect(migrated.favoriteIDs.contains("fund-i-eur"))
         #expect(migrated.alerts[0].id == rule.id)
         #expect(migrated.alerts[0].lastEvaluatedAt == rule.lastEvaluatedAt)
-        #expect(migrated.alerts[0].seriesID == WebstatClient.canonicalID("fr10"))
+        #expect(migrated.alerts[0].seriesID == WebstatStarter.canonicalID("fr10"))
         #expect(migrated.onboardingCompleted == true)
     }
 
     @Test func versionTwoKeepsEmptyAndDeduplicatesCanonicalSelection() throws {
         let empty = AppPreferences(followedSeriesIDs: [])
         #expect(try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(empty)).followedSeriesIDs.isEmpty)
-        let duplicate = AppPreferences(followedSeriesIDs: ["fr10", WebstatClient.canonicalID("fr10"), "eurusd"])
-        #expect(try duplicate.migrated().followedSeriesIDs == [WebstatClient.canonicalID("fr10"), WebstatClient.canonicalID("eurusd")])
+        let duplicate = AppPreferences(followedSeriesIDs: ["fr10", WebstatStarter.canonicalID("fr10"), "eurusd"])
+        #expect(try duplicate.migrated().followedSeriesIDs == [WebstatStarter.canonicalID("fr10"), WebstatStarter.canonicalID("eurusd")])
     }
 
     @Test func migrationIsAtomicAndKeepsOriginalFile() throws {
@@ -177,7 +177,7 @@ struct WebstatCatalogTests {
         try old.write(to: file)
         let store = PreferencesRepository(fileURL: file)
         let migrated = try store.load()
-        #expect(migrated.followedSeriesIDs.count == WebstatClient.starterIDs.count)
+        #expect(migrated.followedSeriesIDs.count == WebstatStarter.ids.count)
         #expect(try Data(contentsOf: file.appendingPathExtension("v1-backup")) == old)
         #expect(try store.load() == migrated)
     }

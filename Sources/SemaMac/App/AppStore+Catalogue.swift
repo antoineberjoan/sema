@@ -72,7 +72,7 @@ extension AppStore {
                     let known = Set(catalogueResults.map(\.key)); catalogueResults += resolvedItems.filter { !known.contains($0.key) }
                 } else {
                     // Prépendre les séries starters (favoris) si pas de recherche texte
-                    let starters = search.query.isEmpty ? WebstatClient.starterSeries.compactMap { series in
+                    let starters = search.query.isEmpty ? WebstatStarter.series.compactMap { series in
                         resolvedItems.first { $0.key == series.id }
                     } : []
                     let starterKeys = Set(starters.map(\.key))

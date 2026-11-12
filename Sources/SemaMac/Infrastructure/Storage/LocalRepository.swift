@@ -35,7 +35,7 @@ struct LocalRepository {
             return cache.series
         }
         let legacy = try JSONDecoder().decode([MarketSeries].self, from: data)
-        let migrated = legacy.map { $0.withID(WebstatClient.canonicalID($0.id)) }
+        let migrated = legacy.map { $0.withID(WebstatStarter.canonicalID($0.id)) }
         let backup = url.appendingPathExtension("v1-backup")
         if !FileManager.default.fileExists(atPath: backup.path) { try data.write(to: backup, options: .atomic) }
         try cacheWebstat(migrated)

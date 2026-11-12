@@ -20,7 +20,7 @@ public enum SeriesEquivalence {
         guard let identity = referenceExchangeRateKey(value) else { return [] }
         let key = String(identity.dropFirst(referencePrefix.count))
         return [
-            ("webstat", URL(string: WebstatClient.catalogueURL + "exr/\(webstatPrefix)\(key)")!),
+            ("webstat", URL(string: WebstatSite.catalogueURL + "exr/\(webstatPrefix)\(key)")!),
             ("ecb", URL(string: ecbDatasetURL + key)!)
         ]
     }

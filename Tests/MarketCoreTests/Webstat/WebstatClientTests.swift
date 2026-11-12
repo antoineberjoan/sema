@@ -27,14 +27,14 @@ struct WebstatClientTests {
 
     @Test
     func starterSeriesCarryNoInventedValues() {
-        let starters = WebstatClient.starterSeries
+        let starters = WebstatStarter.series
         #expect(starters.count == 16)
         #expect(starters.allSatisfy { $0.observations.isEmpty })
     }
 
     @Test
     func decodesExactDecimalsUnitsFrequencyAndSource() throws {
-        let series = try WebstatClient.parse(fixture(), now: now)
+        let series = try WebstatMapping.starterHistory(fixture(), now: now)
         #expect(series.count == 16)
         #expect(Set(series.map(\.id)).count == 16)
         #expect(series.allSatisfy { $0.sourceURL?.host == "webstat.banque-france.fr" })
@@ -54,7 +54,7 @@ struct WebstatClientTests {
         {"series_key":"EXR.D.USD.EUR.SP00.A","time_period_start":"2099-01-01","time_period_end":"2099-01-01","obs_value":10,"obs_status":"A"},
         {"series_key":"ESTR.B.EU000A2X2A25.WT","time_period_start":"2026-10-14","time_period_end":"2026-10-14","obs_value":-0.55,"obs_status":"A"}
         """
-        let series = try WebstatClient.parse(fixture(extraRows: rows), now: now)
+        let series = try WebstatMapping.starterHistory(fixture(extraRows: rows), now: now)
         #expect(series.first { $0.id == "eurusd" }?.observations.count == 1)
         #expect(series.first { $0.id == "estr" }?.latest?.value == Decimal(string: "-0.55"))
     }
@@ -65,7 +65,7 @@ struct WebstatClientTests {
         {"series_key":"MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O","time_period_start":"2026-10-01","time_period_end":"2026-10-31","obs_value":1.7,"obs_status":"A","updated_at":"2026-10-02T08:00:00.125+00:00"},
         {"series_key":"MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O","time_period_start":"2026-10-01","time_period_end":"2026-10-31","obs_value":1.5,"obs_status":"E","updated_at":"2026-10-01T08:00:00+00:00"}
         """
-        let series = try WebstatClient.parse(fixture(extraRows: rows), now: now)
+        let series = try WebstatMapping.starterHistory(fixture(extraRows: rows), now: now)
         let livret = try #require(series.first { $0.id == "livreta" })
         #expect(livret.latest?.value == Decimal(string: "1.7"))
         #expect((livret.latest?.periodEnd ?? .distantPast) > now)
@@ -91,7 +91,7 @@ struct WebstatClientTests {
     @Test
     func incompleteOrInvalidExportDoesNotBecomeAConnectedSource() {
         for body in ["[]", "{}", "broken", "[{\"series_key\":\"x\"}]"] {
-            #expect(throws: (any Error).self) { _ = try WebstatClient.parse(Data(body.utf8), now: now) }
+            #expect(throws: (any Error).self) { _ = try WebstatMapping.starterHistory(Data(body.utf8), now: now) }
         }
     }
 
@@ -99,7 +99,7 @@ struct WebstatClientTests {
     func handlesKeyQuotaAndServerErrorsWithoutEchoingServerBody() {
         for status in [401, 403, 404, 429, 500] {
             do {
-                _ = try WebstatClient.parse(Data("private-key-echo".utf8), statusCode: status, now: now)
+                _ = try WebstatMapping.starterHistory(Data("private-key-echo".utf8), statusCode: status, now: now)
                 Issue.record("An HTTP error was accepted")
             } catch {
                 #expect(!error.localizedDescription.contains("private-key-echo"))
@@ -133,7 +133,7 @@ struct WebstatClientTests {
         let previous = try JSONDecoder().decode(MarketSeries.self, from: Data(old.utf8))
         #expect(previous.frequency == nil)
         #expect(previous.latest?.updatedAt == nil)
-        let current = try WebstatClient.parse(fixture(), now: now)
+        let current = try WebstatMapping.starterHistory(fixture(), now: now)
         #expect(try JSONDecoder().decode([MarketSeries].self, from: JSONEncoder().encode(current)) == current)
     }
 

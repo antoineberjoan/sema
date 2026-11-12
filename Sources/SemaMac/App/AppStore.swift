@@ -6,12 +6,12 @@ import MarketCore
 
 @Observable @MainActor
 final class AppStore {
-    var series = WebstatClient.starterSeries
+    var series = WebstatStarter.series
     var preferences = AppPreferences()
     var section: WorkspaceSection = .overview
     var settingsTab: SettingsTab = .general
     var category: SeriesCategory = .markets
-    var selectedSeriesID = WebstatClient.canonicalID("eurusd")
+    var selectedSeriesID = WebstatStarter.canonicalID("eurusd")
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -101,13 +101,13 @@ final class AppStore {
         do {
             let cached = try storage.cachedWebstat()
             if !cached.isEmpty {
-                merge(cached.map { $0.withID(WebstatClient.canonicalID($0.id)) })
+                merge(cached.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
                 hasLoadedWebstat = cached.contains { $0.sourceURL?.host == "webstat.banque-france.fr" }
                 status = "Repères conservés localement · consultez la période et la date de publication."
             } else {
                 let previousRates = try storage.cachedRates()
                 if !previousRates.isEmpty {
-                    merge(previousRates.map { $0.withID(WebstatClient.canonicalID($0.id)) })
+                    merge(previousRates.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
                     status = "Ancien cache BCE · connectez Webstat dans les réglages pour actualiser."
                 }
             }
@@ -130,7 +130,7 @@ final class AppStore {
         return true
     }
 
-    var starterSeries: [MarketSeries] { WebstatClient.starterSeries }
+    var starterSeries: [MarketSeries] { WebstatStarter.series }
     var storedFollowedSeries: [MarketSeries] { preferences.followedSeriesIDs.compactMap { id in series.first { $0.id == id } } }
     /// Seuls les repères qui ont des valeurs sont visibles ; les autres restent suivis et reviennent avec leurs données.
     var followedSeries: [MarketSeries] { SeriesEquivalence.unique(storedFollowedSeries).filter { !$0.observations.isEmpty } }
@@ -144,9 +144,9 @@ final class AppStore {
     @discardableResult func setProfile(_ profile: LocalProfile) -> Bool { mutatePreferences { $0.profile = profile } }
 
     @discardableResult func followStarterSeries(ids: [String]) -> Bool {
-        let allowed = Set(WebstatClient.starterIDs)
+        let allowed = Set(WebstatStarter.ids)
         var seen: Set<String> = []
-        let chosen = ids.map(WebstatClient.canonicalID).filter { allowed.contains($0) && seen.insert($0).inserted }
+        let chosen = ids.map(WebstatStarter.canonicalID).filter { allowed.contains($0) && seen.insert($0).inserted }
         let result = mutatePreferences { value in
             value.followedSeriesIDs = chosen + value.followedSeriesIDs.filter { !allowed.contains($0) }
             for index in value.alerts.indices where allowed.contains(value.alerts[index].seriesID) && !chosen.contains(value.alerts[index].seriesID) {

@@ -20,9 +20,9 @@ extension AppStore {
             do {
                 let key = try await requiredKey()
                 let current = try await WebstatClient().descriptor(apiKey: key, key: descriptor.key)
-                guard descriptor.usesSameMeasurement(as: current) else { throw WebstatClient.ClientError.metadataChanged }
+                guard descriptor.usesSameMeasurement(as: current) else { throw WebstatError.metadataChanged }
                 let descriptor = current.resolving(labels: descriptor.labels)
-                guard let first = descriptor.firstObservationStart else { throw WebstatClient.ClientError.incompleteData }
+                guard let first = descriptor.firstObservationStart else { throw WebstatError.incompleteData }
                 var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!
                 var end = reload ? min(descriptor.lastPeriod ?? .now, .now) : item.observations.first?.date ?? .now
                 var points = reload ? [] : item.observations

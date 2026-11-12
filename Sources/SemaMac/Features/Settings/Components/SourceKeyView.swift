@@ -15,7 +15,7 @@ struct SourceKeyView: View {
     private var isFRED: Bool { source == StatisticalSource.fred.rawValue }
     private var isClaude: Bool { source == AppStore.claudeSourceID }
     private var title: String { isClaude ? "Claude" : isFRED ? StatisticalSource.fred.title : provider?.title ?? "Webstat" }
-    private var signupURL: URL { isClaude ? Self.claudeSignupURL : isFRED ? Self.fredSignupURL : provider?.signupURL ?? WebstatClient.loginURL }
+    private var signupURL: URL { isClaude ? Self.claudeSignupURL : isFRED ? Self.fredSignupURL : provider?.signupURL ?? WebstatSite.loginURL }
     private var connected: Bool {
         isClaude ? store.hasClaudeKey : isFRED ? store.hasFREDKey : provider.map { store.connectedMarkets.contains($0) } ?? store.hasWebstatKey
     }

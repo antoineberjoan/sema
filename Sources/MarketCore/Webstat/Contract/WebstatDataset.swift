@@ -11,7 +11,7 @@ public struct WebstatDataset: Codable, Equatable, Sendable, Identifiable {
     public var areaField: String? { ["REF_AREA", "AME_REF_AREA", "ZONE_GEO"].first { dimensionCodelists[$0] != nil }?.lowercased() }
     public var areaCodelist: String? { areaField.flatMap { dimensionCodelists[$0.uppercased()] } }
     public init(raw: [String: WebstatValue]) throws {
-        guard let id = raw["dataset_id"]?.text else { throw WebstatClient.ClientError.invalidData }
+        guard let id = raw["dataset_id"]?.text else { throw WebstatError.invalidData }
         self.id = id
         title = raw["title_fr"]?.text ?? raw["name_fr"]?.text ?? id
         detail = raw["description_fr"]?.text ?? ""

@@ -55,14 +55,14 @@ public struct SeriesExplanation: Equatable, Sendable {
         guard series.unit == .percent else { return nil }
         let key: String
         if series.descriptor == nil, series.statisticalDescriptor == nil {
-            key = WebstatClient.canonicalID(series.id)
+            key = WebstatStarter.canonicalID(series.id)
         } else if let descriptor = series.descriptor,
                   descriptor.unit == .percent, descriptor.multiplier == 0,
                   descriptor.datasetID == descriptor.key.split(separator: ".").first.map(String.init),
                   descriptor.frequencyCode == descriptor.key.split(separator: ".").dropFirst().first.map(String.init) {
             key = descriptor.key
         } else { return nil }
-        return WebstatClient.legacyIDs.first { $0.value == key }?.key
+        return WebstatStarter.legacyIDs.first { $0.value == key }?.key
     }
 
     private static func comparisonChange(_ series: MarketSeries, period: HistoryPeriod) -> Decimal? {

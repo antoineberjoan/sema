@@ -26,7 +26,7 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
         func text(_ field: String) -> String? {
             (raw[field]?.text ?? attributes[field.uppercased()] ?? dimensions[field.uppercased()]).flatMap { $0.isEmpty ? nil : $0 }
         }
-        guard let key = text("series_key"), Self.isValidKey(key) else { throw WebstatClient.ClientError.invalidData }
+        guard let key = text("series_key"), Self.isValidKey(key) else { throw WebstatError.invalidData }
         self.key = key
         datasetID = text("dataset_id") ?? String(key.split(separator: ".").first ?? "")
         title = text("title_fr") ?? text("title_en") ?? key

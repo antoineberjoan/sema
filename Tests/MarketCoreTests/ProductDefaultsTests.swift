@@ -6,7 +6,7 @@ import Testing
 struct ProductDefaultsTests {
     @Test func aNewInstallationProposesFourFavoritesAndFollowsNothing() {
         let preferences = AppPreferences()
-        #expect(preferences.favoriteIDs == Set(["fr10", "ecb", "eurusd", "livreta"].map(WebstatClient.canonicalID)))
+        #expect(preferences.favoriteIDs == Set(["fr10", "ecb", "eurusd", "livreta"].map(WebstatStarter.canonicalID)))
         #expect(preferences.followedSeriesIDs.isEmpty)
     }
 

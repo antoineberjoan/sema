@@ -35,8 +35,8 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = StatisticalSource.inactiveByDefault,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
                 ribbonGlass: RibbonGlassPreferences? = nil, shortcuts: ShortcutPreferences? = nil) {
-        self.favoriteIDs = Set(favoriteIDs.map(WebstatClient.canonicalID))
-        self.followedSeriesIDs = followedSeriesIDs.map(WebstatClient.canonicalID)
+        self.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.canonicalID))
+        self.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.canonicalID)
         self.alerts = alerts
         self.notificationsEnabled = notificationsEnabled
         self.themeID = themeID
@@ -77,7 +77,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         brief = try values.decodeIfPresent(BriefPreferences.self, forKey: .brief)
         // Empty is a valid v2 selection; absence only means legacy v1.
         if schemaVersion > 1 { followedSeriesIDs = try values.decode([String].self, forKey: .followedSeriesIDs) }
-        else { followedSeriesIDs = WebstatClient.starterIDs }
+        else { followedSeriesIDs = WebstatStarter.ids }
     }
 
     public func isSourceEnabled(_ id: String) -> Bool { !(disabledSourceIDs ?? []).contains(id) }
@@ -86,11 +86,11 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         guard (1...Self.currentSchemaVersion).contains(schemaVersion) else { throw PreferencesError.unsupportedVersion(schemaVersion) }
         var value = self
         value.schemaVersion = Self.currentSchemaVersion
-        value.favoriteIDs = Set(favoriteIDs.map(WebstatClient.canonicalID))
+        value.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.canonicalID))
         var seen: Set<String> = []
-        value.followedSeriesIDs = followedSeriesIDs.map(WebstatClient.canonicalID).filter { seen.insert($0).inserted }
+        value.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.canonicalID).filter { seen.insert($0).inserted }
         value.alerts = alerts.map { rule in
-            AlertRule(id: rule.id, seriesID: WebstatClient.canonicalID(rule.seriesID), direction: rule.direction,
+            AlertRule(id: rule.id, seriesID: WebstatStarter.canonicalID(rule.seriesID), direction: rule.direction,
                 threshold: rule.threshold, isEnabled: rule.isEnabled, condition: rule.effectiveCondition,
                 lastEvaluatedAt: rule.lastEvaluatedAt)
         }

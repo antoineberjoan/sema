@@ -71,7 +71,7 @@ private struct WelcomeCollection: Identifiable {
     let subtitle: String
     let symbol: String
     let items: [(id: String, title: String)]
-    var seriesIDs: [String] { items.map { WebstatClient.canonicalID($0.id) } }
+    var seriesIDs: [String] { items.map { WebstatStarter.canonicalID($0.id) } }
 
     static let all: [Self] = [
         .init(id: "rates", title: "Taux & marchés", subtitle: "Le coût de l’argent", symbol: "chart.xyaxis.line",
@@ -110,14 +110,14 @@ struct OnboardingScreen: View {
         _selection = State(initialValue: Set(initialSelection))
     }
 
-    private static let previewExamples = WebstatClient.starterSeries
-    private var suggestions: [MarketSeries] { WebstatClient.starterSeries }
+    private static let previewExamples = WebstatStarter.series
+    private var suggestions: [MarketSeries] { WebstatStarter.series }
 
     /// Une carte d’exemple fictif par thème choisi : le seul endroit où sema montre des valeurs inventées.
     private var previewSeries: [MarketSeries] {
         WelcomeCollection.all.compactMap { collection in
             collection.items.lazy
-                .filter { selection.contains(WebstatClient.canonicalID($0.id)) }
+                .filter { selection.contains(WebstatStarter.canonicalID($0.id)) }
                 .compactMap { item in Self.previewExamples.first { $0.id == item.id } }
                 .first { $0.observations.count > Self.minimumPreviewObservations }
         }
