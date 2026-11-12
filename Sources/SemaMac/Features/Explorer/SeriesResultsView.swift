@@ -4,13 +4,13 @@ import SwiftUI
 import MarketCore
 
 struct SeriesResultsView: View {
-    private static let iconSpacing = Spacing.s12
+    private static let iconSpacing = DesignSpace.fieldGap
     private static let iconWidth: CGFloat = 16
-    private static let textSpacing = Spacing.s4
-    private static let emptyTopPadding = Spacing.s32
+    private static let textSpacing = DesignSpace.titleGap
+    private static let emptyTopPadding = DesignSpace.pageInsetNarrow
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
-    private var accent: Color { DesignColor.accent(palette) }
+    private var accentText: Color { DesignColor.accentText(palette) }
     let results: [MarketSeries]
     @Binding var selectedID: String?
     let height: CGFloat
@@ -19,7 +19,7 @@ struct SeriesResultsView: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(spacing: Theme.rowSpacing) {
+                LazyVStack(spacing: DesignSpace.listGapDense) {
                     ForEach(results) { item in
                         Button { open(item) } label: { row(item) }.buttonStyle(PressStyle()).id(item.id)
                     }
@@ -45,19 +45,19 @@ struct SeriesResultsView: View {
     private func row(_ item: MarketSeries) -> some View {
         HStack(spacing: Self.iconSpacing) {
             Image(systemName: store.isFavorite(item.id) ? "star.fill" : "chart.xyaxis.line")
-                .foregroundStyle(accent).frame(width: Self.iconWidth)
+                .foregroundStyle(accentText).frame(width: Self.iconWidth)
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text(MarketFormat.name(item)).typeRole(.heading)
                 Text(item.subtitle).typeRole(.caption).foregroundStyle(.secondary).lineLimit(1)
             }
-            Spacer(minLength: Theme.minorSpacing)
+            Spacer(minLength: DesignSpace.fieldGap)
             VStack(alignment: .trailing, spacing: Self.textSpacing) {
                 Text(MarketFormat.value(item)).typeRole(.body).monospacedDigit()
                 Text(item.frequency?.title ?? "Fréquence non renseignée").typeRole(.caption).foregroundStyle(.secondary)
             }
         }
-        .padding(Theme.rowPadding).foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading)
-        .background(selectedID == item.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
+        .padding(DesignSpace.rowInset).foregroundStyle(DesignColor.text).frame(maxWidth: .infinity, alignment: .leading)
+        .background(selectedID == item.id ? DesignColor.selection(palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))
         .contentShape(Rectangle())
     }
 }

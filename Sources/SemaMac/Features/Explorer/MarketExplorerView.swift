@@ -1,4 +1,5 @@
 // Présente le catalogue de la source et vérifie ses clôtures avant ajout aux repères.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -39,15 +40,15 @@ struct MarketExplorerView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .task { await store.checkMarketKeys() }
         } else {
-            HStack(alignment: .top, spacing: Theme.majorSpacing) {
-                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
+            HStack(alignment: .top, spacing: DesignSpace.groupGap) {
+                VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
                     TextField("Filtrer le catalogue…", text: $query).textFieldStyle(.roundedBorder)
                         .accessibilityLabel("Filtrer les instruments \(provider.title)")
                         .disabled(catalogue == nil)
                     if catalogueLoading {
                         ProgressView("Chargement du catalogue…").controlSize(.small)
                     } else if let catalogueError {
-                        Text(catalogueError).typeRole(.small).foregroundStyle(.secondary)
+                        Text(catalogueError).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                         Button("Réessayer") { retry = UUID() }
                     }
                     List(selection: $selectedID) {
@@ -59,13 +60,13 @@ struct MarketExplorerView: View {
                         }
                     }.listStyle(.plain)
                     if let catalogue {
-                        Text("\(results.count) instrument\(results.count == 1 ? "" : "s")").typeRole(.micro).foregroundStyle(.secondary)
-                        Text(catalogue.scope).typeRole(.micro).foregroundStyle(.secondary)
+                        Text("\(results.count) instrument\(results.count == 1 ? "" : "s")").typeRole(.micro).foregroundStyle(DesignColor.textMuted)
+                        Text(catalogue.scope).typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                     }
-                    Text(provider.quota).typeRole(.micro).foregroundStyle(.secondary)
+                    Text(provider.quota).typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                 }.frame(width: Self.listWidth)
                 ScrollView {
-                    VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+                    VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
                         if let selected {
                             Picker("Historique", selection: $weekly) {
                                 Text("Quotidien").tag(false)
@@ -73,7 +74,7 @@ struct MarketExplorerView: View {
                             }.pickerStyle(.segmented)
                             if provider == .alphaVantage, !weekly {
                                 Text("Gratuit : 100 dernières séances. Pour un historique long, choisissez Hebdomadaire.")
-                                    .typeRole(.micro).foregroundStyle(.secondary)
+                                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                             }
                             if let preview {
                                 SeriesDetailView(series: preview, preview: true)
@@ -89,7 +90,7 @@ struct MarketExplorerView: View {
                                                    systemImage: "chart.xyaxis.line")
                         }
                         if loading { ProgressView().controlSize(.small) }
-                        if let error { Text(error).typeRole(.small).foregroundStyle(.secondary).textSelection(.enabled) }
+                        if let error { Text(error).typeRole(.small).foregroundStyle(DesignColor.textMuted).textSelection(.enabled) }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
             }.task(id: catalogueID) { await loadCatalogue() }
@@ -117,10 +118,10 @@ struct MarketExplorerView: View {
     }
     private func rows(_ items: ArraySlice<MarketInstrument>) -> some View {
         ForEach(items) { item in
-            VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
+            VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                 Text(item.name)
-                Text(item.summary).typeRole(.micro).foregroundStyle(.secondary)
-            }.tag(item.id).padding(.vertical, Theme.rowPadding)
+                Text(item.summary).typeRole(.micro).foregroundStyle(DesignColor.textMuted)
+            }.tag(item.id).padding(.vertical, DesignSpace.rowInset)
         }
     }
     private func filter() {

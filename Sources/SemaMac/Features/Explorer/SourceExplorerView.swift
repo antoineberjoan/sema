@@ -17,7 +17,7 @@ struct SourceExplorerView: View {
     var close: (() -> Void)?
     private var enabledIDs: [String] { (["webstat"] + MarketProvider.allCases.map(\.rawValue) + StatisticalSource.allCases.map(\.rawValue)).filter { store.isSourceEnabled($0) } }
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+        VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
             HStack {
                 if sourceID.isEmpty {
                     Text("Sources").typeRole(.section)
@@ -45,25 +45,25 @@ struct SourceExplorerView: View {
                 MarketExplorerView(provider: provider, close: close).id(sourceID)
             } else if sourceID.isEmpty {
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: compact ? Self.compactCardMinWidth : Self.cardMinWidth), spacing: Theme.majorSpacing)], spacing: Theme.majorSpacing) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: compact ? Self.compactCardMinWidth : Self.cardMinWidth), spacing: DesignSpace.groupGap)], spacing: DesignSpace.groupGap) {
                         ForEach(enabledIDs, id: \.self) { id in
                             Button { sourceID = id } label: {
-                                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
+                                VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                                     HStack {
                                         Text(store.sourceName(id)).typeRole(.heading)
-                                        Spacer(minLength: Theme.rowPadding)
-                                        Image(systemName: "chevron.right").typeRole(.micro).foregroundStyle(.secondary)
+                                        Spacer(minLength: DesignSpace.fieldGap)
+                                        Image(systemName: "chevron.right").typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                                     }
-                                    Text(sourceTopics(id)).typeRole(.small).foregroundStyle(.secondary)
+                                    Text(sourceTopics(id)).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                                         .lineLimit(Self.topicLines).multilineTextAlignment(.leading)
                                 }
                                 .frame(maxWidth: .infinity, minHeight: Self.cardMinHeight, alignment: .leading)
-                                .padding(Theme.majorSpacing).foregroundStyle(.primary)
-                                .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cardCorner))
-                                .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
+                                .padding(DesignSpace.cardInset).foregroundStyle(DesignColor.text)
+                                .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
+                                .contentShape(RoundedRectangle(cornerRadius: DesignRadius.block))
                             }.buttonStyle(PressStyle())
                         }
-                    }.padding(.bottom, Theme.rowSpacing)
+                    }.padding(.bottom, DesignSpace.markInset)
                 }
             } else if let source = StatisticalSource(rawValue: sourceID), store.isSourceEnabled(sourceID) {
                 StatisticalExplorerView(source: source, compact: compact, close: close).id(sourceID)
@@ -100,12 +100,11 @@ private struct StatisticalExplorerView: View {
     private static let seriesMinWidth: CGFloat = 350
     private static let advancedLabelMaxWidth: CGFloat = 140
     private static let advancedMaxHeight: CGFloat = 250
-    private static let formSpacing = Spacing.s12
+    private static let formSpacing = DesignSpace.fieldGap
     private static let seriesTitleLines = 4
     private static let valueLines = 2
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
-    private var accent: Color { DesignColor.accent(palette) }
     let source: StatisticalSource
     var compact: Bool
     var close: (() -> Void)?
@@ -153,10 +152,10 @@ private struct StatisticalExplorerView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+        VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
             CatalogueSearchField(query: $query, prompt: "Rechercher dans \(source.title)…", isSearching: loadingCatalogue,
                 submit: { selectedID = keyboardID ?? matches.first?.id }, move: moveSelection)
-            HStack(alignment: .top, spacing: Theme.majorSpacing) {
+            HStack(alignment: .top, spacing: DesignSpace.groupGap) {
                 datasetsList.frame(minWidth: Self.datasetsMinWidth, idealWidth: Self.datasetsIdealWidth, maxWidth: selected == nil ? .infinity : Self.datasetsMaxWidth)
                 if let selected {
                     if selectedSeriesKey != nil {
@@ -178,83 +177,83 @@ private struct StatisticalExplorerView: View {
     }
 
     private var datasetsList: some View {
-        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+        VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
             if !loadingCatalogue {
                 HStack {
                     Text("\(matches.count.formatted()) \(matches.count == 1 ? "jeu de données" : "jeux de données")")
                     Spacer()
                     Button { Task { await loadCatalogue(reload: true) } } label: { Image(systemName: "arrow.clockwise") }
                         .buttonStyle(.borderless).help("Actualiser le catalogue de la source")
-                }.typeRole(.micro).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
+                }.typeRole(.micro).foregroundStyle(DesignColor.textMuted).padding(.horizontal, DesignSpace.rowInset)
             }
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: Theme.rowSpacing) {
+                    LazyVStack(alignment: .leading, spacing: DesignSpace.listGapDense) {
                         if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !availableStarters.isEmpty {
-                            Text("Pour commencer").typeRole(.tag).fontWeight(.semibold).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
+                            Text("Pour commencer").typeRole(.tag).fontWeight(.semibold).foregroundStyle(DesignColor.textMuted).padding(.horizontal, DesignSpace.rowInset)
                             ForEach(availableStarters) { starter in
                                 starterRow(starter)
                             }
-                            Divider().padding(.horizontal, Theme.rowPadding)
+                            Divider().padding(.horizontal, DesignSpace.rowInset)
                         }
-                        Text("Catalogue").typeRole(.tag).fontWeight(.semibold).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding)
+                        Text("Catalogue").typeRole(.tag).fontWeight(.semibold).foregroundStyle(DesignColor.textMuted).padding(.horizontal, DesignSpace.rowInset)
                         ForEach(Array(matches.prefix(visibleCount))) { dataset in
                             Button { pendingStarter = nil; starterError = nil; keyboardID = dataset.id; selectedID = dataset.id } label: {
-                                VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
-                                    Text(dataset.title).typeRole(.heading).lineLimit(Theme.rowTitleLines)
-                                    Text(dataset.code).typeRole(.micro).foregroundStyle(.secondary).lineLimit(1)
-                                }.foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
-                                    .background(keyboardID == dataset.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
+                                VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
+                                    Text(dataset.title).typeRole(.heading).lineLimit(ExplorerLayout.rowTitleLines)
+                                    Text(dataset.code).typeRole(.micro).foregroundStyle(DesignColor.textMuted).lineLimit(1)
+                                }.foregroundStyle(DesignColor.text).frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
+                                    .background(keyboardID == dataset.id ? DesignColor.selection(palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))
                                     .contentShape(Rectangle())
                             }.buttonStyle(PressStyle()).id(dataset.id)
                                 .accessibilityAddTraits(keyboardID == dataset.id ? [.isSelected] : [])
                         }
-                        if matches.count > visibleCount { Button("Afficher les jeux suivants") { visibleCount += 50 }.buttonStyle(.borderless).padding(Theme.rowPadding) }
+                        if matches.count > visibleCount { Button("Afficher les jeux suivants") { visibleCount += 50 }.buttonStyle(.borderless).padding(DesignSpace.rowInset) }
                         if !loadingCatalogue && matches.isEmpty && error == nil { ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass") }
                     }
                 }.onChange(of: keyboardID) { _, id in if let id { proxy.scrollTo(id) } }
             }
             if let error {
-                Text(error).typeRole(.small).foregroundStyle(.secondary)
+                Text(error).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                 Button("Réessayer") { Task { await loadCatalogue() } }.buttonStyle(.borderless)
             }
         }
     }
 
     private func seriesList(_ dataset: StatisticalDataset) -> some View {
-        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+        VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
             Text(dataset.title).typeRole(.heading).textSelection(.enabled)
             if let starterError {
-                Label(starterError, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(.secondary)
+                Label(starterError, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(DesignColor.textMuted)
             }
             CatalogueSearchField(query: $seriesQuery, prompt: "Rechercher une série…", isSearching: loadingStructure,
                 submit: { if let key = keyboardSeriesKey ?? seriesMatches.first?.key { openSeries(key) } }, move: moveSeriesSelection)
             if !loadingStructure && seriesError == nil {
-                Text("\(seriesMatches.count.formatted()) \(seriesMatches.count == 1 ? "série" : "séries")").typeRole(.micro).foregroundStyle(.secondary)
+                Text("\(seriesMatches.count.formatted()) \(seriesMatches.count == 1 ? "série" : "séries")").typeRole(.micro).foregroundStyle(DesignColor.textMuted)
             }
             ScrollViewReader { proxy in
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: Theme.rowSpacing) {
+                    LazyVStack(alignment: .leading, spacing: DesignSpace.listGapDense) {
                         ForEach(Array(seriesMatches.prefix(visibleSeriesCount)), id: \.id) { item in
                             Button { openSeries(item.key) } label: {
-                                VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
+                                VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                                     Text(item.title).typeRole(.heading).lineLimit(Self.seriesTitleLines)
                                     let context = [item.frequency == .unknown ? nil : item.frequency.title, item.unitCode == nil ? nil : item.displayUnit].compactMap { $0 }.joined(separator: " · ")
-                                    if !context.isEmpty { Text(context).typeRole(.micro).foregroundStyle(.secondary) }
+                                    if !context.isEmpty { Text(context).typeRole(.micro).foregroundStyle(DesignColor.textMuted) }
                                 }
-                                .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
-                                .background(keyboardSeriesKey == item.key ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
+                                .foregroundStyle(DesignColor.text).frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
+                                .background(keyboardSeriesKey == item.key ? DesignColor.selection(palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))
                                 .contentShape(Rectangle())
                             }.buttonStyle(PressStyle()).id(item.key)
                                 .accessibilityAddTraits(keyboardSeriesKey == item.key ? [.isSelected] : [])
                         }
-                        if seriesMatches.count > visibleSeriesCount { Button("Afficher les séries suivantes") { visibleSeriesCount += 50 }.buttonStyle(.borderless).padding(Theme.rowPadding) }
+                        if seriesMatches.count > visibleSeriesCount { Button("Afficher les séries suivantes") { visibleSeriesCount += 50 }.buttonStyle(.borderless).padding(DesignSpace.rowInset) }
                         if !loadingStructure && seriesMatches.isEmpty && seriesError == nil { ContentUnavailableView("Aucune série trouvée", systemImage: "magnifyingglass") }
                     }
                 }.onChange(of: keyboardSeriesKey) { _, key in if let key { proxy.scrollTo(key) } }
             }
             if let seriesError {
-                Text(seriesError).typeRole(.small).foregroundStyle(.secondary)
+                Text(seriesError).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                 Button("Réessayer") { Task { await loadSeriesCatalogue() } }.buttonStyle(.borderless)
             }
             if let structure {
@@ -263,15 +262,15 @@ private struct StatisticalExplorerView: View {
                         VStack(alignment: .leading, spacing: Self.formSpacing) {
                             ForEach(structure.dimensions) { dimension in
                                 HStack(alignment: .firstTextBaseline) {
-                                    Text(dimension.title).foregroundStyle(.secondary).frame(maxWidth: Self.advancedLabelMaxWidth, alignment: .leading)
-                                    Spacer(minLength: Theme.minorSpacing)
+                                    Text(dimension.title).foregroundStyle(DesignColor.textMuted).frame(maxWidth: Self.advancedLabelMaxWidth, alignment: .leading)
+                                    Spacer(minLength: DesignSpace.fieldGap)
                                     if dimension.codes.count == 1, let code = dimension.codes.first { Text(code.title).multilineTextAlignment(.trailing) }
                                     else if dimension.codes.isEmpty {
                                         TextField(dimension.id, text: Binding(get: { values[dimension.id] ?? "" }, set: { values[dimension.id] = $0 }))
                                             .textFieldStyle(.roundedBorder).accessibilityLabel(dimension.title)
                                     } else {
                                         Button { choosingDimension = dimension } label: {
-                                            HStack(spacing: Theme.minorSpacing) {
+                                            HStack(spacing: DesignSpace.fieldGap) {
                                                 Text(dimension.codes.first { $0.id == values[dimension.id] }?.title ?? "Choisir…").lineLimit(Self.valueLines).multilineTextAlignment(.trailing)
                                                 Image(systemName: "chevron.up.chevron.down").typeRole(.micro)
                                             }
@@ -280,9 +279,9 @@ private struct StatisticalExplorerView: View {
                                 }
                             }
                             TextField(source == .newYorkFed ? "Nom de la mesure" : source == .worldBank ? "Code du pays" : "Clé SDMX", text: $exactKey)
-                                .textFieldStyle(.roundedBorder).font(.system(.callout, design: .monospaced)).accessibilityLabel("Clé exacte du repère")
+                                .textFieldStyle(.roundedBorder).typeRole(.code).accessibilityLabel("Clé exacte du repère")
                             Button("Afficher le repère") { openSeries(key) }.buttonStyle(.bordered).disabled(!canPreview)
-                            if !dataset.detail.isEmpty { Text(dataset.detail).typeRole(.micro).foregroundStyle(.secondary).textSelection(.enabled) }
+                            if !dataset.detail.isEmpty { Text(dataset.detail).typeRole(.micro).foregroundStyle(DesignColor.textMuted).textSelection(.enabled) }
                         }.padding(.top, Self.formSpacing)
                     }.frame(maxHeight: Self.advancedMaxHeight)
                 }.typeRole(.small).disclosureGroupStyle(RowDisclosureStyle())
@@ -291,16 +290,16 @@ private struct StatisticalExplorerView: View {
     }
 
     private var previewPane: some View {
-        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+        VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
             Button { selectedSeriesKey = nil; store.closePreview() } label: { Label("Séries", systemImage: "chevron.left") }.buttonStyle(.borderless)
             ScrollView {
-                VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+                VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
                     if store.isLoadingPreview { ProgressView("Chargement de l’historique…").controlSize(.small) }
                     if let value = store.previewSeries {
                         SeriesDetailView(series: value, preview: true)
                         HStack {
                             if let existing = store.followedMatch(for: value) {
-                                Label("Déjà suivi via \(existing.originBadge)", systemImage: "checkmark").typeRole(.micro).foregroundStyle(.secondary)
+                                Label("Déjà suivi via \(existing.originBadge)", systemImage: "checkmark").typeRole(.micro).foregroundStyle(DesignColor.textMuted)
                                 Spacer()
                                 if existing.id != value.id { Button("Utiliser cette source") { _ = store.usePreviewSource() }.buttonStyle(.borderless) }
                                 Button("Ouvrir") { store.show(existing); store.section = .overview; store.closePreview(); close?() }
@@ -312,23 +311,23 @@ private struct StatisticalExplorerView: View {
                         }
                     }
                     if let error = store.previewError {
-                        Label(error, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(.secondary)
+                        Label(error, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(DesignColor.textMuted)
                         if store.previewRequiresRefresh {
                             Button("Actualiser mes repères") { Task { await store.refreshSeries() } }.buttonStyle(.borderless).disabled(store.isLoading)
                         } else if let key = selectedSeriesKey { Button("Réessayer") { openSeries(key) }.buttonStyle(.borderless) }
                     }
-                }.padding(.bottom, Theme.majorSpacing)
+                }.padding(.bottom, DesignSpace.groupGap)
             }
         }
     }
 
     private func starterRow(_ starter: StatisticalStarter) -> some View {
         Button { chooseStarter(starter) } label: {
-            VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
-                Text(starter.title).typeRole(.heading).lineLimit(Theme.rowTitleLines)
+            VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
+                Text(starter.title).typeRole(.heading).lineLimit(ExplorerLayout.rowTitleLines)
                 Text(datasets.first(where: starter.matches)?.title ?? starter.datasetCode)
-                    .typeRole(.micro).foregroundStyle(.secondary).lineLimit(Theme.rowTitleLines)
-            }.foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
+                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted).lineLimit(ExplorerLayout.rowTitleLines)
+            }.foregroundStyle(DesignColor.text).frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
                 .contentShape(Rectangle())
         }.buttonStyle(PressStyle()).accessibilityLabel("\(starter.title), \(source.title)")
     }
@@ -415,20 +414,20 @@ private struct StatisticalCodePicker: View {
     @FocusState private var searchFocused: Bool
     private var codes: [StatisticalCode] { dimension.codes.filter { query.isEmpty || ($0.title + " " + $0.id).localizedStandardContains(query) } }
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+        VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
             Text(dimension.title).typeRole(.heading)
             TextField("Rechercher une valeur ou un code…", text: $query).textFieldStyle(.roundedBorder).focused($searchFocused)
                 .onSubmit { if codes.count == 1, let code = codes.first { choose(code.id); dismiss() } }
             List(codes) { code in
                 Button { choose(code.id); dismiss() } label: {
                     HStack {
-                        VStack(alignment: .leading, spacing: Theme.rowSpacing) { Text(code.title); Text(code.id).typeRole(.micro).foregroundStyle(.secondary) }
+                        VStack(alignment: .leading, spacing: DesignSpace.listGapDense) { Text(code.title); Text(code.id).typeRole(.micro).foregroundStyle(DesignColor.textMuted) }
                         Spacer()
                         if selected == code.id { Image(systemName: "checkmark") }
                     }.contentShape(Rectangle())
-                }.buttonStyle(.plain).padding(.vertical, Theme.rowSpacing)
+                }.buttonStyle(.plain).padding(.vertical, DesignSpace.markInset)
             }.listStyle(.plain)
-            HStack { Text("\(codes.count.formatted()) \(codes.count == 1 ? "valeur" : "valeurs")").typeRole(.micro).foregroundStyle(.secondary); Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
-        }.padding(Theme.majorSpacing).frame(width: Self.size.width, height: Self.size.height).onAppear { searchFocused = true }
+            HStack { Text("\(codes.count.formatted()) \(codes.count == 1 ? "valeur" : "valeurs")").typeRole(.micro).foregroundStyle(DesignColor.textMuted); Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
+        }.padding(DesignSpace.pageInsetNarrow).frame(width: Self.size.width, height: Self.size.height).onAppear { searchFocused = true }
     }
 }
