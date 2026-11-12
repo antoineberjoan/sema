@@ -55,7 +55,7 @@ En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Mo
 
 Référence : **SwiftUI** (macOS 14). AppKit seulement pour un comportement macOS précis.
 
-On assemble ses composants avant d'écrire. Un composant qu'on ne peut pas assembler suit sa structure et déclare la page suivie : la méthode est dans `patron/composants.md` de Sophos.
+On assemble ses composants avant d'écrire. Les composants propres et ceux qui reprennent la référence avec un écart sont dans `Sources/SemaMac/components/custom/`, avec `@documentation` et `@decision` en en-tête (le dossier s'écrit en minuscules : voir `docs/decisions/2026-11-12-ecart-patron-dossier-components-en-minuscules.md`). Un composant qu'on ne peut pas assembler suit sa structure et déclare la page suivie : la méthode est dans `patron/composants.md` de Sophos.
 
 ## Sources de vérité
 

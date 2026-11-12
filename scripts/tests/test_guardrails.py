@@ -214,7 +214,7 @@ class GuardrailsTests(unittest.TestCase):
             "// cornerRadius: 12 reste un commentaire",
             "var size: CGFloat = 32",
             'static let standard = Self(\n    ribbon: Shortcut(keyCode: 11, key: "B"))',
-            ".padding(SemaTheme.rowPadding).frame(width: 0, height: 0)",
+            ".padding(DesignSpace.rowInset).frame(width: 0, height: 0)",
             ".opacity(stage >= 2 ? 1 : 0)",
             ".frame(maxWidth: .infinity, minHeight: Self.emptyMinHeight)",
             ".lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)",
@@ -261,7 +261,7 @@ class GuardrailsTests(unittest.TestCase):
         self.assertTrue(any("typeRole" in error for error in self.errors()))
         self.write("Sources/SemaMac/Title.swift", "// Décrit un titre.\nlet title = Font.system(size: side * scale)\n")
         self.assertEqual(self.errors(), [])
-        self.write("Sources/SemaMac/DesignSystem/TypeRole.swift", "// Décrit les rôles.\nstatic let title = Font.system(size: 28, weight: .medium)\n")
+        self.write("Sources/SemaMac/Style/TypeRole.swift", "// Décrit les rôles.\nstatic let title = Font.system(size: 28, weight: .medium)\n")
         self.assertFalse(any("typeRole" in error for error in self.errors()))
 
     def test_new_type_does_not_repeat_project_name(self):
@@ -328,10 +328,10 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("DesignHand", errors[0])
 
-    def test_shadow_belongs_to_design_system(self):
+    def test_shadow_belongs_to_style(self):
         source = "// Décrit une surface flottante.\n.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius)\n"
         self.write("Sources/SemaMac/Features/Panel.swift", source)
-        self.write("Sources/SemaMac/DesignSystem/Shadow.swift", source)
+        self.write("Sources/SemaMac/Style/Shadow.swift", source)
         self.write("Sources/SemaMac/Features/Card.swift", "// Décrit une carte.\n.shadow(.card)\n")
         errors = self.errors()
         self.assertEqual(len(errors), 1)

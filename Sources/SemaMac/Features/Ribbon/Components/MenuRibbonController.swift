@@ -6,6 +6,14 @@ import QuartzCore
 /// A native status item owns the panel independently of the hub's window lifetime.
 @MainActor
 final class MenuRibbonController: NSObject {
+    /// The menu bar image: the brand symbol, drawn once as a template image.
+    private static let menuBarIcon: NSImage = {
+        let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(.black).frame(width: 18, height: 18))
+        renderer.scale = 2
+        let image = renderer.nsImage ?? NSImage(systemSymbolName: "waveform.path", accessibilityDescription: "sema")!
+        image.isTemplate = true
+        return image
+    }()
     private static let releasesURL = URL(string: "https://github.com/antoineberjoan/homebrew-sema/releases")!
     private let store: AppStore
     private let openWorkspace: () -> Void
@@ -49,7 +57,7 @@ final class MenuRibbonController: NSObject {
         self.store = store; self.openWorkspace = openWorkspace; self.openSettings = openSettings
         super.init()
         if let button = statusItem.button {
-            button.image = Theme.menuBarIcon
+            button.image = Self.menuBarIcon
             button.imagePosition = .imageOnly
             button.toolTip = "sema · Vos favoris"
             button.setAccessibilityLabel("sema, afficher les favoris")

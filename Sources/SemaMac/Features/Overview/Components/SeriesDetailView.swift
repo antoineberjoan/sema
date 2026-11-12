@@ -337,6 +337,12 @@ private struct SeriesDetailSurface: ViewModifier {
     let focus: Bool
     @ViewBuilder func body(content: Content) -> some View {
         if focus { content }
-        else { Surface { content }.clipShape(RoundedRectangle(cornerRadius: DesignRadius.card)) }
+        else {
+            content
+                .padding(DesignSpace.pageInsetNarrow)
+                .background(DesignColor.surfaceRaised, in: RoundedRectangle(cornerRadius: DesignRadius.card))
+                .elevation(DesignElevation.raised)
+                .clipShape(RoundedRectangle(cornerRadius: DesignRadius.card))
+        }
     }
 }

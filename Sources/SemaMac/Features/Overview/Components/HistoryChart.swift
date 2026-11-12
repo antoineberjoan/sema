@@ -1,4 +1,6 @@
 // Dessine l’historique et permet de lire l’observation originale au survol du graphique.
+// @documentation https://developer.apple.com/documentation/charts
+// @decision docs/decisions/2026-11-12-composant-history-chart.md
 import SemaDesign
 import SwiftUI
 import Charts
@@ -23,9 +25,7 @@ struct HistoryChart: View {
     private static let readingHorizontalPadding: CGFloat = 10
     private static let readingVerticalPadding: CGFloat = 7
     private static let areaOpacity = 0.09
-    private static let ruleOpacity = 0.35
     private static let lineWidth: CGFloat = 2
-    private static let tooltipCorner: CGFloat = 8
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
     let series: MarketSeries
@@ -79,19 +79,19 @@ struct HistoryChart: View {
                 }
                 if let hovered {
                     RuleMark(x: .value("Date sélectionnée", hovered.date))
-                        .foregroundStyle(Color.secondary.opacity(Self.ruleOpacity))
+                        .foregroundStyle(DesignColor.ruleHover)
                     PointMark(x: .value("Date", hovered.date), y: .value(series.displayUnit, MarketFormat.double(hovered.value)))
                         .foregroundStyle(accent).symbolSize(Self.pointSize)
-                        .annotation(position: .top, spacing: Theme.minorSpacing,
+                        .annotation(position: .top, spacing: DesignIcon.gap,
                                     overflowResolution: .init(x: .fit(to: .chart), y: .fit(to: .chart))) {
                             VStack(alignment: .leading, spacing: Self.readingSpacing) {
-                                Text(MarketFormat.date(hovered.date)).foregroundStyle(.secondary)
+                                Text(MarketFormat.date(hovered.date)).foregroundStyle(DesignColor.textMuted)
                                 Text(MarketFormat.number(hovered.value, digits: series.fractionDigits) + " " + series.displayUnit)
                                     .fontWeight(.medium).monospacedDigit()
                             }
                             .typeRole(.caption)
                             .padding(.horizontal, Self.readingHorizontalPadding).padding(.vertical, Self.readingVerticalPadding)
-                            .background(Theme.surface, in: RoundedRectangle(cornerRadius: Self.tooltipCorner))
+                            .background(DesignColor.surfaceRaised, in: RoundedRectangle(cornerRadius: DesignRadius.block))
                             .elevation(DesignElevation.floating)
                             .allowsHitTesting(false)
                         }
@@ -110,7 +110,7 @@ struct HistoryChart: View {
             }
             .chartYAxis {
                 AxisMarks(position: .trailing, values: .automatic(desiredCount: Self.axisTickCount)) { value in
-                    AxisGridLine().foregroundStyle(Theme.separator)
+                    AxisGridLine().foregroundStyle(DesignColor.rule)
                     AxisValueLabel {
                         if let number = value.as(Double.self) {
                             Text(MarketFormat.number(Decimal(number), digits: axisDigits))
@@ -129,7 +129,7 @@ struct HistoryChart: View {
                     Text(MarketFormat.number(value, digits: series.fractionDigits) + " " + series.displayUnit).monospacedDigit()
                 }
             }
-            .typeRole(.caption).foregroundStyle(.secondary)
+            .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
         }
         .onChange(of: series.id) { _, _ in hoveredDate = nil }
