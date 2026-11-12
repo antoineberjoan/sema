@@ -1,6 +1,6 @@
 # Un type fabriqué par les jetons peut attendre son premier lecteur
 
-Date : 2026-11-12 · Statut : proposée
+Date : 2026-11-12 · Statut : acceptée
 Décidé par : Antoine
 
 ## Contexte
@@ -24,4 +24,4 @@ Un type fabriqué que personne ne lit n'est pas du code mort écrit à la main :
 
 ## Trace
 
-Lot 3 de l'alignement de sema sur Sophos. Proposée par l'agent, en attente de l'accord d'Antoine : tant qu'il manque, la décision reste « proposée » et rien n'est envoyé.
+Lot 3 de l'alignement de sema sur Sophos. Proposée par l'agent ; accord d'Antoine du 2026-11-12, rapporté par l'architecte (option B).

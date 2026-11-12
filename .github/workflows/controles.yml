@@ -35,6 +35,10 @@ jobs:
         with:
           fetch-depth: 0
       # projet:debut — l'installation propre au projet (langage, dépendances, clone de Sophos)
+      - name: Clone de Sophos du runner
+        run: |
+          [ -d "$HOME/sophos/outils" ] || { echo "Sophos absent de $HOME/sophos : cloner antoineberjoan/sophos sur le runner."; exit 1; }
+          echo "SOPHOS=$HOME/sophos" >> "$GITHUB_ENV"
       - name: Chaîne d'outils Swift
         run: swift --version
       - name: Suite Swift
