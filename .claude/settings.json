@@ -1,14 +1,56 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__github__merge_pull_request",
+      "mcp__github__pull_request_read",
+      "mcp__github__issue_read",
+      "mcp__github__issue_write",
+      "mcp__github__update_pull_request",
+      "mcp__github__create_pull_request",
+      "Bash(git push origin --delete claude/*)",
+      "Bash(git branch -D claude/*)"
+    ],
+    "deny": [
+      "Bash(gh pr merge*)",
+      "Bash(git push --force*)",
+      "Bash(git push * --force*)",
+      "Bash(git push -f*)",
+      "Bash(* --no-verify*)",
+      "Bash(git push origin main*)",
+      "Bash(git push origin HEAD:main*)",
+      "mcp__github__push_files",
+      "mcp__github__create_or_update_file",
+      "mcp__github__delete_file",
+      "mcp__github__enable_pr_auto_merge",
+      "Edit(.claude/settings.json)",
+      "Write(.claude/settings.json)",
+      "Edit(.claude/sophos/**)",
+      "Write(.claude/sophos/**)"
+    ]
+  },
   "hooks": {
-    "PostToolUse": [
+    "PreToolUse": [
       {
-        "matcher": "Edit|MultiEdit|Write",
-        "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/agent-hook.py\"" }]
+        "matcher": "Bash|mcp__github__merge_pull_request|mcp__github__issue_write|mcp__github__update_pull_request",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/sophos/garde.mjs\" --garder",
+            "timeout": 300
+          }
+        ]
       }
     ],
-    "Stop": [
+    "PostToolUse": [
       {
-        "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/scripts/agent-hook.py\"" }]
+        "matcher": "mcp__github__pull_request_read|mcp__github__issue_read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/sophos/garde.mjs\" --noter",
+            "timeout": 30
+          }
+        ]
       }
     ]
   }

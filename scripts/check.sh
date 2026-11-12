@@ -11,5 +11,5 @@ test_arguments=(--disable-xctest --disable-sandbox --scratch-path "$project_root
 swift test "${test_arguments[@]}"
 bash -n scripts/build-app.sh
 bash -n scripts/setup.sh
-sh -n .githooks/pre-commit
+sh -n .githooks/pre-push
 plutil -lint Resources/Info.plist
