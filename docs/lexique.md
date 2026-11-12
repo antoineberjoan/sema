@@ -12,7 +12,7 @@ Les mots du métier, tels que le code les écrit. Un terme n'entre ici que lorsq
 | Descripteur source | `descriptor` | Métadonnées officielles, unité et dimensions |
 | Fournisseur | `source`, `StatisticalSource` | Producteur ou connecteur selon le type explicite |
 | Règle d’alerte | `rule`, `AlertRule` | Série, seuil, direction et état |
-| Seuil | `threshold` | Valeur absolue dans l’unité de la série pour les alertes actuelles |
+| Seuil | `threshold` | Valeur absolue dans l’unité de la série pour les alertes |
 | Dernière évaluation | `lastEvaluatedAt` | Checkpoint de déduplication |
 | Date d’observation d’un événement | `observedAt` | Date du point ayant produit l’événement |
 | Période affichée | `period`, `HistoryPeriod` | Fenêtre de consultation, distincte de la fréquence |

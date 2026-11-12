@@ -6,7 +6,7 @@ struct LocalRepository {
     let directory: URL
 
     static func applicationDefault() -> LocalRepository {
-        if let path = Bundle.main.object(forInfoDictionaryKey: "SemaDevelopmentDataDirectory") as? String {
+        if let path = Bundle.main.object(forInfoDictionaryKey: "DevelopmentDataDirectory") as? String {
             return LocalRepository(directory: URL(fileURLWithPath: path, isDirectory: true))
         }
         let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]

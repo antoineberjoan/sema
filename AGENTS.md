@@ -28,7 +28,7 @@ sema est une app macOS native (SwiftUI, Swift 6, macOS 14 et plus) pour consulte
 
 - Dedans : le cœur (`Sources/MarketCore`), l'app (`Sources/SemaMac`), ses tests (`Tests/`), le site (`site/`), la distribution (`distribution/`).
 - Dehors : un serveur, un compte, une clé fournisseur partagée.
-- Nom : **sema**, en minuscules dans les textes visibles. Français pour l'interface et la documentation ; anglais pour les identifiants et les rôles. Pas de préfixe `Sema` dans un nouvel identifiant.
+- Nom : **sema**, en minuscules dans les textes visibles. Français pour l'interface et la documentation ; anglais pour les identifiants et les rôles. Aucun préfixe de projet dans un identifiant (les noms de cibles `SemaMac` et `SemaDesign` sont les seuls).
 
 Charger au bon moment, sans tout lire au démarrage :
 
@@ -72,7 +72,7 @@ Une information vit à un seul endroit. Si deux sources se contredisent, arrête
 | Marque | `Resources/Brand/` |
 | Carte du dépôt | `projet.yml` |
 
-Une intention formulée dans le chat vaut instruction pour la tâche ; sa décision durable s'écrit dans `docs/decisions/`, avec sa date. Le dépôt suit Sophos : `docs/decisions/2026-11-12-suivre-sophos.md`.
+Une intention formulée dans le chat vaut instruction pour la tâche ; sa décision durable s'écrit dans `docs/decisions/`, avec sa date. Le dépôt suit Sophos.
 
 ## Validation et autonomie
 

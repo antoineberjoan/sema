@@ -335,6 +335,15 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("lit la primitive `scale-space-1`", errors[0])
 
+    def test_cited_repository_paths_must_exist(self):
+        self.write("Sources/Real.swift", "// Décrit un type.\nlet value = 1\n")
+        self.write("Sources/Dir/Real.swift", "// Décrit un type.\nlet value = 2\n")
+        self.write("docs/note.md", "Voir `Sources/Real.swift`, `Sources/` et `Sources/Gone.swift`. Partiels : `Sources/Real.swift` plus court `Real.swift` est ignoré, `Dir/Real.swift` et `Dir/Gone.swift`. Ignorés : `Sources/*.swift`, `build/x.dmg`.\n")
+        errors = self.errors()
+        self.assertEqual(len(errors), 2)
+        self.assertIn("le chemin cité `Sources/Gone.swift` n’existe pas", errors[0])
+        self.assertIn("le fichier cité `Dir/Gone.swift` n’existe pas", errors[1])
+
     def test_site_variable_must_be_defined(self):
         self.write_site(".card { padding: var(--space-9); margin: var(--wrap-max, var(--space-1)); }\n.card { --wrap-max: var(--space-1); }")
         errors = self.errors()
