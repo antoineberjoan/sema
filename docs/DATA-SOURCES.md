@@ -97,7 +97,7 @@ Le TEC 10 quotidien est distinct de l’emprunt phare mensuel actuellement inté
 
 ## Cours Twelve Data et Alpha Vantage — 18 octobre 2026
 
-Antoine lève le 18 octobre l’exclusion des cotations individuelles (décision du 17) pour obtenir des cours avec une clé personnelle. sema intègre les connexions personnelles Twelve Data et Alpha Vantage ; voir le [plan et ses preuves](plans/market-sources.md). Le catalogue s’affiche à l’ouverture de la source ; son filtre par nom, symbole ou place fonctionne localement. Twelve Data filtre actions, ETF et indices selon le forfait et les droits de métadonnées publiés. Alpha Vantage présente son catalogue officiel d’actions et ETF américains ; il ne fournit pas de liste de droits instrument par instrument. L’aperçu vérifie les cours avant ajout. Les séries quotidiennes et hebdomadaires ont des identifiants différents ; les valeurs restent en Decimal et portent leur devise et leur origine. Les cours sont non ajustés (Twelve Data `adjust=none`, endpoints bruts Alpha Vantage).
+Antoine lève le 18 octobre l’exclusion des cotations individuelles (décision du 17) pour obtenir des cours avec une clé personnelle. sema intègre les connexions personnelles Twelve Data et Alpha Vantage . Le catalogue s’affiche à l’ouverture de la source ; son filtre par nom, symbole ou place fonctionne localement. Twelve Data filtre actions, ETF et indices selon le forfait et les droits de métadonnées publiés. Alpha Vantage présente son catalogue officiel d’actions et ETF américains ; il ne fournit pas de liste de droits instrument par instrument. L’aperçu vérifie les cours avant ajout. Les séries quotidiennes et hebdomadaires ont des identifiants différents ; les valeurs restent en Decimal et portent leur devise et leur origine. Les cours sont non ajustés (Twelve Data `adjust=none`, endpoints bruts Alpha Vantage).
 
 Liens officiels : [Twelve Data](https://twelvedata.com/account/api-keys), [clé Alpha Vantage](https://www.alphavantage.co/support/#api-key), [documentation Twelve Data](https://twelvedata.com/docs), [documentation Alpha Vantage](https://www.alphavantage.co/documentation/).
 
@@ -105,7 +105,7 @@ Une clé personnelle ne garantit ni l’accès à tous les instruments ni les dr
 
 ## Contexte d’une séance — 8 novembre 2026
 
-Sources ajoutées par le chantier « alertes de marché et refonte », décision d’Antoine du 7 novembre ; [plan et preuves](plans/market-alerts.md). Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
+Sources ajoutées par le chantier « alertes de marché et refonte », décision d’Antoine du 7 novembre. Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
 
 | Source | Usage | Accès | Limites |
 | --- | --- | --- | --- |

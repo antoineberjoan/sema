@@ -18,7 +18,7 @@ Référence : dépôt `antoineberjoan/sophos`. Lire le `SKILL.md` d'un skill à 
 - `penser` : la façon de travailler avec Antoine. Une direction qu'il tranche est une décision de ce dépôt, dans `docs/decisions/`.
 - `construire` : une seule implémentation par responsabilité, aucun alias ni code mort, preuve avant de dire « fini ». Les valeurs financières restent en `Decimal`.
 - `expliquer` : français simple pour toute explication, avec ce qui n'est pas vérifié.
-- `concevoir` : interface, texte visible et mouvement. Les règles de sema sont dans `docs/IDENTITY.md`.
+- `concevoir` : interface, texte visible et mouvement. Les choix de direction visuelle de sema sont des décisions datées dans `docs/decisions/`.
 
 Une recherche de fond avec des sources ne reste pas dans une conversation. Avant la fin de la session, propose la note ou la fiche de lecture, et son coffre (`cristalliser`) : la finance et le patrimoine dans Épistémè, le sport et la physiologie dans Ponos, la façon de penser, d'écrire ou de travailler dans la bibliothèque de Sophos. Une direction que je tranche est une décision de ce dépôt, pas une note.
 
