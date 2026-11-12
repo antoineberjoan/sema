@@ -1,6 +1,6 @@
-# Vocabulaire du code
+# Lexique
 
-Référence de nommage, pas registre de toutes les variables. Ajouter un terme seulement lorsqu’il porte un concept partagé. Les noms publics et formats externes conservent leur contrat.
+Les mots du métier, tels que le code les écrit. Un terme n'entre ici que lorsqu'il porte un concept partagé. Les noms publics et les formats externes gardent leur contrat.
 
 | Concept | Nom dans le code | Sens |
 | --- | --- | --- |

@@ -1,0 +1,21 @@
+# La fiche du dépôt (fonder § 5). Elle pointe vers la marque : elle ne recopie aucune valeur.
+nom: "sema"
+depot: antoineberjoan/sema
+role: "Une application macOS native pour consulter des séries économiques, suivre ses favoris et définir des seuils."
+raison: "Que chacun garde à portée de main les repères économiques publics qui comptent pour lui, avec leur source, leur unité et leur date."
+etat: actif
+sophos: 2
+sorte: application macOS
+adresse: https://getsema.app
+skills: [penser, construire, expliquer, concevoir]
+marque:
+  tokens: Resources/Brand/tokens.json
+  icone-claire: Resources/Brand/sema-app-icon.svg
+  icone-sombre: Resources/Brand/sema-app-icon-dark.svg
+  clair: { fond: color.background, texte: color.text, accent: color.accent }
+  sombre: { fond: color.background, texte: color.text, accent: color.accent }
+politique:
+  defaut: orange
+  vert: [docs/**, site/**]
+  rouge: [Package.swift, Sources/MarketCore/**, Sources/SemaMac/Infrastructure/**, distribution/**, scripts/distribution/**]
+  controle: ./controler.sh

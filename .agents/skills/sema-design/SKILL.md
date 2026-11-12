@@ -5,7 +5,7 @@ description: Appliquer Interface Craft à une interface, une copy ou un mouvemen
 
 # Concevoir et vérifier
 
-Lire `docs/IDENTITY.md` et la décision Notion pertinente via `docs/engineering/SOURCES.md`. Si la skill Interface Craft est disponible, consulter sa partie utile ; ces critères locaux restent utilisables par tout agent sans installation supplémentaire.
+Lire `docs/IDENTITY.md`, `docs/fondation.md` et la décision pertinente dans `docs/decisions/`. Si la skill Interface Craft est disponible, consulter sa partie utile ; ces critères locaux restent utilisables par tout agent sans installation supplémentaire.
 
 - Définir l’action principale et l’information qui mérite le premier regard. Chaque texte, contrôle, surface ou animation sert cette tâche ; retirer les répétitions.
 - Séparer la revue du parcours, de l’apparence et du mouvement. Couleur intentionnelle, typographie système, espaces cohérents, ombres discrètes pour les surfaces flottantes. Sur Mac, SwiftUI, SF Symbols et conventions natives avant un composant personnalisé.
