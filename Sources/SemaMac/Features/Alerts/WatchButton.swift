@@ -18,7 +18,7 @@ struct WatchButton: View {
             Label(watched ? "Surveillé" : "Me prévenir", systemImage: watched ? "bell.fill" : "bell")
         } primaryAction: { toggle() }
         .menuStyle(.button).buttonStyle(.bordered).controlSize(.small)
-        .tint(watched ? DesignColor.accent(store.palette) : nil)
+        .tint(watched ? DesignColor.accentText(store.palette) : nil)
         .fixedSize()
         .disabled(!store.canWatch(series))
         .help(watched ? "Surveillé : sema vous prévient si ce repère bouge plus que d’habitude."

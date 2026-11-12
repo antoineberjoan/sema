@@ -1,11 +1,13 @@
 // Formulaire de création d’une règle de seuil sur une série suivie.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
 struct AlertEditorView: View {
     private static let sheetWidth: CGFloat = 480
-    private static let inset = Spacing.s24
-    private static let rowSpacing = Spacing.s16
+    private static let inset = DesignSpace.pageInsetNarrow
+    private static let blockSpacing = DesignSpace.groupGap
+    private static let rowSpacing = DesignSpace.fieldGap
     @Environment(AppStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var seriesID = ""
@@ -15,7 +17,7 @@ struct AlertEditorView: View {
     private var item: MarketSeries? { store.macroSeries.first { $0.id == seriesID } }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Self.inset) {
+        VStack(alignment: .leading, spacing: Self.blockSpacing) {
             Text("Créer une alerte").typeRole(.section)
             Grid(alignment: .leading, horizontalSpacing: Self.rowSpacing, verticalSpacing: Self.rowSpacing) {
                 GridRow {
@@ -33,26 +35,26 @@ struct AlertEditorView: View {
                 }
                 GridRow {
                     Text("Seuil")
-                    HStack(spacing: Theme.minorSpacing) {
+                    HStack(spacing: DesignSpace.fieldGap) {
                         TextField("Seuil", text: $thresholdText)
                             .textFieldStyle(.roundedBorder).accessibilityLabel("Seuil")
-                        Text(item.map(MarketFormat.unit) ?? "").foregroundStyle(.secondary)
+                        Text(item.map(MarketFormat.unit) ?? "").foregroundStyle(DesignColor.textMuted)
                     }
                 }
             }
             if threshold == nil {
                 Text("Saisissez un nombre valide, par exemple 3,5.")
-                    .typeRole(.small).foregroundStyle(.red)
+                    .typeRole(.small).foregroundStyle(DesignColor.danger)
             }
             if let item {
-                VStack(alignment: .leading, spacing: Theme.minorSpacing) {
+                VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
                     HStack {
-                        Text("Dernière valeur").foregroundStyle(.secondary)
+                        Text("Dernière valeur").foregroundStyle(DesignColor.textMuted)
                         Spacer()
                         Text(MarketFormat.value(item)).monospacedDigit()
                     }
                     Text("Vérification à l’actualisation des repères.")
-                        .typeRole(.small).foregroundStyle(.secondary)
+                        .typeRole(.small).foregroundStyle(DesignColor.textMuted)
                         .fixedSize(horizontal: false, vertical: true)
                         .help("Aucun contrôle quand sema est quittée ou le Mac en veille. La règle suit les nouvelles observations publiées.")
                 }

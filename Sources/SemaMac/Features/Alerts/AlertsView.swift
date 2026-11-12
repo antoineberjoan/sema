@@ -4,7 +4,7 @@ import SwiftUI
 import MarketCore
 
 struct AlertsView: View {
-    private static let sectionSpacing = Spacing.s24
+    private static let sectionSpacing = DesignSpace.groupGap
     private static let emptyMinHeight: CGFloat = 350
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
@@ -16,8 +16,8 @@ struct AlertsView: View {
         VStack(alignment: .leading, spacing: Self.sectionSpacing) {
             HStack(alignment: .firstTextBaseline) {
                 Text("Vérification après chaque clôture et à chaque actualisation, tant que sema tourne.")
-                    .typeRole(.small).foregroundStyle(.secondary)
-                Spacer(minLength: Spacing.s8)
+                    .typeRole(.small).foregroundStyle(DesignColor.textMuted)
+                Spacer(minLength: DesignSpace.fieldGap)
                 Button("Sensibilité \(store.moveSensitivity.title.lowercased()) · \(MarketFormat.ratio(store.moveSensitivity.multiplier))") {
                     store.settingsTab = .general; openSettings()
                 }
@@ -57,21 +57,21 @@ struct AlertsView: View {
     }
 
     private var favoritesOffer: some View {
-        HStack(spacing: Spacing.s16) {
-            VStack(alignment: .leading, spacing: Spacing.s2) {
+        HStack(spacing: DesignSpace.fieldGap) {
+            VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
                 Text(unwatchedFavorites.count == 1 ? "Surveiller votre favori ?" : "Surveiller vos \(unwatchedFavorites.count) favoris ?").typeRole(.heading)
-                Text("sema vous prévient quand l’un d’eux bouge plus que d’habitude.").typeRole(.small).foregroundStyle(.secondary)
+                Text("sema vous prévient quand l’un d’eux bouge plus que d’habitude.").typeRole(.small).foregroundStyle(DesignColor.textMuted)
             }
-            Spacer(minLength: Spacing.s8)
+            Spacer(minLength: DesignSpace.fieldGap)
             Button("Activer") { Task { await store.watchFavorites() } }.buttonStyle(.borderedProminent)
         }
-        .padding(Spacing.s16)
-        .background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Radius.block))
+        .padding(DesignSpace.cardInset)
+        .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
     }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(title).typeRole(.heading).padding(.bottom, Spacing.s8)
+            Text(title).typeRole(.heading).padding(.bottom, DesignSpace.titleGap)
             Divider()
             content()
         }
@@ -86,43 +86,43 @@ private struct WatchRow: View {
     var body: some View {
         let displayed = store.displayedSeries(series)
         let move = UnusualMove(series: series)
-        HStack(spacing: Spacing.s16) {
+        HStack(spacing: DesignSpace.itemGap) {
             Text(MarketFormat.name(displayed)).typeRole(.small).lineLimit(1).frame(width: Self.nameWidth, alignment: .leading)
             Text(move.map { MarketFormat.sessionChange($0.change, series: series) } ?? "Historique insuffisant")
-                .typeRole(.caption).monospacedDigit().foregroundStyle(.secondary)
+                .typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)
             if let move { MoveBadge(ratio: move.ratio) }
-            Spacer(minLength: Spacing.s8)
-            Text(MarketFormat.date(series.latest?.date)).typeRole(.caption).foregroundStyle(.secondary)
+            Spacer(minLength: DesignSpace.fieldGap)
+            Text(MarketFormat.date(series.latest?.date)).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             WatchButton(series: series)
         }
-        .padding(.vertical, Spacing.s10)
+        .padding(.vertical, DesignSpace.frameInset)
     }
 }
 
 private struct AlertRow: View {
-    private static let iconSpacing = Spacing.s14
+    private static let iconSpacing = DesignSpace.fieldGap
     private static let iconSize: CGFloat = 30
-    private static let textSpacing = Spacing.s8
-    private static let actionSpacing = Spacing.s16
-    private static let verticalPadding = Spacing.s16
+    private static let textSpacing = DesignSpace.titleGap
+    private static let actionSpacing = DesignSpace.itemGap
+    private static let verticalPadding = DesignSpace.cardInset
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
-    private var accent: Color { DesignColor.accent(palette) }
+    private var accentText: Color { DesignColor.accentText(palette) }
     let rule: AlertRule
     private var item: MarketSeries? { store.series.first { $0.id == rule.seriesID } }
     private var lastEvent: AlertEvent? { store.recentAlertEvents.last { $0.ruleID == rule.id } }
 
     var body: some View {
         HStack(alignment: .top, spacing: Self.iconSpacing) {
-            Image(systemName: rule.isEnabled ? "bell" : "bell.slash").foregroundStyle(accent)
+            Image(systemName: rule.isEnabled ? "bell" : "bell.slash").foregroundStyle(accentText)
                 .frame(width: Self.iconSize, height: Self.iconSize)
             VStack(alignment: .leading, spacing: Self.textSpacing) {
                 Text(item.map(MarketFormat.name) ?? "Repère indisponible").typeRole(.label)
                 Text("\(rule.direction.crossingTitle) \(MarketFormat.number(rule.threshold, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "").")
-                    .typeRole(.small).foregroundStyle(.secondary)
+                    .typeRole(.small).foregroundStyle(DesignColor.textMuted)
                 if let event = lastEvent, let value = event.observedValue {
                     Text("Dernier signal : \(MarketFormat.number(value, digits: item?.fractionDigits ?? 2)) \(item.map(MarketFormat.unit) ?? "") · \(MarketFormat.date(event.observedAt))")
-                        .typeRole(.caption).foregroundStyle(.secondary)
+                        .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 }
                 HStack(spacing: Self.actionSpacing) {
                     Button("Tester la notification") { store.simulate(rule) }.disabled(!store.isSourceEnabled(for: rule.seriesID))
@@ -135,7 +135,7 @@ private struct AlertRow: View {
             }
             Spacer(minLength: 0)
             Text(!store.isFollowing(rule.seriesID) ? "Repère retiré · en pause" : !store.isSourceEnabled(for: rule.seriesID) ? "Source désactivée · en pause" : !rule.isEnabled ? "En pause" : item?.canAlert == false ? "Unité à vérifier" : "À l’actualisation")
-                .typeRole(.caption).foregroundStyle(.secondary)
+                .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
         }
         .padding(.vertical, Self.verticalPadding)
     }
