@@ -26,7 +26,7 @@ extension AppStore {
 
     func economicReleases(on day: Date) async -> [EconomicRelease]? {
         guard hasFREDKey, isSourceEnabled(StatisticalSource.fred.rawValue) else { return nil }
-        return try? await statisticalClient().releaseDates(on: day)
+        return try? await statisticalConnectors().releaseDates(on: day)
     }
 
     func pressReleases(from start: Date, to end: Date) async -> [PressRelease]? {

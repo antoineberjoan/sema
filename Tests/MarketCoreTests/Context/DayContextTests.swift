@@ -34,8 +34,8 @@ struct DayContextTests {
 
     @Test func fredCalendarListsTheReleasesOfTheDay() throws {
         let data = Data(#"{"release_dates":[{"release_id":180,"release_name":"Unemployment Insurance Weekly Claims Report","date":"2026-11-05"}]}"#.utf8)
-        let releases = try StatisticalClient.fredReleaseDates(data)
+        let releases = try FredMapping.releaseDates(data)
         #expect(releases.map(\.name) == ["Unemployment Insurance Weekly Claims Report"])
-        #expect(!StatisticalClient.fredReleaseDatesRequest(on: start).url!.absoluteString.contains("api_key"))
+        #expect(!FredClient.releaseDatesRequest(on: start).url!.absoluteString.contains("api_key"))
     }
 }

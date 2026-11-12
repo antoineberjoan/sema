@@ -31,6 +31,6 @@ struct PressReleaseClientTests {
 
     @Test func entityDeclarationsAreRejected() {
         let hostile = Data(#"<?xml version="1.0"?><!DOCTYPE r [<!ENTITY x "y">]><rss><channel><item><title>&x;</title></item></channel></rss>"#.utf8)
-        #expect(throws: StatisticalClient.ClientError.self) { try PressReleaseClient.parse(hostile, feed: .fed) }
+        #expect(throws: PublicDataError.self) { try PressReleaseClient.parse(hostile, feed: .fed) }
     }
 }

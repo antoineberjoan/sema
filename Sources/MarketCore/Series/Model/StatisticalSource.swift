@@ -11,6 +11,8 @@ public enum StatisticalSource: String, Codable, CaseIterable, Sendable, Identifi
         case .bis: "BRI"; case .oecd: "OCDE"; case .newYorkFed: "Fed de New York"; case .worldBank: "Banque mondiale"; case .fred: "FRED" }
     }
     public var isSDMX: Bool { ![.newYorkFed, .worldBank, .fred].contains(self) }
+    /// Les hôtes que sert le connecteur SDMX : l'hôte est son paramètre.
+    public static let sdmxSources: [StatisticalSource] = allCases.filter(\.isSDMX)
     /// FRED needs a free personal key, kept in the Keychain and sent only to its host.
     public var requiresKey: Bool { self == .fred }
     public var baseURL: String {
