@@ -1,4 +1,4 @@
-// Couleurs, rayons, rythme et ombres partagés par toutes les vues.
+// Couleurs, rayons et rythme partagés par toutes les vues.
 import AppKit
 import SemaDesign
 import SwiftUI
@@ -57,31 +57,4 @@ enum Theme {
         image.isTemplate = true
         return image
     }()
-}
-
-/// Shared black shadows: opacity, blur and offset of each elevated surface.
-extension Theme {
-    struct Shadow {
-        let opacity: Double
-        let radius: CGFloat
-        var x: CGFloat = 0
-        let y: CGFloat
-
-        // Espace et forme 1.1: level 1 rests (0 1 2), level 2 floats (0 8 24), level 3 is a window (0 24 64).
-        // A SwiftUI radius is about half a CSS blur.
-        static let contact = Shadow(opacity: 0.04, radius: 1, y: 1)
-        static let contactDark = Shadow(opacity: 0.16, radius: 1, y: 1)
-        static let plane = Shadow(opacity: 0.06, radius: 12, y: 8)
-        static let planeDark = Shadow(opacity: 0.20, radius: 12, y: 8)
-        static let cardResting = Shadow(opacity: 0.08, radius: 1, y: 1)
-        static let card = Shadow(opacity: 0.12, radius: 12, y: 8)
-        static let sidebar = Shadow(opacity: 0.12, radius: 12, y: 8)
-        static let switcher = Shadow(opacity: 0.18, radius: 32, y: 24)
-    }
-}
-
-extension View {
-    func shadow(_ shadow: Theme.Shadow) -> some View {
-        self.shadow(color: .black.opacity(shadow.opacity), radius: shadow.radius, x: shadow.x, y: shadow.y)
-    }
 }

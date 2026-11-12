@@ -1,5 +1,6 @@
 // Compose les cartes en matière macOS et leur repli opaque pour les réglages d’accessibilité.
 import AppKit
+import SemaDesign
 import SwiftUI
 
 /// A separate native backdrop per card leaves the space between cards transparent.
@@ -103,6 +104,6 @@ struct RibbonSurface: ViewModifier {
                                                   endPoint: .bottomTrailing), lineWidth: Theme.hairline)
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
-            .shadow(emphasized ? .card : .cardResting)
+            .elevation(emphasized ? DesignElevation.floating : DesignElevation.raised)
     }
 }

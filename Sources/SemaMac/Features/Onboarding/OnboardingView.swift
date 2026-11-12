@@ -299,7 +299,7 @@ struct OnboardingView: View {
                 RoundedRectangle(cornerRadius: Theme.cardCorner)
                     .strokeBorder(selected ? accent : Color.clear, lineWidth: WelcomeLayout.tileBorder)
             }
-            .modifier(Elevation())
+            .elevation(DesignElevation.raised)
             .contentShape(RoundedRectangle(cornerRadius: Theme.cardCorner))
         }
         .buttonStyle(PressStyle())
