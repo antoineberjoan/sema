@@ -17,7 +17,7 @@ struct SeriesExplanationTests {
 
     private func rate(_ id: String, values: [Decimal], unit: String = "PC", multiplier: String = "0",
                       frequency: String? = nil, definition: String = "Définition du fournisseur") throws -> MarketSeries {
-        let key = WebstatClient.canonicalID(id)
+        let key = WebstatStarter.canonicalID(id)
         return try WebstatSeriesDescriptor(raw: [
             "series_key": .string(key), "dataset_id": .string(String(key.split(separator: ".")[0])),
             "freq": .string(frequency ?? String(key.split(separator: ".")[1])),

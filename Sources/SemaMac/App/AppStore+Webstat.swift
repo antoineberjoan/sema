@@ -12,7 +12,7 @@ extension AppStore {
     }
 
     func requiredKey() async throws -> String {
-        guard let key = try await webstatKeychain.read() else { hasWebstatKey = false; throw WebstatClient.ClientError.missingKey }
+        guard let key = try await webstatKeychain.read() else { hasWebstatKey = false; throw WebstatError.missingKey }
         return key
     }
 
@@ -66,7 +66,7 @@ extension AppStore {
                     value = try await statisticalConnectors().observations(for: descriptor)
                     measurementChanged = value.statisticalDescriptor.map { !descriptor.usesSameMeasurement(as: $0) } ?? true
                 } else {
-                    guard let key else { throw WebstatClient.ClientError.missingKey }
+                    guard let key else { throw WebstatError.missingKey }
                     let descriptor = try await WebstatClient().descriptor(apiKey: key, key: id)
                     let resolved = await resolve(descriptor, apiKey: key)
                     value = try await fetchRecent(descriptor: resolved, apiKey: key)
