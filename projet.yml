@@ -23,6 +23,6 @@ structure:
   unites:
     bibliotheque-de-regles: [Sources/MarketCore/Series, Sources/MarketCore/Moves, Sources/MarketCore/Alerts, Sources/MarketCore/Context]
     depot-de-donnees: [Sources/MarketCore/Preferences]
-    connecteur: [Sources/MarketCore/Webstat, Sources/MarketCore/Statistical, Sources/MarketCore/Markets, Sources/MarketCore/ECB]
+    connecteur: [Sources/MarketCore/Webstat, Sources/MarketCore/Statistical, Sources/MarketCore/Markets, Sources/MarketCore/ECB, Sources/MarketCore/Claude, Sources/MarketCore/Gdelt, Sources/MarketCore/CentralBankFeeds]
     module-ecran: [Sources/SemaMac/Features/*]
-  cliquet: 69
+  cliquet: 49

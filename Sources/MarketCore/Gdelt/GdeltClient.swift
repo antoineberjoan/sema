@@ -1,7 +1,7 @@
 // Cherche dans GDELT les titres anglophones d’une séance sur les marchés, sans clé ni compte.
 import Foundation
 
-public struct GDELTClient: Sendable {
+public struct GdeltClient: Sendable {
     static let baseURL = "https://api.gdeltproject.org/api/v2/doc/doc"
     static let timeout: TimeInterval = 20
     static let maximumRecords = 10

@@ -43,7 +43,7 @@ extension AppStore {
     func headlines(from start: Date, to end: Date) async -> [Headline]? {
         switch headlineSource {
         case .none: return []
-        case .gdelt: return try? await GDELTClient().headlines(from: start, to: end)
+        case .gdelt: return try? await GdeltClient().headlines(from: start, to: end)
         case .alphaVantage:
             guard connectedMarkets.contains(.alphaVantage), let client = marketClients[.alphaVantage],
                   let key = try? await marketKeychains[.alphaVantage]?.read() else { return nil }
