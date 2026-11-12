@@ -9,7 +9,7 @@ struct RibbonEnvironment: ViewModifier {
         content
             .environment(store)
             .environment(\.palette, store.palette).tint(DesignColor.accentControl(store.palette))
-            .environment(\.semaGlassSettings, store.ribbonGlass)
+            .environment(\.glassSettings, store.ribbonGlass)
             .preferredColorScheme(store.appearance.colorScheme)
             .environment(\.locale, .french)
     }

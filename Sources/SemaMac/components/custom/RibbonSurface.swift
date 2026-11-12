@@ -66,7 +66,7 @@ struct RibbonSurface: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.palette) private var palette
     private var glassTint: Color { DesignColor.glassTint(palette) }
-    @Environment(\.semaGlassSettings) private var glass
+    @Environment(\.glassSettings) private var glass
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
     var emphasized = false
