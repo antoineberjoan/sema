@@ -45,4 +45,4 @@ Les opacités `glass-rest` et `glass-hover` sont des valeurs de marque de sema :
 
 ## Trace
 
-Règle de l'architecte du 2026-11-12, validée par Antoine ; `patron/couleur.md` 1.1 (surfaces translucides).
+Règle de Sophos suivie avec deux écarts bornés : `patron/couleur.md` 1.1 (surfaces translucides).

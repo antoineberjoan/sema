@@ -46,7 +46,7 @@ public struct SessionRank: Equatable, Sendable {
         }
     }
 
-    /// « Plus forte baisse depuis 18 mois (exemple) » without the example mark.
+    /// Reading of the rank, for example « Plus forte baisse depuis 18 mois ».
     public var text: String {
         let word = direction == .rise ? "hausse" : "baisse"
         guard let months else { return "Plus forte \(word) de tout l’historique chargé (\(Self.duration(historyMonths)))" }

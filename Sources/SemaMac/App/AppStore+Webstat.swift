@@ -1,4 +1,4 @@
-// Gère la clé Webstat, l’actualisation des séries et le retour à la démonstration.
+// Gère la clé Webstat et l’actualisation des séries.
 import Foundation
 import MarketCore
 

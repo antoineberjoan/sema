@@ -35,12 +35,3 @@ La photo est choisie avec le sélecteur macOS, limitée à 25 Mo à l’entrée,
 ### Soutien
 
 « Soutenir sema » ouvre `https://ko-fi.com/antoineberjoan`, depuis À propos et le menu sema. Aucun widget, suivi ou paiement embarqué. Texte : « sema est gratuite. Vous pouvez soutenir son développement sur Ko-fi. »
-
-## Vérification
-
-- Compilation du bundle natif : réussie.
-- `scripts/check.sh` : bloqué par l’absence du module Swift Testing dans les Command Line Tools installés. Les tests durables `ProfileAndSourcesTests.swift` sont ajoutés pour Xcode/CI.
-- Exécutable de contrôle indépendant : équivalences et contre-exemples, ordre et favoris regroupés, pause/reprise sans signal rétroactif, franchissement suivant émis une seule fois, changement explicite d’accès conservant UUID et seuil des règles, profil/photo après relecture, retrait de photo, sources toutes désactivées, compatibilité des anciens réglages et préservation d’un fichier illisible : succès. Il n’a effectué aucun accès réseau, lecture du Trousseau ou envoi de notification.
-- Import d’une image de contrôle : JPEG sRGB 384 × 384, sans métadonnées GPS, vérifié avec ImageIO.
-- Contrôle natif après confirmation d’Antoine : ouverture directe de Profil via Mon espace ; saisie d’une identité de test et affichage dans la sidebar ; import d’une image locale via le sélecteur macOS, puis retrait ; huit interrupteurs présents, Insee retiré du menu Explorer après désactivation puis réactivé ; Gérer les sources ouvre le bon onglet ; lien Ko-fi et destination contrôlés dans À propos, entrée présente dans le menu sema.
-- Bundle de revue `Sema-Personalization-Review.app`, identifiant `com.antoineberjoan.sema.personalization-review`, préférences dans `work/sema-personalization-review/data`. Capture conservée dans `work/sema-personalization-review/sources-native.png`. La revue n’a pas installé l’app ni modifié les préférences de l’app principale. Le regroupement et les seuils ont été validés avec des fixtures explicitement identifiées dans l’exécutable indépendant ; aucun compte fournisseur ni notifications système n’a été activé pour ce contrôle UI.
