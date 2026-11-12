@@ -25,7 +25,7 @@ struct HeadlineTests {
 
     @Test func alphaVantageFeedUsesItsOwnTimestamp() throws {
         let data = Data(#"{"items":"1","feed":[{"title":"Nvidia falls 9.3%","url":"https://example.com/n","time_published":"20261105T210000","source":"Example News"}]}"#.utf8)
-        let headlines = try MarketDataClient.news(data)
+        let headlines = try AlphaVantageMapping.news(data)
         #expect(headlines.map(\.publisher) == ["Example News"])
         #expect(headlines.first?.publishedAt == utc("2026-11-05T21:00:00Z"))
     }

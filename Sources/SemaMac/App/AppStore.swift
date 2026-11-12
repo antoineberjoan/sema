@@ -51,7 +51,9 @@ final class AppStore {
     let storage: LocalRepository
     let notifications = NotificationClient()
     let webstatKeychain = KeychainClient(sourceID: "webstat", title: "Webstat")
-    let marketClients = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, MarketDataClient(provider: $0)) })
+    let twelveDataClient = TwelveDataClient()
+    let alphaVantageClient = AlphaVantageClient()
+    var marketClients: [MarketProvider: any MarketDataConnector] { [.twelveData: twelveDataClient, .alphaVantage: alphaVantageClient] }
     let marketKeychains = Dictionary(uniqueKeysWithValues: MarketProvider.allCases.map { ($0, KeychainClient(sourceID: $0.rawValue, title: $0.title)) })
     var connectedMarkets: Set<MarketProvider> = []
     let fredKeychain = KeychainClient(sourceID: StatisticalSource.fred.rawValue, title: StatisticalSource.fred.title)
