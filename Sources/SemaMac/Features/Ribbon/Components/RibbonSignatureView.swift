@@ -74,7 +74,7 @@ struct RibbonSignatureView: View {
         .padding(MenuRibbonLayout.cardPadding).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
             let shape = RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
-            shape.fill(.black)
+            shape.fill(DesignColor.signatureBase)
             shape.fill(LinearGradient(colors: [DesignColor.accentControl(store.palette).opacity(DesignOpacity.signatureGradientTop), DesignColor.accentControl(store.palette).opacity(DesignOpacity.signatureGradientBottom)],
                                       startPoint: .topLeading, endPoint: .bottomTrailing))
         }

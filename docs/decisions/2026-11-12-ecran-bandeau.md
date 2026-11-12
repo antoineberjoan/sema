@@ -1,11 +1,11 @@
-# L'écran Bandeau lit les rôles de sens et garde le blanc de la signature
+# L'écran Bandeau lit les rôles de sens, et sa signature lit on-accent
 
 Date : 2026-11-12 · Statut : proposée
 Décidé par : à confirmer par Antoine
 
 ## Contexte
 
-Le bandeau est la première des surfaces translucides de sema (liste fermée, décision sur les surfaces translucides). Ses cartes sont sur du verre. La signature est un dégradé d'accent avec du texte blanc.
+Le bandeau est la première des surfaces translucides de sema (liste fermée, décision sur les surfaces translucides). Ses cartes sont sur du verre. La signature est un dégradé d'accent avec du texte posé dessus.
 
 ## Décision
 
@@ -21,8 +21,8 @@ Le bandeau est la première des surfaces translucides de sema (liste fermée, d�
 
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
-| Lire les rôles, garder le blanc de la signature | Le bandeau lit les jetons là où le verre le permet | Un blanc propre à sema dans la signature |
-| Tout lire dans les jetons | Aucun écart | Un texte de la signature sans contraste garanti sur le dégradé |
+| Garder le blanc de la signature | Aucun changement de teinte | Un blanc écrit dans une vue, refusé par Sophos |
+| Tout lire dans les jetons | Aucune couleur écrite ; le verre et la signature ont leurs rôles de sema | Un papier et une encre à la place d'un blanc et d'un noir purs ; un contraste sur dégradé non mesuré |
 
 ## Conséquences
 
