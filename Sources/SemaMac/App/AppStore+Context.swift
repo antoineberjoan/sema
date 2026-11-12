@@ -45,9 +45,9 @@ extension AppStore {
         case .none: return []
         case .gdelt: return try? await GdeltClient().headlines(from: start, to: end)
         case .alphaVantage:
-            guard connectedMarkets.contains(.alphaVantage), let client = marketClients[.alphaVantage],
+            guard connectedMarkets.contains(.alphaVantage),
                   let key = try? await marketKeychains[.alphaVantage]?.read() else { return nil }
-            return try? await client.news(from: start, to: end, key: key)
+            return try? await alphaVantageClient.news(from: start, to: end, key: key)
         }
     }
 }
