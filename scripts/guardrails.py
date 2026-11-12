@@ -253,6 +253,8 @@ def web_errors(sources):
     pages = "\n".join(source for path, source in sources.items() if not path.endswith(".css"))
     defined = {name for source in sources.values() for match in CSS_VARIABLE_DEFINITION.finditer(source) for name in match.groups() if name}
     for path, css in sorted(styles.items()):
+        if is_generated(sources[path]):
+            continue  # la feuille fabriquée par `jetons.mjs` définit des variables et des classes de rôle : jetons.mjs la contrôle
         if path != TOKEN_SHEET:
             for number, line in enumerate(css.splitlines(), 1):
                 for match in RAW_STYLE.finditer(line):
