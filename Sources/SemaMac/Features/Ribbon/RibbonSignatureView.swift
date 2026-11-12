@@ -1,5 +1,6 @@
 // Orchestre le tracé du symbole et la signature à chaque ouverture, avec réduction des animations.
 import AppKit
+import SemaDesign
 import SwiftUI
 
 // SIGNATURE — une lecture, sans boucle. Le texte reste disponible à VoiceOver.
@@ -48,7 +49,7 @@ struct RibbonSignatureView: View {
                 SignalPath().trim(from: 0, to: stage >= SignatureMotion.drawStage ? 1 : 0)
                     .stroke(.white, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
                 // The teal point settles once the line has arrived.
-                SignalDot().fill(Palette.brand.controlAccent)
+                SignalDot().fill(DesignColor.accentControl(.brand))
                     .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
                     .animation(reduceMotion ? nil : Motion.easeOut(SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             }
@@ -80,7 +81,7 @@ struct RibbonSignatureView: View {
         .background {
             let shape = RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
             shape.fill(.black)
-            shape.fill(LinearGradient(colors: [store.palette.signatureAccent.opacity(Self.backgroundTopOpacity), store.palette.signatureAccent.opacity(Self.backgroundBottomOpacity)],
+            shape.fill(LinearGradient(colors: [DesignColor.accentControl(store.palette).opacity(Self.backgroundTopOpacity), DesignColor.accentControl(store.palette).opacity(Self.backgroundBottomOpacity)],
                                       startPoint: .topLeading, endPoint: .bottomTrailing))
         }
         .overlay {

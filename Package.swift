@@ -14,6 +14,7 @@ let package = Package(
         .target(name: "MarketCore", exclude: ["AGENTS.md"]),
         .target(name: "SemaDesign"),
         .executableTarget(name: "SemaMac", dependencies: ["MarketCore", "SemaDesign"], exclude: ["AGENTS.md"]),
-        .testTarget(name: "MarketCoreTests", dependencies: ["MarketCore"])
+        .testTarget(name: "MarketCoreTests", dependencies: ["MarketCore"]),
+        .testTarget(name: "SemaDesignTests", dependencies: ["SemaDesign"])
     ]
 )

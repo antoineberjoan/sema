@@ -1,4 +1,5 @@
 // Explore les jeux et dimensions des sources publiques pour ajouter un repère précis.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -103,7 +104,8 @@ private struct StatisticalExplorerView: View {
     private static let seriesTitleLines = 4
     private static let valueLines = 2
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     let source: StatisticalSource
     var compact: Bool
     var close: (() -> Void)?

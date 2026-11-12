@@ -1,4 +1,5 @@
 // Dessine l’historique et permet de lire l’observation originale au survol du graphique.
+import SemaDesign
 import SwiftUI
 import Charts
 import MarketCore
@@ -25,7 +26,8 @@ struct HistoryChart: View {
     private static let ruleOpacity = 0.35
     private static let lineWidth: CGFloat = 2
     private static let tooltipCorner: CGFloat = 8
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     let series: MarketSeries
     let period: HistoryPeriod
     var height: CGFloat? = Self.defaultHeight

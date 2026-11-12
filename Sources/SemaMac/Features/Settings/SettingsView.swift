@@ -1,4 +1,5 @@
 // Organise les réglages en rubriques recherchables, avec un contenu natif et un profil fixé en bas.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -138,7 +139,7 @@ struct SettingsView: View {
                 settingsContent
                     .scrollContentBackground(.hidden)
                     .buttonStyle(.bordered)
-                    .tint(store.palette.accent)
+                    .tint(DesignColor.accent(store.palette))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .background(Theme.background)
@@ -238,18 +239,18 @@ struct SettingsView: View {
                 }.padding(.vertical, Theme.minorSpacing)
             }
             Section("Palette") {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Theme.minorSpacing), count: Palette.allCases.count), spacing: Theme.minorSpacing) {
-                    ForEach(Palette.allCases) { palette in
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Theme.minorSpacing), count: DesignPalette.allCases.count), spacing: Theme.minorSpacing) {
+                    ForEach(DesignPalette.allCases, id: \.self) { palette in
                         Button { store.setPalette(palette) } label: {
                             VStack(spacing: Theme.minorSpacing) {
                                 ZStack {
-                                    RoundedRectangle(cornerRadius: Self.swatchCorner).fill(Palette.swatch(palette.swatches[0]))
-                                    RoundedRectangle(cornerRadius: Self.innerSwatchCorner).fill(Palette.swatch(palette.swatches[1]))
+                                    RoundedRectangle(cornerRadius: Self.swatchCorner).fill(DesignColor.palettePreview1(palette))
+                                    RoundedRectangle(cornerRadius: Self.innerSwatchCorner).fill(DesignColor.palettePreview2(palette))
                                         .padding(Self.innerSwatchInset)
                                 }
                                 .padding(Self.swatchPadding).frame(height: Self.swatchHeight)
                                 .overlay(RoundedRectangle(cornerRadius: Self.swatchCorner).strokeBorder(
-                                    store.palette == palette ? store.palette.accent : .clear, lineWidth: Self.selectedStroke))
+                                    store.palette == palette ? DesignColor.accent(store.palette) : .clear, lineWidth: Self.selectedStroke))
                                 Text(palette.title).typeRole(.caption).lineLimit(Self.paletteTitleLines)
                                     .frame(maxWidth: .infinity, minHeight: Self.paletteTitleHeight, alignment: .top)
                             }.contentShape(Rectangle())
@@ -309,7 +310,8 @@ private struct SettingsChoice: View {
     private static let corner = Radius.block
     private static let selectedStroke: CGFloat = 2
     private static let width: CGFloat = 76
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     let title: String
     let symbol: String
     let selected: Bool

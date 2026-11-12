@@ -1,4 +1,5 @@
 // Réglages visuels de l’app transmis aux surfaces flottantes : accent, verre, apparence et langue.
+import SemaDesign
 import SwiftUI
 
 struct RibbonEnvironment: ViewModifier {
@@ -7,8 +8,7 @@ struct RibbonEnvironment: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(store)
-            .environment(\.semaAccent, store.palette.accent).tint(store.palette.controlAccent)
-            .environment(\.semaGlassTint, store.palette.glassTint)
+            .environment(\.palette, store.palette).tint(DesignColor.accentControl(store.palette))
             .environment(\.semaGlassSettings, store.ribbonGlass)
             .preferredColorScheme(store.appearance.colorScheme)
             .environment(\.locale, .french)

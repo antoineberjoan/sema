@@ -1,4 +1,5 @@
 // Détail d’une série : valeur, variation, historique et métadonnées officielles.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -53,7 +54,7 @@ struct SeriesDetailView: View {
             } actions: {
                 if needsWebstatKey {
                     Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }
-                        .buttonStyle(.borderedProminent).tint(store.palette.accent)
+                        .buttonStyle(.borderedProminent).tint(DesignColor.accent(store.palette))
                 }
             }
             .frame(maxWidth: .infinity, minHeight: HistoryChart.defaultHeight, maxHeight: .infinity)
@@ -231,10 +232,10 @@ struct SeriesDetailView: View {
         if displayed.change(for: period) != nil {
             Text(MarketFormat.change(displayed, period: period) + " sur " + period.title)
                 .typeRole(.tag).fontWeight(.medium).monospacedDigit().lineLimit(1)
-                .foregroundStyle(store.palette.accent)
+                .foregroundStyle(DesignColor.accent(store.palette))
                 .padding(.horizontal, Spacing.s8)
                 .padding(.vertical, Spacing.s2)
-                .background(store.palette.accent.opacity(Theme.badgeFillOpacity), in: RoundedRectangle(cornerRadius: Radius.mark))
+                .background(DesignColor.accent(store.palette).opacity(Theme.badgeFillOpacity), in: RoundedRectangle(cornerRadius: Radius.mark))
         } else if series.latest != nil {
             Text(MarketFormat.change(displayed, period: period))
                 .typeRole(.small).foregroundStyle(.secondary)

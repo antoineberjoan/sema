@@ -1,9 +1,11 @@
 // Épingle ou retire une série des favoris depuis sa carte ou son détail.
+import SemaDesign
 import SwiftUI
 
 struct FavoriteButton: View {
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     let seriesID: String
     let seriesName: String
     var body: some View {

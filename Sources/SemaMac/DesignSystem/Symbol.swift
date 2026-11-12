@@ -1,4 +1,5 @@
 // Trace le logo repère : la ligne, l’écart qui la détache du point, puis le point sarcelle.
+import SemaDesign
 import SwiftUI
 
 /// Antoine’s mark (8 November 2026). In the menu bar the point follows the template colour.
@@ -16,7 +17,7 @@ struct Symbol: View {
                 if isMenuBarIcon {
                     SignalDot()
                 } else {
-                    SignalDot().fill(Palette.brand.controlAccent)
+                    SignalDot().fill(DesignColor.accentControl(.brand))
                 }
             }
             .compositingGroup()

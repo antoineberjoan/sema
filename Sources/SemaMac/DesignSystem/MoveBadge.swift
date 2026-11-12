@@ -1,4 +1,5 @@
 // Pastille de l’écart à l’habituel : sa teinte s’intensifie avec le multiple, sans jamais coder hausse ou baisse.
+import SemaDesign
 import SwiftUI
 import AppKit
 import MarketCore
@@ -6,7 +7,8 @@ import MarketCore
 struct MoveBadge: View {
     /// Five intensity zones of the brand teal: below 1×, 1–2×, 2–3×, 3–5×, above 5×.
     private static let zones: [(limit: Double, opacity: Double)] = [(1, 0), (2, 0.25), (3, 0.55), (5, 1), (.infinity, 1)]
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     let ratio: Double
     var prefix = ""
     var suffix = ""

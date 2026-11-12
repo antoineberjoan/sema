@@ -1,4 +1,5 @@
 // Guide la première ouverture : bienvenue, thèmes avec aperçu du bandeau, puis connexion des données.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -90,7 +91,8 @@ struct OnboardingView: View {
     private static let previewCardCount = 3
     private static let minimumPreviewObservations = 1
     @Environment(AppStore.self) private var store
-    @Environment(\.semaAccent) private var accent
+    @Environment(\.palette) private var palette
+    private var accent: Color { DesignColor.accent(palette) }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let initialSelection: [String]
     let selectSeries: ([String]) -> Bool
@@ -258,7 +260,6 @@ struct OnboardingView: View {
             }
         }
         .frame(maxWidth: .infinity, minHeight: MenuRibbonLayout.cardHeight, maxHeight: MenuRibbonLayout.cardHeight, alignment: .leading)
-        .environment(\.semaGlassTint, store.palette.glassTint)
         .environment(\.semaGlassSettings, store.ribbonGlass)
         .animation(reduceMotion ? nil : Motion.easeOut(WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
         .allowsHitTesting(false).accessibilityHidden(true)
@@ -371,7 +372,7 @@ private struct WelcomeSignal: View {
         ZStack {
             SignalPath().trim(from: 0, to: progress)
                 .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-            SignalDot().fill(Palette.brand.controlAccent).opacity(progress >= 1 ? 1 : 0)
+            SignalDot().fill(DesignColor.accentControl(.brand)).opacity(progress >= 1 ? 1 : 0)
         }
         .accessibilityHidden(true)
     }

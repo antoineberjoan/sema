@@ -1,13 +1,10 @@
-// Transmet l’accent, la teinte du verre et ses réglages aux vues par l’environnement.
-import SwiftUI
+// Transmet la palette choisie et les réglages du verre aux vues par l’environnement.
 import MarketCore
+import SemaDesign
+import SwiftUI
 
-private struct AccentKey: EnvironmentKey {
-    static let defaultValue: Color = Palette.standard.accent
-}
-
-private struct GlassTintKey: EnvironmentKey {
-    static let defaultValue: Color = .clear
+private struct PaletteKey: EnvironmentKey {
+    static let defaultValue = DesignPalette.brand
 }
 
 private struct GlassSettingsKey: EnvironmentKey {
@@ -19,12 +16,8 @@ extension EnvironmentValues {
         get { self[GlassSettingsKey.self] }
         set { self[GlassSettingsKey.self] = newValue }
     }
-    var semaGlassTint: Color {
-        get { self[GlassTintKey.self] }
-        set { self[GlassTintKey.self] = newValue }
-    }
-    var semaAccent: Color {
-        get { self[AccentKey.self] }
-        set { self[AccentKey.self] = newValue }
+    var palette: DesignPalette {
+        get { self[PaletteKey.self] }
+        set { self[PaletteKey.self] = newValue }
     }
 }

@@ -1,4 +1,5 @@
 // Saisit, remplace ou retire la clé personnelle d’une source, dans les réglages comme à la première connexion.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -30,7 +31,7 @@ struct SourceKeyView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.majorSpacing) {
             if connected {
-                Label("Connecté", systemImage: "checkmark.circle.fill").foregroundStyle(store.palette.accent)
+                Label("Connecté", systemImage: "checkmark.circle.fill").foregroundStyle(DesignColor.accent(store.palette))
             }
             HStack(spacing: Theme.minorSpacing) {
                 SecureField(connected ? "Nouvelle clé API" : "Clé API personnelle", text: $key)
