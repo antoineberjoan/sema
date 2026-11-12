@@ -29,11 +29,11 @@ struct SourceKeyView: View {
     private var canConnect: Bool { !connecting && enabled && !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Theme.majorSpacing) {
+        VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
             if connected {
-                Label("Connecté", systemImage: "checkmark.circle.fill").foregroundStyle(DesignColor.accent(store.palette))
+                Label("Connecté", systemImage: "checkmark.circle.fill").foregroundStyle(DesignColor.accentText(store.palette))
             }
-            HStack(spacing: Theme.minorSpacing) {
+            HStack(spacing: DesignSpace.fieldGap) {
                 SecureField(connected ? "Nouvelle clé API" : "Clé API personnelle", text: $key)
                     .textFieldStyle(.roundedBorder).textContentType(.password).privacySensitive()
                     .accessibilityLabel("Clé API \(title)").onSubmit(connect)
@@ -49,23 +49,23 @@ struct SourceKeyView: View {
                         .disabled(connecting || store.isLoading)
                 }
             }.typeRole(.small).buttonStyle(.link)
-            if let provider { Text(provider.quota).typeRole(.micro).foregroundStyle(.secondary) }
+            if let provider { Text(provider.quota).typeRole(.micro).foregroundStyle(DesignColor.textMuted) }
             if isFRED {
                 Text("Gratuite · VIX, taux américains quotidiens, dollar et calendrier des publications.")
-                    .typeRole(.micro).foregroundStyle(.secondary)
+                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted)
             }
             if isClaude {
                 Text("Payante à l’usage sur votre compte Anthropic · quelques centimes par synthèse.")
-                    .typeRole(.micro).foregroundStyle(.secondary)
+                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted)
             }
             if !enabled {
-                Text("Activez \(title) dans les catalogues.").typeRole(.small).foregroundStyle(.secondary)
+                Text("Activez \(title) dans les catalogues.").typeRole(.small).foregroundStyle(DesignColor.textMuted)
             }
             if let error {
-                Text(error).typeRole(.small).foregroundStyle(.red).textSelection(.enabled)
+                Text(error).typeRole(.small).foregroundStyle(DesignColor.danger).textSelection(.enabled)
             }
         }
-        .padding(.vertical, Theme.minorSpacing)
+        .padding(.vertical, DesignSpace.rowInset)
         .help("Clé conservée dans le Trousseau de ce Mac, transmise uniquement à \(title).")
         .onDisappear { key = "" }
     }

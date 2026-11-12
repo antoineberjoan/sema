@@ -1,4 +1,5 @@
 // Permet de modifier le profil de ce Mac et sa photo sans créer de compte.
+import SemaDesign
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -12,13 +13,13 @@ struct ProfileSettingsView: View {
     var body: some View {
         Form {
             Section {
-                HStack(spacing: Theme.majorSpacing) {
+                HStack(spacing: DesignSpace.groupGap) {
                     Button { showsImporter = true } label: {
                         ProfileAvatar(profile: store.profile, size: Self.avatarSize)
                     }
                     .buttonStyle(.plain).disabled(isImporting)
                     .accessibilityLabel("Modifier la photo")
-                    VStack(alignment: .leading, spacing: Theme.minorSpacing) {
+                    VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
                         if !store.profile.displayName.isEmpty {
                             Text(store.profile.displayName).typeRole(.subheading)
                         }
@@ -32,7 +33,7 @@ struct ProfileSettingsView: View {
                         }
                     }.buttonStyle(.link)
                     Spacer()
-                }.padding(.vertical, Theme.minorSpacing)
+                }.padding(.vertical, DesignSpace.rowInset)
             }
             Section {
                 TextField("Prénom", text: Binding(get: { store.profile.firstName }, set: {

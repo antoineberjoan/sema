@@ -1,9 +1,10 @@
 // Réunit les sources activables et leurs clés personnelles sans modifier les données en cache.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
 struct SourceSettingsView: View {
-    private static let rowPadding = Spacing.s4
+    private static let rowPadding = DesignSpace.markInset
     @Environment(AppStore.self) private var store
 
     var body: some View {
@@ -26,7 +27,7 @@ struct SourceSettingsView: View {
             Section {
                 ForEach(CentralBankFeed.allCases) { feed in sourceRow(id: feed.rawValue, title: feed.title) }
             } header: { Text("Communiqués des banques centrales") } footer: {
-                Text("Flux publics, sans clé. Ils servent au contexte d’un mouvement et au brief du matin.").typeRole(.caption).foregroundStyle(.secondary)
+                Text("Flux publics, sans clé. Ils servent au contexte d’un mouvement et au brief du matin.").typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
             Section {
                 Picker("Source des titres", selection: Binding(get: { store.headlineSource }, set: { store.setHeadlineSource($0) })) {
@@ -34,19 +35,19 @@ struct SourceSettingsView: View {
                 }
             } header: { Text("Titres d’actualité") } footer: {
                 Text("Les titres restent des liens vers leurs éditeurs. Alpha Vantage utilise la clé déjà connectée et un appel de son quota quotidien. Conditions d’usage de GDELT à vérifier avant une diffusion large.")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
             Section {
                 Picker("Rédacteur", selection: Binding(get: { store.summaryWriter }, set: { store.setSummaryWriter($0) })) {
                     ForEach(SummaryWriter.allCases) { Text($0.title).tag($0) }
                 }
                 if store.summaryWriter == .appleIntelligence, !store.isAppleIntelligenceAvailable {
-                    Text(AppleSummaryWriter.UnavailableError().errorDescription ?? "").typeRole(.small).foregroundStyle(.secondary)
+                    Text(AppleSummaryWriter.UnavailableError().errorDescription ?? "").typeRole(.small).foregroundStyle(DesignColor.textMuted)
                 }
                 if store.summaryWriter == .claude { SourceKeyView(source: AppStore.claudeSourceID) }
             } header: { Text("Synthèse rédigée") } footer: {
                 Text("Désactivée par défaut. Apple Intelligence rédige sur ce Mac, sans réseau. Claude reçoit seulement les faits numérotés de la séance (repères, variations, titres), jamais votre profil ni vos autres clés. Une phrase n’est affichée que si ses chiffres et son sens se retrouvent dans les faits qu’elle cite.")
-                    .typeRole(.caption).foregroundStyle(.secondary)
+                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
         }
         .formStyle(.grouped)
