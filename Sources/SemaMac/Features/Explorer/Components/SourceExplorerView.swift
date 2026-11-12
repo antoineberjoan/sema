@@ -391,7 +391,7 @@ private struct StatisticalExplorerView: View {
 }
 
 private struct StatisticalCodePicker: View {
-    private static let size = CGSize(width: 490, height: 470)
+    private static let size = CGSize(width: DesignLayout.codePickerWidth, height: DesignLayout.codePickerHeight)
     @Environment(\.dismiss) private var dismiss
     let dimension: StatisticalDimension
     let selected: String?

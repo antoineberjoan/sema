@@ -4,7 +4,7 @@ import SwiftUI
 import MarketCore
 
 struct SearchScreen: View {
-    static let size = CGSize(width: 600, height: 460)
+    static let size = CGSize(width: DesignLayout.searchPanelWidth, height: DesignLayout.searchPanelHeight)
     private static let panelPadding = DesignSpace.cardInset
     private static let fieldSpacing = DesignSpace.fieldGap
     private static let escapeRadius = DesignRadius.control

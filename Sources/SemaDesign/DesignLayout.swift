@@ -213,4 +213,12 @@ public enum DesignLayout {
     public static let profileAvatarDefaultSize: CGFloat = 32
     /// Propre à sema : la taille du texte du bouton d'enregistrement d'un raccourci, un contrôle natif d'AppKit.
     public static let shortcutRecorderFontSize: CGFloat = 12
+    /// Propre à sema : la largeur du panneau de recherche rapide.
+    public static let searchPanelWidth: CGFloat = 600
+    /// Propre à sema : la hauteur du panneau de recherche rapide.
+    public static let searchPanelHeight: CGFloat = 460
+    /// Propre à sema : la largeur de la fenêtre de choix d'un code statistique.
+    public static let codePickerWidth: CGFloat = 490
+    /// Propre à sema : la hauteur de la fenêtre de choix d'un code statistique.
+    public static let codePickerHeight: CGFloat = 470
 }

@@ -65,4 +65,8 @@ public enum DesignMeasure {
     public static let profilePhotoThumbnailPixelSize: Double = 768
     /// Propre à sema : la qualité de compression JPEG de la photo de profil, de 0 à 1.
     public static let profilePhotoJpegQuality: Double = 0.85
+    /// Propre à sema : le facteur de rendu de l'image de la barre des menus (2 = pixels d'un écran Retina).
+    public static let menuBarIconRenderScale: Double = 2
+    /// Propre à sema : l'angle en degrés du chevron d'une ligne dépliée.
+    public static let disclosureExpandedAngle: Double = 90
 }

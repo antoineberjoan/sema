@@ -389,6 +389,8 @@
   --icon-gap: var(--primitive-space-8);
   /* Côté d'un bouton d'icône d'une fenêtre Mac au pointeur : app Mac au pointeur, cible au toucher non applicable. Une vue qui accepte le toucher lit target.min. */
   --icon-button-size: 26px;
+  /* Côté de l'image de l'icône dans la barre des menus (un modèle rendu une fois). */
+  --icon-menu-bar-size: 18px;
   /* Côté minimal d'une cible au toucher (fonder) ; un contrôle plus petit agrandit sa zone de toucher. */
   --target-min: 44px;
   /* Largeur maximale d'une colonne de lecture, en caractères. */
@@ -453,6 +455,10 @@
   --measure-profile-photo-thumbnail-pixel-size: 768;
   /* Propre à sema : la qualité de compression JPEG de la photo de profil, de 0 à 1. */
   --measure-profile-photo-jpeg-quality: 0.85;
+  /* Propre à sema : le facteur de rendu de l'image de la barre des menus (2 = pixels d'un écran Retina). */
+  --measure-menu-bar-icon-render-scale: 2;
+  /* Propre à sema : l'angle en degrés du chevron d'une ligne dépliée. */
+  --measure-disclosure-expanded-angle: 90;
   /* Écran étroit : sous ce seuil, le titre rétrécit. Seul seuil de largeur du patron. */
   --breakpoint-narrow: 40rem;
   /* Famille de l'interface ; le projet y met sa police. */
@@ -837,6 +843,14 @@
   --layout-profile-avatar-default-size: 32px;
   /* Propre à sema : la taille du texte du bouton d'enregistrement d'un raccourci, un contrôle natif d'AppKit. */
   --layout-shortcut-recorder-font-size: 12px;
+  /* Propre à sema : la largeur du panneau de recherche rapide. */
+  --layout-search-panel-width: 600px;
+  /* Propre à sema : la hauteur du panneau de recherche rapide. */
+  --layout-search-panel-height: 460px;
+  /* Propre à sema : la largeur de la fenêtre de choix d'un code statistique. */
+  --layout-code-picker-width: 490px;
+  /* Propre à sema : la hauteur de la fenêtre de choix d'un code statistique. */
+  --layout-code-picker-height: 470px;
 }
 
 /* Palette graphite : les pas d'échelle qui diffèrent de brand. */

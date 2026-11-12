@@ -56,6 +56,7 @@ Aucun écart daté ne reste. Toute valeur visuelle de l'app et du site se lit da
 **Sans objet (2026-11-12, arbitrage de l'architecte)** :
 
 - Pourcentages d'étapes des `@keyframes`, `0`, `1`, `scale(0)`, `scale(1)` : la structure d'une animation et des identités mathématiques. CSS n'accepte pas `var()` dans un pourcentage d'étape. Les durées et les courbes de ces animations sont des jetons.
+- `.frame(width: 0, height: 0)` des hôtes invisibles (`MenuRibbonAttachment`, `FocusKeyboard`), `.aspectRatio(1, …)`, `.opacity(… ? 1 : 0)`, `.rotationEffect(… : 0)` : des identités (taille nulle, rapport carré, tout ou rien), pas des valeurs de présentation (2026-11-12).
 - `ProfilePhoto.maximumFileSize` : une limite de logique (un nombre d'octets), pas une valeur de design.
 
 **Lu par rôle, jamais par marche** : le CSS du site ne lit aucune primitive (`--scale-space-N`, `--scale-text-N`, `--scale-weight-*`). Il lit des rôles nommés par usage (par exemple `--fav-padding`, `--focus-value-text-size`), chacun avec sa `$description` dans `site/tokens.json`. `guardrails.py` échoue si le CSS lit une primitive `--scale-*`.

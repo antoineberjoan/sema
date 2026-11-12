@@ -9,8 +9,8 @@ import SemaDesign
 final class MenuRibbonController: NSObject {
     /// The menu bar image: the brand symbol, drawn once as a template image.
     private static let menuBarIcon: NSImage = {
-        let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(DesignColor.text).frame(width: 18, height: 18))
-        renderer.scale = 2
+        let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(DesignColor.text).frame(width: DesignIcon.menuBarSize, height: DesignIcon.menuBarSize))
+        renderer.scale = CGFloat(DesignMeasure.menuBarIconRenderScale)
         let image = renderer.nsImage ?? NSImage(systemSymbolName: "waveform.path", accessibilityDescription: "sema")!
         image.isTemplate = true
         return image

@@ -16,7 +16,7 @@ struct RowDisclosureStyle: DisclosureGroupStyle {
             } label: {
                 HStack(spacing: DesignLayout.rowDisclosureSpacing) {
                     Image(systemName: "chevron.right").typeRole(.caption).fontWeight(.semibold)
-                        .rotationEffect(.degrees(configuration.isExpanded ? 90 : 0))
+                        .rotationEffect(.degrees(configuration.isExpanded ? DesignMeasure.disclosureExpandedAngle : 0))
                         .frame(width: DesignLayout.rowDisclosureChevronWidth).accessibilityHidden(true)
                     configuration.label
                     Spacer(minLength: 0)
