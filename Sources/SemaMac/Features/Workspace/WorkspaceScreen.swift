@@ -5,7 +5,7 @@ import SemaDesign
 import SwiftUI
 import MarketCore
 
-struct WorkspaceView: View {
+struct WorkspaceScreen: View {
     private static let searchCorner = DesignRadius.control
     private static let minimumWidth: CGFloat = 980
     private static let minimumHeight: CGFloat = 680
@@ -62,7 +62,7 @@ struct WorkspaceView: View {
         } detail: {
             VStack(spacing: 0) {
                 if store.section == .explorer {
-                    ExplorerView().padding(DesignSpace.pageInsetNarrow).frame(maxWidth: .infinity, maxHeight: .infinity)
+                    ExplorerScreen().padding(DesignSpace.pageInsetNarrow).frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if store.section == .overview {
                     ViewThatFits(in: .vertical) {
                         overviewContent
@@ -350,9 +350,9 @@ struct WorkspaceView: View {
             HStack(spacing: DesignIcon.gap) {
                 if let status = store.status {
                     Image(systemName: store.hasLoadedWebstat ? "clock" : "info.circle")
-                    Text(status).lineLimit(WorkspaceView.statusLines).help(status)
+                    Text(status).lineLimit(WorkspaceScreen.statusLines).help(status)
                 }
-                Spacer(minLength: WorkspaceView.statusSpacing)
+                Spacer(minLength: WorkspaceScreen.statusSpacing)
                 if !store.hasWebstatKey, store.connectedMarkets.isEmpty {
                     Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }.buttonStyle(.borderless)
                 }

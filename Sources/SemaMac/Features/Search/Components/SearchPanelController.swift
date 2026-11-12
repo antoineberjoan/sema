@@ -32,7 +32,7 @@ final class SearchPanelController {
     }
 
     private func content() -> AnyView {
-        AnyView(SearchPanelView(model: model,
+        AnyView(SearchScreen(model: model,
             openInHub: { [weak self] series in
                 guard let self else { return }
                 self.dismiss(); self.store.show(series); self.store.section = .overview; self.openWorkspace()
@@ -50,7 +50,7 @@ final class SearchPanelController {
         model.detail = nil
         transition = UUID(); isPresented = true
         hostedContent.rootView = content()
-        let size = SearchPanelView.size
+        let size = SearchScreen.size
         let visible = screen.visibleFrame
         let target = NSRect(x: visible.midX - size.width / 2,
                             y: visible.maxY - visible.height * Self.topInset - size.height, width: size.width, height: size.height)

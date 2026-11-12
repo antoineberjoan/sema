@@ -37,7 +37,7 @@ private extension SettingsTab {
     }
 }
 
-struct SettingsView: View {
+struct SettingsScreen: View {
     private static let sidebarWidth: CGFloat = 230
     private static let searchSpacing = DesignIcon.gap
     private static let searchPadding = DesignSpace.frameInset

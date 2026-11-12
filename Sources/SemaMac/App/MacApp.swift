@@ -12,7 +12,7 @@ struct MacApp: App {
 
     var body: some Scene {
         Window("sema", id: "workspace") {
-            WorkspaceView().environment(store).tint(DesignColor.accentControl(store.palette))
+            WorkspaceScreen().environment(store).tint(DesignColor.accentControl(store.palette))
                 .environment(\.palette, store.palette)
                 .environment(\.locale, .french)
                 .preferredColorScheme(store.appearance.colorScheme)
@@ -35,7 +35,7 @@ struct MacApp: App {
         }
 
         Settings {
-            SettingsView().environment(store).tint(DesignColor.accentControl(store.palette))
+            SettingsScreen().environment(store).tint(DesignColor.accentControl(store.palette))
                 .environment(\.palette, store.palette)
                 .preferredColorScheme(store.appearance.colorScheme)
         }
