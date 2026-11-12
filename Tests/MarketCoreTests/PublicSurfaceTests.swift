@@ -27,6 +27,7 @@ struct PublicSurfaceTests {
         "Headline",
         "HeadlineSource",
         "HistoryPeriod",
+        "IdentifierMigration",
         "LocalProfile",
         "MarketCatalogue",
         "MarketDataConnector",
