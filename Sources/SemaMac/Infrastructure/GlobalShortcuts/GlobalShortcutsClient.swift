@@ -4,7 +4,7 @@ import Carbon
 import MarketCore
 
 @MainActor
-final class GlobalShortcuts {
+final class GlobalShortcutsClient {
     private var handler: EventHandlerRef?
     private var registrations: [ShortcutAction: (shortcut: AppShortcut, reference: EventHotKeyRef)] = [:]
     var perform: (ShortcutAction) -> Void = { _ in }
@@ -75,8 +75,8 @@ final class GlobalShortcuts {
             var key = EventHotKeyID()
             guard GetEventParameter(event, EventParamName(kEventParamDirectObject), EventParamType(typeEventHotKeyID),
                 nil, MemoryLayout<EventHotKeyID>.size, nil, &key) == noErr,
-                key.signature == GlobalShortcuts.signature else { return OSStatus(eventNotHandledErr) }
-            let controller = Unmanaged<GlobalShortcuts>.fromOpaque(context).takeUnretainedValue()
+                key.signature == GlobalShortcutsClient.signature else { return OSStatus(eventNotHandledErr) }
+            let controller = Unmanaged<GlobalShortcutsClient>.fromOpaque(context).takeUnretainedValue()
             let id = key.id
             // End the Carbon callback before opening a SwiftUI window or changing the key panel.
             Task { @MainActor in

@@ -42,7 +42,7 @@ struct SourceSettingsView: View {
                     ForEach(SummaryWriter.allCases) { Text($0.title).tag($0) }
                 }
                 if store.summaryWriter == .appleIntelligence, !store.isAppleIntelligenceAvailable {
-                    Text(AppleSummaryWriter.UnavailableError().errorDescription ?? "").typeRole(.small).foregroundStyle(DesignColor.textMuted)
+                    Text(AppleIntelligenceClient.UnavailableError().errorDescription ?? "").typeRole(.small).foregroundStyle(DesignColor.textMuted)
                 }
                 if store.summaryWriter == .claude { SourceKeyView(source: AppStore.claudeSourceID) }
             } header: { Text("Synthèse rédigée") } footer: {

@@ -3,7 +3,7 @@ import Foundation
 import Security
 
 /// A device-local credential. Never copied into preferences, caches or the distributed app.
-actor SourceKeychain {
+actor KeychainClient {
     private let service: String
     private let title: String
     private let account = "api-key"

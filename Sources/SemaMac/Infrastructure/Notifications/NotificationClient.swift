@@ -3,7 +3,7 @@ import Foundation
 import UserNotifications
 
 @MainActor
-final class NotificationService {
+final class NotificationClient {
     /// All alerts of sema share one thread, so macOS stacks them instead of filling the screen.
     private static let thread = "sema.alerts"
 

@@ -8,13 +8,13 @@ extension AppStore {
     var summaryWriter: SummaryWriter { SummaryWriter(rawValue: preferences.summaryWriterID ?? "") ?? .standard }
     func setSummaryWriter(_ writer: SummaryWriter) { mutatePreferences { $0.summaryWriterID = writer.rawValue } }
 
-    var isAppleIntelligenceAvailable: Bool { AppleSummaryWriter.isAvailable }
+    var isAppleIntelligenceAvailable: Bool { AppleIntelligenceClient.isAvailable }
 
     /// Why the chosen writer cannot write now, in words for the reader; nil when it can.
     var summaryBlocker: String? {
         switch summaryWriter {
         case .off: "La synthèse est désactivée. Choisissez un rédacteur dans Réglages, Sources."
-        case .appleIntelligence: isAppleIntelligenceAvailable ? nil : AppleSummaryWriter.UnavailableError().errorDescription
+        case .appleIntelligence: isAppleIntelligenceAvailable ? nil : AppleIntelligenceClient.UnavailableError().errorDescription
         case .claude: hasClaudeKey ? nil : "Connectez votre clé Claude dans Réglages, Sources."
         }
     }
@@ -30,13 +30,13 @@ extension AppStore {
     /// Writes once per session and writer, then keeps only the sentences whose facts, figures and directions match.
     func summary(for series: MarketSeries, context: DayContext) async throws -> SummaryCheck {
         let writer = summaryWriter
-        guard let key = Self.contextKey(series).map({ "\($0)#\(writer.rawValue)" }) else { throw AppleSummaryWriter.UnavailableError() }
+        guard let key = Self.contextKey(series).map({ "\($0)#\(writer.rawValue)" }) else { throw AppleIntelligenceClient.UnavailableError() }
         if let cached = summaries[key] { return cached }
         let facts = contextFacts(for: series, context: context)
         let draft: [SummarySentence]
         switch writer {
         case .off: return SummaryCheck([], facts: facts, day: context.day)
-        case .appleIntelligence: draft = try await AppleSummaryWriter.write(facts: facts, day: context.day)
+        case .appleIntelligence: draft = try await AppleIntelligenceClient.write(facts: facts, day: context.day)
         case .claude:
             guard let apiKey = try await claudeKeychain.read() else { throw ClaudeClient.ClientError.rejectedKey }
             draft = try await ClaudeClient(key: apiKey).write(facts: facts, day: context.day)

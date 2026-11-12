@@ -5,7 +5,7 @@ import MarketCore
 import FoundationModels
 #endif
 
-enum AppleSummaryWriter {
+enum AppleIntelligenceClient {
     struct UnavailableError: Error, LocalizedError {
         var errorDescription: String? {
             "Apple Intelligence n’est pas disponible sur ce Mac. Il faut macOS 26, un Mac compatible et Apple Intelligence activé dans Réglages Système."
