@@ -4,11 +4,11 @@ import SwiftUI
 import MarketCore
 
 struct MenuRibbonView: View {
-    private static let cardsVerticalPadding = Spacing.s2
-    private static let headerHorizontalPadding = Spacing.s10
-    private static let headerVerticalPadding = Spacing.s4
-    private static let emptySpacing = Spacing.s10
-    private static let emptyButtonTopPadding = Spacing.s4
+    private static let cardsVerticalPadding = DesignSpace.listGapDense
+    private static let headerHorizontalPadding = DesignSpace.frameInset
+    private static let headerVerticalPadding = DesignSpace.markInset
+    private static let emptySpacing = DesignSpace.fieldGap
+    private static let emptyButtonTopPadding = DesignSpace.markInset
     @Environment(AppStore.self) private var store
     let presentationID: UUID?
     let openWorkspace: () -> Void
@@ -74,7 +74,7 @@ struct MenuRibbonView: View {
                 AgendaCard(openWorkspace: openWorkspace).frame(width: cardWidth, height: MenuRibbonLayout.cardHeight)
                 RibbonSignatureView(presentationID: presentationID)
                     .frame(width: cardWidth, height: MenuRibbonLayout.signatureHeight)
-                    .overlay(alignment: .topTrailing) { settingsButton.padding(Spacing.s8) }
+                    .overlay(alignment: .topTrailing) { settingsButton.padding(DesignSpace.rowInset) }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: MenuRibbonLayout.cardHeight)
@@ -83,7 +83,7 @@ struct MenuRibbonView: View {
 
     private var settingsButton: some View {
         Button(action: openSettings) {
-            Image(systemName: "gearshape").frame(width: Theme.iconButtonSize, height: Theme.iconButtonSize).contentShape(Circle())
+            Image(systemName: "gearshape").frame(width: DesignIcon.buttonSize, height: DesignIcon.buttonSize).contentShape(Circle())
         }
         .buttonStyle(.plain)
         .background(.regularMaterial, in: Circle())
@@ -93,7 +93,7 @@ struct MenuRibbonView: View {
     private var header: some View {
         HStack(spacing: 0) {
             Spacer()
-            HStack(spacing: Theme.minorSpacing) {
+            HStack(spacing: DesignIcon.gap) {
                 Text(store.period.title).typeRole(.caption).foregroundStyle(.secondary)
                     .help("Période choisie dans le hub")
                 settingsButton
@@ -101,12 +101,12 @@ struct MenuRibbonView: View {
             .padding(.horizontal, Self.headerHorizontalPadding).padding(.vertical, Self.headerVerticalPadding)
             .modifier(RibbonSurface())
         }
-        .foregroundStyle(.primary).frame(height: MenuRibbonLayout.headerHeight)
+        .foregroundStyle(DesignColor.text).frame(height: MenuRibbonLayout.headerHeight)
     }
 
     private var emptyState: some View {
         VStack(spacing: Self.emptySpacing) {
-            Image(systemName: "star").typeRole(.figure).foregroundStyle(DesignColor.accent(store.palette))
+            Image(systemName: "star").typeRole(.figure).foregroundStyle(DesignColor.accentText(store.palette))
             Text("Vos repères, en un coup d’œil.").typeRole(.section)
             Text("Épinglez les repères à retrouver dans ce bandeau.").typeRole(.small).foregroundStyle(.secondary)
             Button("Choisir mes favoris") { store.section = .overview; openWorkspace() }

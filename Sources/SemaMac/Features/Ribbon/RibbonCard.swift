@@ -5,7 +5,7 @@ import Charts
 import MarketCore
 
 struct RibbonCard: View {
-    private static let contentSpacing = Spacing.s8
+    private static let contentSpacing = DesignSpace.rowInset
     private static let valueMinimumScale: CGFloat = 0.7
     private static let headingLines = 2
     private static let chartHeight: CGFloat = 80
@@ -45,11 +45,11 @@ struct RibbonCard: View {
                 Spacer(minLength: Self.contentSpacing)
                 chart
             }
-            .foregroundStyle(.primary)
+            .foregroundStyle(DesignColor.text)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-            .clipShape(RoundedRectangle(cornerRadius: Theme.surfaceCorner))
+            .clipShape(RoundedRectangle(cornerRadius: DesignRadius.card))
             .modifier(RibbonSurface(emphasized: hovered))
-            .contentShape(RoundedRectangle(cornerRadius: Theme.surfaceCorner))
+            .contentShape(RoundedRectangle(cornerRadius: DesignRadius.card))
         }
         .buttonStyle(PressStyle())
         .onHover { hovered = $0 }
@@ -64,7 +64,7 @@ struct RibbonCard: View {
     }
 
     private var heading: some View {
-        HStack(alignment: .top, spacing: Theme.minorSpacing) {
+        HStack(alignment: .top, spacing: DesignSpace.fieldGap) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(MarketFormat.name(series)).typeRole(.heading).lineLimit(Self.headingLines)
                 Text(series.originBadge + " · " + MarketFormat.unit(series)).typeRole(.caption).foregroundStyle(.secondary).lineLimit(1)
@@ -72,16 +72,16 @@ struct RibbonCard: View {
             Spacer(minLength: 0)
             Text(series.supports(period) ? comparison + " · " + period.shortTitle : comparison)
                 .typeRole(.tag).monospacedDigit().lineLimit(1)
-                .padding(.horizontal, Spacing.s6).padding(.vertical, Spacing.s2)
-                .background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Radius.mark))
+                .padding(.horizontal, DesignSpace.markInsetInline).padding(.vertical, DesignSpace.markInset)
+                .background(DesignColor.text.opacity(DesignOpacity.glassRest), in: RoundedRectangle(cornerRadius: DesignRadius.mark))
         }
     }
 
     private var valueAndDate: some View {
-        VStack(alignment: .leading, spacing: Spacing.s2) {
+        VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
             Text((selected ?? series.latest).map { MarketFormat.number($0.value, digits: series.fractionDigits) } ?? "—")
                 .typeRole(.figure).lineLimit(1).minimumScaleFactor(Self.valueMinimumScale)
-            HStack(spacing: Theme.minorSpacing) {
+            HStack(spacing: DesignSpace.fieldGap) {
                 Text((selected ?? series.latest).map { MarketFormat.date($0.date) } ?? "Aucune publication").lineLimit(1)
                 if selected == nil, let unusual {
                     MoveBadge(ratio: unusual.ratio, prefix: MarketFormat.sessionChange(unusual.change, series: series) + " · ")
@@ -114,7 +114,7 @@ struct RibbonCard: View {
             .frame(height: Self.chartHeight).accessibilityHidden(true)
         } else {
             Text(points.isEmpty ? "Historique indisponible" : "Une observation disponible")
-                .typeRole(.caption).foregroundStyle(.tertiary)
+                .typeRole(.caption).foregroundStyle(.secondary)
                 .padding(.horizontal, MenuRibbonLayout.cardPadding).padding(.bottom, MenuRibbonLayout.cardPadding)
                 .frame(height: Self.chartHeight, alignment: .bottomLeading)
         }

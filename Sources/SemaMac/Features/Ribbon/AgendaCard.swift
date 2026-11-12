@@ -9,15 +9,15 @@ struct AgendaCard: View {
     private static let emptyLines = 4
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
-    private var accent: Color { DesignColor.accent(palette) }
+    private var accentText: Color { DesignColor.accentText(palette) }
     @State private var day = DayAgenda.currentDay(now: .now) ?? .now
     @State private var agenda: DayAgenda?
     let openWorkspace: () -> Void
     private var week: [Date] { DayAgenda.week(containing: .now) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.s8) {
-            HStack(spacing: Spacing.s6) {
+        VStack(alignment: .leading, spacing: DesignSpace.fieldGap) {
+            HStack(spacing: DesignIcon.gap) {
                 strip
                 detailButton
             }
@@ -26,14 +26,14 @@ struct AgendaCard: View {
         }
         .padding(MenuRibbonLayout.cardPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.surfaceCorner))
+        .clipShape(RoundedRectangle(cornerRadius: DesignRadius.card))
         .modifier(RibbonSurface())
         .task(id: day) { agenda = await store.agenda(on: day) }
         .accessibilityElement(children: .contain).accessibilityLabel("Agenda de la semaine")
     }
 
     private var strip: some View {
-        HStack(spacing: Spacing.s2) {
+        HStack(spacing: DesignSpace.listGapDense) {
             ForEach(week, id: \.self) { value in
                 let selected = AgendaDay.isSame(value, day)
                 Button { day = value } label: {
@@ -42,28 +42,28 @@ struct AgendaCard: View {
                         Text(AgendaDay.text(value, "d")).typeRole(.small).monospacedDigit()
                     }
                     .frame(maxWidth: .infinity).frame(height: Self.dayHeight)
-                    .background(selected ? Theme.surface : Color.clear, in: RoundedRectangle(cornerRadius: Radius.control))
-                    .contentShape(RoundedRectangle(cornerRadius: Radius.control))
+                    .background(selected ? DesignColor.selection(palette) : Color.clear, in: RoundedRectangle(cornerRadius: DesignRadius.control))
+                    .contentShape(RoundedRectangle(cornerRadius: DesignRadius.control))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(AgendaDay.text(value, "EEEE d MMMM") + (store.hasUnusualMove(on: value) ? ", mouvement inhabituel" : ""))
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
         }
-        .padding(Spacing.s2).background(Theme.quietFill, in: RoundedRectangle(cornerRadius: Radius.block))
+        .padding(DesignSpace.listGapDense).background(DesignColor.text.opacity(DesignOpacity.glassRest), in: RoundedRectangle(cornerRadius: DesignRadius.block))
     }
 
     private var detailButton: some View {
         Button { store.openAgenda(on: day); openWorkspace() } label: {
-            Image(systemName: "arrow.up.right").frame(width: Theme.iconButtonSize, height: Theme.iconButtonSize).contentShape(Circle())
+            Image(systemName: "arrow.up.right").frame(width: DesignIcon.buttonSize, height: DesignIcon.buttonSize).contentShape(Circle())
         }
-        .buttonStyle(.plain).foregroundStyle(accent)
+        .buttonStyle(.plain).foregroundStyle(accentText)
         .help("Voir le détail du jour dans sema").accessibilityLabel("Voir le détail du jour dans sema")
     }
 
     @ViewBuilder private var lines: some View {
         if let agenda {
-            VStack(alignment: .leading, spacing: Spacing.s6) {
+            VStack(alignment: .leading, spacing: DesignSpace.markInset) {
                 if agenda.items.isEmpty {
                     Text(AgendaLine.emptyText(hasFREDKey: store.hasFREDKey)).typeRole(.small).foregroundStyle(.secondary)
                         .lineLimit(Self.emptyLines)
@@ -85,7 +85,7 @@ struct AgendaCard: View {
     }
 
     private func row(_ line: AgendaLine) -> some View {
-        HStack(spacing: Spacing.s8) {
+        HStack(spacing: DesignSpace.rowInset) {
             Rectangle().fill(line.bar(palette: palette)).frame(width: AgendaLine.barWidth)
             VStack(alignment: .leading, spacing: 0) {
                 Text(line.title).typeRole(.small).lineLimit(1)
@@ -93,10 +93,10 @@ struct AgendaCard: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.trailing, Spacing.s8)
+        .padding(.trailing, DesignSpace.rowInset)
         .frame(height: Self.lineHeight)
-        .background(line.tint(palette: palette), in: RoundedRectangle(cornerRadius: Radius.control))
-        .clipShape(RoundedRectangle(cornerRadius: Radius.control))
-        .contentShape(RoundedRectangle(cornerRadius: Radius.control))
+        .background(line.tint(palette: palette), in: RoundedRectangle(cornerRadius: DesignRadius.control))
+        .clipShape(RoundedRectangle(cornerRadius: DesignRadius.control))
+        .contentShape(RoundedRectangle(cornerRadius: DesignRadius.control))
     }
 }

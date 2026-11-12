@@ -8,17 +8,17 @@ import SwiftUI
 // 150 ms  Un survol change seulement la profondeur de la carte.
 // Le défilement des cartes reste natif, au trackpad et au clavier.
 enum MenuRibbonLayout {
-    static let cardPadding = Spacing.s16
+    static let cardPadding = DesignSpace.cardInset
     static let height = topPadding + cardHeight + bottomPadding
     static let verticalWidth: CGFloat = 368
     static let signatureHeight = cardHeight
-    static let screenInset = Spacing.s6
-    static let padding = Spacing.s16
-    static let topPadding = Spacing.s6
-    static let bottomPadding = Spacing.s12
+    static let screenInset = DesignSpace.controlInsetDense
+    static let padding = DesignSpace.cardInset
+    static let topPadding = DesignSpace.controlInsetDense
+    static let bottomPadding = DesignSpace.menuInset
     static let headerHeight: CGFloat = 32
-    static let headerSpacing = Spacing.s6
-    static let spacing = Spacing.s12
+    static let headerSpacing = DesignIcon.gap
+    static let spacing = DesignSpace.fieldGap
     static let minimumCardWidth: CGFloat = 208
     static let preferredVisibleCards = 4
     /// Cards outside the scroll view: the agenda and the signature.

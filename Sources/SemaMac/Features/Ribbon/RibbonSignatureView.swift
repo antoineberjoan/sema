@@ -26,13 +26,13 @@ private enum SignatureMotion {
 }
 
 struct RibbonSignatureView: View {
-    private static let titleTopPadding = Spacing.s4
+    private static let titleTopPadding = DesignSpace.markInset
     private static let markAreaHeight: CGFloat = 48
     private static let contextOpacity = 0.85
-    private static let feedbackPadding = Spacing.s10
+    private static let feedbackPadding = DesignSpace.frameInset
     private static let feedbackHeight: CGFloat = 26
     private static let feedbackFillOpacity = 0.12
-    private static let feedbackTopPadding = Spacing.s16
+    private static let feedbackTopPadding = DesignSpace.cardInset
     private static let backgroundTopOpacity = 0.85
     private static let backgroundBottomOpacity = 0.65
     private static let edgeTopOpacity = 0.22
@@ -56,7 +56,7 @@ struct RibbonSignatureView: View {
                 .frame(width: SignatureMotion.markSize, height: SignatureMotion.markSize)
                 .frame(height: Self.markAreaHeight).accessibilityHidden(true)
                 .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.inOut, duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
-            Spacer(minLength: Theme.minorSpacing)
+            Spacer(minLength: DesignSpace.fieldGap)
             Text("L’économie bouge.")
                 .typeRole(.small).foregroundStyle(.white.opacity(Self.contextOpacity))
                 .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
@@ -79,15 +79,15 @@ struct RibbonSignatureView: View {
         .foregroundStyle(.white)
         .padding(MenuRibbonLayout.cardPadding).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
-            let shape = RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
+            let shape = RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
             shape.fill(.black)
             shape.fill(LinearGradient(colors: [DesignColor.accentControl(store.palette).opacity(Self.backgroundTopOpacity), DesignColor.accentControl(store.palette).opacity(Self.backgroundBottomOpacity)],
                                       startPoint: .topLeading, endPoint: .bottomTrailing))
         }
         .overlay {
-            RoundedRectangle(cornerRadius: Theme.surfaceCorner, style: .continuous)
+            RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
                 .strokeBorder(LinearGradient(colors: [.white.opacity(Self.edgeTopOpacity), .white.opacity(Self.edgeBottomOpacity)],
-                                              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: Theme.hairline)
+                                              startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: DesignBorder.width)
                 .allowsHitTesting(false).accessibilityHidden(true)
         }
         .elevation(DesignElevation.floating)
