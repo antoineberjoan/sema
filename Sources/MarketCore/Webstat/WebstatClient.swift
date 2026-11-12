@@ -10,6 +10,8 @@ public struct WebstatClient: Sendable {
     /// Search results per page; the API refuses an offset beyond 10 000, so the last full page starts at 9 950.
     public static let pageSize = 50
     public static let maximumSearchOffset = 9_950
+    /// From this offset on, the paged search is replaced by one lightweight export, paged locally.
+    public static func usesSummaryExport(forOffset offset: Int) -> Bool { offset >= maximumSearchOffset }
     static let datasetPageSize = 100
     public enum ClientError: Error, LocalizedError {
         case missingKey, accessDenied, quotaReached, unavailable, invalidData, incompleteData, metadataChanged
@@ -287,7 +289,7 @@ public struct WebstatClient: Sendable {
         }
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        let start = calendar.date(byAdding: .year, value: -HistoryPeriod.recentYears, to: now)!
+        let start = HistoryPeriod.tranche(endingAt: now, calendar: calendar).start
         let date = ISO8601DateFormatter()
         date.formatOptions = [.withFullDate]
         var url = URLComponents(string: Self.apiURL + "observations/exports/json")!

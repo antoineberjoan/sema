@@ -29,4 +29,15 @@ enum MenuRibbonLayout {
     static let hoverDuration = DesignDuration.fast
     static let sparklineWidth: CGFloat = 1.8
     static let revealOffset = DesignMotion.shift
+
+    /// How many favorite cards are visible at this width: the two fixed cards take their share, the minimum card width decides the rest.
+    static func visibleCardCount(width: CGFloat, favoriteCount: Int) -> Int {
+        let capacity = max(1, Int((width + spacing) / (minimumCardWidth + spacing)) - fixedCards)
+        return max(1, min(favoriteCount, capacity, preferredVisibleCards))
+    }
+
+    /// The width of each card (favorites and fixed cards share the whole width, with no cap).
+    static func cardWidth(width: CGFloat, visibleCount: Int) -> CGFloat {
+        (width - CGFloat(visibleCount + fixedCards - 1) * spacing) / CGFloat(visibleCount + fixedCards)
+    }
 }

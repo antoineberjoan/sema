@@ -141,7 +141,7 @@ public struct StatisticalClient: Sendable {
               key.split(separator: ".", omittingEmptySubsequences: false).allSatisfy({ !$0.isEmpty }),
               key.range(of: "^[A-Za-z0-9_@.:-]+$", options: .regularExpression) != nil else { throw ClientError.invalidKey }
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        let start = calendar.date(byAdding: .year, value: -HistoryPeriod.recentYears, to: now)!
+        let start = HistoryPeriod.tranche(endingAt: now, calendar: calendar).start
         let source = dataset.source
         if source == .newYorkFed {
             let route = dataset.metadata["ROUTE"] ?? "all"
