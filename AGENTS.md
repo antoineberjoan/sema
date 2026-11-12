@@ -46,7 +46,7 @@ Référence : `patron/structure.md` de Sophos. Chaque sorte de code a une forme 
 | --- | --- |
 | Bibliothèque de règles | `Sources/MarketCore/Series`, `Moves`, `Alerts`, `Context` |
 | Dépôt de données | `Sources/MarketCore/Preferences`, `Sources/SemaMac/Infrastructure/Storage` |
-| Connecteur | `Sources/MarketCore/Webstat`, `Statistical`, `Markets`, `ECB`, `Claude`, `Gdelt`, `CentralBankFeeds` ; `Sources/SemaMac/Infrastructure/Keychain`, `Notifications`, `LoginItem`, `GlobalShortcuts`, `AppleIntelligence`, `Feedback` |
+| Connecteur | `Sources/MarketCore/Webstat`, `Sdmx`, `NewYorkFed`, `WorldBank`, `Fred`, `Markets`, `ECB`, `Claude`, `Gdelt`, `CentralBankFeeds` ; `Sources/SemaMac/Infrastructure/Keychain`, `Notifications`, `LoginItem`, `GlobalShortcuts`, `AppleIntelligence`, `Feedback` |
 | Module d'écran | `Sources/SemaMac/Features/*` |
 
 En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Le détail est dans `docs/decisions/2026-11-12-forme-swift-des-unites.md`. La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés.

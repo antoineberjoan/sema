@@ -1,9 +1,9 @@
-// Vérifie les contrats de découverte et de décodage des fournisseurs publics.
+// Vérifie les contrats de découverte et de décodage des producteurs SDMX.
 import Foundation
 import Testing
 @testable import MarketCore
 
-struct StatisticalClientTests {
+struct SdmxClientTests {
     private let dataset = StatisticalDataset(source: .ecb, code: "UNLISTED", agency: "ECB", version: "1.0", title: "Un jeu nouveau", detail: "Définition officielle")
     private let structure = StatisticalStructure(dimensions: [
         .init(id: "FREQ", title: "Fréquence", position: 1, codes: []),
@@ -35,7 +35,7 @@ struct StatisticalClientTests {
         #expect(value.observations.count == 2)
         #expect(value.observations[0].value == Decimal(string: "-0.123456789"))
         #expect(value.frequency == .quarterly && value.canAlert)
-        #expect(value.observations[0].periodEnd == SDMXParser.period("2025-03-31")?.start)
+        #expect(value.observations[0].periodEnd == PublicDataFormat.period("2025-03-31")?.start)
         #expect(value.change(for: .all) == Decimal(string: "0.373456789"))
     }
     @Test func sourceScaleIsNeverMultipliedAgainAndIndexVariationIsUnavailable() throws {
@@ -76,27 +76,14 @@ struct StatisticalClientTests {
         #expect(decoded.withID(decoded.id).statisticalDescriptor == value.statisticalDescriptor)
     }
     @Test func requestsStayOnPublicHostsWithoutCredentials() throws {
-        for source in StatisticalSource.allCases {
-            let request = StatisticalClient.catalogueRequest(source)
+        for source in StatisticalSource.sdmxSources {
+            let request = SdmxClient.catalogueRequest(source)
             #expect(request.url?.scheme == "https")
             #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
         }
         for key in ["../private", "D..FR", "all", "D.FR&api_key=secret", "D.FR\n"] {
-            #expect(throws: (any Error).self) { _ = try StatisticalClient.observationsRequest(dataset: dataset, key: key) }
+            #expect(throws: (any Error).self) { _ = try SdmxClient.observationsRequest(dataset: dataset, key: key) }
         }
-    }
-    @Test func discoversFedMeasuresInsteadOfConflatingTargetRateAndEffectiveRate() throws {
-        let json = Data("""
-        {"refRates":[{"type":"EFFR","effectiveDate":"2025-01-02","percentRate":4.33,"targetRateFrom":4.25,"targetRateTo":4.50,"volumeInBillions":100}]}
-        """.utf8)
-        let flows = try StatisticalClient.fedDatasets(json)
-        let flow = try #require(flows.first)
-        #expect(flow.metadata["MEASURE:targetRateFrom"] != nil)
-        let target = try StatisticalClient.parse(json, dataset: flow, structure: structure, key: "targetRateFrom")
-        let effective = try StatisticalClient.parse(json, dataset: flow, structure: structure, key: "percentRate")
-        #expect(target.id != effective.id)
-        #expect(target.latest?.value == Decimal(string: "4.25"))
-        #expect(effective.latest?.value == Decimal(string: "4.33"))
     }
     @Test func rejectsEntityDeclarations() {
         let xml = Data("<!DOCTYPE x [<!ENTITY test 'expanded'>]><Structure><Dataflow id='x' agencyID='x'><Name>&test;</Name></Dataflow></Structure>".utf8)
@@ -135,29 +122,16 @@ struct StatisticalClientTests {
         }
     }
     @Test func requestsOnlySeriesMetadataOnEachPublicSDMXHost() throws {
-        for source in StatisticalSource.allCases where source.isSDMX {
+        for source in StatisticalSource.sdmxSources {
             let flow = StatisticalDataset(source: source, code: "FLOW", agency: "AGENCY", version: "1.0", title: "Jeu", detail: "")
-            let request = StatisticalClient.seriesCatalogueRequest(flow)
+            let request = SdmxClient.seriesCatalogueRequest(flow)
             let url = try #require(request.url)
             #expect(url.host == URL(string: source.baseURL)?.host)
             #expect(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems == [URLQueryItem(name: "detail", value: "nodata")])
             #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
             #expect(request.value(forHTTPHeaderField: "Accept")?.contains("structurespecificdata") == true)
-            let observation = try StatisticalClient.observationsRequest(dataset: flow, key: "A.FR")
+            let observation = try SdmxClient.observationsRequest(dataset: flow, key: "A.FR")
             #expect(observation.url?.path == url.path + "/A.FR")
         }
     }
-    @Test func listsFedMeasuresAndWorldBankCountriesWithoutInventingCombinations() async throws {
-        for source in [StatisticalSource.newYorkFed, .worldBank] {
-            let flow = StatisticalDataset(source: source, code: "TEST", agency: "SOURCE", version: "1", title: "Indicateur", detail: "")
-            let dimension = StatisticalDimension(id: source == .newYorkFed ? "MEASURE" : "REF_AREA", title: "Choix", position: 1,
-                codes: [.init(id: source == .newYorkFed ? "targetRateFrom" : "FR", title: "Libellé publié")])
-            let structure = StatisticalStructure(dimensions: [dimension], labels: [:])
-            let items = try await StatisticalClient().seriesCatalogue(dataset: flow, structure: structure)
-            #expect(items.count == 1 && items[0].key == dimension.codes[0].id)
-            #expect(items[0].title == "Indicateur · Libellé publié")
-            #expect(items[0].series(observations: []).observations.isEmpty)
-        }
-    }
-
 }

@@ -13,7 +13,7 @@ public struct PressReleaseClient: Sendable {
         let session = URLSession(configuration: .ephemeral)
         defer { session.finishTasksAndInvalidate() }
         let (data, response) = try await session.data(for: request)
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw StatisticalClient.ClientError.unavailable }
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw PublicDataError.unavailable }
         return try Self.parse(data, feed: feed)
     }
 

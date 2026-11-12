@@ -11,7 +11,7 @@ public enum SDMXParser {
             return .init(source: source, code: code, agency: agency, version: flow.attributes["version"] ?? "latest",
                          title: flow.label, detail: detail?.text.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
         }
-        guard !flows.isEmpty else { throw StatisticalClient.ClientError.noData }
+        guard !flows.isEmpty else { throw PublicDataError.noData }
         return Dictionary(flows.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first }).values.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
     }
 
@@ -20,7 +20,7 @@ public enum SDMXParser {
         let flow = root.descendants("Dataflow").first { $0.attributes["id"] == dataset.code && $0.attributes["agencyID"] == dataset.agency }
         let dsdID = flow?.descendants("Ref").first { $0.attributes["class"] == "DataStructure" }?.attributes["id"]
         let dsd = root.descendants("DataStructure").first { dsdID == nil || $0.attributes["id"] == dsdID }
-        guard let dsd, let components = dsd.child("DataStructureComponents"), let list = components.child("DimensionList") else { throw StatisticalClient.ClientError.invalidData }
+        guard let dsd, let components = dsd.child("DataStructureComponents"), let list = components.child("DimensionList") else { throw PublicDataError.invalidData }
         var codelists: [StatisticalCodelistReference: [String: String]] = [:]
         let extraNodes = try additionalCodelists.flatMap { try XMLTree.read($0).descendants("Codelist") }
         for list in root.descendants("Codelist") + extraNodes {
@@ -69,23 +69,23 @@ public enum SDMXParser {
         for attribute in components.child("AttributeList")?.children ?? [] {
             if let id = attribute.attributes["id"] { labels[id.uppercased()] = codes(attribute) }
         }
-        guard !dimensions.isEmpty else { throw StatisticalClient.ClientError.invalidData }
+        guard !dimensions.isEmpty else { throw PublicDataError.invalidData }
         return .init(dimensions: dimensions, labels: labels, missingCodelists: Array(missing))
     }
 
     public static func catalogue(_ data: Data, dataset: StatisticalDataset, structure: StatisticalStructure) throws -> [StatisticalSeriesDescriptor] {
         let root = try XMLTree.read(data)
-        guard root.descendants("Footer").isEmpty else { throw StatisticalClient.ClientError.invalidData }
+        guard root.descendants("Footer").isEmpty else { throw PublicDataError.invalidData }
         var items: [String: StatisticalSeriesDescriptor] = [:]
         for set in root.descendants("DataSet") {
             let shared = fields(set)
             for node in set.children where node.name == "Series" {
                 let value = try descriptor(fields: shared.merging(fields(node), uniquingKeysWith: { _, new in new }), dataset: dataset, structure: structure)
-                if let previous = items[value.id], previous != value { throw StatisticalClient.ClientError.invalidData }
+                if let previous = items[value.id], previous != value { throw PublicDataError.invalidData }
                 items[value.id] = value
             }
         }
-        guard !items.isEmpty else { throw StatisticalClient.ClientError.noData }
+        guard !items.isEmpty else { throw PublicDataError.noData }
         return items.values.sorted {
             let order = $0.title.localizedStandardCompare($1.title)
             return order == .orderedSame ? $0.key < $1.key : order == .orderedAscending
@@ -105,14 +105,14 @@ public enum SDMXParser {
             attributes["TITLE"] = dataset.title + (title.isEmpty ? "" : " · " + title)
         }
         let parts = structure.dimensions.map { attributes[$0.id.uppercased()] ?? "" }
-        guard parts.allSatisfy({ !$0.isEmpty }), !parts.isEmpty else { throw StatisticalClient.ClientError.invalidData }
+        guard parts.allSatisfy({ !$0.isEmpty }), !parts.isEmpty else { throw PublicDataError.invalidData }
         return .init(dataset: dataset, key: parts.joined(separator: "."), dimensionIDs: structure.dimensions.map(\.id), fields: attributes, labels: labels)
     }
 
     public static func series(_ data: Data, dataset: StatisticalDataset, structure: StatisticalStructure,
                               fullHistory: Bool = false, now: Date = .now) throws -> MarketSeries {
         let root = try XMLTree.read(data)
-        guard root.descendants("Footer").isEmpty else { throw StatisticalClient.ClientError.invalidData }
+        guard root.descendants("Footer").isEmpty else { throw PublicDataError.invalidData }
         var result: [MarketSeries] = []
         for set in root.descendants("DataSet") {
             let shared = fields(set)
@@ -124,20 +124,20 @@ public enum SDMXParser {
                     let observation = fields(obs)
                     guard let rawDate = obs.attributes["TIME_PERIOD"] ?? obs.child("ObsDimension")?.attributes["value"],
                           let rawValue = obs.attributes["OBS_VALUE"] ?? obs.child("ObsValue")?.attributes["value"],
-                          let value = decimal(rawValue), !["M", "Q"].contains(observation["OBS_STATUS"] ?? "") else { continue }
-                    guard let interval = period(rawDate) else { throw StatisticalClient.ClientError.unsupportedPeriod }
+                          let value = PublicDataFormat.decimal(rawValue), !["M", "Q"].contains(observation["OBS_STATUS"] ?? "") else { continue }
+                    guard let interval = PublicDataFormat.period(rawDate) else { throw PublicDataError.unsupportedPeriod }
                     guard interval.start <= now else { continue }
                     for field in ["UNIT", "UNIT_MEASURE", "UNIT_MULT", "UNIT_INDEX_BASE", "BASIND"] {
-                        if let value = observation[field], value != attributes[field] { throw StatisticalClient.ClientError.metadataChanged }
+                        if let value = observation[field], value != attributes[field] { throw PublicDataError.metadataChanged }
                     }
                     points.append(.init(date: interval.start, value: value, periodEnd: interval.end,
-                        updatedAt: attributes["LAST_UPDATE"].flatMap { period(String($0.prefix(10)))?.start }, status: observation["OBS_STATUS"]))
+                        updatedAt: attributes["LAST_UPDATE"].flatMap { PublicDataFormat.period(String($0.prefix(10)))?.start }, status: observation["OBS_STATUS"]))
                 }
                 if !points.isEmpty { result.append(descriptor.series(observations: points, syncedAt: now, completeHistory: fullHistory)) }
             }
         }
-        guard result.count <= 1 else { throw StatisticalClient.ClientError.chooseOneSeries }
-        guard let series = result.first else { throw StatisticalClient.ClientError.noData }
+        guard result.count <= 1 else { throw PublicDataError.chooseOneSeries }
+        guard let series = result.first else { throw PublicDataError.noData }
         return series
     }
 
@@ -149,31 +149,5 @@ public enum SDMXParser {
             }
         }
         return values
-    }
-    static func decimal(_ text: String) -> Decimal? {
-        guard text.range(of: "^-?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?$", options: .regularExpression) != nil,
-              let value = Decimal(string: text, locale: .posix), !value.isNaN else { return nil }
-        return value
-    }
-    static func period(_ text: String) -> (start: Date, end: Date)? {
-        var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        let formatter = ISO8601DateFormatter(); formatter.formatOptions = [.withFullDate]
-        if text.count == 10, let date = formatter.date(from: text), formatter.string(from: date) == text { return (date, date) }
-        guard let year = Int(text.prefix(4)), year >= 1, text.count >= 4 else { return nil }
-        var month = 1; var length = 12
-        if text.count == 7, text.dropFirst(4).first == "-" {
-            let suffix = String(text.suffix(2))
-            if ["Q", "T"].contains(String(suffix.prefix(1))), let quarter = Int(suffix.suffix(1)), (1...4).contains(quarter) { month = (quarter - 1) * 3 + 1; length = 3 }
-            else if ["S", "H"].contains(String(suffix.prefix(1))), let half = Int(suffix.suffix(1)), (1...2).contains(half) { month = (half - 1) * 6 + 1; length = 6 }
-            else if let number = Int(suffix), (1...12).contains(number) { month = number; length = 1 }
-            else { return nil }
-        } else if text.count == 8, text.contains("-W"), let week = Int(text.suffix(2)), (1...53).contains(week) {
-            var iso = Calendar(identifier: .iso8601); iso.timeZone = calendar.timeZone
-            guard let start = iso.date(from: DateComponents(weekday: 2, weekOfYear: week, yearForWeekOfYear: year)),
-                  iso.component(.weekOfYear, from: start) == week, iso.component(.yearForWeekOfYear, from: start) == year else { return nil }
-            return (start, start.addingTimeInterval(6 * .day))
-        } else if text.count != 4 { return nil }
-        guard let start = calendar.date(from: DateComponents(year: year, month: month, day: 1)), let next = calendar.date(byAdding: .month, value: length, to: start) else { return nil }
-        return (start, next.addingTimeInterval(-.day))
     }
 }

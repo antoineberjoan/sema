@@ -370,7 +370,7 @@ private struct StatisticalExplorerView: View {
         let id = selected.id; loadingStructure = true
         defer { if selectedID == id { loadingStructure = false } }
         do {
-            let client = await store.statisticalClient()
+            let client = await store.statisticalConnectors()
             let value = try await client.structure(dataset: selected)
             try Task.checkCancellation(); guard selectedID == id else { return }
             structure = value

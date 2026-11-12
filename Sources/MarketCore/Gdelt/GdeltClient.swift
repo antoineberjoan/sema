@@ -26,12 +26,12 @@ public struct GdeltClient: Sendable {
         let session = URLSession(configuration: .ephemeral)
         defer { session.finishTasksAndInvalidate() }
         let (data, response) = try await session.data(for: Self.request(from: start, to: end))
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw StatisticalClient.ClientError.unavailable }
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw PublicDataError.unavailable }
         return try Self.parse(data)
     }
 
     public static func parse(_ data: Data) throws -> [Headline] {
-        guard let root = try? JSONDecoder().decode([String: WebstatValue].self, from: data) else { throw StatisticalClient.ClientError.invalidData }
+        guard let root = try? JSONDecoder().decode([String: WebstatValue].self, from: data) else { throw PublicDataError.invalidData }
         guard case .array(let articles) = root["articles"] else { return [] }
         return articles.compactMap { value -> Headline? in
             guard case .object(let article) = value, let title = article["title"]?.text, !title.isEmpty,

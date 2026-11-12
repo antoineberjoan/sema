@@ -56,7 +56,7 @@ extension AppStore {
         historyTask = Task {
             defer { if historyGeneration == generation { historyLoadingID = nil; historyProgress = nil } }
             do {
-                let value = try await statisticalClient().fetch(descriptor, fullHistory: true)
+                let value = try await statisticalConnectors().fetch(descriptor, fullHistory: true)
                 try Task.checkCancellation()
                 guard historyGeneration == generation else { return }
                 if isFollowing(item.id) {

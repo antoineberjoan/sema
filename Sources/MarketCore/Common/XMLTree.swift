@@ -22,8 +22,8 @@ final class XMLTree {
     static func read(_ data: Data) throws -> XMLTree {
         let reader = XMLTreeReader(); let parser = XMLParser(data: data)
         parser.shouldResolveExternalEntities = false; parser.delegate = reader
-        guard parser.parse(), !reader.rejectedEntity else { throw StatisticalClient.ClientError.invalidData }
-        guard reader.root.descendants("Error").isEmpty, reader.root.descendants("Fault").isEmpty else { throw StatisticalClient.ClientError.invalidData }
+        guard parser.parse(), !reader.rejectedEntity else { throw PublicDataError.invalidData }
+        guard reader.root.descendants("Error").isEmpty, reader.root.descendants("Fault").isEmpty else { throw PublicDataError.invalidData }
         return reader.root
     }
 }
