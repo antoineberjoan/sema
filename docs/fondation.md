@@ -41,7 +41,7 @@ Dehors : un service serveur, la synchronisation entre appareils, une clé fourni
 
 sema doit sembler calme et précise. Les surfaces suivent l'apparence du système ; la valeur et son graphique passent d'abord.
 
-La marque tient en cinq couleurs : Encre, Graphite, Papier, Brume et Sarcelle Profonde (`Resources/Brand/sema-colors.json`). La personne choisit sa palette dans les réglages ; chaque palette redistribue les valeurs des mêmes rôles. L'icône est dans `Resources/Brand/`. La typographie est celle du système (SF Pro). Les jetons de forme, d'espace et de mouvement viendront de `tokens.json`, source unique ; la direction visuelle détaillée est dans [IDENTITY.md](IDENTITY.md).
+La marque tient en cinq couleurs : Encre, Graphite, Papier, Brume et Sarcelle Profonde (`Resources/Brand/sema-colors.json`). La personne choisit sa palette dans les réglages, parmi sept (la marque et six autres) ; chaque palette redistribue les valeurs des mêmes rôles. L'icône est dans `Resources/Brand/`. La typographie est celle du système (SF Pro). Les jetons de forme, d'espace et de mouvement viendront de `tokens.json`, source unique ; la direction visuelle détaillée est dans [IDENTITY.md](IDENTITY.md).
 
 ## Voix
 

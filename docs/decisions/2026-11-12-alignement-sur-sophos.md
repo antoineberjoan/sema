@@ -12,7 +12,7 @@ sema avait son propre système : règles d'agents, contrôles Python, convention
 sema reprend Sophos à l'identique, sans compromis. Une chose qui existe déjà ne reste pas par habitude. Seuls restent le nom, la marque (palettes, icône, police) et le comportement du produit.
 
 - **Qui décide.** Les décisions vivent dans ce dépôt (`docs/decisions/`, `docs/fondation.md`). Notion ne pilote plus sema. Antoine a décidé de quitter Notion le 2026-11-10.
-- **Les six palettes** que la personne choisit dans les réglages restent. C'est un réglage visible du produit. Chaque palette est un jeu des mêmes rôles de couleur.
+- **Les sept palettes** (la marque et six autres) que la personne choisit dans les réglages restent. C'est un réglage visible du produit. Chaque palette est un jeu des mêmes rôles de couleur.
 - **Les fichiers de la personne** ne changent pas : noms, clés et valeurs restent, même si le type Swift est renommé.
 - **Le code** s'écrit en anglais. L'interface et ce qu'un fichier persistant porte restent tels quels.
 - L'ADR 003 (socle agentique en Python) est retirée : la garde, les skills et le hook Git de Sophos la remplacent.
