@@ -5,29 +5,29 @@ import MarketCore
 
 /// Shared by Explorer and ⌘K. Result rows stay in place while the detail loads.
 struct CatalogueBrowserView: View {
-    private static let sectionSpacing = Spacing.s16
-    private static let textInset = Spacing.s4
-    private static let filterSpacing = Spacing.s14
-    private static let toolbarSpacing = Spacing.s12
-    private static let clearButtonTopPadding = Spacing.s4
-    private static let columnSpacing = Spacing.s24
+    private static let sectionSpacing = DesignSpace.itemGap
+    private static let textInset = DesignSpace.markInset
+    private static let filterSpacing = DesignSpace.fieldGap
+    private static let toolbarSpacing = DesignSpace.fieldGap
+    private static let clearButtonTopPadding = DesignSpace.markInset
+    private static let columnSpacing = DesignSpace.groupGap
     private static let compactResultsMinWidth: CGFloat = 260
     private static let resultsMinWidth: CGFloat = 300
     private static let resultsMaxWidth: CGFloat = 350
     private static let compactPreviewMinWidth: CGFloat = 330
     private static let previewMinWidth: CGFloat = 360
     private static let previewOffset = DesignMotion.shift
-    private static let previewSpacing = Spacing.s14
-    private static let previewContentSpacing = Spacing.s16
+    private static let previewSpacing = DesignSpace.fieldGap
+    private static let previewContentSpacing = DesignSpace.itemGap
     private static let loadingMinHeight: CGFloat = 280
-    private static let loadingPadding = Spacing.s24
-    private static let previewBottomPadding = Spacing.s10
+    private static let loadingPadding = DesignSpace.pageInsetNarrow
+    private static let previewBottomPadding = DesignSpace.frameInset
     private static let detailLines = 2
-    private static let messagePadding = Spacing.s16
+    private static let messagePadding = DesignSpace.cardInset
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     @Environment(\.palette) private var palette
-    private var accent: Color { DesignColor.accent(palette) }
+    private var accentText: Color { DesignColor.accentText(palette) }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let selectionDuration = DesignDuration.fast
     private let previewDuration = DesignDuration.standard
@@ -42,11 +42,11 @@ struct CatalogueBrowserView: View {
         VStack(alignment: .leading, spacing: Self.sectionSpacing) {
             if !store.hasWebstatKey {
                 HStack(spacing: Self.sectionSpacing) {
-                    Label("Clé personnelle requise", systemImage: "key").foregroundStyle(.secondary)
+                    Label("Clé personnelle requise", systemImage: "key").foregroundStyle(DesignColor.textMuted)
                     Spacer()
                     Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }
                         .buttonStyle(.borderedProminent).tint(DesignColor.accentControl(store.palette))
-                }.padding(Theme.majorSpacing).background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cardCorner))
+                }.padding(DesignSpace.cardInset).background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
                 Spacer(minLength: 0)
             } else {
                 HStack(spacing: Self.toolbarSpacing) {
@@ -73,7 +73,7 @@ struct CatalogueBrowserView: View {
                         }.frame(maxWidth: .infinity)
                         if hasFilters {
                             Button { store.catalogueSearch.datasetID = ""; store.catalogueSearch.area = ""; store.catalogueSearch.frequency = "" } label: {
-                                Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                                Image(systemName: "xmark.circle.fill").foregroundStyle(DesignColor.textMuted)
                             }.buttonStyle(.plain).help("Retirer les filtres").padding(.top, Self.clearButtonTopPadding)
                         }
                     }.typeRole(.small)
@@ -104,7 +104,7 @@ struct CatalogueBrowserView: View {
     private func previewPane(_ descriptor: WebstatSeriesDescriptor) -> some View {
         VStack(alignment: .leading, spacing: Self.previewSpacing) {
             HStack {
-                Text("Aperçu").typeRole(.overline).foregroundStyle(.secondary)
+                Text("Aperçu").typeRole(.overline).foregroundStyle(DesignColor.textMuted)
                 if store.isLoadingPreview { ProgressView().controlSize(.mini) }
                 Spacer()
                 Button { store.closePreview() } label: { Image(systemName: "xmark") }
@@ -115,7 +115,7 @@ struct CatalogueBrowserView: View {
                     if store.isLoadingPreview && store.previewSeries == nil {
                         VStack(alignment: .leading, spacing: Self.previewContentSpacing) {
                             Text(descriptor.title).typeRole(.section)
-                            Text(descriptor.definition).typeRole(.small).foregroundStyle(.secondary)
+                            Text(descriptor.definition).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                             ProgressView("Chargement de l’historique…").controlSize(.small)
                         }.frame(maxWidth: .infinity, minHeight: Self.loadingMinHeight, alignment: .topLeading).padding(Self.loadingPadding)
                     } else {
@@ -123,7 +123,7 @@ struct CatalogueBrowserView: View {
                     }
                     if let error = store.previewError {
                         Label(error, systemImage: "exclamationmark.triangle")
-                            .typeRole(.caption).foregroundStyle(.secondary)
+                            .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                         if store.previewRequiresRefresh {
                             Button("Actualiser mes repères") { Task { await store.refreshSeries() } }
                                 .buttonStyle(.borderless).disabled(store.isLoading)
@@ -135,7 +135,7 @@ struct CatalogueBrowserView: View {
             }
             HStack {
                 if let existing = store.followedMatch(for: store.previewSeries ?? descriptor.series(observations: [])) {
-                    Label("Déjà suivi via \(existing.originBadge)", systemImage: "checkmark").foregroundStyle(accent)
+                    Label("Déjà suivi via \(existing.originBadge)", systemImage: "checkmark").foregroundStyle(accentText)
                     Spacer()
                     if let value = store.previewSeries, existing.id != value.id {
                         Button("Utiliser cette source") { _ = store.usePreviewSource() }.buttonStyle(.borderless)
@@ -160,24 +160,24 @@ struct CatalogueBrowserView: View {
     private var results: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: Theme.rowSpacing) {
+                LazyVStack(alignment: .leading, spacing: DesignSpace.listGapDense) {
                     HStack {
                         Text(store.isSearchingCatalogue && store.catalogueResults.isEmpty ? "Recherche…" : "\(store.catalogueTotal.formatted()) \(store.catalogueTotal == 1 ? "série" : "séries")")
                         Spacer()
-                    }.typeRole(.micro).foregroundStyle(.secondary).padding(.horizontal, Theme.rowPadding).padding(.bottom, Theme.minorSpacing)
+                    }.typeRole(.micro).foregroundStyle(DesignColor.textMuted).padding(.horizontal, DesignSpace.rowInset).padding(.bottom, DesignSpace.fieldGap)
                     ForEach(store.catalogueResults) { item in
                         Button { selectedID = item.id; store.openPreview(item) } label: {
-                            VStack(alignment: .leading, spacing: Theme.rowTextSpacing) {
-                                HStack(alignment: .top, spacing: Theme.minorSpacing) {
-                                    Text(MarketFormat.name(item.series(observations: []))).typeRole(.label).lineLimit(Theme.rowTitleLines)
+                            VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
+                                HStack(alignment: .top, spacing: DesignSpace.fieldGap) {
+                                    Text(MarketFormat.name(item.series(observations: []))).typeRole(.label).lineLimit(ExplorerLayout.rowTitleLines)
                                     Spacer(minLength: 0)
-                                    if store.followedMatch(for: item.series(observations: [])) != nil { Image(systemName: "checkmark").foregroundStyle(accent).accessibilityLabel("Déjà suivi") }
+                                    if store.followedMatch(for: item.series(observations: [])) != nil { Image(systemName: "checkmark").foregroundStyle(accentText).accessibilityLabel("Déjà suivi") }
                                 }
                                 Text([item.area, item.frequencyTitle, item.displayUnit].compactMap { $0 }.joined(separator: " · "))
-                                    .typeRole(.micro).foregroundStyle(.secondary).lineLimit(Self.detailLines)
+                                    .typeRole(.micro).foregroundStyle(DesignColor.textMuted).lineLimit(Self.detailLines)
                             }
-                            .foregroundStyle(.primary).frame(maxWidth: .infinity, alignment: .leading).padding(Theme.rowPadding)
-                            .background(selectedID == item.id ? accent.opacity(Theme.selectionOpacity) : .clear, in: RoundedRectangle(cornerRadius: Theme.rowCorner))
+                            .foregroundStyle(DesignColor.text).frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
+                            .background(selectedID == item.id ? DesignColor.selection(palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))
                             .contentShape(Rectangle())
                         }.buttonStyle(PressStyle()).id(item.id)
                         .accessibilityAddTraits(selectedID == item.id ? [.isSelected] : [])
@@ -185,7 +185,7 @@ struct CatalogueBrowserView: View {
                         .animation(reduceMotion ? nil : .timingCurve(DesignEase.inOut, duration: selectionDuration), value: selectedID == item.id)
                     }
                     if let error = store.catalogueError {
-                        Label(error, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(.secondary).padding(Self.messagePadding)
+                        Label(error, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(DesignColor.textMuted).padding(Self.messagePadding)
                         Button("Réessayer") { store.searchCatalogue() }.buttonStyle(.borderless).padding(.horizontal, Self.messagePadding)
                     } else if !store.isSearchingCatalogue && store.catalogueResults.isEmpty {
                         ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass")

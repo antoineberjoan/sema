@@ -6,12 +6,12 @@ import MarketCore
 struct SearchPanelView: View {
     static let size = CGSize(width: 600, height: 460)
     private static let resultsHeight: CGFloat = 280
-    private static let panelPadding = Spacing.s16
-    private static let fieldSpacing = Spacing.s12
-    private static let escapeRadius = Radius.control
+    private static let panelPadding = DesignSpace.cardInset
+    private static let fieldSpacing = DesignSpace.fieldGap
+    private static let escapeRadius = DesignRadius.control
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
-    private var accent: Color { DesignColor.accent(palette) }
+    private var accentText: Color { DesignColor.accentText(palette) }
     @FocusState private var isFieldFocused: Bool
     @State private var query = ""
     @State private var selectedID: String?
@@ -42,19 +42,19 @@ struct SearchPanelView: View {
                     .onKeyPress(.downArrow) { move(by: 1); return .handled }
                     .onKeyPress(.upArrow) { move(by: -1); return .handled }
                 Text("esc").typeRole(.small).foregroundStyle(.secondary)
-                    .padding(.horizontal, Spacing.s8).padding(.vertical, Spacing.s2)
-                    .overlay(RoundedRectangle(cornerRadius: Self.escapeRadius).stroke(.quaternary))
+                    .padding(.horizontal, DesignSpace.markInsetInline).padding(.vertical, DesignSpace.markInset)
+                    .overlay(RoundedRectangle(cornerRadius: Self.escapeRadius).stroke(DesignColor.rule))
             }
-            .padding(.horizontal, Theme.rowPadding)
+            .padding(.horizontal, DesignSpace.rowInset)
             SeriesResultsView(results: results, selectedID: $selectedID, height: Self.resultsHeight) { model.detail = $0 }
             Button { openCatalogues(query) } label: {
                 Label(query.isEmpty ? "Chercher dans les catalogues" : "Chercher « \(query) » dans les catalogues",
                       systemImage: "books.vertical").typeRole(.small)
             }
-            .buttonStyle(.borderless).foregroundStyle(accent).padding(.horizontal, Theme.rowPadding)
+            .buttonStyle(.borderless).foregroundStyle(accentText).padding(.horizontal, DesignSpace.rowInset)
             Spacer(minLength: 0)
             Text("↑ ↓ choisir · ↩ voir · esc fermer").typeRole(.caption).foregroundStyle(.secondary)
-                .padding(.horizontal, Theme.rowPadding)
+                .padding(.horizontal, DesignSpace.rowInset)
         }
     }
 
@@ -68,7 +68,7 @@ struct SearchPanelView: View {
                 Spacer()
                 Button("Ouvrir dans sema") { openInHub(series) }.keyboardShortcut(.defaultAction).buttonStyle(.borderedProminent)
             }
-            .padding(.horizontal, Theme.rowPadding)
+            .padding(.horizontal, DesignSpace.rowInset)
         }
     }
 

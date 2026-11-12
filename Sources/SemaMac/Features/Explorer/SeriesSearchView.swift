@@ -1,17 +1,18 @@
 // Propose la recherche rapide locale et Webstat avec sélection au clavier.
+import SemaDesign
 import SwiftUI
 import MarketCore
 
 struct SeriesSearchView: View {
     private static let sheetWidth: CGFloat = 880
     private static let sheetHeight: CGFloat = 560
-    private static let sheetPadding = Spacing.s16
-    private static let sectionSpacing = Spacing.s16
+    private static let sheetPadding = DesignSpace.cardInset
+    private static let sectionSpacing = DesignSpace.itemGap
     private static let modePickerWidth: CGFloat = 300
     private static let catalogueHeight: CGFloat = 420
     private static let resultsHeight: CGFloat = 320
-    private static let searchSpacing = Spacing.s12
-    private static let searchTopPadding = Spacing.s6
+    private static let searchSpacing = DesignSpace.fieldGap
+    private static let searchTopPadding = DesignSpace.controlInsetDense
     @Environment(AppStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @FocusState private var isSearchFocused: Bool
@@ -32,28 +33,28 @@ struct SeriesSearchView: View {
                 HStack { Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
             } else {
             HStack(spacing: Self.searchSpacing) {
-                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
+                Image(systemName: "magnifyingglass").foregroundStyle(DesignColor.textMuted)
                 TextField("Rechercher un repère…", text: $query)
                     .textFieldStyle(.plain).typeRole(.subheading).focused($isSearchFocused)
                     .accessibilityLabel("Rechercher un repère")
                     .onSubmit(openSelected)
                     .onKeyPress(.downArrow) { moveSelection(by: 1); return .handled }
                     .onKeyPress(.upArrow) { moveSelection(by: -1); return .handled }
-                Text("⌘K").typeRole(.small).foregroundStyle(.secondary)
+                Text("⌘K").typeRole(.small).foregroundStyle(DesignColor.textMuted)
             }
-            .padding(.horizontal, Theme.rowPadding).padding(.top, Self.searchTopPadding)
+            .padding(.horizontal, DesignSpace.rowInset).padding(.top, Self.searchTopPadding)
             SeriesResultsView(results: results, selectedID: $selectedID, height: Self.resultsHeight, open: open)
             HStack {
-                Text("↑ ↓ choisir · ↩ ouvrir").typeRole(.caption).foregroundStyle(.secondary)
+                Text("↑ ↓ choisir · ↩ ouvrir").typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 Spacer()
                 Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction)
                 Button("Ouvrir", action: openSelected).keyboardShortcut(.defaultAction)
                     .disabled(selectedID == nil).buttonStyle(.borderedProminent)
             }
-            .padding(.horizontal, Theme.rowPadding)
+            .padding(.horizontal, DesignSpace.rowInset)
         }
             }
-        .padding(Self.sheetPadding).frame(width: Self.sheetWidth, height: Self.sheetHeight).background(Theme.surface)
+        .padding(Self.sheetPadding).frame(width: Self.sheetWidth, height: Self.sheetHeight).background(DesignColor.surface)
         .onAppear {
             // The search panel hands over its text and asks for the catalogues tab.
             if let seed = store.catalogueSeed { query = seed; catalogue = true; store.catalogueSeed = nil }
