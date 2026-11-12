@@ -13,6 +13,7 @@ Pour développer (macOS 14 ou plus, Swift 6, Xcode complet) :
 
 ```sh
 ./scripts/setup.sh
+./controler.sh
 ./scripts/check.sh
 ./scripts/build-app.sh
 open build/Sema.app
