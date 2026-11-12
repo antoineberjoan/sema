@@ -4,7 +4,8 @@ import Foundation
 public enum WebstatStarter {
     /// Une ligne du fichier `Starters/webstat.json`.
     struct Definition: Decodable, Sendable {
-        let id: String
+        /// Nom de départ propre au produit (« fr10 », « eurusd »), clé des règles de lecture et de la recherche.
+        let slug: String
         let seriesCode: String
         let name: String
         let subtitle: String
@@ -17,10 +18,12 @@ public enum WebstatStarter {
 
     static let definitions = StarterResources.load([Definition].self, file: "webstat")
 
-    public static var shortIDs: [String: String] {
-        Dictionary(uniqueKeysWithValues: definitions.map { ($0.id, $0.seriesCode) })
+    /// Code de série Webstat de chaque nom de départ.
+    public static var keysBySlug: [String: String] {
+        Dictionary(uniqueKeysWithValues: definitions.map { ($0.slug, $0.seriesCode) })
     }
-    public static func canonicalID(_ id: String) -> String { shortIDs[id] ?? id }
+    /// Code de série d'un nom de départ ; un code de série reste tel quel.
+    public static func starterKey(_ slug: String) -> String { keysBySlug[slug] ?? slug }
     public static var ids: [String] { definitions.map(\.seriesCode) }
     /// Repères sans observation : leurs valeurs viennent de Webstat, jamais d’un exemple.
     public static var series: [MarketSeries] {

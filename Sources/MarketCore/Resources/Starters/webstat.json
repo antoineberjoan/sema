@@ -1,6 +1,6 @@
 [
   {
-    "id": "fr10",
+    "slug": "fr10",
     "seriesCode": "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD",
     "name": "OAT France · 10 ans",
     "subtitle": "Rendement · série mensuelle",
@@ -11,7 +11,7 @@
     "producer": "Banque de France"
   },
   {
-    "id": "ecb",
+    "slug": "ecb",
     "seriesCode": "FM.D.U2.EUR.4F.KR.DFR.LEV",
     "name": "Taux de dépôt BCE",
     "subtitle": "Facilité de dépôt · politique monétaire",
@@ -22,7 +22,7 @@
     "producer": "BCE · via Banque de France"
   },
   {
-    "id": "eurusd",
+    "slug": "eurusd",
     "seriesCode": "EXR.D.USD.EUR.SP00.A",
     "name": "Euro / Dollar",
     "subtitle": "USD pour 1 EUR · taux de référence",
@@ -33,7 +33,7 @@
     "producer": "BCE · via Banque de France"
   },
   {
-    "id": "eurjpy",
+    "slug": "eurjpy",
     "seriesCode": "EXR.D.JPY.EUR.SP00.A",
     "name": "Euro / Yen",
     "subtitle": "JPY pour 1 EUR · taux de référence",
@@ -44,7 +44,7 @@
     "producer": "BCE · via Banque de France"
   },
   {
-    "id": "eurchf",
+    "slug": "eurchf",
     "seriesCode": "EXR.D.CHF.EUR.SP00.A",
     "name": "Euro / Franc suisse",
     "subtitle": "CHF pour 1 EUR · taux de référence",
@@ -55,7 +55,7 @@
     "producer": "BCE · via Banque de France"
   },
   {
-    "id": "livreta",
+    "slug": "livreta",
     "seriesCode": "MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O",
     "name": "Livret A",
     "subtitle": "Épargne réglementée",
@@ -66,7 +66,7 @@
     "producer": "Banque de France"
   },
   {
-    "id": "lep",
+    "slug": "lep",
     "seriesCode": "MIR1.M.FR.B.L23FRLP.H.R.A.2250U6.EUR.O",
     "name": "LEP",
     "subtitle": "Épargne réglementée",
@@ -77,7 +77,7 @@
     "producer": "Banque de France"
   },
   {
-    "id": "inflation",
+    "slug": "inflation",
     "seriesCode": "HICP.M.FR.N.000000.4D0.ANR",
     "name": "Inflation · France",
     "subtitle": "IPCH · variation annuelle · données brutes",
@@ -88,7 +88,7 @@
     "producer": "Eurostat · via Banque de France"
   },
   {
-    "id": "ldds",
+    "slug": "ldds",
     "seriesCode": "MIR1.M.FR.B.L23FRLD.D.R.A.2254U6.EUR.O",
     "name": "LDDS",
     "subtitle": "Épargne réglementée",
@@ -99,7 +99,7 @@
     "producer": "Banque de France"
   },
   {
-    "id": "estr",
+    "slug": "estr",
     "seriesCode": "ESTR.B.EU000A2X2A25.WT",
     "name": "€STR",
     "subtitle": "Marché monétaire au jour le jour",
@@ -110,7 +110,7 @@
     "producer": "BCE · via Banque de France"
   },
   {
-    "id": "inflation-euro",
+    "slug": "inflation-euro",
     "seriesCode": "HICP.M.U2.N.000000.4D0.ANR",
     "name": "Inflation · Zone euro",
     "subtitle": "IPCH · variation annuelle · données brutes",
@@ -121,7 +121,7 @@
     "producer": "Eurostat · via Banque de France"
   },
   {
-    "id": "eurgbp",
+    "slug": "eurgbp",
     "seriesCode": "EXR.D.GBP.EUR.SP00.A",
     "name": "Euro / Livre sterling",
     "subtitle": "GBP pour 1 EUR · taux de référence",
@@ -132,7 +132,7 @@
     "producer": "BCE · via Banque de France"
   },
   {
-    "id": "mortgage-fr",
+    "slug": "mortgage-fr",
     "seriesCode": "MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N",
     "name": "Crédit immobilier",
     "subtitle": "Nouveaux crédits à l’habitat · hors renégociations",
@@ -143,7 +143,7 @@
     "producer": "Banque de France"
   },
   {
-    "id": "de10",
+    "slug": "de10",
     "seriesCode": "FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD",
     "name": "Bund · 10 ans",
     "subtitle": "Rendement · série mensuelle",
@@ -154,7 +154,7 @@
     "producer": "Banque de France"
   },
   {
-    "id": "us10",
+    "slug": "us10",
     "seriesCode": "FM.M.US.USD.FR2.BB.US10YT_RR.YLD",
     "name": "Treasury US · 10 ans",
     "subtitle": "Rendement · série mensuelle",
@@ -165,7 +165,7 @@
     "producer": "Banque de France"
   },
   {
-    "id": "mro",
+    "slug": "mro",
     "seriesCode": "FM.D.U2.EUR.4F.KR.MRR_FR.LEV",
     "name": "Taux de refinancement BCE",
     "subtitle": "Opérations principales · politique monétaire",

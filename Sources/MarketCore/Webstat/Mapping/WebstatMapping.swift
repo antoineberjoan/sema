@@ -87,7 +87,7 @@ enum WebstatMapping {
                 definition.unit == .percent || $0.value > 0
             }
             guard !observations.isEmpty else { throw WebstatError.incompleteData }
-            return MarketSeries(id: definition.id, name: definition.name, subtitle: definition.subtitle,
+            return MarketSeries(id: definition.slug, name: definition.name, subtitle: definition.subtitle,
                 category: definition.category, unit: definition.unit, fractionDigits: definition.digits,
                 source: definition.producer,
                 sourceURL: URL(string: WebstatSite.catalogueURL + "\(definition.seriesCode.split(separator: ".")[0].lowercased())/\(definition.seriesCode)"),

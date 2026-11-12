@@ -12,8 +12,8 @@ struct WebstatStarterTests {
     }
 
     @Test func shortIdentifiersStillOpenTheirSeries() {
-        #expect(WebstatStarter.canonicalID("fr10") == "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD")
-        #expect(WebstatStarter.canonicalID("inflation-euro") == "HICP.M.U2.N.000000.4D0.ANR")
-        #expect(WebstatStarter.canonicalID("unknown-id") == "unknown-id")
+        #expect(WebstatStarter.starterKey("fr10") == "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD")
+        #expect(WebstatStarter.starterKey("inflation-euro") == "HICP.M.U2.N.000000.4D0.ANR")
+        #expect(WebstatStarter.starterKey("unknown-id") == "unknown-id")
     }
 }

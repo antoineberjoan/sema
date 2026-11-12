@@ -35,8 +35,8 @@ public struct AppPreferences: Codable, Equatable, Sendable {
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = StatisticalSource.inactiveByDefault,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
                 ribbonGlass: RibbonGlassPreferences? = nil, shortcuts: ShortcutPreferences? = nil) {
-        self.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.canonicalID))
-        self.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.canonicalID)
+        self.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.starterKey))
+        self.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.starterKey)
         self.alerts = alerts
         self.canNotify = canNotify
         self.themeID = themeID

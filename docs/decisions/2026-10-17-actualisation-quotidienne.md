@@ -15,14 +15,6 @@ Une personne ouvre sema pour voir des repères à jour. Le produit n'a ni serveu
 - Les nouvelles observations passent par le moteur d'alertes. Les notifications restent désactivées jusqu'à activation explicite.
 - Un échec garde les données ; le prochain essai est quotidien ou manuel.
 
-## Options
-
-| Option | Ce qu'elle donne | Ce qu'elle coûte |
-| --- | --- | --- |
-| Contrôle de fraîcheur à 24 h, app ouverte | Des données du jour sans service ni serveur | Aucune surveillance quand l'app est quittée ou le Mac en veille |
-| Actualisation manuelle seule | Aucun appel réseau non voulu | Des repères périmés à l'ouverture |
-| Service de notification serveur | Une surveillance continue | Un serveur et un compte, hors périmètre du produit |
-
 ## Conséquences
 
 La règle de fraîcheur est dans `RefreshPolicy` et testée par `RefreshPolicyTests`. Aucune promesse de suivi app quittée ou Mac en veille.
