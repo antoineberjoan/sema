@@ -19,3 +19,10 @@ politique:
   vert: [docs/**, site/**]
   rouge: [Package.swift, Sources/MarketCore/**, Sources/SemaMac/Infrastructure/**, distribution/**, scripts/distribution/**]
   controle: ./controler.sh
+structure:
+  unites:
+    bibliotheque-de-regles: [Sources/MarketCore/Series, Sources/MarketCore/Alerts, Sources/MarketCore/Context]
+    depot-de-donnees: [Sources/MarketCore/Preferences]
+    connecteur: [Sources/MarketCore/Webstat, Sources/MarketCore/Statistical, Sources/MarketCore/Markets, Sources/MarketCore/ECB]
+    module-ecran: [Sources/SemaMac/Features/*]
+  cliquet: 121

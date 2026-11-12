@@ -38,6 +38,19 @@ Charger au bon moment, sans tout lire au démarrage :
 | App native, état, design et mouvement | `Sources/SemaMac/AGENTS.md` |
 | Site | `site/AGENTS.md` |
 
+## Structure du code
+
+Référence : `patron/structure.md` de Sophos. Chaque sorte de code a une forme fermée. `projet.yml` déclare les unités ; `structure.mjs` refuse ce qui sort de la forme, et un cliquet compte l'existant hors forme (il ne peut que baisser, jusqu'à 0).
+
+| Sorte | Unités de sema |
+| --- | --- |
+| Bibliothèque de règles | `Sources/MarketCore/Series`, `Alerts`, `Context` |
+| Dépôt de données | `Sources/MarketCore/Preferences` |
+| Connecteur | `Sources/MarketCore/Webstat`, `Statistical`, `Markets`, `ECB` |
+| Module d'écran | `Sources/SemaMac/Features/*` |
+
+En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Le détail est dans `docs/decisions/2026-11-12-forme-swift-des-unites.md`. La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés.
+
 ## Bibliothèque de composants
 
 Référence : **SwiftUI** (macOS 14). AppKit seulement pour un comportement macOS précis.
