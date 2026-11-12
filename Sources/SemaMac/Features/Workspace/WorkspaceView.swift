@@ -1,6 +1,7 @@
 // Organise Focus et la sidebar persistante ou survolée, avec sélection ordonnée et accès au profil.
 import AppKit
 import Carbon
+import SemaDesign
 import SwiftUI
 import MarketCore
 
@@ -424,7 +425,7 @@ private struct SidebarItem: View {
         .buttonStyle(PressStyle())
         .accessibilityAddTraits(selected ? [.isSelected] : [])
         .onHover { isHovered = $0 }
-        .animation(reduceMotion ? nil : .easeInOut(duration: Theme.hoverDuration), value: isHovered)
+        .animation(reduceMotion ? nil : .timingCurve(DesignEase.hover, duration: Theme.hoverDuration), value: isHovered)
     }
 }
 
@@ -437,7 +438,7 @@ private enum FocusMotion {
     static let sidebarMinWidth: CGFloat = 220
     static let sidebarMaxWidth: CGFloat = 280
     static let sidebarWidth: CGFloat = 240
-    static let sidebar = Motion.drawer(Motion.wide)
+    static let sidebar = Animation.timingCurve(DesignEase.drawer, duration: DesignDuration.wide)
     static let hoverExitDelay: Duration = .milliseconds(220)
 }
 }

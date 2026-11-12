@@ -1,5 +1,6 @@
 // Couleurs, rayons, rythme et ombres partagés par toutes les vues.
 import AppKit
+import SemaDesign
 import SwiftUI
 
 @MainActor
@@ -47,7 +48,7 @@ enum Theme {
     static let badgeFillOpacity = 0.12
     // One-pixel rule; the shadow, not the stroke, tells the height.
     static let hairline: CGFloat = 1
-    static let hoverDuration = Motion.fast
+    static let hoverDuration = DesignDuration.fast
 
     static let menuBarIcon: NSImage = {
         let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(.black).frame(width: 18, height: 18))

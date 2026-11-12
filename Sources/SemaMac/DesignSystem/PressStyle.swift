@@ -1,4 +1,5 @@
 // Retour d’appui des boutons, sans mouvement quand les animations sont réduites.
+import SemaDesign
 import SwiftUI
 
 struct PressStyle: ButtonStyle {
@@ -7,7 +8,7 @@ struct PressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .opacity(configuration.isPressed ? Self.pressedOpacity : 1)
-            .scaleEffect(configuration.isPressed && !reduceMotion ? Motion.pressScale : 1)
-            .animation(reduceMotion ? nil : Motion.easeOut(Motion.press), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed && !reduceMotion ? DesignMotion.pressScale : 1)
+            .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: DesignDuration.press), value: configuration.isPressed)
     }
 }

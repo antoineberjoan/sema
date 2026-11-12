@@ -1,6 +1,7 @@
 // Ouvre et ferme le panneau de recherche rapide, centré dans le haut de l’écran sous le pointeur, depuis n’importe quelle app.
 import AppKit
 import Carbon
+import SemaDesign
 import SwiftUI
 
 @MainActor
@@ -59,7 +60,7 @@ final class SearchPanelController {
         dismissal.start()
         guard !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else { return }
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = Motion.standard
+            context.duration = DesignDuration.standard
             context.timingFunction = CAMediaTimingFunction(name: .easeOut)
             panel.animator().alphaValue = 1
         }
@@ -75,7 +76,7 @@ final class SearchPanelController {
             return
         }
         NSAnimationContext.runAnimationGroup { context in
-            context.duration = Motion.standard * Motion.exitRatio
+            context.duration = DesignDuration.standard * DesignMotion.exitRatio
             panel.animator().alphaValue = 0
         } completionHandler: { [weak self] in
             Task { @MainActor in
