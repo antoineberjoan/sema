@@ -13,6 +13,7 @@ python3 scripts/guardrails.py
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/tests -p 'test_*.py'
 python3 scripts/export_signe.py --verifier
 node "$sophos/outils/jetons.mjs" Resources/Brand/tokens.json --verifier
+node "$sophos/outils/jetons.mjs" site/tokens.json --verifier
 node "$sophos/outils/carte.mjs" --verifier
 node "$sophos/outils/structure.mjs"
 node "$sophos/outils/politique.mjs" --verifier

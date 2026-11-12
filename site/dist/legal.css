@@ -1,10 +1,10 @@
 /* Met en page les documents légaux avec une largeur de lecture commune. */
 .legal-content.wrap { --wrap-max: var(--width-prose); padding-block: var(--space-11) var(--space-12); }
-.legal-content h1 { margin: 0; font-size: var(--display-legal); font-weight: var(--weight-medium); line-height: 1.14; letter-spacing: var(--tracking-heading); }
+.legal-content h1 { margin: 0; font-size: var(--display-legal); font-weight: var(--weight-medium); line-height: var(--leading-legal-title); letter-spacing: var(--tracking-heading); }
 .legal-content .updated { margin: var(--space-4) 0 var(--space-10); color: var(--quiet); font-size: var(--text-3); }
 .legal-content section + section { margin-top: var(--space-8); }
-.legal-content h2 { margin: 0 0 var(--space-3); font-size: var(--text-8); font-weight: var(--weight-medium); line-height: 1.15; letter-spacing: var(--tracking-title); }
-.legal-content p { color: var(--secondary); font-size: var(--text-5); line-height: 1.8; margin: var(--space-3) 0; }
+.legal-content h2 { margin: 0 0 var(--space-3); font-size: var(--text-8); font-weight: var(--weight-medium); line-height: var(--leading-heading); letter-spacing: var(--tracking-title); }
+.legal-content p { color: var(--secondary); font-size: var(--text-5); line-height: var(--leading-note); margin: var(--space-3) 0; }
 .legal-content a { color: var(--text-soft); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: var(--underline-offset); transition: color var(--motion-selection) ease; }
 .legal-content a:hover { color: var(--bright); }
 @media (max-width: 700px) {

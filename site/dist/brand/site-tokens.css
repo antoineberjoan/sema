@@ -1,0 +1,356 @@
+/* fabriqué depuis tokens.json par sophos/outils/jetons.mjs ; ne pas modifier à la main (patron 1.1.0). */
+:root {
+  color-scheme: light dark;
+  /* Propre au site : l'ombre proche d'un panneau. */
+  --shadow-near: rgb(0 0 0 / 0.2);
+  /* Propre au site : l'ombre lointaine d'un panneau et l'ombre d'un bouton. */
+  --shadow-far: rgb(0 0 0 / 0.1333);
+  /* Encre, lue dans les primitives du projet. */
+  --ink: var(--primitive-color-ink-800);
+  /* Papier, lu dans les primitives du projet. */
+  --paper: var(--primitive-color-paper-0);
+  /* Texte secondaire sur le fond sombre de la page. */
+  --secondary: #aaaaaa;
+  /* Texte secondaire en mode clair. */
+  --secondary-light: #5c5c5c;
+  /* Le fond d'un panneau de la landing. */
+  --surface: #262626;
+  /* Graphite, lu dans les primitives du projet. */
+  --graphite: var(--primitive-color-ink-600);
+  /* Brume, lue dans les primitives du projet. */
+  --brume: var(--primitive-color-paper-100);
+  /* Sarcelle profonde, lue dans les primitives du projet. */
+  --sarcelle: var(--primitive-color-accent-500);
+  /* Sarcelle claire, lue dans les primitives du projet. */
+  --sarcelle-light: var(--primitive-color-accent-200);
+  /* L'accent du site : la sarcelle claire. */
+  --signal: var(--primitive-color-accent-200);
+  /* Propre au site : radius control (identité). */
+  --radius-control: 8px;
+  /* Propre au site : radius surface (identité). */
+  --radius-surface: 16px;
+  /* Propre au site : shadow panel (identité). */
+  --shadow-panel: 0 2px 4px var(--shadow-near), 0 12px 26px var(--shadow-far);
+  /* Propre au site : motion feedback (identité). */
+  --motion-feedback: 120ms;
+  /* Propre au site : motion selection (identité). */
+  --motion-selection: 180ms;
+  /* Propre au site : page (surfaces et texte). */
+  --page: #0e0e0e;
+  /* Propre au site : page glass (surfaces et texte). */
+  --page-glass: rgb(14 14 14 / 0.851);
+  /* Propre au site : page glass solid (surfaces et texte). */
+  --page-glass-solid: rgb(14 14 14 / 0.949);
+  /* Propre au site : surface deep (surfaces et texte). */
+  --surface-deep: #1f1f1f;
+  /* Propre au site : tile light (surfaces et texte). */
+  --tile-light: #e5e5e5;
+  /* Propre au site : tile ink (surfaces et texte). */
+  --tile-ink: #303030;
+  /* Propre au site : paper soft (surfaces et texte). */
+  --paper-soft: #f5f5f5;
+  /* Propre au site : bright (surfaces et texte). */
+  --bright: #ffffff;
+  /* Propre au site : text (surfaces et texte). */
+  --text: #eeeeee;
+  /* Propre au site : text strong (surfaces et texte). */
+  --text-strong: #dbdbdb;
+  /* Propre au site : text soft (surfaces et texte). */
+  --text-soft: #c2c2c2;
+  /* Propre au site : meta (surfaces et texte). */
+  --meta: #b4b4b4;
+  /* Propre au site : muted (surfaces et texte). */
+  --muted: #929292;
+  /* Propre au site : quiet (surfaces et texte). */
+  --quiet: #858585;
+  /* Propre au site : line (surfaces et texte). */
+  --line: #555555;
+  /* Propre au site : button (surfaces et texte). */
+  --button: #efefef;
+  /* Propre au site : button ink (surfaces et texte). */
+  --button-ink: #171717;
+  /* Propre au site : veil (surfaces et texte). */
+  --veil: rgb(255 255 255 / 0.0471);
+  /* Propre au site : selection (surfaces et texte). */
+  --selection: rgb(214 214 214 / 0.2);
+  /* Propre au site : font family (typographie). */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Propre au site : weight light (typographie). */
+  --weight-light: 300;
+  /* Propre au site : weight regular (typographie). */
+  --weight-regular: 400;
+  /* Propre au site : weight medium (typographie). */
+  --weight-medium: 500;
+  /* Propre au site : weight bold (typographie). */
+  --weight-bold: 600;
+  /* Propre au site : text 1 (typographie). */
+  --text-1: 10px;
+  /* Propre au site : text 2 (typographie). */
+  --text-2: 11px;
+  /* Propre au site : text 3 (typographie). */
+  --text-3: 12px;
+  /* Propre au site : text 4 (typographie). */
+  --text-4: 13px;
+  /* Propre au site : text 5 (typographie). */
+  --text-5: 14px;
+  /* Propre au site : text 6 (typographie). */
+  --text-6: 16px;
+  /* Propre au site : text 7 (typographie). */
+  --text-7: 18px;
+  /* Propre au site : text 8 (typographie). */
+  --text-8: 20px;
+  /* Propre au site : text 9 (typographie). */
+  --text-9: 24px;
+  /* Propre au site : text 10 (typographie). */
+  --text-10: 28px;
+  /* Propre au site : text 11 (typographie). */
+  --text-11: 32px;
+  /* Propre au site : text 12 (typographie). */
+  --text-12: 40px;
+  /* Propre au site : text 13 (typographie). */
+  --text-13: 48px;
+  /* Propre au site : text command (typographie). */
+  --text-command: clamp(13px, 1.4vw, 18px);
+  /* Propre au site : display hero (typographie). */
+  --display-hero: clamp(42px, 5.6vw, 80px);
+  /* Propre au site : display hero compact (typographie). */
+  --display-hero-compact: clamp(39px, 8.7vw, 58px);
+  /* Propre au site : display brand (typographie). */
+  --display-brand: clamp(60px, 7.5vw, 104px);
+  /* Propre au site : display section (typographie). */
+  --display-section: clamp(27px, 3.1vw, 40px);
+  /* Propre au site : display legal (typographie). */
+  --display-legal: clamp(30px, 4vw, 44px);
+  /* Propre au site : display specimen (typographie). */
+  --display-specimen: 124px;
+  /* Propre au site : display specimen compact (typographie). */
+  --display-specimen-compact: 100px;
+  /* Propre au site : tracking tight (typographie). */
+  --tracking-tight: -.01em;
+  /* Propre au site : tracking title (typographie). */
+  --tracking-title: -.02em;
+  /* Propre au site : tracking heading (typographie). */
+  --tracking-heading: -.04em;
+  /* Propre au site : tracking display (typographie). */
+  --tracking-display: -.045em;
+  /* Propre au site : tracking specimen (typographie). */
+  --tracking-specimen: -.08em;
+  /* Propre au site : tracking label (typographie). */
+  --tracking-label: .03em;
+  /* Propre au site : underline offset (typographie). */
+  --underline-offset: 4px;
+  /* Propre au site : space 1 (espacement et dimensions). */
+  --space-1: 4px;
+  /* Propre au site : space 2 (espacement et dimensions). */
+  --space-2: 8px;
+  /* Propre au site : space 3 (espacement et dimensions). */
+  --space-3: 12px;
+  /* Propre au site : space 4 (espacement et dimensions). */
+  --space-4: 16px;
+  /* Propre au site : space 5 (espacement et dimensions). */
+  --space-5: 20px;
+  /* Propre au site : space 6 (espacement et dimensions). */
+  --space-6: 24px;
+  /* Propre au site : space 7 (espacement et dimensions). */
+  --space-7: 32px;
+  /* Propre au site : space 8 (espacement et dimensions). */
+  --space-8: 40px;
+  /* Propre au site : space 9 (espacement et dimensions). */
+  --space-9: 48px;
+  /* Propre au site : space 10 (espacement et dimensions). */
+  --space-10: 64px;
+  /* Propre au site : space 11 (espacement et dimensions). */
+  --space-11: 80px;
+  /* Propre au site : space 12 (espacement et dimensions). */
+  --space-12: 96px;
+  /* Propre au site : space 13 (espacement et dimensions). */
+  --space-13: 128px;
+  /* Propre au site : block 1 (espacement et dimensions). */
+  --block-1: 160px;
+  /* Propre au site : block 2 (espacement et dimensions). */
+  --block-2: 192px;
+  /* Propre au site : block 3 (espacement et dimensions). */
+  --block-3: 224px;
+  /* Propre au site : block 4 (espacement et dimensions). */
+  --block-4: 256px;
+  /* Propre au site : block 5 (espacement et dimensions). */
+  --block-5: 288px;
+  /* Propre au site : block 6 (espacement et dimensions). */
+  --block-6: 320px;
+  /* Propre au site : block 8 (espacement et dimensions). */
+  --block-8: 448px;
+  /* Propre au site : width content (espacement et dimensions). */
+  --width-content: 1360px;
+  /* Propre au site : width chrome (espacement et dimensions). */
+  --width-chrome: 1520px;
+  /* Propre au site : width guide (espacement et dimensions). */
+  --width-guide: 1120px;
+  /* Propre au site : width prose (espacement et dimensions). */
+  --width-prose: 720px;
+  /* Propre au site : wrap fill (espacement et dimensions). */
+  --wrap-fill: 88%;
+  /* Propre au site : target min (espacement et dimensions). */
+  --target-min: 44px;
+  /* Propre au site : control height (espacement et dimensions). */
+  --control-height: 52px;
+  /* Propre au site : control height compact (espacement et dimensions). */
+  --control-height-compact: 34px;
+  /* Propre au site : mark size (espacement et dimensions). */
+  --mark-size: 36px;
+  /* Propre au site : header height (espacement et dimensions). */
+  --header-height: 76px;
+  /* Propre au site : header gap (espacement et dimensions). */
+  --header-gap: 24px;
+  /* Propre au site : header download width (espacement et dimensions). */
+  --header-download-width: 116px;
+  /* Propre au site : focus width (espacement et dimensions). */
+  --focus-width: 2px;
+  /* Propre au site : blur glass (espacement et dimensions). */
+  --blur-glass: 16px;
+  /* Propre au site : radius card (espacement et dimensions). */
+  --radius-card: 12px;
+  /* Propre au site : radius panel (espacement et dimensions). */
+  --radius-panel: 20px;
+  /* Propre au site : radius pill (espacement et dimensions). */
+  --radius-pill: 999px;
+  /* Propre au site : layer header (espacement et dimensions). */
+  --layer-header: 10;
+  /* Propre au site : layer skip (espacement et dimensions). */
+  --layer-skip: 20;
+  /* Propre au site : shadow button (espacement et dimensions). */
+  --shadow-button: 0 4px 16px var(--shadow-far);
+  /* Propre au site : motion write (espacement et dimensions). */
+  --motion-write: cubic-bezier(.35, 0, .2, 1);
+  /* Propre au site : logo write delay (espacement et dimensions). */
+  --logo-write-delay: 160ms;
+  /* Propre au site : mark point ring (espacement et dimensions). */
+  --mark-point-ring: 14;
+  /* Propre au site : logo write duration (espacement et dimensions). */
+  --logo-write-duration: 2400ms;
+  /* Propre au site : motion ease (scènes de la landing). */
+  --motion-ease: cubic-bezier(.22, 1, .36, 1);
+  /* Propre au site : motion spring (scènes de la landing). */
+  --motion-spring: cubic-bezier(.34, 1.45, .64, 1);
+  /* Propre au site : scene settle (scènes de la landing). */
+  --scene-settle: 900ms;
+  /* Propre au site : scene enter (scènes de la landing). */
+  --scene-enter: 400ms;
+  /* Propre au site : scene stagger (scènes de la landing). */
+  --scene-stagger: 90ms;
+  /* Propre au site : scene draw (scènes de la landing). */
+  --scene-draw: 1200ms;
+  /* Propre au site : scene cards start (scènes de la landing). */
+  --scene-cards-start: 200ms;
+  /* Propre au site : scene lines start (scènes de la landing). */
+  --scene-lines-start: 900ms;
+  /* Propre au site : scene keys (scènes de la landing). */
+  --scene-keys: 1100ms;
+  /* Propre au site : scene panel start (scènes de la landing). */
+  --scene-panel-start: 900ms;
+  /* Propre au site : scene type start (scènes de la landing). */
+  --scene-type-start: 1500ms;
+  /* Propre au site : scene type (scènes de la landing). */
+  --scene-type: 640ms;
+  /* Propre au site : scene results start (scènes de la landing). */
+  --scene-results-start: 2300ms;
+  /* Propre au site : scene select start (scènes de la landing). */
+  --scene-select-start: 3100ms;
+  /* Propre au site : scene step (scènes de la landing). */
+  --scene-step: 700ms;
+  /* Propre au site : scene open start (scènes de la landing). */
+  --scene-open-start: 5400ms;
+  /* Propre au site : scene pointer start (scènes de la landing). */
+  --scene-pointer-start: 7000ms;
+  /* Propre au site : scene pointer (scènes de la landing). */
+  --scene-pointer: 2600ms;
+  /* Propre au site : scene swap (scènes de la landing). */
+  --scene-swap: 700ms;
+  /* Propre au site : scene swap start (scènes de la landing). */
+  --scene-swap-start: 8600ms;
+  /* Propre au site : scene loop (scènes de la landing). */
+  --scene-loop: 13000ms;
+  /* Propre au site : scene dot delay (scènes de la landing). */
+  --scene-dot-delay: 1000ms;
+  /* Propre au site : scene tint (scènes de la landing). */
+  --scene-tint: 22%;
+  /* Propre au site : tone accent (scènes de la landing). */
+  --tone-accent: #7cc2c0;
+  /* Propre au site : tone lavender (scènes de la landing). */
+  --tone-lavender: #d0a2f7;
+  /* Propre au site : tone mint (scènes de la landing). */
+  --tone-mint: #9ed5c5;
+  /* Propre au site : tone teal (scènes de la landing). */
+  --tone-teal: #2d9596;
+  /* Propre au site : écran étroit, sous ce seuil l'en-tête et les marges se resserrent. Le patron fixe 40rem ; le site garde son seuil actuel de 700 px. */
+  --breakpoint-narrow: 700px;
+  /* Propre au site : l'interligne d'un paragraphe de réponse ou de présentation. */
+  --leading-prose: 1.65;
+  /* Propre au site : l'interligne d'une note et d'un paragraphe légal. */
+  --leading-note: 1.8;
+  /* Propre au site : l'interligne du pied de page et de la commande Homebrew. */
+  --leading-compact: 1.6;
+  /* Propre au site : l'interligne du titre de la landing. */
+  --leading-hero: 1.07;
+  /* Propre au site : l'interligne du titre de la landing sur écran étroit. */
+  --leading-hero-compact: 1.08;
+  /* Propre au site : l'interligne du titre d'une section de la landing. */
+  --leading-section: 1.12;
+  /* Propre au site : l'interligne de la valeur d'un favori de la landing. */
+  --leading-fav-value: 1.1;
+  /* Propre au site : l'interligne de la valeur de la scène Focus. */
+  --leading-focus-value: 1.05;
+  /* Propre au site : l'interligne d'un titre de deuxième niveau. */
+  --leading-heading: 1.15;
+  /* Propre au site : l'interligne du titre d'un document légal. */
+  --leading-legal-title: 1.14;
+  /* Propre au site : l'opacité du signe plus d'une question. */
+  --plus-opacity: .7;
+  /* Propre au site : l'épaisseur d'un filet. */
+  --hairline: 1px;
+  /* Propre au site : l'épaisseur d'un trait de grille dans un graphique de la landing. */
+  --grid-stroke-width: .15;
+  /* Propre au site : les colonnes d'une présentation : texte puis scène. */
+  --showcase-columns: 1fr 1.25fr;
+  /* Propre au site : les colonnes d'une présentation inversée : scène puis texte. */
+  --showcase-columns-flip: 1.25fr 1fr;
+  /* Propre au site : les colonnes de la rangée de favoris. */
+  --favs-columns: repeat(4, minmax(0, 1fr));
+  /* Propre au site : les colonnes de la rangée de favoris sur écran étroit. */
+  --favs-columns-narrow: repeat(2, minmax(0, 1fr));
+  /* Propre au site : les colonnes de la section des questions. */
+  --questions-columns: 1fr 1fr;
+  /* Propre au site : le nombre de pas de l'animation de saisie. */
+  --typing-steps: 4;
+  /* Propre au site : l'échelle de départ d'une carte favori qui s'ouvre en éventail. */
+  --scene-fan-scale: .5;
+  /* Propre au site : l'échelle de départ d'un anneau et des touches. */
+  --scene-grow-from: .8;
+  /* Propre au site : l'échelle d'arrivée d'un anneau de focus. */
+  --scene-ring-to: 2.4;
+  /* Propre au site : l'échelle d'arrivée des touches. */
+  --scene-keys-to: 1.3;
+  /* Propre au site : l'échelle d'une touche enfoncée. */
+  --scene-press-scale: .95;
+  /* Propre au site : l'échelle d'un panneau qui part. */
+  --scene-leave-scale: .94;
+  /* Propre au site : l'échelle d'un bouton touché. */
+  --scene-tap-scale: .9;
+  /* Propre au site : l'échelle du pointeur qui clique. */
+  --scene-pointer-press-scale: .85;
+  /* Propre au site : l'échelle de départ de la scène Focus qui s'ouvre. */
+  --scene-open-scale: .92;
+  /* Propre au site : l'échelle de départ du panneau de recherche. */
+  --scene-pop-scale: .88;
+  /* Propre au site : la durée du message « copié » après la copie de la commande. */
+  --copy-feedback-duration: 2200ms;
+  /* Propre au site : la part de hauteur d'une scène qui doit être visible pour la jouer. */
+  --scene-visible-threshold: .35;
+}
+
+@media (max-width: 700px) {
+  :root {
+    --wrap-fill: calc(100% - var(--space-8));
+    --header-height: 64px;
+    --header-gap: var(--space-4);
+  }
+}
