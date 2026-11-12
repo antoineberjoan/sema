@@ -44,7 +44,7 @@ Référence : `patron/structure.md` de Sophos. Chaque sorte de code a une forme 
 
 | Sorte | Unités de sema |
 | --- | --- |
-| Bibliothèque de règles | `Sources/MarketCore/Series`, `Alerts`, `Context` |
+| Bibliothèque de règles | `Sources/MarketCore/Series`, `Moves`, `Alerts`, `Context` |
 | Dépôt de données | `Sources/MarketCore/Preferences` |
 | Connecteur | `Sources/MarketCore/Webstat`, `Statistical`, `Markets`, `ECB` |
 | Module d'écran | `Sources/SemaMac/Features/*` |
