@@ -15,7 +15,7 @@ struct WorkspaceScreen: View {
     static let statusLines = 2
     private static let previewInset = DesignSpace.frameInset
     private static let previewVerticalInset = DesignSpace.controlInsetDense
-    private static let switcherScrim = DesignColor.text.opacity(DesignOpacity.glassRest)
+    private static let switcherScrim = DesignColor.scrim
     // Every sidebar text starts on one edge: an 8 pt block inset plus an 8 pt inner padding equals the 16 pt margin.
     private static let sidebarSpacing = DesignSpace.itemGap
     private static let sidebarMargin = DesignSpace.cardInset
@@ -130,7 +130,7 @@ struct WorkspaceScreen: View {
     }
 
     private var overviewContent: some View {
-        OverviewScreen(showsQuickSwitcher: columnVisibility == .detailOnly)
+        OverviewScreen(isQuickSwitcherShown: columnVisibility == .detailOnly)
             .padding(.horizontal, Self.focusHorizontalMargin).padding(.top, DesignSpace.pageInsetNarrow)
             .padding(.bottom, DesignSpace.pageInsetNarrow)
     }
@@ -370,25 +370,25 @@ struct WorkspaceScreen: View {
     private static let nameLines = 2
     @Environment(AppStore.self) private var store
     let series: MarketSeries
-    private var selected: Bool { store.section == .overview && store.selectedSeries?.id == series.id }
+    private var isSelected: Bool { store.section == .overview && store.selectedSeries?.id == series.id }
 
     var body: some View {
         let displayed = store.displayedSeries(series)
         Button { store.show(series); store.section = .overview } label: {
             VStack(alignment: .leading, spacing: Self.textSpacing) {
-                Text(MarketFormat.name(displayed)).typeRole(.small).fontWeight(selected ? .semibold : .regular)
+                Text(MarketFormat.name(displayed)).typeRole(.small).fontWeight(isSelected ? .semibold : .regular)
                     .foregroundStyle(DesignColor.text).lineLimit(Self.nameLines).multilineTextAlignment(.leading)
                 if displayed.latest != nil {
                     Text(MarketFormat.value(displayed)).typeRole(.caption).monospacedDigit().foregroundStyle(DesignColor.textMuted)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading).padding(DesignSpace.rowInset)
-            .background(selected ? DesignColor.selection(store.palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.control))
+            .background(isSelected ? DesignColor.selection(store.palette) : .clear, in: RoundedRectangle(cornerRadius: DesignRadius.control))
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
         .accessibilityLabel(displayed.latest == nil ? MarketFormat.name(displayed) : "\(MarketFormat.name(displayed)), \(MarketFormat.value(displayed))")
-        .accessibilityAddTraits(selected ? [.isSelected] : [])
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 }
 
@@ -402,7 +402,7 @@ private struct SidebarItem: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isHovered = false
     let section: WorkspaceSection
-    private var selected: Bool { store.section == section }
+    private var isSelected: Bool { store.section == section }
 
     var body: some View {
         Button { store.section = section } label: {
@@ -415,15 +415,15 @@ private struct SidebarItem: View {
                     Text("\(store.macroAlerts.count + store.moveWatches.count)").foregroundStyle(DesignColor.textMuted)
                 }
             }
-            .typeRole(.small).fontWeight(selected ? .semibold : .regular)
+            .typeRole(.small).fontWeight(isSelected ? .semibold : .regular)
             .foregroundStyle(DesignColor.text)
             .padding(.horizontal, DesignSpace.rowInset).padding(.vertical, Self.verticalPadding)
-            .background(selected ? DesignColor.selection(store.palette) : (isHovered ? DesignColor.text.opacity(DesignOpacity.glassHover) : .clear),
+            .background(isSelected ? DesignColor.selection(store.palette) : (isHovered ? DesignColor.text.opacity(DesignOpacity.glassHover) : .clear),
                         in: RoundedRectangle(cornerRadius: DesignRadius.control, style: .continuous))
             .contentShape(Rectangle())
         }
         .buttonStyle(PressStyle())
-        .accessibilityAddTraits(selected ? [.isSelected] : [])
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
         .onHover { isHovered = $0 }
         .animation(reduceMotion ? nil : .timingCurve(DesignEase.hover, duration: DesignDuration.fast), value: isHovered)
     }

@@ -15,7 +15,7 @@ struct RibbonCard: View {
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var hovered = false
+    @State private var isHovered = false
     @State private var selectedDate: Date?
     let series: MarketSeries
     let period: HistoryPeriod
@@ -48,12 +48,12 @@ struct RibbonCard: View {
             .foregroundStyle(DesignColor.text)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .clipShape(RoundedRectangle(cornerRadius: DesignRadius.card))
-            .modifier(RibbonSurface(emphasized: hovered))
+            .modifier(RibbonSurface(isEmphasized: isHovered))
             .contentShape(RoundedRectangle(cornerRadius: DesignRadius.card))
         }
         .buttonStyle(PressStyle())
-        .onHover { hovered = $0 }
-        .animation(reduceMotion ? nil : .timingCurve(DesignEase.hover, duration: MenuRibbonLayout.hoverDuration), value: hovered)
+        .onHover { isHovered = $0 }
+        .animation(reduceMotion ? nil : .timingCurve(DesignEase.hover, duration: MenuRibbonLayout.hoverDuration), value: isHovered)
         .contextMenu {
             Button(store.isWatched(series.id) ? "Ne plus surveiller les mouvements" : "Me prévenir des mouvements inhabituels") {
                 Task { await store.toggleWatch(series) }

@@ -23,12 +23,12 @@ struct SeriesDetailView: View {
     @Environment(\.openSettings) private var openSettings
     let series: MarketSeries
     var preview = false
-    var focus = false
+    var isFocus = false
     /// Previews outside Focus keep their own period; Focus shares the hub and ribbon choice.
     @State private var localPeriod: HistoryPeriod = .year
-    @State private var showsExplanation = false
+    @State private var isExplanationShown = false
 
-    private var period: HistoryPeriod { focus ? store.period(for: series) : localPeriod }
+    private var period: HistoryPeriod { isFocus ? store.period(for: series) : localPeriod }
 
     var body: some View {
         if series.observations.isEmpty { noData } else { populated }
@@ -39,9 +39,9 @@ struct SeriesDetailView: View {
         return VStack(alignment: .leading, spacing: Self.sectionSpacing) {
             VStack(alignment: .leading, spacing: Self.titleSpacing) {
                 Text(MarketFormat.name(displayed))
-                    .typeRole(focus ? .small : .section)
-                    .foregroundStyle(focus ? DesignColor.textMuted : DesignColor.text).textSelection(.enabled)
-                if !focus {
+                    .typeRole(isFocus ? .small : .section)
+                    .foregroundStyle(isFocus ? DesignColor.textMuted : DesignColor.text).textSelection(.enabled)
+                if !isFocus {
                     Text(displayed.subtitle).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -49,10 +49,10 @@ struct SeriesDetailView: View {
             ContentUnavailableView {
                 Label("Pas encore de données", systemImage: "chart.xyaxis.line")
             } description: {
-                Text(needsWebstatKey ? "Connectez votre clé Webstat pour afficher ce repère."
+                Text(isWebstatKeyMissing ? "Connectez votre clé Webstat pour afficher ce repère."
                      : "Aucune observation n’a été reçue pour l’instant.")
             } actions: {
-                if needsWebstatKey {
+                if isWebstatKeyMissing {
                     Button("Connecter Webstat") { store.settingsTab = .sources; openSettings() }
                         .buttonStyle(.borderedProminent).tint(DesignColor.accent(store.palette))
                 }
@@ -60,29 +60,29 @@ struct SeriesDetailView: View {
             .frame(maxWidth: .infinity, minHeight: HistoryChart.defaultHeight, maxHeight: .infinity)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .modifier(SeriesDetailSurface(focus: focus))
+        .modifier(SeriesDetailSurface(isFocus: isFocus))
     }
 
-    private var needsWebstatKey: Bool { store.sourceID(for: series.id) == "webstat" && !store.hasWebstatKey }
+    private var isWebstatKeyMissing: Bool { store.sourceID(for: series.id) == "webstat" && !store.hasWebstatKey }
 
     private var populated: some View {
         let displayed = store.displayedSeries(series)
         let explanation = SeriesExplanation(series: series, period: period,
             inverted: store.isExchangeRateInverted(series),
             formatNumber: { MarketFormat.number($0, digits: $1) })
-        return VStack(alignment: .leading, spacing: focus ? Self.focusSectionSpacing : Self.sectionSpacing) {
+        return VStack(alignment: .leading, spacing: isFocus ? Self.focusSectionSpacing : Self.sectionSpacing) {
             HStack(alignment: .top, spacing: Self.headerSpacing) {
                 VStack(alignment: .leading, spacing: Self.titleSpacing) {
                     Text(MarketFormat.name(displayed))
-                        .typeRole(focus ? .small : .section)
-                        .foregroundStyle(focus ? DesignColor.textMuted : DesignColor.text).textSelection(.enabled)
-                    if !focus {
+                        .typeRole(isFocus ? .small : .section)
+                        .foregroundStyle(isFocus ? DesignColor.textMuted : DesignColor.text).textSelection(.enabled)
+                    if !isFocus {
                         Text(displayed.subtitle).typeRole(.small).foregroundStyle(DesignColor.textMuted)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
                 Spacer(minLength: 0)
-                if focus {
+                if isFocus {
                     PeriodTabs(periods: availablePeriods, selection: period) { store.setPeriod($0) }
                 } else {
                     ExchangeDirectionButton(series: series)
@@ -93,7 +93,7 @@ struct SeriesDetailView: View {
                 Label("Source désactivée · historique conservé, actualisations et alertes en pause.", systemImage: "pause.circle")
                     .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
-            if focus {
+            if isFocus {
                 focusHeadline(displayed)
             } else {
                 VStack(alignment: .leading, spacing: Self.valueSpacing) {
@@ -107,14 +107,14 @@ struct SeriesDetailView: View {
                     }
                 }
             }
-            if let explanation, focus || explanation.reading != nil || explanation.implication != nil {
-                DisclosureGroup("Comprendre", isExpanded: $showsExplanation) {
+            if let explanation, isFocus || explanation.reading != nil || explanation.implication != nil {
+                DisclosureGroup("Comprendre", isExpanded: $isExplanationShown) {
                     SeriesExplanationView(explanation: explanation)
                 }
                 .typeRole(.small).fixedSize(horizontal: false, vertical: true)
             }
-            if !focus { periodPicker }
-            HistoryChart(series: displayed, period: period, height: focus ? nil : preview ? Self.previewChartHeight : Self.chartHeight, showsReading: !focus)
+            if !isFocus { periodPicker }
+            HistoryChart(series: displayed, period: period, height: isFocus ? nil : preview ? Self.previewChartHeight : Self.chartHeight, isReadingShown: !isFocus)
             if period == .all, series.hasCompleteHistory != true {
                 HStack(spacing: Self.actionSpacing) {
                     if store.historyLoadingID == series.id {
@@ -135,16 +135,16 @@ struct SeriesDetailView: View {
             }
             HStack(alignment: .firstTextBaseline) {
                 Group {
-                    if focus {
+                    if isFocus {
                     Text(selectedPeriodLabel)
                     } else { Label(selectedPeriodLabel, systemImage: "calendar") }
                 }
                 .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: DesignSpace.fieldGap)
-                if !focus { alertButton }
+                if !isFocus { alertButton }
             }
-            if !focus, store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
+            if !isFocus, store.isExchangeRateInverted(series), let pair = series.exchangeRatePair {
                 Text("Lecture inversée calculée à partir de la série publiée. Les alertes restent exprimées en " + pair.publishedDescription + ".")
                     .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
@@ -156,13 +156,13 @@ struct SeriesDetailView: View {
                 Label(error + " Les observations conservées restent visibles.", systemImage: "exclamationmark.triangle")
                     .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
             }
-            if !focus {
+            if !isFocus {
                 DisclosureGroup("Source et définition") { sourceDetails }
                     .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
                 metadata
             }
         }
-        .modifier(SeriesDetailSurface(focus: focus))
+        .modifier(SeriesDetailSurface(isFocus: isFocus))
         .disclosureGroupStyle(RowDisclosureStyle())
         .inspector(isPresented: contextBinding) {
             MoveContextView(series: series)
@@ -170,7 +170,7 @@ struct SeriesDetailView: View {
         }
         .onChange(of: series.id, initial: true) { _, _ in
             localPeriod = series.supports(.year) ? .year : .all
-            showsExplanation = false
+            isExplanationShown = false
         }
     }
 
@@ -204,7 +204,7 @@ struct SeriesDetailView: View {
         if store.isFollowing(series.id) {
             HStack(spacing: DesignSpace.fieldGap) {
                 WatchButton(series: series)
-                if focus {
+                if isFocus {
                     Button { store.isContextPresented.toggle() } label: { Label("Pourquoi ?", systemImage: "text.magnifyingglass") }
                         .buttonStyle(.bordered).controlSize(.small)
                         .help("Faits datés de la séance : vos autres repères, l’agenda, les communiqués et les titres.")
@@ -215,7 +215,7 @@ struct SeriesDetailView: View {
 
     /// Only Focus opens the inspector; previews in the catalogue stay compact.
     private var contextBinding: Binding<Bool> {
-        Binding(get: { focus && store.isContextPresented }, set: { store.isContextPresented = $0 })
+        Binding(get: { isFocus && store.isContextPresented }, set: { store.isContextPresented = $0 })
     }
 
     private func focusValue(_ displayed: MarketSeries) -> some View {
@@ -334,9 +334,9 @@ struct SeriesDetailView: View {
 }
 
 private struct SeriesDetailSurface: ViewModifier {
-    let focus: Bool
+    let isFocus: Bool
     @ViewBuilder func body(content: Content) -> some View {
-        if focus { content }
+        if isFocus { content }
         else {
             content
                 .padding(DesignSpace.pageInsetNarrow)

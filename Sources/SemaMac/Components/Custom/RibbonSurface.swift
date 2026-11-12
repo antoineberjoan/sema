@@ -1,4 +1,4 @@
-// Compose les cartes en matière macOS et leur repli opaque pour les réglages d’accessibilité.
+// Compose les cartes en matière macOS et leur repli isOpaque pour les réglages d’accessibilité.
 // @documentation aucune
 // @decision docs/decisions/2026-11-12-composant-ribbon-surface.md
 import AppKit
@@ -69,10 +69,10 @@ struct RibbonSurface: ViewModifier {
     @Environment(\.glassSettings) private var glass
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
-    var emphasized = false
+    var isEmphasized = false
 
     func body(content: Content) -> some View {
-        let opaque = reduceTransparency || contrast == .increased
+        let isOpaque = reduceTransparency || contrast == .increased
         let shape = RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
         // NSVisualEffectView owns the blur. Only the contrast veil changes opacity.
         let veil = (colorScheme == .dark ? RibbonGlassStyle.darkVeil : RibbonGlassStyle.lightVeil)
@@ -80,7 +80,7 @@ struct RibbonSurface: ViewModifier {
         let tint = (colorScheme == .dark ? RibbonGlassStyle.darkTint : RibbonGlassStyle.lightTint) * glass.tint * RibbonGlassStyle.tintRange
         content
             .background {
-                if opaque {
+                if isOpaque {
                     shape.fill(DesignColor.surfaceRaised)
                     shape.fill(glassTint.opacity(RibbonGlassStyle.opaqueTintOpacity))
                 }
@@ -97,7 +97,7 @@ struct RibbonSurface: ViewModifier {
                             .blendMode(.softLight)
                             .allowsHitTesting(false).accessibilityHidden(true)
                     }
-                    shape.fill(Color.white.opacity(emphasized ? RibbonGlassStyle.emphasizedHighlightOpacity : RibbonGlassStyle.highlightOpacity))
+                    shape.fill(Color.white.opacity(isEmphasized ? RibbonGlassStyle.emphasizedHighlightOpacity : RibbonGlassStyle.highlightOpacity))
                 }
             }
             .overlay {
@@ -106,6 +106,6 @@ struct RibbonSurface: ViewModifier {
                                                   endPoint: .bottomTrailing), lineWidth: DesignBorder.width)
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
-            .elevation(emphasized ? DesignElevation.floating : DesignElevation.raised)
+            .elevation(isEmphasized ? DesignElevation.floating : DesignElevation.raised)
     }
 }

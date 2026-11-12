@@ -16,37 +16,37 @@ struct SourceKeyView: View {
     private var isClaude: Bool { source == AppStore.claudeSourceID }
     private var title: String { isClaude ? "Claude" : isFRED ? StatisticalSource.fred.title : provider?.title ?? "Webstat" }
     private var signupURL: URL { isClaude ? Self.claudeSignupURL : isFRED ? Self.fredSignupURL : provider?.signupURL ?? WebstatSite.loginURL }
-    private var connected: Bool {
+    private var isConnected: Bool {
         isClaude ? store.hasClaudeKey : isFRED ? store.hasFREDKey : provider.map { store.connectedMarkets.contains($0) } ?? store.hasWebstatKey
     }
-    private var connecting: Bool {
+    private var isConnecting: Bool {
         isClaude ? store.isConnectingClaude : isFRED ? store.isConnectingFRED : provider.map { store.connectingMarkets.contains($0) } ?? store.isLoading
     }
     private var error: String? {
         isClaude ? store.claudeError : isFRED ? store.fredError : provider.map { store.marketErrors[$0] } ?? store.webstatError
     }
-    private var enabled: Bool { store.isSourceEnabled(source) }
-    private var canConnect: Bool { !connecting && enabled && !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    private var isEnabled: Bool { store.isSourceEnabled(source) }
+    private var canConnect: Bool { !isConnecting && isEnabled && !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
-            if connected {
+            if isConnected {
                 Label("Connecté", systemImage: "checkmark.circle.fill").foregroundStyle(DesignColor.accentText(store.palette))
             }
             HStack(spacing: DesignSpace.fieldGap) {
-                SecureField(connected ? "Nouvelle clé API" : "Clé API personnelle", text: $key)
+                SecureField(isConnected ? "Nouvelle clé API" : "Clé API personnelle", text: $key)
                     .textFieldStyle(.roundedBorder).textContentType(.password).privacySensitive()
                     .accessibilityLabel("Clé API \(title)").onSubmit(connect)
-                Button(connecting ? "Connexion…" : connected ? "Remplacer" : "Connecter", action: connect)
+                Button(isConnecting ? "Connexion…" : isConnected ? "Remplacer" : "Connecter", action: connect)
                     .disabled(!canConnect)
             }
-            .controlSize(.large).disabled(!enabled)
+            .controlSize(.large).disabled(!isEnabled)
             HStack {
                 Link("Obtenir une clé", destination: signupURL)
                 Spacer()
-                if connected {
+                if isConnected {
                     Button("Retirer la clé", role: .destructive) { Task { await remove() } }
-                        .disabled(connecting || store.isLoading)
+                        .disabled(isConnecting || store.isLoading)
                 }
             }.typeRole(.small).buttonStyle(.link)
             if let provider { Text(provider.quota).typeRole(.micro).foregroundStyle(DesignColor.textMuted) }
@@ -58,7 +58,7 @@ struct SourceKeyView: View {
                 Text("Payante à l’usage sur votre compte Anthropic · quelques centimes par synthèse.")
                     .typeRole(.micro).foregroundStyle(DesignColor.textMuted)
             }
-            if !enabled {
+            if !isEnabled {
                 Text("Activez \(title) dans les catalogues.").typeRole(.small).foregroundStyle(DesignColor.textMuted)
             }
             if let error {

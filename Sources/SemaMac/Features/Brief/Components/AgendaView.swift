@@ -13,7 +13,7 @@ struct AgendaView: View {
     private var accentText: Color { DesignColor.accentText(palette) }
     @State private var day = DayAgenda.currentDay(now: .now) ?? .now
     @State private var agenda: DayAgenda?
-    @State private var showsAll = false
+    @State private var isAllShown = false
     private var week: [Date] { DayAgenda.week(containing: .now) }
 
     var body: some View {
@@ -26,7 +26,7 @@ struct AgendaView: View {
         .frame(maxWidth: Self.maximumWidth, alignment: .leading)
         .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.card))
         .task(id: day) {
-            showsAll = false
+            isAllShown = false
             agenda = await store.agenda(on: day)
         }
         // A day chosen in the ribbon opens here; the request is consumed once read.
@@ -50,13 +50,13 @@ struct AgendaView: View {
         let total = agenda.items.count
         if total == 0 { return date + " · rien à signaler" }
         let count = total == 1 ? "1 élément" : "\(total) éléments"
-        return date + " · " + (agenda.hiddenCount > 0 && !showsAll ? "\(count), \(DayAgenda.shownLimit) affichés" : count)
+        return date + " · " + (agenda.hiddenCount > 0 && !isAllShown ? "\(count), \(DayAgenda.shownLimit) affichés" : count)
     }
 
     private var strip: some View {
         HStack(spacing: DesignSpace.markInset) {
             ForEach(week, id: \.self) { value in
-                let selected = AgendaDay.isSame(value, day)
+                let isSelected = AgendaDay.isSame(value, day)
                 Button { day = value } label: {
                     VStack(spacing: DesignSpace.listGapDense) {
                         Text(AgendaDay.text(value, "EEE").capitalized).typeRole(.caption).foregroundStyle(DesignColor.textMuted)
@@ -64,12 +64,12 @@ struct AgendaView: View {
                         Circle().fill(store.hasUnusualMove(on: value) ? accent : Color.clear).frame(width: Self.dotSize, height: Self.dotSize)
                     }
                     .frame(maxWidth: .infinity).padding(.vertical, DesignSpace.rowInset)
-                    .background(selected ? DesignColor.selection(palette) : Color.clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))
+                    .background(isSelected ? DesignColor.selection(palette) : Color.clear, in: RoundedRectangle(cornerRadius: DesignRadius.block))
                     .contentShape(RoundedRectangle(cornerRadius: DesignRadius.block))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(AgendaDay.text(value, "EEEE d MMMM") + (store.hasUnusualMove(on: value) ? ", mouvement inhabituel" : ""))
-                .accessibilityAddTraits(selected ? [.isSelected] : [])
+                .accessibilityAddTraits(isSelected ? [.isSelected] : [])
             }
         }
         .padding(DesignSpace.markInset).background(DesignColor.surfaceRaised, in: RoundedRectangle(cornerRadius: DesignRadius.block + DesignSpace.markInset))
@@ -82,9 +82,9 @@ struct AgendaView: View {
                     Text(AgendaLine.emptyText(hasFREDKey: store.hasFREDKey))
                         .typeRole(.small).foregroundStyle(DesignColor.textMuted)
                 }
-                ForEach((showsAll ? agenda.items : agenda.shown).map { AgendaLine($0, store: store) }) { line($0) }
+                ForEach((isAllShown ? agenda.items : agenda.shown).map { AgendaLine($0, store: store) }) { line($0) }
                 if agenda.hiddenCount > 0 {
-                    Button(showsAll ? "Réduire" : "Tout voir · \(agenda.hiddenCount) autre\(agenda.hiddenCount > 1 ? "s" : "")") { showsAll.toggle() }
+                    Button(isAllShown ? "Réduire" : "Tout voir · \(agenda.hiddenCount) autre\(agenda.hiddenCount > 1 ? "s" : "")") { isAllShown.toggle() }
                         .buttonStyle(.borderless).typeRole(.small)
                 }
             }

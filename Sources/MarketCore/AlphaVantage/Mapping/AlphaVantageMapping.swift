@@ -24,35 +24,35 @@ enum AlphaVantageMapping {
     private static func csv(_ text: String) throws -> [[String]] {
         let characters = Array(text.hasPrefix("\u{FEFF}") ? String(text.dropFirst()) : text)
         var rows: [[String]] = [], row: [String] = [], field = ""
-        var quoted = false, closed = false, index = 0
+        var isQuoted = false, isClosed = false, index = 0
         while index < characters.count {
             let value = characters[index]
-            if quoted {
+            if isQuoted {
                 if value == "\"" {
                     if index + 1 < characters.count, characters[index + 1] == "\"" { field.append("\""); index += 1 }
-                    else { quoted = false; closed = true }
+                    else { isQuoted = false; isClosed = true }
                 } else { field.append(value) }
             } else if value == "," {
-                row.append(field); field = ""; closed = false
+                row.append(field); field = ""; isClosed = false
             } else if value == "\n" || value == "\r" || value == "\r\n" {
                 row.append(field)
                 if row != [""] { rows.append(row) }
-                row = []; field = ""; closed = false
+                row = []; field = ""; isClosed = false
                 if value == "\r", index + 1 < characters.count, characters[index + 1] == "\n" { index += 1 }
-            } else if value == "\"", field.isEmpty, !closed { quoted = true }
+            } else if value == "\"", field.isEmpty, !isClosed { isQuoted = true }
             else {
-                guard !closed, value != "\"" else { throw MarketDataError.invalidData }
+                guard !isClosed, value != "\"" else { throw MarketDataError.invalidData }
                 field.append(value)
             }
             index += 1
         }
-        guard !quoted else { throw MarketDataError.invalidData }
-        if !field.isEmpty || !row.isEmpty || closed { row.append(field); rows.append(row) }
+        guard !isQuoted else { throw MarketDataError.invalidData }
+        if !field.isEmpty || !row.isEmpty || isClosed { row.append(field); rows.append(row) }
         return rows
     }
 
     static func rows(_ data: [String: Any], instrument: MarketInstrument) throws -> [(String, String)] {
-        let field = instrument.weekly ? "Weekly Time Series" : "Time Series (Daily)"
+        let field = instrument.isWeekly ? "Weekly Time Series" : "Time Series (Daily)"
         guard let values = data[field] as? [String: [String: String]],
               let meta = data["Meta Data"] as? [String: String],
               meta["2. Symbol"] == instrument.symbol else { throw MarketDataError.invalidData }

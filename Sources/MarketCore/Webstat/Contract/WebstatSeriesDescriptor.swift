@@ -46,7 +46,7 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
 
     public func resolving(labels: [String: String]) -> WebstatSeriesDescriptor {
         // The key was validated at construction and raw values remain unchanged.
-        (try? WebstatSeriesDescriptor(raw: raw, labels: self.labels.merging(labels, uniquingKeysWith: { _, new in new }))) ?? self
+        (try? WebstatSeriesDescriptor(raw: raw, labels: self.labels.merging(labels, uniquingKeysWith: { _, replacement in replacement }))) ?? self
     }
 
     public var frequency: ObservationFrequency {

@@ -39,7 +39,7 @@ public actor AlphaVantageClient: MarketDataConnector {
 
     public func fetch(_ instrument: MarketInstrument, key: String) async throws -> MarketSeries {
         guard instrument.provider == .alphaVantage else { throw MarketDataError.invalidData }
-        let data = try await request(["function": instrument.weekly ? "TIME_SERIES_WEEKLY" : "TIME_SERIES_DAILY", "symbol": instrument.symbol], key: key)
+        let data = try await request(["function": instrument.isWeekly ? "TIME_SERIES_WEEKLY" : "TIME_SERIES_DAILY", "symbol": instrument.symbol], key: key)
         return try AlphaVantageMapping.series(data, instrument: instrument, now: .now)
     }
 

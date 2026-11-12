@@ -38,7 +38,7 @@ enum TwelveDataMapping {
         guard let values = data["values"] as? [[String: String]],
               let meta = data["meta"] as? [String: Any],
               meta["symbol"] as? String == instrument.symbol,
-              meta["interval"] as? String == (instrument.weekly ? "1week" : "1day") else { throw MarketDataError.invalidData }
+              meta["interval"] as? String == (instrument.isWeekly ? "1week" : "1day") else { throw MarketDataError.invalidData }
         if let currency = meta["currency"] as? String, currency != instrument.currency { throw MarketDataError.invalidData }
         if !instrument.exchange.isEmpty, let exchange = meta["exchange"] as? String,
            exchange != instrument.exchange { throw MarketDataError.invalidData }

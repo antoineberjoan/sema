@@ -5,8 +5,8 @@ import MarketCore
 extension AppStore {
     func checkWebstatKey() async {
         await checkMarketKeys()
-        guard !didCheckWebstatKey else { return }
-        didCheckWebstatKey = true
+        guard !hasCheckedWebstatKey else { return }
+        hasCheckedWebstatKey = true
         do { hasWebstatKey = try await webstatKeychain.read() != nil }
         catch { webstatError = error.localizedDescription }
     }
@@ -57,29 +57,29 @@ extension AppStore {
             if let blocked = blockedMarkets[source] { failures[id] = blocked; continue }
             do {
                 try Task.checkCancellation()
-                let old = series.first { $0.id == id }
+                let held = series.first { $0.id == id }
                 let value: MarketSeries
-                var measurementChanged = false
-                if let instrument = old?.marketInstrument {
+                var hasMeasurementChanged = false
+                if let instrument = held?.marketInstrument {
                     value = try await fetchMarket(instrument)
-                } else if let descriptor = old?.statisticalDescriptor ?? statisticalDescriptors[id] {
+                } else if let descriptor = held?.statisticalDescriptor ?? statisticalDescriptors[id] {
                     value = try await statisticalConnectors().observations(for: descriptor)
-                    measurementChanged = value.statisticalDescriptor.map { !descriptor.usesSameMeasurement(as: $0) } ?? true
+                    hasMeasurementChanged = value.statisticalDescriptor.map { !descriptor.usesSameMeasurement(as: $0) } ?? true
                 } else {
                     guard let key else { throw WebstatError.missingKey }
                     let descriptor = try await WebstatClient().descriptor(apiKey: key, key: id)
                     let resolved = await resolve(descriptor, apiKey: key)
                     value = try await fetchRecent(descriptor: resolved, apiKey: key)
-                    measurementChanged = old?.descriptor.map { !$0.usesSameMeasurement(as: resolved) } ?? false
+                    hasMeasurementChanged = held?.descriptor.map { !$0.usesSameMeasurement(as: resolved) } ?? false
                 }
                 guard isSourceEnabled(source), generations[source] == sourceGenerations[source] else { continue }
-                if measurementChanged {
+                if hasMeasurementChanged {
                     changedMeasurements.insert(id)
                     failures[id] = "L’unité, l’échelle ou la base a changé. Les périodes récentes remplacent l’ancienne courbe ; rechargez l’historique et vérifiez les seuils."
                     updated.append(value)
                 } else {
-                    updated.append(value.replacing(observations: (old?.observations ?? []) + value.observations,
-                        completeHistory: old?.hasCompleteHistory))
+                    updated.append(value.replacing(observations: (held?.observations ?? []) + value.observations,
+                        completeHistory: held?.hasCompleteHistory))
                 }
             } catch is CancellationError { break }
             catch {
@@ -97,7 +97,7 @@ extension AppStore {
                     value.alerts[index].isEnabled = false
                 }
             }
-            // Keep the old descriptor too when pausing cannot be persisted. A later refresh
+            // Keep the held descriptor too when pausing cannot be persisted. A later refresh
             // must detect the scale change again instead of resuming a stale threshold.
             if !paused {
                 updated.removeAll { changedMeasurements.contains($0.id) }

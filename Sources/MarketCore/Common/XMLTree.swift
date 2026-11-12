@@ -22,7 +22,7 @@ final class XMLTree {
     static func read(_ data: Data) throws -> XMLTree {
         let reader = XMLTreeReader(); let parser = XMLParser(data: data)
         parser.shouldResolveExternalEntities = false; parser.delegate = reader
-        guard parser.parse(), !reader.rejectedEntity else { throw PublicDataError.invalidData }
+        guard parser.parse(), !reader.hasRejectedEntity else { throw PublicDataError.invalidData }
         guard reader.root.descendants("Error").isEmpty, reader.root.descendants("Fault").isEmpty else { throw PublicDataError.invalidData }
         return reader.root
     }
@@ -32,7 +32,7 @@ private final class XMLTreeReader: NSObject, XMLParserDelegate {
     let root = XMLTree(name: "root")
     private var stack: [XMLTree] = []
     private var ignoredDepth = 0
-    var rejectedEntity = false
+    var hasRejectedEntity = false
     override init() { super.init(); stack = [root] }
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes: [String: String]) {
         let name = String(elementName.split(separator: ":").last ?? "")
@@ -47,6 +47,6 @@ private final class XMLTreeReader: NSObject, XMLParserDelegate {
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if ignoredDepth > 0 { ignoredDepth -= 1 } else { _ = stack.popLast() }
     }
-    func parser(_ parser: XMLParser, foundInternalEntityDeclarationWithName name: String, value: String?) { rejectedEntity = true; parser.abortParsing() }
-    func parser(_ parser: XMLParser, foundExternalEntityDeclarationWithName name: String, publicID: String?, systemID: String?) { rejectedEntity = true; parser.abortParsing() }
+    func parser(_ parser: XMLParser, foundInternalEntityDeclarationWithName name: String, value: String?) { hasRejectedEntity = true; parser.abortParsing() }
+    func parser(_ parser: XMLParser, foundExternalEntityDeclarationWithName name: String, publicID: String?, systemID: String?) { hasRejectedEntity = true; parser.abortParsing() }
 }

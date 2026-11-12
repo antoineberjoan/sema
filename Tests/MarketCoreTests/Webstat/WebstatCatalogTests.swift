@@ -11,7 +11,7 @@ struct WebstatCatalogTests {
             "unit": .string("EUR"), "unit_mult": .string("6"), "freq": .string("Q"),
             "decimals": .string("3"), "first_time_period_date": .string("1990-03-31"),
             "series_dimensions_and_values": .string("{\"REF_AREA\":\"FR\",\"CURRENCY\":\"EUR\"}")]
-        return try WebstatSeriesDescriptor(raw: raw.merging(extra, uniquingKeysWith: { _, new in new }))
+        return try WebstatSeriesDescriptor(raw: raw.merging(extra, uniquingKeysWith: { _, replacement in replacement }))
     }
 
     @Test func sourceScaleIsDisplayedWithoutChangingTheValue() throws {
@@ -149,16 +149,16 @@ struct WebstatCatalogTests {
 
     @Test func versionOneMigrationPreservesAlertIdentityCheckpointAndLegacyFunds() throws {
         let rule = AlertRule(seriesID: "fr10", direction: .rise, threshold: 3, condition: .level, lastEvaluatedAt: Date(timeIntervalSince1970: 42))
-        var legacy = AppPreferences(favoriteIDs: ["fr10", "fund-i-eur"], alerts: [rule])
-        legacy.schemaVersion = 1
-        let migrated = try legacy.migrated()
+        var storedV1 = AppPreferences(favoriteIDs: ["fr10", "fund-i-eur"], alerts: [rule])
+        storedV1.schemaVersion = 1
+        let migrated = try storedV1.migrated()
         #expect(migrated.schemaVersion == 2)
         #expect(migrated.favoriteIDs.contains(WebstatStarter.canonicalID("fr10")))
         #expect(migrated.favoriteIDs.contains("fund-i-eur"))
         #expect(migrated.alerts[0].id == rule.id)
         #expect(migrated.alerts[0].lastEvaluatedAt == rule.lastEvaluatedAt)
         #expect(migrated.alerts[0].seriesID == WebstatStarter.canonicalID("fr10"))
-        #expect(migrated.onboardingCompleted == true)
+        #expect(migrated.isOnboardingCompleted == true)
     }
 
     @Test func versionTwoKeepsEmptyAndDeduplicatesCanonicalSelection() throws {
@@ -173,12 +173,12 @@ struct WebstatCatalogTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let file = directory.appendingPathComponent("preferences.json")
-        let old = Data("{\"schemaVersion\":1,\"favoriteIDs\":[\"eurusd\"],\"alerts\":[],\"notificationsEnabled\":false}".utf8)
-        try old.write(to: file)
+        let storedV1File = Data("{\"schemaVersion\":1,\"favoriteIDs\":[\"eurusd\"],\"alerts\":[],\"notificationsEnabled\":false}".utf8)
+        try storedV1File.write(to: file)
         let store = PreferencesRepository(fileURL: file)
         let migrated = try store.load()
         #expect(migrated.followedSeriesIDs.count == WebstatStarter.ids.count)
-        #expect(try Data(contentsOf: file.appendingPathExtension("v1-backup")) == old)
+        #expect(try Data(contentsOf: file.appendingPathExtension("v1-backup")) == storedV1File)
         #expect(try store.load() == migrated)
     }
 }

@@ -28,26 +28,20 @@ private enum SignatureMotion {
 struct RibbonSignatureView: View {
     private static let titleTopPadding = DesignSpace.markInset
     private static let markAreaHeight: CGFloat = 48
-    private static let contextOpacity = 0.85
     private static let feedbackPadding = DesignSpace.frameInset
     private static let feedbackHeight: CGFloat = 26
-    private static let feedbackFillOpacity = 0.12
     private static let feedbackTopPadding = DesignSpace.cardInset
-    private static let backgroundTopOpacity = 0.85
-    private static let backgroundBottomOpacity = 0.65
-    private static let edgeTopOpacity = 0.22
-    private static let edgeBottomOpacity = 0.03
     @Environment(AppStore.self) private var store
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let presentationID: UUID?
     @State private var stage = 0
-    @State private var formUnavailable = false
+    @State private var isFormUnavailable = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack {
                 SignalPath().trim(from: 0, to: stage >= SignatureMotion.drawStage ? 1 : 0)
-                    .stroke(.white, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
+                    .stroke(DesignColor.onAccent, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
                 // The teal point settles once the line has arrived.
                 SignalDot().fill(DesignColor.accentControl(.brand))
                     .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
@@ -58,7 +52,7 @@ struct RibbonSignatureView: View {
                 .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.inOut, duration: SignatureMotion.drawDuration), value: stage >= SignatureMotion.drawStage)
             Spacer(minLength: DesignSpace.fieldGap)
             Text("L’économie bouge.")
-                .typeRole(.small).foregroundStyle(.white.opacity(Self.contextOpacity))
+                .typeRole(.small).foregroundStyle(DesignColor.onAccent.opacity(DesignOpacity.signatureContextText))
                 .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
                 .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
             Text("Gardez vos repères.")
@@ -69,31 +63,31 @@ struct RibbonSignatureView: View {
             Button(action: openFeedback) {
                 Label("Une idée ou un bug ?", systemImage: "bubble.left")
                     .typeRole(.overline).padding(.horizontal, Self.feedbackPadding)
-                    .frame(height: Self.feedbackHeight).background(.white.opacity(Self.feedbackFillOpacity), in: Capsule())
+                    .frame(height: Self.feedbackHeight).background(DesignColor.onAccent.opacity(DesignOpacity.signatureFeedbackFill), in: Capsule())
             }
             .buttonStyle(PressStyle()).padding(.top, Self.feedbackTopPadding)
             .help(FeedbackClient.formURL == nil ? "Le formulaire de retour est en préparation" : "Ouvrir le formulaire Notion dans votre navigateur")
             .accessibilityLabel("Une idée ou un bug ? Ouvrir le formulaire Notion")
             .disabled(FeedbackClient.formURL == nil)
         }
-        .foregroundStyle(.white)
+        .foregroundStyle(DesignColor.onAccent)
         .padding(MenuRibbonLayout.cardPadding).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background {
             let shape = RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
             shape.fill(.black)
-            shape.fill(LinearGradient(colors: [DesignColor.accentControl(store.palette).opacity(Self.backgroundTopOpacity), DesignColor.accentControl(store.palette).opacity(Self.backgroundBottomOpacity)],
+            shape.fill(LinearGradient(colors: [DesignColor.accentControl(store.palette).opacity(DesignOpacity.signatureGradientTop), DesignColor.accentControl(store.palette).opacity(DesignOpacity.signatureGradientBottom)],
                                       startPoint: .topLeading, endPoint: .bottomTrailing))
         }
         .overlay {
             RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
-                .strokeBorder(LinearGradient(colors: [.white.opacity(Self.edgeTopOpacity), .white.opacity(Self.edgeBottomOpacity)],
+                .strokeBorder(LinearGradient(colors: [DesignColor.onAccent.opacity(DesignOpacity.signatureEdgeTop), DesignColor.onAccent.opacity(DesignOpacity.signatureEdgeBottom)],
                                               startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: DesignBorder.width)
                 .allowsHitTesting(false).accessibilityHidden(true)
         }
         .elevation(DesignElevation.floating)
         .task(id: presentationID) { await play() }
         .onChange(of: reduceMotion) { _, value in if value { stage = SignatureMotion.missionStage } }
-        .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $formUnavailable) {
+        .alert("Le formulaire n’a pas pu s’ouvrir", isPresented: $isFormUnavailable) {
             Button("Copier le lien") {
                 guard let url = FeedbackClient.formURL else { return }
                 NSPasteboard.general.clearContents()
@@ -107,7 +101,7 @@ struct RibbonSignatureView: View {
 
     private func openFeedback() {
         guard let url = FeedbackClient.formURL else { return }
-        formUnavailable = !NSWorkspace.shared.open(url)
+        isFormUnavailable = !NSWorkspace.shared.open(url)
     }
 
     private func play() async {

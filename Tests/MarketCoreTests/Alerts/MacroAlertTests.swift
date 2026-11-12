@@ -67,12 +67,12 @@ struct MacroAlertTests {
     }
 
     @Test func legacyPreferencesAndFundRulesRemainReadableWithoutReinterpretation() throws {
-        let old = Data("""
+        let storedV1 = Data("""
         {"schemaVersion":1,"favoriteIDs":["atlas-i-eur","fr10"],"notificationsEnabled":false,
          "alerts":[{"id":"0F1396B5-51D9-42B3-A6DC-75E16B00D144","seriesID":"atlas-i-eur",
                     "direction":"fall","threshold":3,"isEnabled":true}]}
         """.utf8)
-        var preferences = try JSONDecoder().decode(AppPreferences.self, from: old)
+        var preferences = try JSONDecoder().decode(AppPreferences.self, from: storedV1)
         #expect(preferences.themeID == nil)
         #expect(preferences.ribbonPositionID == nil)
         #expect(preferences.alerts.first?.effectiveCondition == .relativeChange)

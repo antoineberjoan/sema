@@ -11,7 +11,7 @@ struct RibbonGlassSettingsView: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
 
-    private var opaque: Bool { reduceTransparency || contrast == .increased }
+    private var isOpaque: Bool { reduceTransparency || contrast == .increased }
 
     var body: some View {
         Section("Verre des cartes") {
@@ -27,19 +27,19 @@ struct RibbonGlassSettingsView: View {
                 store.setRibbonGlass(RibbonGlassPreferences(transparency: value, tint: store.ribbonGlass.tint,
                                                             grain: store.ribbonGlass.grain))
             }))
-            .disabled(opaque)
+            .disabled(isOpaque)
 
             glassSlider("Teinte", symbol: "circle.lefthalf.filled", value: Binding(get: { store.ribbonGlass.tint }, set: { value in
                 store.setRibbonGlass(RibbonGlassPreferences(transparency: store.ribbonGlass.transparency,
                                                             tint: value, grain: store.ribbonGlass.grain))
             }))
-            .disabled(opaque || store.palette == .graphite)
+            .disabled(isOpaque || store.palette == .graphite)
 
             glassSlider("Grain", symbol: "aqi.medium", value: Binding(get: { store.ribbonGlass.grain }, set: { value in
                 store.setRibbonGlass(RibbonGlassPreferences(transparency: store.ribbonGlass.transparency,
                                                             tint: store.ribbonGlass.tint, grain: value))
             }))
-            .disabled(opaque)
+            .disabled(isOpaque)
 
             Text(explanation).typeRole(.small).foregroundStyle(DesignColor.textMuted)
             Button("Réinitialiser le verre") { store.setRibbonGlass(.standard) }
@@ -48,8 +48,8 @@ struct RibbonGlassSettingsView: View {
     }
 
     private var explanation: String {
-        if opaque {
-            return "macOS impose une surface opaque avec Réduire la transparence ou Augmenter le contraste. Vos réglages sont conservés."
+        if isOpaque {
+            return "macOS impose une surface isOpaque avec Réduire la transparence ou Augmenter le contraste. Vos réglages sont conservés."
         }
         return "Le flou reste natif macOS. La transparence règle le voile des cartes du bandeau."
             + (store.palette == .graphite ? " Graphite reste neutre ; choisissez une palette colorée pour ajuster la teinte." : " La teinte reprend votre palette.")

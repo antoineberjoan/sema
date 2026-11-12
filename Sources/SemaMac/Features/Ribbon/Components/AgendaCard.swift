@@ -35,19 +35,19 @@ struct AgendaCard: View {
     private var strip: some View {
         HStack(spacing: DesignSpace.listGapDense) {
             ForEach(week, id: \.self) { value in
-                let selected = AgendaDay.isSame(value, day)
+                let isSelected = AgendaDay.isSame(value, day)
                 Button { day = value } label: {
                     VStack(spacing: 0) {
                         Text(AgendaDay.text(value, "EEE").capitalized).typeRole(.micro).foregroundStyle(.secondary)
                         Text(AgendaDay.text(value, "d")).typeRole(.small).monospacedDigit()
                     }
                     .frame(maxWidth: .infinity).frame(height: Self.dayHeight)
-                    .background(selected ? DesignColor.selection(palette) : Color.clear, in: RoundedRectangle(cornerRadius: DesignRadius.control))
+                    .background(isSelected ? DesignColor.selection(palette) : Color.clear, in: RoundedRectangle(cornerRadius: DesignRadius.control))
                     .contentShape(RoundedRectangle(cornerRadius: DesignRadius.control))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(AgendaDay.text(value, "EEEE d MMMM") + (store.hasUnusualMove(on: value) ? ", mouvement inhabituel" : ""))
-                .accessibilityAddTraits(selected ? [.isSelected] : [])
+                .accessibilityAddTraits(isSelected ? [.isSelected] : [])
             }
         }
         .padding(DesignSpace.listGapDense).background(DesignColor.text.opacity(DesignOpacity.glassRest), in: RoundedRectangle(cornerRadius: DesignRadius.block))

@@ -13,7 +13,7 @@ struct SourceExplorerView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings
     @State private var sourceID = ""
-    var compact = false
+    var isCompact = false
     var close: (() -> Void)?
     private var enabledIDs: [String] { (["webstat"] + MarketProvider.allCases.map(\.rawValue) + StatisticalSource.allCases.map(\.rawValue)).filter { store.isSourceEnabled($0) } }
     var body: some View {
@@ -45,7 +45,7 @@ struct SourceExplorerView: View {
                 MarketExplorerView(provider: provider, close: close).id(sourceID)
             } else if sourceID.isEmpty {
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: compact ? Self.compactCardMinWidth : Self.cardMinWidth), spacing: DesignSpace.groupGap)], spacing: DesignSpace.groupGap) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: isCompact ? Self.compactCardMinWidth : Self.cardMinWidth), spacing: DesignSpace.groupGap)], spacing: DesignSpace.groupGap) {
                         ForEach(enabledIDs, id: \.self) { id in
                             Button { sourceID = id } label: {
                                 VStack(alignment: .leading, spacing: DesignSpace.titleGap) {
@@ -66,8 +66,8 @@ struct SourceExplorerView: View {
                     }.padding(.bottom, DesignSpace.markInset)
                 }
             } else if let source = StatisticalSource(rawValue: sourceID), store.isSourceEnabled(sourceID) {
-                StatisticalExplorerView(source: source, compact: compact, close: close).id(sourceID)
-            } else if sourceID == "webstat", store.isSourceEnabled("webstat") { CatalogueBrowserView(compact: compact, close: close) }
+                StatisticalExplorerView(source: source, isCompact: isCompact, close: close).id(sourceID)
+            } else if sourceID == "webstat", store.isSourceEnabled("webstat") { CatalogueBrowserView(isCompact: isCompact, close: close) }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onChange(of: sourceID) { _, _ in store.closePreview() }
@@ -106,7 +106,7 @@ private struct StatisticalExplorerView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
     let source: StatisticalSource
-    var compact: Bool
+    var isCompact: Bool
     var close: (() -> Void)?
     @State private var datasets: [StatisticalDataset] = []
     @State private var query = ""
@@ -117,8 +117,8 @@ private struct StatisticalExplorerView: View {
     @State private var values: [String: String] = [:]
     @State private var exactKey = ""
     @State private var error: String?
-    @State private var loadingCatalogue = false
-    @State private var loadingStructure = false
+    @State private var isLoadingCatalogue = false
+    @State private var isLoadingStructure = false
     @State private var choosingDimension: StatisticalDimension?
     @State private var catalogueSeries: [StatisticalSeriesDescriptor] = []
     @State private var seriesQuery = ""
@@ -128,7 +128,7 @@ private struct StatisticalExplorerView: View {
     @State private var selectedSeriesKey: String?
     @State private var pendingStarter: StatisticalStarter?
     @State private var starterError: String?
-    @State private var showsAdvanced = false
+    @State private var isAdvancedShown = false
 
     private var availableStarters: [StatisticalStarter] {
         StatisticalStarter.recommendations(for: source).filter { starter in datasets.contains(where: starter.matches) }
@@ -147,21 +147,21 @@ private struct StatisticalExplorerView: View {
     private var selected: StatisticalDataset? { datasets.first { $0.id == selectedID } }
     private var key: String { exactKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? structure?.key(values: values) ?? "" : exactKey.trimmingCharacters(in: .whitespacesAndNewlines) }
     private var canPreview: Bool {
-        guard structure != nil, !loadingStructure, !store.isLoadingPreview else { return false }
+        guard structure != nil, !isLoadingStructure, !store.isLoadingPreview else { return false }
         return !exactKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || structure?.dimensions.allSatisfy { !(values[$0.id] ?? "").isEmpty } == true
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
-            CatalogueSearchField(query: $query, prompt: "Rechercher dans \(source.title)…", isSearching: loadingCatalogue,
+            CatalogueSearchField(query: $query, prompt: "Rechercher dans \(source.title)…", isSearching: isLoadingCatalogue,
                 submit: { selectedID = keyboardID ?? matches.first?.id }, move: moveSelection)
             HStack(alignment: .top, spacing: DesignSpace.groupGap) {
                 datasetsList.frame(minWidth: Self.datasetsMinWidth, idealWidth: Self.datasetsIdealWidth, maxWidth: selected == nil ? .infinity : Self.datasetsMaxWidth)
                 if let selected {
                     if selectedSeriesKey != nil {
-                        previewPane.frame(minWidth: compact ? Self.compactSeriesMinWidth : Self.seriesMinWidth, maxWidth: .infinity)
+                        previewPane.frame(minWidth: isCompact ? Self.compactSeriesMinWidth : Self.seriesMinWidth, maxWidth: .infinity)
                     } else {
-                        seriesList(selected).frame(minWidth: compact ? Self.compactSeriesMinWidth : Self.seriesMinWidth, maxWidth: .infinity)
+                        seriesList(selected).frame(minWidth: isCompact ? Self.compactSeriesMinWidth : Self.seriesMinWidth, maxWidth: .infinity)
                     }
                 }
             }
@@ -178,7 +178,7 @@ private struct StatisticalExplorerView: View {
 
     private var datasetsList: some View {
         VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
-            if !loadingCatalogue {
+            if !isLoadingCatalogue {
                 HStack {
                     Text("\(matches.count.formatted()) \(matches.count == 1 ? "jeu de données" : "jeux de données")")
                     Spacer()
@@ -209,7 +209,7 @@ private struct StatisticalExplorerView: View {
                                 .accessibilityAddTraits(keyboardID == dataset.id ? [.isSelected] : [])
                         }
                         if matches.count > visibleCount { Button("Afficher les jeux suivants") { visibleCount += 50 }.buttonStyle(.borderless).padding(DesignSpace.rowInset) }
-                        if !loadingCatalogue && matches.isEmpty && error == nil { ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass") }
+                        if !isLoadingCatalogue && matches.isEmpty && error == nil { ContentUnavailableView("Aucun résultat", systemImage: "magnifyingglass") }
                     }
                 }.onChange(of: keyboardID) { _, id in if let id { proxy.scrollTo(id) } }
             }
@@ -226,9 +226,9 @@ private struct StatisticalExplorerView: View {
             if let starterError {
                 Label(starterError, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(DesignColor.textMuted)
             }
-            CatalogueSearchField(query: $seriesQuery, prompt: "Rechercher une série…", isSearching: loadingStructure,
+            CatalogueSearchField(query: $seriesQuery, prompt: "Rechercher une série…", isSearching: isLoadingStructure,
                 submit: { if let key = keyboardSeriesKey ?? seriesMatches.first?.key { openSeries(key) } }, move: moveSeriesSelection)
-            if !loadingStructure && seriesError == nil {
+            if !isLoadingStructure && seriesError == nil {
                 Text("\(seriesMatches.count.formatted()) \(seriesMatches.count == 1 ? "série" : "séries")").typeRole(.micro).foregroundStyle(DesignColor.textMuted)
             }
             ScrollViewReader { proxy in
@@ -248,7 +248,7 @@ private struct StatisticalExplorerView: View {
                                 .accessibilityAddTraits(keyboardSeriesKey == item.key ? [.isSelected] : [])
                         }
                         if seriesMatches.count > visibleSeriesCount { Button("Afficher les séries suivantes") { visibleSeriesCount += 50 }.buttonStyle(.borderless).padding(DesignSpace.rowInset) }
-                        if !loadingStructure && seriesMatches.isEmpty && seriesError == nil { ContentUnavailableView("Aucune série trouvée", systemImage: "magnifyingglass") }
+                        if !isLoadingStructure && seriesMatches.isEmpty && seriesError == nil { ContentUnavailableView("Aucune série trouvée", systemImage: "magnifyingglass") }
                     }
                 }.onChange(of: keyboardSeriesKey) { _, key in if let key { proxy.scrollTo(key) } }
             }
@@ -257,7 +257,7 @@ private struct StatisticalExplorerView: View {
                 Button("Réessayer") { Task { await loadSeriesCatalogue() } }.buttonStyle(.borderless)
             }
             if let structure {
-                DisclosureGroup("Recherche avancée", isExpanded: $showsAdvanced) {
+                DisclosureGroup("Recherche avancée", isExpanded: $isAdvancedShown) {
                     ScrollView {
                         VStack(alignment: .leading, spacing: Self.formSpacing) {
                             ForEach(structure.dimensions) { dimension in
@@ -303,7 +303,7 @@ private struct StatisticalExplorerView: View {
                                 Spacer()
                                 if existing.id != value.id { Button("Utiliser cette source") { _ = store.usePreviewSource() }.buttonStyle(.borderless) }
                                 Button("Ouvrir") { store.show(existing); store.section = .overview; store.closePreview(); close?() }
-                                    .buttonStyle(.borderedProminent).disabled(store.previewRequiresRefresh)
+                                    .buttonStyle(.borderedProminent).disabled(store.isPreviewRefreshRequired)
                             } else {
                                 Button("Ajouter à mes repères") { _ = store.followStatisticalPreview() }.buttonStyle(.borderedProminent)
                                     .disabled(store.isLoadingPreview || store.previewError != nil)
@@ -312,7 +312,7 @@ private struct StatisticalExplorerView: View {
                     }
                     if let error = store.previewError {
                         Label(error, systemImage: "exclamationmark.triangle").typeRole(.small).foregroundStyle(DesignColor.textMuted)
-                        if store.previewRequiresRefresh {
+                        if store.isPreviewRefreshRequired {
                             Button("Actualiser mes repères") { Task { await store.refreshSeries() } }.buttonStyle(.borderless).disabled(store.isLoading)
                         } else if let key = selectedSeriesKey { Button("Réessayer") { openSeries(key) }.buttonStyle(.borderless) }
                     }
@@ -334,7 +334,7 @@ private struct StatisticalExplorerView: View {
     private func chooseStarter(_ starter: StatisticalStarter) {
         guard let dataset = datasets.first(where: starter.matches) else { return }
         starterError = nil
-        if selectedID == dataset.id, structure != nil, !loadingStructure, seriesError == nil {
+        if selectedID == dataset.id, structure != nil, !isLoadingStructure, seriesError == nil {
             if let descriptor = catalogueSeries.first(where: { $0.key == starter.key }) {
                 selectedSeriesKey = descriptor.key; openSeries(descriptor.key)
             } else {
@@ -344,7 +344,7 @@ private struct StatisticalExplorerView: View {
         }
         pendingStarter = starter
         if selectedID == dataset.id {
-            if !loadingStructure { Task { await loadSeriesCatalogue() } }
+            if !isLoadingStructure { Task { await loadSeriesCatalogue() } }
         } else {
             selectedID = dataset.id
         }
@@ -355,8 +355,8 @@ private struct StatisticalExplorerView: View {
         store.openStatisticalPreview(dataset: selected, structure: structure, key: key)
     }
     private func loadCatalogue(reload: Bool = false) async {
-        loadingCatalogue = true; error = nil
-        defer { loadingCatalogue = false }
+        isLoadingCatalogue = true; error = nil
+        defer { isLoadingCatalogue = false }
         do {
             datasets = try await store.statisticalDatasets(source: source, reload: reload)
             try Task.checkCancellation(); keyboardID = matches.first?.id
@@ -365,16 +365,16 @@ private struct StatisticalExplorerView: View {
     }
     private func loadSeriesCatalogue() async {
         store.closePreview(); selectedSeriesKey = nil; structure = nil; values = [:]; exactKey = ""; catalogueSeries = []
-        seriesQuery = ""; seriesError = nil; showsAdvanced = false; visibleSeriesCount = 50; keyboardSeriesKey = nil
+        seriesQuery = ""; seriesError = nil; isAdvancedShown = false; visibleSeriesCount = 50; keyboardSeriesKey = nil
         guard let selected else { return }
-        let id = selected.id; loadingStructure = true
-        defer { if selectedID == id { loadingStructure = false } }
+        let id = selected.id; isLoadingStructure = true
+        defer { if selectedID == id { isLoadingStructure = false } }
         do {
             let client = await store.statisticalConnectors()
             let value = try await client.structure(dataset: selected)
             try Task.checkCancellation(); guard selectedID == id else { return }
             structure = value
-            values = Dictionary(value.dimensions.compactMap { $0.codes.count == 1 ? ($0.id, $0.codes[0].id) : nil }, uniquingKeysWith: { _, new in new })
+            values = Dictionary(value.dimensions.compactMap { $0.codes.count == 1 ? ($0.id, $0.codes[0].id) : nil }, uniquingKeysWith: { _, replacement in replacement })
             let items = try await client.seriesCatalogue(dataset: selected, structure: value)
             try Task.checkCancellation(); guard selectedID == id else { return }
             catalogueSeries = items; keyboardSeriesKey = seriesMatches.first?.key
@@ -411,12 +411,12 @@ private struct StatisticalCodePicker: View {
     let selected: String?
     let choose: (String) -> Void
     @State private var query = ""
-    @FocusState private var searchFocused: Bool
+    @FocusState private var isSearchFocused: Bool
     private var codes: [StatisticalCode] { dimension.codes.filter { query.isEmpty || ($0.title + " " + $0.id).localizedStandardContains(query) } }
     var body: some View {
         VStack(alignment: .leading, spacing: DesignSpace.groupGap) {
             Text(dimension.title).typeRole(.heading)
-            TextField("Rechercher une valeur ou un code…", text: $query).textFieldStyle(.roundedBorder).focused($searchFocused)
+            TextField("Rechercher une valeur ou un code…", text: $query).textFieldStyle(.roundedBorder).focused($isSearchFocused)
                 .onSubmit { if codes.count == 1, let code = codes.first { choose(code.id); dismiss() } }
             List(codes) { code in
                 Button { choose(code.id); dismiss() } label: {
@@ -428,6 +428,6 @@ private struct StatisticalCodePicker: View {
                 }.buttonStyle(.plain).padding(.vertical, DesignSpace.markInset)
             }.listStyle(.plain)
             HStack { Text("\(codes.count.formatted()) \(codes.count == 1 ? "valeur" : "valeurs")").typeRole(.micro).foregroundStyle(DesignColor.textMuted); Spacer(); Button("Fermer") { dismiss() }.keyboardShortcut(.cancelAction) }
-        }.padding(DesignSpace.pageInsetNarrow).frame(width: Self.size.width, height: Self.size.height).onAppear { searchFocused = true }
+        }.padding(DesignSpace.pageInsetNarrow).frame(width: Self.size.width, height: Self.size.height).onAppear { isSearchFocused = true }
     }
 }

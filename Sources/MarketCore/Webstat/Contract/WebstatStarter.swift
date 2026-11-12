@@ -65,10 +65,10 @@ public enum WebstatStarter {
               digits: 2, frequency: .daily, producer: "BCE · via Banque de France")
     ]
 
-    public static var legacyIDs: [String: String] {
+    public static var shortIDs: [String: String] {
         Dictionary(uniqueKeysWithValues: definitions.map { ($0.id, $0.seriesCode) })
     }
-    public static func canonicalID(_ id: String) -> String { legacyIDs[id] ?? id }
+    public static func canonicalID(_ id: String) -> String { shortIDs[id] ?? id }
     public static var ids: [String] { definitions.map(\.seriesCode) }
     /// Repères sans observation : leurs valeurs viennent de Webstat, jamais d’un exemple.
     public static var series: [MarketSeries] {

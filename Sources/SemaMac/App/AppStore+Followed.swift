@@ -68,11 +68,11 @@ extension AppStore {
 
     func prepareAlert(for item: MarketSeries) {
         show(item); closePreview()
-        if isSearchPresented { opensAlertAfterSearch = true; isSearchPresented = false }
+        if isSearchPresented { isAlertOpenPending = true; isSearchPresented = false }
         else { isAlertSheetPresented = true }
     }
 
     func finishSearch() {
-        if opensAlertAfterSearch { opensAlertAfterSearch = false; isAlertSheetPresented = true }
+        if isAlertOpenPending { isAlertOpenPending = false; isAlertSheetPresented = true }
     }
 }

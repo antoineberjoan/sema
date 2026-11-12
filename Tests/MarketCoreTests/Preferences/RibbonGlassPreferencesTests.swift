@@ -25,7 +25,7 @@ struct RibbonGlassPreferencesTests {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("sema-glass-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json"))
-        let expected = AppPreferences(favoriteIDs: ["eurusd"], notificationsEnabled: true,
+        let expected = AppPreferences(favoriteIDs: ["eurusd"], canNotify: true,
             themeID: "polar", appearanceID: "light", ribbonPositionID: "left", invertedCurrencyPairs: ["EUR/USD"],
             ribbonGlass: RibbonGlassPreferences(transparency: 0.9, tint: 0.8, grain: 0.3))
         try store.save(expected)
