@@ -70,7 +70,7 @@ Notion ne pilote plus sema (`docs/decisions/2026-11-12-alignement-sur-sophos.md`
 
 ## Contrôles
 
-Le lanceur unique est nommé dans `projet.yml` (`politique.controle`). Il passe avant chaque envoi.
+Le lanceur unique est nommé dans `projet.yml` (`politique.controle`). Il passe avant chaque envoi. Il lance les outils de Sophos depuis un clone de Sophos : `../sophos` à côté de ce dépôt, ou la variable `SOPHOS`. Un clone absent est un échec, jamais un contrôle sauté.
 
 ## Revue de code
 
