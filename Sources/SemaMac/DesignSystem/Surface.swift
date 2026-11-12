@@ -8,6 +8,6 @@ struct Surface<Content: View>: View {
         content
             .padding(Theme.contentPadding)
             .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.surfaceCorner))
-            .shadow(DesignElevation.raised)
+            .elevation(DesignElevation.raised)
     }
 }

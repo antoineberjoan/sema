@@ -92,7 +92,7 @@ struct HistoryChart: View {
                             .typeRole(.caption)
                             .padding(.horizontal, Self.readingHorizontalPadding).padding(.vertical, Self.readingVerticalPadding)
                             .background(Theme.surface, in: RoundedRectangle(cornerRadius: Self.tooltipCorner))
-                            .shadow(DesignElevation.floating)
+                            .elevation(DesignElevation.floating)
                             .allowsHitTesting(false)
                         }
                 }

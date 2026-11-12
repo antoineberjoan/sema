@@ -104,6 +104,6 @@ struct RibbonSurface: ViewModifier {
                                                   endPoint: .bottomTrailing), lineWidth: Theme.hairline)
                     .allowsHitTesting(false).accessibilityHidden(true)
             }
-            .shadow(emphasized ? DesignElevation.floating : DesignElevation.raised)
+            .elevation(emphasized ? DesignElevation.floating : DesignElevation.raised)
     }
 }

@@ -52,7 +52,7 @@ struct FocusSwitcherView: View {
                 .strokeBorder(Color.primary.opacity(contrast == .increased ? Self.contrastStrokeOpacity : Self.strokeOpacity), lineWidth: Theme.hairline)
                 .allowsHitTesting(false)
         }
-        .shadow(DesignElevation.window)
+        .elevation(DesignElevation.window)
         .padding(.horizontal, Self.panelInset)
         .accessibilityElement(children: .contain).accessibilityLabel("Choisir un repère")
     }
