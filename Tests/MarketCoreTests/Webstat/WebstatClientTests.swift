@@ -103,7 +103,8 @@ struct WebstatClientTests {
                 Issue.record("An HTTP error was accepted")
             } catch {
                 #expect(!error.localizedDescription.contains("private-key-echo"))
-                if status == 429 { #expect(error.localizedDescription.contains("quota")) }
+                if status == 429 { #expect(error as? PublicDataError == .quotaReached) }
+                if status == 401 { #expect(error as? WebstatError == .accessDenied) }
             }
         }
     }

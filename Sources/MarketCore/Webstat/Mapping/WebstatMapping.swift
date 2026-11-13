@@ -3,12 +3,12 @@ import Foundation
 
 enum WebstatMapping {
     static func rows(_ data: Data) throws -> [[String: WebstatValue]] {
-        do { return try JSONDecoder().decode([[String: WebstatValue]].self, from: data) } catch { throw WebstatError.invalidData }
+        do { return try JSONDecoder().decode([[String: WebstatValue]].self, from: data) } catch { throw PublicDataError.invalidData }
     }
 
     static func summaryExport(_ data: Data) throws -> [WebstatSeriesDescriptor] {
         let items = try rows(data).map { try WebstatSeriesDescriptor(raw: $0) }
-        guard Set(items.map(\.key)).count == items.count else { throw WebstatError.invalidData }
+        guard Set(items.map(\.key)).count == items.count else { throw PublicDataError.invalidData }
         // Garde le classement de texte du fournisseur : les exports et les enregistrements utilisent le même order_by.
         return items
     }
@@ -32,7 +32,7 @@ enum WebstatMapping {
 
     static func observations(_ data: Data, expectedKey: String, now: Date = .now) throws -> [MarketObservation] {
         let rows: [Row]
-        do { rows = try JSONDecoder().decode([Row].self, from: data) } catch { throw WebstatError.invalidData }
+        do { rows = try JSONDecoder().decode([Row].self, from: data) } catch { throw PublicDataError.invalidData }
         let timestamp = ISO8601DateFormatter(); timestamp.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let fallback = ISO8601DateFormatter()
         return rows.sorted { ($0.updatedAt ?? "") < ($1.updatedAt ?? "") }.compactMap { row in
@@ -52,7 +52,7 @@ enum WebstatMapping {
         enum CodingKeys: String, CodingKey { case totalCount = "total_count", results }
     }
     static func page(_ data: Data) throws -> Page {
-        do { return try JSONDecoder().decode(Page.self, from: data) } catch { throw WebstatError.invalidData }
+        do { return try JSONDecoder().decode(Page.self, from: data) } catch { throw PublicDataError.invalidData }
     }
 
     static func starterHistory(_ data: Data, statusCode: Int = 200, now: Date = .now) throws -> [MarketSeries] {
@@ -60,12 +60,12 @@ enum WebstatMapping {
         case 200: break
         // Webstat renvoie aussi 404 quand la clé API ne peut pas accéder à une table technique.
         case 401, 403, 404: throw WebstatError.accessDenied
-        case 429: throw WebstatError.quotaReached
-        default: throw WebstatError.unavailable
+        case 429: throw PublicDataError.quotaReached
+        default: throw PublicDataError.unavailable
         }
         let rows: [Row]
         do { rows = try JSONDecoder().decode([Row].self, from: data) }
-        catch { throw WebstatError.invalidData }
+        catch { throw PublicDataError.invalidData }
         let day = ISO8601DateFormatter()
         day.formatOptions = [.withFullDate]
         let timestamp = ISO8601DateFormatter()
