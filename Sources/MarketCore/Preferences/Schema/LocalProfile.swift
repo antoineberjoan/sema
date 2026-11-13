@@ -1,7 +1,7 @@
 // Décrit l’identité locale facultative, sans compte ni métadonnées de photo originales.
 import Foundation
 
-/// Optional identity for this Mac. No account, network service or original photo metadata.
+/// Identité facultative pour ce Mac. Pas de compte, de service réseau ni de métadonnées de la photo d’origine.
 public struct LocalProfile: Codable, Equatable, Sendable {
     public var firstName: String
     public var lastName: String

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Write the fixed Finder layout for Sema's read-only DMG, using stdlib only.
+"""Écrit la disposition fixe du Finder pour le DMG en lecture seule de sema, avec la seule bibliothèque standard.
 
-The file contains one B-tree leaf, not a general-purpose DS_Store editor.
-Format reference: https://metacpan.org/dist/Mac-Finder-DSStore/view/DSStoreFormat.pod
-The background alias is produced by macOS Alias Manager for the mounted volume.
+Le fichier contient une feuille de B-tree, pas un éditeur DS_Store général.
+Référence du format : https://metacpan.org/dist/Mac-Finder-DSStore/view/DSStoreFormat.pod
+L'alias du fond est produit par l'Alias Manager de macOS pour le volume monté.
 """
 import pathlib
 import plistlib
@@ -59,7 +59,7 @@ def write_layout(mount, alias_path):
     if len(leaf) > 4096:
         raise ValueError("La disposition dépasse la feuille DS_Store prévue")
 
-    # Logical offsets are relative to byte 4: header [0,32), tree header [32,64),
+    # Les décalages logiques sont relatifs à l’octet 4 : en-tête [0,32), en-tête d’arbre [32,64),
     # buddy metadata [2048,4096), tree leaf [4096,8192).
     blocks = [2048 | 11, 32 | 5, 4096 | 12]
     metadata = uint(len(blocks), 0) + uint(*blocks) + bytes((256 - len(blocks)) * 4)

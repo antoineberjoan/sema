@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read release facts from the built bundle and its DMG. Never activate publication."""
+"""Lit les faits d'une version depuis le bundle construit et son DMG. N'active jamais la publication."""
 import argparse
 import datetime
 import hashlib
@@ -73,7 +73,7 @@ def main():
     output = args.output or dmg.with_name("release.json")
     output.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
     dmg.with_suffix(".dmg.sha256").write_text(f"{checksum}  {dmg.name}\n")
-    # This is a template until the versioned URL is published and brew is tested.
+    # Ceci est un modèle tant que l’URL versionnée n’est pas publiée et brew pas testé.
     cask = f'''# Modèle de release — URL proposée ; ne pas publier avant les tests indiqués dans release.json.
 cask "sema-app" do
   version "{version}"

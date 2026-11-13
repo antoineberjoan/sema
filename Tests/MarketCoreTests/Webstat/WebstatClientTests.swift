@@ -6,7 +6,7 @@ import Testing
 struct WebstatClientTests {
     private let now = Date(timeIntervalSince1970: 1_792_022_400) // 2026-10-15 UTC
 
-    /// One independent sample for each product indicator, including a month not yet finished.
+    /// Un échantillon indépendant pour chaque indicateur du produit, dont un mois pas encore terminé.
     private func fixture(extraRows: String = "") -> Data {
         let keys = [
             "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", "FM.D.U2.EUR.4F.KR.DFR.LEV",
@@ -71,7 +71,7 @@ struct WebstatClientTests {
         #expect((livret.latest?.periodEnd ?? .distantPast) > now)
         #expect(livret.latest?.updatedAt != nil)
         #expect(livret.latest?.status == "A")
-        // September has 30 days; the same calendar-month logic also handles a 31-day gap.
+        // Septembre compte 30 jours ; la même logique de mois calendaire gère aussi un écart de 31 jours.
         #expect(livret.history(for: .month).count == 2)
     }
 

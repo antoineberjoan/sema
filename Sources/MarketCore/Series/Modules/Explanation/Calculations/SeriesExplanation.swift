@@ -39,7 +39,7 @@ public struct SeriesExplanation: Equatable, Sendable {
                 return
             }
         }
-        // A title or a percent unit alone never establishes the economic meaning of a series.
+        // Un titre ou une unité en pourcent seul n’établit jamais le sens économique d’une série.
         let official = (series.descriptor?.definition ?? series.statisticalDescriptor?.definition ?? "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !official.isEmpty, official.localizedCaseInsensitiveCompare(series.name) != .orderedSame else { return nil }

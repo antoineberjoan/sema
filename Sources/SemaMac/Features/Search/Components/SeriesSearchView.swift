@@ -51,7 +51,7 @@ struct SeriesSearchView: View {
             }
         .padding(Self.sheetPadding).frame(width: DesignLayout.seriesSearchSheetWidth, height: DesignLayout.seriesSearchSheetHeight).background(DesignColor.surface)
         .onAppear {
-            // The search panel hands over its text and asks for the catalogues tab.
+            // Le panneau de recherche transmet son texte et demande l’onglet catalogues.
             if let seed = store.catalogueSeed { query = seed; isCatalogueSearch = true; store.catalogueSeed = nil }
             selectedID = results.first?.id; isSearchFocused = true
         }

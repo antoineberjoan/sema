@@ -19,12 +19,12 @@ struct RibbonCard: View {
     private var comparison: String {
         series.supports(period) ? MarketFormat.change(series, period: period) : "Historique partiel"
     }
-    /// The point under the pointer, if any.
+    /// Le point sous le pointeur, s’il y en a un.
     private var selected: MarketObservation? {
         guard let selectedDate else { return nil }
         return points.min { abs($0.date.timeIntervalSince(selectedDate)) < abs($1.date.timeIntervalSince(selectedDate)) }
     }
-    /// Last session, shown only when it left the usual range chosen in Réglages.
+    /// Dernière séance, montrée seulement si elle sort de la plage habituelle choisie dans Réglages.
     private var unusual: UnusualMove? {
         UnusualMove(series: series).flatMap { $0.ratio >= store.moveSensitivity.multiplier ? $0 : nil }
     }

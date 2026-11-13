@@ -97,8 +97,8 @@ extension AppStore {
                     value.alerts[index].isEnabled = false
                 }
             }
-            // Keep the held descriptor too when pausing cannot be persisted. A later refresh
-            // must detect the scale change again instead of resuming a stale threshold.
+            // Garde aussi le descripteur détenu quand la pause ne peut pas être enregistrée. Une actualisation ultérieure
+            // doit détecter à nouveau le changement d’échelle au lieu de reprendre un seuil périmé.
             if !paused {
                 updated.removeAll { changedMeasurements.contains($0.id) }
                 for id in changedMeasurements { failures[id] = "La source a changé d’unité, d’échelle ou de base. La sauvegarde des alertes en pause a échoué ; les anciennes données restent affichées." }

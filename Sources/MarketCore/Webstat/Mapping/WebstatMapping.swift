@@ -9,7 +9,7 @@ enum WebstatMapping {
     static func summaryExport(_ data: Data) throws -> [WebstatSeriesDescriptor] {
         let items = try rows(data).map { try WebstatSeriesDescriptor(raw: $0) }
         guard Set(items.map(\.key)).count == items.count else { throw WebstatError.invalidData }
-        // Keep the provider’s text collation: exports and records use the same order_by.
+        // Garde le classement de texte du fournisseur : les exports et les enregistrements utilisent le même order_by.
         return items
     }
 
@@ -58,7 +58,7 @@ enum WebstatMapping {
     static func starterHistory(_ data: Data, statusCode: Int = 200, now: Date = .now) throws -> [MarketSeries] {
         switch statusCode {
         case 200: break
-        // Webstat also returns 404 when the API key cannot access a technical table.
+        // Webstat renvoie aussi 404 quand la clé API ne peut pas accéder à une table technique.
         case 401, 403, 404: throw WebstatError.accessDenied
         case 429: throw WebstatError.quotaReached
         default: throw WebstatError.unavailable
@@ -72,7 +72,7 @@ enum WebstatMapping {
         timestamp.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let timestampWithoutFraction = ISO8601DateFormatter()
         var grouped: [String: [MarketObservation]] = [:]
-        // Latest revision wins, independently of export ordering for duplicate dates.
+        // La dernière révision l’emporte, indépendamment de l’ordre d’export pour les dates en double.
         for row in rows.sorted(by: { ($0.updatedAt ?? "") < ($1.updatedAt ?? "") }) {
             guard let value = row.value, !value.isNaN,
                   let date = day.date(from: row.start), date <= now,

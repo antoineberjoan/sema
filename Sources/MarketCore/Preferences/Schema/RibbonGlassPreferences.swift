@@ -1,7 +1,7 @@
 // Normalise les réglages du verre indépendamment de la palette et du mode d’affichage.
 import Foundation
 
-/// Appearance of the ribbon surfaces, independent of the palette and display mode.
+/// Apparence des surfaces du bandeau, indépendante de la palette et du mode d’affichage.
 public struct RibbonGlassPreferences: Codable, Equatable, Sendable {
     public static let standardTransparency = 0.75
     public static let standardTint = 0.5

@@ -35,7 +35,7 @@ enum FredMapping {
         }
     }
 
-    /// FRED units become the same unit codes as the other sources, so alerts and variations follow one contract.
+    /// Les unités FRED deviennent les mêmes codes d’unité que les autres sources, pour que les alertes et les variations suivent un seul contrat.
     static func unit(_ units: String) -> (code: String, multiplier: String) {
         let text = units.lowercased()
         if text.hasPrefix("percent") { return ("PC", "0") }
@@ -51,7 +51,7 @@ enum FredMapping {
         guard let info = try rows(metadata, key: "seriess").first, info["id"]?.text?.caseInsensitiveCompare(key) == .orderedSame,
               let title = info["title"]?.text else { throw PublicDataError.invalidData }
         let points = try rows(observations, key: "observations").compactMap { row -> MarketObservation? in
-            // FRED marks a missing value with ".", for example on a market holiday.
+            // FRED marque une valeur manquante par ".", par exemple un jour férié de marché.
             guard let dateText = row["date"]?.text, let period = PublicDataFormat.period(dateText), period.start <= now,
                   let raw = row["value"]?.text, raw != ".", let value = PublicDataFormat.decimal(raw) else { return nil }
             return .init(date: period.start, value: value)

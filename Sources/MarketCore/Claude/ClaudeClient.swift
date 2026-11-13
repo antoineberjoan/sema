@@ -5,7 +5,7 @@ public struct ClaudeClient: Sendable {
     static let messagesURL = URL(string: "https://api.anthropic.com/v1/messages")!
     static let modelsURL = URL(string: "https://api.anthropic.com/v1/models")!
     static let apiVersion = "2026-10-21"
-    /// Server-side fallback when the model declines: the API reruns the request on its recommended model.
+    /// Repli côté serveur quand le modèle refuse : l’API relance la requête sur le modèle qu’elle recommande.
     static let fallbackBeta = "server-side-fallback-2026-07-01"
     static let model = "claude-opus-5-5"
     static let effort = "low"
@@ -28,7 +28,7 @@ public struct ClaudeClient: Sendable {
     private let key: String
     public init(key: String) { self.key = key }
 
-    /// One Messages call; the key travels in its header only.
+    /// Un appel Messages ; la clé voyage dans son en-tête seulement.
     public func request(facts: [ContextFact], day: Date) throws -> URLRequest {
         var request = signed(URLRequest(url: Self.messagesURL))
         request.httpMethod = "POST"
@@ -53,7 +53,7 @@ public struct ClaudeClient: Sendable {
         return try Self.parse(data)
     }
 
-    /// Lists the models, a free call that tells a valid key from a rejected one.
+    /// Liste les modèles, un appel gratuit qui distingue une clé valide d’une clé rejetée.
     public func validateKey() async throws {
         let session = URLSession(configuration: .ephemeral)
         defer { session.finishTasksAndInvalidate() }
@@ -90,7 +90,7 @@ public struct ClaudeClient: Sendable {
         }
     }
 
-    /// Computed, because a dictionary of `Any` cannot be shared across tasks.
+    /// Calculé, car un dictionnaire de `Any` ne peut pas être partagé entre tâches.
     private static var schema: [String: Any] { [
         "type": "object", "additionalProperties": false, "required": ["sentences"],
         "properties": ["sentences": [

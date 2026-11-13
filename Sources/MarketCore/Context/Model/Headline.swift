@@ -12,7 +12,7 @@ public struct Headline: Codable, Equatable, Identifiable, Sendable {
         self.title = title; self.link = link; self.publisher = publisher; self.publishedAt = publishedAt
     }
 
-    /// Compact UTC stamps used by GDELT and Alpha Vantage, for example « 20261105T221500Z » or « 20261105T221500 ».
+    /// Horodatages compacts utilisés par GDELT et Alpha Vantage, par exemple « 20261105T221500Z » ou « 20261105T221500 ».
     static func compactDate(_ text: String) -> Date? {
         let formatter = DateFormatter()
         formatter.locale = .posix

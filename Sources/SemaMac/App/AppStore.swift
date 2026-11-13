@@ -22,7 +22,7 @@ final class AppStore {
     var recentAlertEvents: [AlertEvent] = []
     var isAlertSheetPresented = false
     var isSearchPresented = false
-    /// Text carried from the search panel to the catalogues tab of the search sheet; read once.
+    /// Texte transmis du panneau de recherche à l’onglet catalogues de la feuille de recherche ; lu une seule fois.
     var catalogueSeed: String?
     var isOnboardingPresented = false
     var shortcutError: String?
@@ -64,14 +64,14 @@ final class AppStore {
     var hasClaudeKey = false
     var isConnectingClaude = false
     var claudeError: String?
-    /// Verified summaries of a session, kept in memory only, keyed by session and writer.
+    /// Synthèses vérifiées d’une séance, gardées en mémoire seulement, par séance et par rédacteur.
     var summaries: [String: SummaryCheck] = [:]
-    /// Facts of a session, kept in memory for the session only; never written to disk.
+    /// Faits d’une séance, gardés en mémoire pour la session seulement ; jamais écrits sur le disque.
     var dayContexts: [String: DayContext] = [:]
     var isContextPresented = false
-    /// Agendas already loaded, by day (noon UTC); kept in memory only.
+    /// Agendas déjà chargés, par jour (midi UTC) ; gardés en mémoire seulement.
     var agendas: [Date: DayAgenda] = [:]
-    /// Day chosen in the ribbon, waiting for the agenda of the hub to open on it.
+    /// Jour choisi dans le bandeau, en attente que l’agenda du hub s’ouvre dessus.
     var agendaDay: Date?
     var connectingMarkets: Set<MarketProvider> = []
     var marketErrors: [MarketProvider: String] = [:]
@@ -86,7 +86,7 @@ final class AppStore {
     var historyTask: Task<Void, Never>?
     var historyGeneration = UUID()
     var sourceGenerations: [String: UUID] = [:]
-    /// Set by the app delegate: asks the refresh timer to plan again after a schedule setting changes.
+    /// Posé par le délégué de l’app : demande au minuteur d’actualisation de replanifier après un changement de réglage d’horaire.
     @ObservationIgnored var rescheduleRefresh: () -> Void = {}
     @ObservationIgnored var invertedExchangeRates: [String: (source: MarketSeries, display: MarketSeries)] = [:]
 

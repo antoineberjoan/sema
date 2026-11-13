@@ -35,7 +35,7 @@ struct RibbonScreen: View {
                 RibbonSignatureView(presentationID: presentationID).frame(height: MenuRibbonLayout.signatureHeight)
                 header
             } else {
-                // The ribbon follows the period chosen in the hub: no rail, the cards take the whole width.
+                // Le bandeau suit la période choisie dans le hub : pas de rail, les cartes prennent toute la largeur.
                 horizontalFavorites.frame(height: DesignLayout.menuRibbonCardHeight)
             }
         }
@@ -48,7 +48,7 @@ struct RibbonScreen: View {
 
     private var horizontalFavorites: some View {
         GeometryReader { geometry in
-            // Two slots stay outside the scroll view: the agenda and the signature, always visible.
+            // Deux emplacements restent hors de la vue défilante : l’agenda et la signature, toujours visibles.
             let visibleCount = MenuRibbonLayout.visibleCardCount(width: geometry.size.width, favoriteCount: items.count)
             let cardWidth = MenuRibbonLayout.cardWidth(width: geometry.size.width, visibleCount: visibleCount)
             HStack(spacing: MenuRibbonLayout.spacing) {

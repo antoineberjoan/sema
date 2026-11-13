@@ -6,7 +6,7 @@ import SwiftUI
 import MarketCore
 
 struct MoveBadge: View {
-    /// Five intensity zones of the brand teal: below 1×, 1–2×, 2–3×, 3–5×, above 5×.
+    /// Cinq zones d’intensité de la sarcelle de la marque : sous 1×, 1–2×, 2–3×, 3–5×, au-dessus de 5×.
     private static let zones: [(limit: Double, opacity: Double)] = [(1, 0), (2, 0.25), (3, 0.55), (5, 1), (.infinity, 1)]
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
@@ -25,7 +25,7 @@ struct MoveBadge: View {
             .accessibilityLabel(MarketFormat.ratio(ratio) + " la variation habituelle")
     }
 
-    /// The same fill on an opaque page and on a glass card: the calmest zone is the glass-rest opacity of the text color.
+    /// Le même remplissage sur une page opaque et sur une carte de verre : la zone la plus calme prend l’opacité « verre au repos » de la couleur du texte.
     private var background: Color {
         switch zone {
         case 0: DesignColor.text.opacity(DesignOpacity.glassRest)
@@ -34,7 +34,7 @@ struct MoveBadge: View {
         }
     }
 
-    /// Dark text on the two strongest zones: the accent plate takes the on-accent text, the full plate takes the page color.
+    /// Texte sombre sur les deux zones les plus fortes : la plaque d’accent prend le texte sur accent, la plaque pleine prend la couleur de la page.
     private var textColor: Color {
         switch zone {
         case 0, 1, 2: DesignColor.text

@@ -7,7 +7,7 @@ public struct PeerMove: Equatable, Identifiable, Sendable {
     public let ratio: Double?
     public var id: String { series.id }
 
-    /// Followed series observed the same day as `day` (calendar day in UTC), ordered by their distance from the usual.
+    /// Séries suivies observées le même jour que `day` (jour calendaire en UTC), classées par leur distance à l’habituel.
     public static func moves(on day: Date, among candidates: [MarketSeries], excluding seriesID: String) -> [PeerMove] {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!

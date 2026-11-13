@@ -12,8 +12,8 @@ extension AppStore {
     func isWatched(_ seriesID: String) -> Bool { moveWatches.contains { $0.seriesID == seriesID && $0.isEnabled } }
     func canWatch(_ item: MarketSeries) -> Bool { isFollowing(item.id) && item.canAlert && isSourceEnabled(for: item.id) }
 
-    /// One click: starts or stops watching unusual moves. The first watch asks macOS for notifications,
-    /// which counts as the explicit activation the contract requires.
+    /// Un clic : lance ou arrête la surveillance des mouvements inhabituels. La première surveillance demande à macOS les notifications,
+    /// ce qui vaut activation explicite, comme l’exige le contrat.
     func toggleWatch(_ item: MarketSeries) async {
         if moveWatches.contains(where: { $0.seriesID == item.id }) {
             mutatePreferences { $0.alerts.removeAll { $0.seriesID == item.id && $0.effectiveCondition == .unusualMove } }
@@ -22,7 +22,7 @@ extension AppStore {
         await watch([item])
     }
 
-    /// Watches every favourite that can be watched, in one click.
+    /// Surveille en un clic chaque favori qui peut l’être.
     func watchFavorites() async { await watch(favorites.filter { canWatch($0) && !isWatched($0.id) }) }
 
     private func watch(_ items: [MarketSeries]) async {
@@ -115,7 +115,7 @@ extension AppStore {
         }
     }
 
-    /// One line per event, grouped in a single notification: « S&P 500 · −4,40 % · 4,0× l’habituel ».
+    /// Une ligne par événement, regroupées dans une seule notification : « S&P 500 · −4,40 % · 4,0× l’habituel ».
     private static func notificationLine(for event: AlertEvent, series: MarketSeries) -> String {
         let name = MarketFormat.name(series)
         if let ratio = event.ratio {

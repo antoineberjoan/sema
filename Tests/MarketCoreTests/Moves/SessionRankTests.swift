@@ -6,7 +6,7 @@ import Testing
 struct SessionRankTests {
     private let start = Date(timeIntervalSince1970: 1_700_006_400)
 
-    /// Daily series with calm noise and sessions replaced by the given percent changes at the given indices.
+    /// Série quotidienne au bruit calme, dont les séances aux indices donnés sont remplacées par les variations en pourcent données.
     private func series(count: Int, drops: [Int: Decimal]) -> MarketSeries {
         var values: [Decimal] = [100]
         for index in 1..<count {

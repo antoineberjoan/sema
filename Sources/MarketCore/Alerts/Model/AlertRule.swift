@@ -30,8 +30,8 @@ public struct AlertRule: Codable, Identifiable, Equatable, Sendable {
         }
     }
 
-    /// An unusual-move watch covers both directions and follows the global sensitivity, so its direction
-    /// and threshold are fixed and never read.
+    /// Une surveillance de mouvement inhabituel couvre les deux directions et suit la sensibilité globale, donc sa direction
+    /// et son seuil sont fixes et jamais lus.
     public static func unusualMove(seriesID: String, lastEvaluatedAt: Date?) -> AlertRule {
         AlertRule(seriesID: seriesID, direction: .rise, threshold: 0, condition: .unusualMove, lastEvaluatedAt: lastEvaluatedAt)
     }

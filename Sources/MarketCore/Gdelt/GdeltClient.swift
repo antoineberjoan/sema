@@ -5,7 +5,7 @@ public struct GdeltClient: Sendable {
     static let baseURL = "https://api.gdeltproject.org/api/v2/doc/doc"
     static let timeout: TimeInterval = 20
     static let maximumRecords = 10
-    /// Broad market vocabulary; the day window and the title list stay facts, never causes.
+    /// Vocabulaire large de marché ; la fenêtre du jour et la liste de titres restent des faits, jamais des causes.
     static let marketQuery = #"("stock market" OR "wall street" OR stocks OR "central bank" OR "treasury yields") sourcelang:english"#
     public init() {}
 

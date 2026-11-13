@@ -18,15 +18,15 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var invertedCurrencyPairs: Set<String>?
     public var ribbonGlass: RibbonGlassPreferences?
     public var shortcuts: ShortcutPreferences?
-    /// History period shared by the hub and the ribbon; absent means one year.
+    /// Période d’historique partagée par le hub et le bandeau ; absente signifie un an.
     public var periodID: String?
-    /// Global sensitivity of unusual-move alerts; absent means normal (2×).
+    /// Sensibilité globale des alertes de mouvement inhabituel ; absente signifie normale (2×).
     public var moveSensitivityID: String?
-    /// Source of the headlines of the day; absent means GDELT.
+    /// Source des titres du jour ; absente signifie GDELT.
     public var headlineSourceID: String?
-    /// Writer of the summary of a session; absent means off.
+    /// Rédacteur de la synthèse d’une séance ; absent signifie désactivé.
     public var summaryWriterID: String?
-    /// Morning brief settings; absent means off at 8:00 on weekdays.
+    /// Réglages du brief du matin ; absents signifie désactivé à 8:00 les jours ouvrés.
     public var brief: BriefPreferences?
 
     public init(favoriteIDs: Set<String> = ["FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", "FM.D.U2.EUR.4F.KR.DFR.LEV", "EXR.D.USD.EUR.SP00.A", "MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O"],

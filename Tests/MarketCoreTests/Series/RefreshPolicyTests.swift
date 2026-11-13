@@ -27,7 +27,7 @@ struct RefreshPolicyTests {
     private func utc(_ text: String) -> Date { ISO8601DateFormatter().date(from: text)! }
 
     @Test func watchedMarketsAreDueOnceACloseHasPassed() {
-        // Thursday 5 November 2026: New York closes at 16:20 EST, 21:20 UTC.
+        // Jeudi 5 novembre 2026 : New York ferme à 16:20 EST, soit 21:20 UTC.
         let beforeClose = utc("2026-11-05T20:00:00Z")
         let afterClose = utc("2026-11-05T22:00:00Z")
         #expect(RefreshPolicy.isDue(syncedAt: beforeClose, now: afterClose, followsCloses: true))

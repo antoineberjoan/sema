@@ -2,7 +2,7 @@
 import Foundation
 
 public enum SeriesSearch {
-    /// Local search only. Aliases name the integrated series, never a different benchmark.
+    /// Recherche locale seulement. Les alias nomment la série intégrée, jamais un autre indice de référence.
     public static func results(in series: [MarketSeries], query: String) -> [MarketSeries] {
         let tokens = normalize(query).split(separator: " ")
         return series.filter { item in

@@ -7,7 +7,7 @@ import Charts
 import MarketCore
 
 struct HistoryChart: View {
-    /// Beyond this many points, the line keeps one point per bucket so that drawing stays fluid.
+    /// Au-delà de ce nombre de points, la ligne garde un point par tranche pour que le tracé reste fluide.
     private static let decimationThreshold = 1_200
     private static let decimationTarget = 500
     private static let minimumAxisDigits = 4
@@ -21,7 +21,7 @@ struct HistoryChart: View {
     @State private var hoveredDate: Date?
 
     private var points: [MarketObservation] { series.history(for: period) }
-    // Drawing is bounded; hover and analysis always retain every original observation.
+    // Le tracé est borné ; le survol et l’analyse gardent toujours chaque observation d’origine.
     private var drawnPoints: [MarketObservation] {
         guard points.count > Self.decimationThreshold else { return points }
         let bucket = max(1, points.count / Self.decimationTarget)

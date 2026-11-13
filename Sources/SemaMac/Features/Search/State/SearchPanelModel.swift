@@ -5,6 +5,6 @@ import MarketCore
 @MainActor
 @Observable
 final class SearchPanelModel {
-    /// The series shown in the panel after Return; Escape goes back to the list before closing.
+    /// La série montrée dans le panneau après Retour ; Échap revient à la liste avant de fermer.
     var detail: MarketSeries?
 }

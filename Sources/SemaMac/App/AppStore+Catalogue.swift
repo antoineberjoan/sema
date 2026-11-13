@@ -3,7 +3,7 @@ import Foundation
 import MarketCore
 
 extension AppStore {
-    /// A pause after the last keystroke avoids one request per letter.
+    /// Une pause après la dernière frappe évite une requête par lettre.
     static let searchDelay: Duration = .milliseconds(250)
     var canLoadMoreCatalogue: Bool { hasMoreCatalogue && !isSearchingCatalogue }
 

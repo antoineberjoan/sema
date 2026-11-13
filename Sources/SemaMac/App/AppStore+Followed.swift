@@ -32,7 +32,7 @@ extension AppStore {
             status = "Ce repère est déjà suivi via \(existing.originBadge)."
             return true
         }
-        // Persist the cache before preferences, for every provider.
+        // Écrit le cache avant les préférences, pour chaque fournisseur.
         let merged = series.filter { $0.id != value.id } + [value]
         try storage.cacheWebstat(merged)
         guard mutatePreferences({ $0.followedSeriesIDs.append(value.id) }) else { return false }

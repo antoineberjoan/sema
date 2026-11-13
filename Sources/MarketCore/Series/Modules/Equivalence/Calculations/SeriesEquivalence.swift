@@ -1,8 +1,8 @@
 // Relie uniquement les séries dont la correspondance entre fournisseurs a été vérifiée.
 import Foundation
 
-/// Explicit, verified correspondence only. Titles and matching observation values
-/// are never evidence that two independently published indicators are equivalent.
+/// Correspondance explicite et vérifiée seulement. Les titres et les valeurs d’observation identiques
+/// ne prouvent jamais que deux indicateurs publiés indépendamment sont équivalents.
 public enum SeriesEquivalence {
     public static func matches(_ lhs: MarketSeries, _ rhs: MarketSeries) -> Bool {
         if lhs.id == rhs.id { return true }
@@ -43,17 +43,17 @@ public enum SeriesEquivalence {
             key = String(descriptor.key.dropFirst(webstatPrefix.count)); unit = descriptor.unitCode
             multiplier = descriptor.multiplier; frequency = descriptor.frequencyCode
         } else { return nil }
-        // The full key retains frequency and numerator currency. Index/rebased series differ.
+        // La clé complète garde la fréquence et la devise du numérateur. Les séries d’indice ou rebasées diffèrent.
         guard let parts = spotRateParts(key), parts[0] == frequency, parts[1] == unit, multiplier == 0 else { return nil }
         return referencePrefix + key
     }
 
-    /// Webstat repeats the dataset in front of the ECB key; a verified reference carries its source.
+    /// Webstat répète le jeu de données devant la clé BCE ; une référence vérifiée porte sa source.
     static let webstatPrefix = "EXR."
     static let referencePrefix = "ECB:EXR:"
     static let ecbDatasetURL = "https://data.ecb.europa.eu/data/datasets/EXR/"
 
-    /// Parts of an ECB spot reference rate against the euro, average observation: frequency, currency, EUR, SP00, A.
+    /// Parties d’une référence de change au comptant BCE contre l’euro, observation moyenne : fréquence, devise, EUR, SP00, A.
     static func spotRateParts(_ key: String) -> [String]? {
         let parts = key.split(separator: ".").map(String.init)
         guard parts.count == 5, parts[2] == "EUR", parts[3] == "SP00", parts[4] == "A" else { return nil }

@@ -8,12 +8,12 @@ public enum MoveSensitivity: String, CaseIterable, Codable, Identifiable, Sendab
     public var title: String {
         switch self { case .discreet: "Discrète"; case .normal: "Normale"; case .attentive: "Attentive" }
     }
-    /// A move is unusual when its absolute change reaches this multiple of the usual variation.
+    /// Un mouvement est inhabituel quand sa variation absolue atteint ce multiple de la variation habituelle.
     public var multiplier: Double {
         switch self { case .discreet: 3; case .normal: 2; case .attentive: 1.5 }
     }
-    /// Expected alerts per series and per year if daily changes were normally distributed (252 sessions);
-    /// real markets usually produce more.
+    /// Alertes attendues par série et par an si les variations quotidiennes suivaient une loi normale (252 séances) ;
+    /// les vrais marchés en produisent d’ordinaire plus.
     public var expectedAlertsPerYear: Double {
         switch self { case .discreet: 0.7; case .normal: 11.5; case .attentive: 33.7 }
     }

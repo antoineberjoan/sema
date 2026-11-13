@@ -12,7 +12,7 @@ final class PanelDismissal {
     private var globalMonitor: Any?
     private var workspaceObservers: [NSObjectProtocol] = []
 
-    /// `handleKey` sees every key first and answers true to consume it; an unhandled Escape closes the panel.
+    /// `handleKey` voit chaque touche en premier et répond true pour la consommer ; une touche Échap non gérée ferme le panneau.
     init(panel: NSPanel, ignoring ignoredWindows: @escaping () -> [NSWindow?] = { [] },
          dismiss: @escaping () -> Void, handleKey: @escaping (NSEvent) -> Bool = { _ in false }) {
         self.panel = panel; self.ignoredWindows = ignoredWindows; self.dismiss = dismiss; self.handleKey = handleKey

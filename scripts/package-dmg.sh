@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build a versioned private alpha from a validated .app. This does not publish it.
+# Construit une alpha privée versionnée à partir d’une .app validée. Ne la publie pas.
 set -euo pipefail
 
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
@@ -28,7 +28,7 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-# Snapshot first: a concurrent build cannot change the version being packaged.
+# Instantané d’abord : une construction concurrente ne peut pas changer la version empaquetée.
 ditto "$bundle" "$staging/Sema.app"
 release_bundle="$staging/Sema.app"
 facts="$(python3 "$project_root/scripts/distribution/release-manifest.py" "$release_bundle")"
@@ -40,7 +40,7 @@ if [[ -e "$output_directory/$filename" ]]; then
 fi
 
 
-# Build-only helpers: SVG rendering and a native Finder alias on the mounted volume.
+# Aides de construction seulement : rendu SVG et alias Finder natif sur le volume monté.
 mkdir -p "$project_root/.build/ModuleCache"
 CLANG_MODULE_CACHE_PATH="$project_root/.build/ModuleCache" swiftc \
     "$project_root/scripts/render-dmg.swift" -o "$staging/render-dmg"
@@ -69,9 +69,9 @@ python3 "$project_root/scripts/distribution/finder-layout.py" "$mount_point" "$s
 SetFile -a V "$mount_point/.background"
 cp "$release_bundle/Contents/Resources/Sema.icns" "$mount_point/.VolumeIcon.icns"
 SetFile -a C "$mount_point"
-# Never add FinderInfo to the signed bundle; validate the exact app on the volume.
+# Ne jamais ajouter FinderInfo au bundle signé ; valider l’app exacte sur le volume.
 codesign --verify --strict --deep "$mount_point/Sema.app"
-# bless --openfolder is unavailable on Apple Silicon. Finder reads .DS_Store on mount.
+# bless --openfolder est indisponible sur Apple Silicon. Le Finder lit .DS_Store au montage.
 hdiutil detach "$mount_point" -quiet
 mounted=0
 hdiutil convert "$staging/Sema-writable.dmg" -format UDZO \

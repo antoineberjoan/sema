@@ -10,7 +10,7 @@ extension AppStore {
 
     var isAppleIntelligenceAvailable: Bool { AppleIntelligenceClient.isAvailable }
 
-    /// Why the chosen writer cannot write now, in words for the reader; nil when it can.
+    /// Pourquoi le rédacteur choisi ne peut pas écrire maintenant, en mots pour le lecteur ; nil s’il le peut.
     var summaryBlocker: String? {
         switch summaryWriter {
         case .off: "La synthèse est désactivée. Choisissez un rédacteur dans Réglages, Sources."
@@ -27,7 +27,7 @@ extension AppStore {
         Self.contextKey(series).flatMap { summaries["\($0)#\(summaryWriter.rawValue)"] }
     }
 
-    /// Writes once per session and writer, then keeps only the sentences whose facts, figures and directions match.
+    /// Écrit une fois par session et par rédacteur, puis garde seulement les phrases dont les faits, les chiffres et les directions concordent.
     func summary(for series: MarketSeries, context: DayContext) async throws -> SummaryCheck {
         let writer = summaryWriter
         guard let key = Self.contextKey(series).map({ "\($0)#\(writer.rawValue)" }) else { throw AppleIntelligenceClient.UnavailableError() }

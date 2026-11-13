@@ -37,7 +37,7 @@ final class RefreshController {
         check()
     }
 
-    /// Also called when the brief settings change, so a new time is honoured without waiting for the next refresh.
+    /// Appelé aussi quand les réglages du brief changent, pour qu’une nouvelle heure compte sans attendre la prochaine actualisation.
     func check() {
         guard isStarted, !isSleeping, task == nil else { return }
         timer?.invalidate(); timer = nil
@@ -55,7 +55,7 @@ final class RefreshController {
                 RefreshPolicy.isDue(syncedAt: $0.syncedAt, now: now, followsCloses: store.followsCloses($0))
             }.map(\.id))
             if !due.isEmpty { await store.refreshSeries(only: due) }
-            // After the refresh, so the brief reads the latest session.
+            // Après l’actualisation, pour que le brief lise la dernière séance.
             await store.sendBriefIfDue()
             task = nil
             // Une série en erreur garde son cache ; le prochain essai automatique est le lendemain.
