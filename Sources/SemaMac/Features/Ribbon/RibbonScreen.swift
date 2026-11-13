@@ -71,7 +71,7 @@ struct RibbonScreen: View {
                 AgendaCard(openWorkspace: openWorkspace).frame(width: cardWidth, height: DesignLayout.menuRibbonCardHeight)
                 RibbonSignatureView(presentationID: presentationID)
                     .frame(width: cardWidth, height: MenuRibbonLayout.signatureHeight)
-                    .overlay(alignment: .topTrailing) { settingsButton.padding(DesignSpace.rowInset) }
+                    .overlay(alignment: .topTrailing) { settingsButton.padding(DesignSpace.cornerButtonInset) }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(height: DesignLayout.menuRibbonCardHeight)

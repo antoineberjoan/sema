@@ -35,4 +35,8 @@ public enum DesignSpace {
     public static let sectionGap: CGFloat = DesignScale.space48
     /// Marge d'une page large.
     public static let pageInsetWide: CGFloat = DesignScale.space64
+    /// Marge d'un bouton d'icône posé au coin d'une carte ou d'une surface ; pas pour la marge intérieure d'une ligne de liste (row-inset).
+    public static let cornerButtonInset: CGFloat = DesignScale.space8
+    /// Écart entre deux points d'un indicateur de progression par étapes ; pas pour l'écart entre une icône et son libellé (icon.gap).
+    public static let stepDotGap: CGFloat = DesignScale.space8
 }

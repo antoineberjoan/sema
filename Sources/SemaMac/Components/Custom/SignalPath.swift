@@ -1,4 +1,5 @@
 // Géométrie de la courbe du logo repère : une ligne qui monte et se pose sur un palier.
+// Source unique du logo : `scripts/export_signe.py` lit ces constantes pour fabriquer les SVG de `Resources/Brand/` et de `site/dist/brand/`, et `controler.sh` refuse un export périmé.
 // @documentation aucune
 // @decision docs/decisions/2026-11-12-composant-signe-de-la-marque.md
 import SwiftUI

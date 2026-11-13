@@ -46,7 +46,7 @@ struct IndicatorTile: View {
             HStack(spacing: 0) {
                 ExchangeDirectionButton(series: series)
                 FavoriteButton(seriesID: series.id, seriesName: MarketFormat.name(displayed))
-            }.padding(DesignSpace.rowInset)
+            }.padding(DesignSpace.cornerButtonInset)
         }
         .onHover { isHovered = $0 }
         .animation(reduceMotion ? nil : .timingCurve(DesignEase.hover, duration: DesignDuration.fast), value: isHovered)

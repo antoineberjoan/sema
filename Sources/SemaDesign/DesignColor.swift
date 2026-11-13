@@ -98,6 +98,8 @@ public enum DesignColor {
     }
     /// Propre à sema : le fond sur lequel une photo de profil à fond transparent est aplatie avant l'enregistrement en JPEG ; papier dans les deux modes, car l'image enregistrée ne suit pas l'apparence.
     public static let photoMatte: Color = makeColor(DesignPrimitive.paper0)
+    /// Point d'étape pas encore atteint dans un indicateur de progression ; pas pour un filet ni un survol.
+    public static let stepDotIdle: Color = makeAdaptive(light: DesignPrimitive.paper200, dark: DesignPrimitive.ink600, lightHigh: DesignPrimitive.ink500, darkHigh: DesignPrimitive.ink300)
 
     /// The color of a 0xRRGGBB sRGB value, the same in light and dark.
     static func makeColor(_ value: UInt32) -> Color {

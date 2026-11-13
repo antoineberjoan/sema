@@ -27,7 +27,7 @@
   }
   addEventListener('pagehide', () => clearTimeout(resetTimer));
 
-  // Chaque scène part de son état caché puis joue quand 35 % de sa hauteur est visible. Une scène « data-loop » se rejoue après une pause, tant qu’elle reste visible. Sans script ou avec « réduire les animations », elle s’affiche déjà terminée.
+  // Chaque scène part de son état caché puis joue quand la part de sa hauteur visible atteint `--scene-visible-threshold`. Une scène « data-loop » se rejoue après une pause, tant qu’elle reste visible. Sans script ou avec « réduire les animations », elle s’affiche déjà terminée.
   const scenes = document.querySelectorAll('[data-scene]');
   if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
   const timers = new Map();

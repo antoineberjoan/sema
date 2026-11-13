@@ -397,6 +397,26 @@ def theme_color_errors(snapshot):
     return errors
 
 
+MEDIA_MAX_WIDTH = re.compile(r"@media\s*\(\s*max-width\s*:\s*(\d+(?:\.\d+)?)px\s*\)")
+
+
+def breakpoint_errors(snapshot):
+    """Une media query ne lit pas `var()` : la limite écrite dans une feuille du site est celle du jeton `breakpoint.narrow` de `site/tokens.json`."""
+    if TOKEN_SOURCE not in snapshot.paths:
+        return []
+    try:
+        limit = float(json.loads(snapshot.read(TOKEN_SOURCE))["breakpoint"]["narrow"]["$value"]["value"])
+    except (ValueError, KeyError, TypeError):
+        return []
+    errors = []
+    for path in sorted(snapshot.paths):
+        if not (path.startswith("site/dist/") and path.endswith(".css")) or path.startswith("site/dist/brand/"):
+            continue
+        errors.extend(f"{path} : `max-width: {value}px` ; le jeton `breakpoint.narrow` de {TOKEN_SOURCE} vaut {limit:g}px."
+                      for value in MEDIA_MAX_WIDTH.findall(snapshot.read(path)) if float(value) != limit)
+    return errors
+
+
 def check(snapshot):
     errors = []
     glossary = {}
@@ -461,6 +481,7 @@ def check(snapshot):
     errors.extend(theme_color_errors(snapshot))
     errors.extend(cited_path_errors(snapshot))
     errors.extend(cited_identifier_errors(snapshot))
+    errors.extend(breakpoint_errors(snapshot))
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths
