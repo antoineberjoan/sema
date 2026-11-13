@@ -181,4 +181,13 @@ struct WebstatCatalogTests {
         #expect(try Data(contentsOf: file.appendingPathExtension("v1-backup")) == storedV1File)
         #expect(try store.load() == migrated)
     }
+
+    @Test func labelsComeFromTheCachedCodelistsWithAFallbackOnTheUsualLists() throws {
+        let value = try descriptor()
+        let labels = ["CL_UNIT": ["EUR": "Euro"], "CL_FREQ": ["Q": "Trimestrielle"]]
+        let resolved = value.resolving(codeLabels: labels, dataset: nil)
+        #expect(resolved.labels["unit"] == "Euro")
+        #expect(resolved.labels["freq"] == "Trimestrielle")
+        #expect(value.resolving(codeLabels: [:], dataset: nil).labels.isEmpty)
+    }
 }

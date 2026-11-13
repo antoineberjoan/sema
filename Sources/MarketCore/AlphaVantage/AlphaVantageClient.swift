@@ -73,7 +73,7 @@ public actor AlphaVantageClient: MarketDataConnector {
         if delay > 0 { try await Task.sleep(for: .seconds(delay)) }
         try Task.checkCancellation()
         var query = parameters
-        // Exception demandée par Antoine le 17 octobre : Alpha Vantage ne documente que ce mode.
+        // Exception : Alpha Vantage ne documente que ce mode.
         query["apikey"] = key
         return try await MarketDataTransport.send(MarketDataTransport.request(host: Self.host, endpoint: "query", query: query), on: session)
     }

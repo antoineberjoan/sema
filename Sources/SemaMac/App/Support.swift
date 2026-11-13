@@ -1,4 +1,4 @@
-// Résout l’adresse de soutien du projet depuis la configuration du bundle.
+// Adresse de soutien du projet.
 import Foundation
 
 enum Support {

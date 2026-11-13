@@ -314,6 +314,32 @@ def cited_path_errors(snapshot):
     return errors
 
 
+# Un identifiant de code cité entre accents graves dans une doc (`displayedSeries`, `AlertEvaluator`) existe dans le code, les tests ou les scripts.
+IDENTIFIER_SPAN = re.compile(r"^(?=.*[a-z])(?:[a-z][a-z0-9]*(?:[A-Z][A-Za-z0-9]*)+|[A-Z][a-z0-9]+(?:[A-Z][A-Za-z0-9]*)+)$")
+IDENTIFIER_SOURCES = (".swift", ".py", ".js", ".mjs", ".css", ".html", ".json", ".yml", ".sh")
+# Noms d'API de la plateforme : ils vivent dans le SDK, pas dans le dépôt.
+PLATFORM_IDENTIFIER = re.compile(r"^(?:NS|SM|UN|CG|AX|CA|SF|UT|AV|WK)[A-Z]|^(?:SwiftUI|SwiftData|CoreGraphics|HomebrewCask|GitHub|MacOS|WebKit|JavaScript)$|^(?:decodeIfPresent|keyboardShortcut|onMove|isEnabled|hdiutil)$|^kVK_")
+
+
+def cited_identifier_errors(snapshot):
+    corpus = "\n".join(snapshot.read(path) for path in sorted(snapshot.paths)
+                       if path.endswith(IDENTIFIER_SOURCES) and not path.startswith(("docs/", "site/dist/brand/")))
+    words = set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*", corpus))
+    errors = []
+    for path in sorted(snapshot.paths):
+        name = pathlib.PurePosixPath(path).name
+        if not (path.endswith(".md") and not path.startswith("docs/decisions/")
+                and (path.startswith("docs/") or name in {"AGENTS.md", "README.md", "CONTRIBUTING.md", "SECURITY.md"})):
+            continue
+        for number, line in enumerate(snapshot.read(path).splitlines(), 1):
+            for span in BACKTICK_SPAN.findall(line):
+                head = span.split(".")[0].split("(")[0]
+                for part in {head, *span.replace("(", ".").replace(")", "").split(".")}:
+                    if IDENTIFIER_SPAN.match(part) and part not in words and not PLATFORM_IDENTIFIER.search(part):
+                        errors.append(f"{path}:{number} : l’identifiant cité `{part}` n’existe pas dans le code.")
+    return errors
+
+
 # Un type sans cas (un espace de noms : `WebstatStarter`, `IdentifierMigration`) définit ses membres statiques ; un test ou une source qui en cite un autre ne compile pas.
 NAMESPACE_DECLARATION = re.compile(r"^[ \t]*(?:(?:public|internal|private|fileprivate|package)\s+)?(?:final\s+)?(?P<kind>enum|extension)\s+(?P<name>[A-Z]\w*)[^{\n]*\{", re.MULTILINE)
 STATIC_MEMBER = re.compile(r"\bstatic\s+(?:var|let|func)\s+(\w+)|\b(?:struct|enum|class|actor|typealias|protocol)\s+(\w+)")
@@ -434,6 +460,7 @@ def check(snapshot):
     errors.extend(web_errors(web_sources))
     errors.extend(theme_color_errors(snapshot))
     errors.extend(cited_path_errors(snapshot))
+    errors.extend(cited_identifier_errors(snapshot))
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths

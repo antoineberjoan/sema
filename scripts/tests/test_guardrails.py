@@ -290,9 +290,20 @@ class GuardrailsTests(unittest.TestCase):
         self.write("Tests/SeriesTests.swift", "// Vérifie une série.\nlet sample = Series()\n")
         self.assertEqual([error for error in self.errors() if "Tests/" not in error], [])
 
+    def test_cited_identifiers_must_exist_in_the_code(self):
+        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nstruct Series {\n    var displayedSeries: Int { 1 }\n}\n")
+        self.write("docs/lexique.md", "Voir `displayedSeries` et `publishedSeries`, mais pas `A22FRX` ni `NSStatusItem`.\n")
+        errors = [error for error in self.errors() if "identifiant cité" in error]
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`publishedSeries`", errors[0])
+
+    def test_decisions_may_cite_identifiers_that_no_longer_exist(self):
+        self.write("docs/decisions/2026-11-01-ancien-choix.md", "Le type `removedType` portait ce choix.\n")
+        self.assertEqual([error for error in self.errors() if "identifiant cité" in error], [])
+
     def test_glossary_spelling_is_enforced(self):
         self.write("docs/lexique.md", "| Concept | Nom dans le code | Sens |\n| --- | --- | --- |\n| Identifiant | `seriesID` | Série |\n")
-        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nimport Observation\nlet seriesId = 1\n")
+        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nimport Observation\nlet seriesId = 1\nlet seriesID = 2\n")
         errors = self.errors()
         self.assertEqual(len(errors), 1)
         self.assertIn("`seriesId` s’écrit `seriesID`", errors[0])

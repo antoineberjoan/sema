@@ -27,7 +27,6 @@ extension AppStore {
 
     func sourceName(_ id: String) -> String { id == "webstat" ? "Webstat" : MarketProvider(rawValue: id)?.title ?? StatisticalSource(rawValue: id)?.title ?? id }
 
-    func sourceSeriesCount(_ id: String) -> Int { storedFollowedSeries.filter { sourceID(for: $0.id) == id }.count }
 
     func setSourceEnabled(_ id: String, enabled: Bool) {
         guard id == "webstat" || StatisticalSource(rawValue: id) != nil || MarketProvider(rawValue: id) != nil || CentralBankFeed(rawValue: id) != nil,
@@ -37,7 +36,7 @@ extension AppStore {
             if enabled { disabled.remove(id) } else { disabled.insert(id) }
             value.disabledSourceIDs = disabled
             if !enabled {
-                let rules = value.alerts.filter { $0.isEnabled && sourceID(for: $0.seriesID) == id }.map(\.id)
+                let rules = AlertEvaluator.ruleIDsToReset(value.alerts) { sourceID(for: $0) == id }
                 value.alertBaselineIDs = (value.alertBaselineIDs ?? []).union(rules)
             }
         }) else { return }

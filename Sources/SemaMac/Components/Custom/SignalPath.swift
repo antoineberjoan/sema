@@ -1,4 +1,4 @@
-// Géométrie de la courbe du logo repère d’Antoine : une ligne qui monte et se pose sur un palier.
+// Géométrie de la courbe du logo repère : une ligne qui monte et se pose sur un palier.
 // @documentation aucune
 // @decision docs/decisions/2026-11-12-composant-signe-de-la-marque.md
 import SwiftUI

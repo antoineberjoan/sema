@@ -18,6 +18,13 @@ public enum HistoryPeriod: String, CaseIterable, Identifiable, Sendable {
         return (start, end, start <= first)
     }
 
+    /// Fenêtre récente chargée à l'ouverture : `recentYears` années calendaires jusqu'à `end`.
+    /// `isComplete` est vrai si le début publié (`firstPublished`) tient dans la fenêtre.
+    public static func recent(endingAt end: Date, firstPublished: Date?, calendar: Calendar) -> (start: Date, isComplete: Bool) {
+        let start = tranche(endingAt: end, calendar: calendar).start
+        return (start, firstPublished.map { $0 >= start } ?? false)
+    }
+
     /// Où finit la tranche plus ancienne suivante : la veille du début de l’actuelle.
     public static func previousEnd(before start: Date) -> Date { start.addingTimeInterval(-.day) }
     public var days: Int {

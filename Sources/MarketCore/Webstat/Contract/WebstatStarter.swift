@@ -23,6 +23,13 @@ public enum WebstatStarter {
         Dictionary(uniqueKeysWithValues: definitions.map { ($0.slug, $0.seriesCode) })
     }
     public static var ids: [String] { definitions.map(\.seriesCode) }
+    /// Les repères de départ d'abord, dans l'ordre du fichier, puis le reste des résultats.
+    public static func placingFirst(_ results: [WebstatSeriesDescriptor]) -> [WebstatSeriesDescriptor] {
+        let starters = definitions.compactMap { definition in results.first { $0.key == definition.seriesCode } }
+        let keys = Set(starters.map(\.key))
+        return starters + results.filter { !keys.contains($0.key) }
+    }
+
     /// Repères sans observation : leurs valeurs viennent de Webstat, jamais d’un exemple.
     public static var series: [MarketSeries] {
         definitions.map { definition in

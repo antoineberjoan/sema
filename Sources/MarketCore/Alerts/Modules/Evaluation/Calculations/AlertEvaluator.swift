@@ -44,6 +44,52 @@ public enum AlertEvaluator {
         }
     }
 
+    /// Vérifie toutes les règles actives sur les séries reçues. Une règle à réinitialiser reprend à la dernière observation sans émettre d'événement.
+    public static func check(rules: [AlertRule], baselineIDs: Set<UUID>?, series values: [MarketSeries],
+                             sensitivity: MoveSensitivity, isSourceEnabled: (String) -> Bool) -> AlertCheck {
+        var result = AlertCheck(rules: rules, baselineIDs: baselineIDs, events: [], hasAdvanced: false)
+        for index in result.rules.indices {
+            let rule = result.rules[index]
+            guard rule.isEnabled, rule.effectiveCondition != .relativeChange,
+                  isSourceEnabled(rule.seriesID),
+                  let item = values.first(where: { $0.id == rule.seriesID }), item.canAlert,
+                  let latest = item.latest else { continue }
+            if result.baselineIDs?.contains(rule.id) == true {
+                result.rules[index].lastEvaluatedAt = max(latest.date, rule.lastEvaluatedAt ?? latest.date)
+                result.baselineIDs?.remove(rule.id); result.hasAdvanced = true
+                continue
+            }
+            guard rule.lastEvaluatedAt.map({ latest.date > $0 }) ?? true else { continue }
+            result.events += newEvents(rule, series: item, sensitivity: sensitivity)
+            result.rules[index].lastEvaluatedAt = latest.date; result.hasAdvanced = true
+        }
+        return result
+    }
+
+    /// Règles actives d'une source qu'on suspend : elles reprendront à la dernière observation quand la source revient, sans événement sur ce qui a eu lieu entre-temps.
+    public static func ruleIDsToReset(_ rules: [AlertRule], isFromSuspendedSource: (String) -> Bool) -> Set<UUID> {
+        Set(rules.filter { $0.isEnabled && isFromSuspendedSource($0.seriesID) }.map(\.id))
+    }
+
+    /// Met en pause les règles des séries dont l'unité, l'échelle ou la base a changé : un seuil périmé ne doit pas se déclencher.
+    public static func pausing(_ rules: [AlertRule], seriesIDs: Set<String>) -> [AlertRule] {
+        rules.map { rule in
+            var rule = rule
+            if seriesIDs.contains(rule.seriesID) { rule.isEnabled = false }
+            return rule
+        }
+    }
+
+    /// Deux observations de part et d'autre du seuil, pour tester la notification d'une règle sans toucher aux données réelles.
+    public static func testSample(for rule: AlertRule, series item: MarketSeries, now: Date) -> MarketSeries {
+        let step: Decimal = 0.1
+        let sign: Decimal = rule.direction == .fall ? -1 : 1
+        return item.replacing(observations: [
+            .init(date: now.addingTimeInterval(-60), value: rule.threshold - sign * step),
+            .init(date: now, value: rule.threshold + sign * step)
+        ])
+    }
+
     private static func crossing(_ rule: AlertRule, previous: MarketObservation,
                                  latest: MarketObservation) -> AlertEvent? {
         let crossed = rule.direction == .rise

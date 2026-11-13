@@ -61,12 +61,7 @@ extension AppStore {
               let item = series.first(where: { $0.id == rule.seriesID }), item.canAlert,
               isSourceEnabled(for: rule.seriesID) else { return }
         let now = Date()
-        let step: Decimal = 0.1
-        let sign: Decimal = rule.direction == .fall ? -1 : 1
-        let sample = item.replacing(observations: [
-            .init(date: now.addingTimeInterval(-60), value: rule.threshold - sign * step),
-            .init(date: now, value: rule.threshold + sign * step)
-        ])
+        let sample = AlertEvaluator.testSample(for: rule, series: item, now: now)
         let testRule = AlertRule(id: rule.id, seriesID: rule.seriesID, direction: rule.direction,
                                  threshold: rule.threshold, condition: .level)
         guard let event = AlertEvaluator.evaluate(testRule, series: sample) else { return }
@@ -80,49 +75,19 @@ extension AppStore {
     }
 
     func evaluateAlerts(in values: [MarketSeries]) {
-        var events: [AlertEvent] = []; var next = preferences; var hasAdvanced = false
-        for index in next.alerts.indices {
-            let rule = next.alerts[index]
-            guard rule.isEnabled, rule.effectiveCondition != .relativeChange,
-                  isSourceEnabled(for: rule.seriesID),
-                  let item = values.first(where: { $0.id == rule.seriesID }), item.canAlert,
-                  let latest = item.latest else { continue }
-            if next.alertBaselineIDs?.contains(rule.id) == true {
-                next.alerts[index].lastEvaluatedAt = max(latest.date, rule.lastEvaluatedAt ?? latest.date)
-                next.alertBaselineIDs?.remove(rule.id); hasAdvanced = true
-                continue
-            }
-            guard rule.lastEvaluatedAt.map({ latest.date > $0 }) ?? true else { continue }
-            events += AlertEvaluator.newEvents(rule, series: item, sensitivity: moveSensitivity)
-            next.alerts[index].lastEvaluatedAt = latest.date; hasAdvanced = true
-        }
-        guard hasAdvanced, commit(next) else { return }
+        let check = AlertEvaluator.check(rules: preferences.alerts, baselineIDs: preferences.alertBaselineIDs, series: values,
+                                         sensitivity: moveSensitivity, isSourceEnabled: isSourceEnabled(for:))
+        var next = preferences
+        next.alerts = check.rules; next.alertBaselineIDs = check.baselineIDs
+        let events = check.events
+        guard check.hasAdvanced, commit(next) else { return }
         recentAlertEvents = Array((recentAlertEvents + events).suffix(Self.recentAlertLimit))
         guard preferences.canNotify, !events.isEmpty else { return }
-        let entries = events.compactMap { event -> (name: String, line: String)? in
-            guard isSourceEnabled(for: event.seriesID), let item = values.first(where: { $0.id == event.seriesID }) else { return nil }
-            return (MarketFormat.name(item), Self.notificationLine(for: event, series: item))
-        }
-        guard let first = entries.first else { return }
-        let lines = entries.map(\.line)
-        let moves = events.filter { $0.ratio != nil }.count
-        let title = entries.count == 1 ? first.name : "\(entries.count) repères"
-        let subtitle = moves == events.count ? "Mouvement inhabituel" : moves == 0 ? "Seuil franchi" : "Alertes"
-        let target: NotificationTarget = entries.count == 1 ? .series(events[0].seriesID) : .section(.alerts)
+        guard let summary = NotificationText.summary(events: events, series: values, isSourceEnabled: isSourceEnabled(for:)) else { return }
         Task {
-            do { try await notifications.send(title: title, subtitle: subtitle, body: lines.joined(separator: "\n"), target: target) }
+            do { try await notifications.send(title: summary.title, subtitle: summary.subtitle, body: summary.body, target: summary.target) }
             catch { errorMessage = "La notification système n’a pas pu être envoyée : \(error.localizedDescription)" }
         }
-    }
-
-    /// Une ligne par événement, regroupées dans une seule notification : « S&P 500 · −4,40 % · 4,0× l’habituel ».
-    private static func notificationLine(for event: AlertEvent, series: MarketSeries) -> String {
-        let name = MarketFormat.name(series)
-        if let ratio = event.ratio {
-            return "\(name) · \(MarketFormat.sessionChange(event.changePercent, series: series)) · \(MarketFormat.ratio(ratio)) l’habituel"
-        }
-        let value = event.observedValue.map { MarketFormat.number($0, digits: series.fractionDigits) } ?? "—"
-        return "\(name) · seuil franchi : \(value) \(MarketFormat.unit(series)) · \(MarketFormat.date(event.observedAt))"
     }
 
     func setNotificationsEnabled(_ enabled: Bool) async {

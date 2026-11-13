@@ -9,4 +9,11 @@ struct MarketDataFormatTests {
         #expect(throws: MarketDataError.entitlement) { try MarketDataFormat.checkError(["Information": "This is a premium endpoint."]) }
         #expect(throws: MarketDataError.invalidKey) { try MarketDataFormat.checkError(["code": 401, "message": "incorrect apikey"]) }
     }
+
+    @Test func onlyQuotaAndRejectedKeyStopAProvider() {
+        #expect(MarketDataError.quota.stopsProvider)
+        #expect(MarketDataError.invalidKey.stopsProvider)
+        #expect(!MarketDataError.unavailable.stopsProvider)
+        #expect(!MarketDataError.network.stopsProvider)
+    }
 }

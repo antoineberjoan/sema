@@ -7,7 +7,7 @@ etat: actif
 sophos: 2
 sorte: application macOS
 adresse: https://getsema.app
-skills: [penser, construire, expliquer, concevoir]
+skills: [penser, construire, expliquer, concevoir, cristalliser]
 marque:
   tokens: Resources/Brand/tokens.json
   icone-claire: Resources/Brand/sema-app-icon.svg

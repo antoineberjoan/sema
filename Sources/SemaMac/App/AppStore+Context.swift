@@ -34,10 +34,10 @@ extension AppStore {
         var result: [PressRelease] = []
         var hasFailed = false
         for feed in feeds {
-            do { result += try await PressReleaseClient().releases(feed).filter { (start...end).contains($0.publishedAt) } }
+            do { result += try await PressReleaseClient().releases(feed) }
             catch { hasFailed = true }
         }
-        return hasFailed && result.isEmpty ? nil : result.sorted { $0.publishedAt > $1.publishedAt }
+        return hasFailed && result.isEmpty ? nil : PressRelease.recent(result, from: start, to: end)
     }
 
     func headlines(from start: Date, to end: Date) async -> [Headline]? {

@@ -16,9 +16,7 @@ extension AppStore {
 
     func toggleFavorite(_ id: String) {
         guard isFollowing(id) else { return }
-        let equivalentIDs = Set(storedFollowedSeries.filter { candidate in
-            series.first(where: { $0.id == id }).map { SeriesEquivalence.matches($0, candidate) } ?? false
-        }.map(\.id))
+        let equivalentIDs = FollowedOrder.equivalentIDs(of: series.first { $0.id == id }, among: storedFollowedSeries)
         let wasFavorite = isFavorite(id)
         mutatePreferences { value in
             if wasFavorite { value.favoriteIDs.subtract(equivalentIDs) } else { value.favoriteIDs.insert(id) }
@@ -44,26 +42,16 @@ extension AppStore {
     }
 
     func moveFollowed(_ id: String, by offset: Int) {
-        var ordered = followedSeries
-        guard let index = ordered.firstIndex(where: { $0.id == id }) else { return }
-        let target = index + offset
-        guard ordered.indices.contains(target) else { return }
-        ordered.swapAt(index, target); reorderFollowed(ordered)
+        if let ordered = FollowedOrder.moving(followedSeries, id: id, by: offset) { reorderFollowed(ordered) }
     }
 
     func moveFollowed(from offsets: IndexSet, to destination: Int) {
-        var ordered = followedSeries
-        guard offsets.allSatisfy({ ordered.indices.contains($0) }) else { return }
-        let moved = offsets.sorted().map { ordered[$0] }
-        for index in offsets.sorted(by: >) { ordered.remove(at: index) }
-        let target = destination - offsets.filter { $0 < destination }.count
-        ordered.insert(contentsOf: moved, at: min(max(0, target), ordered.count)); reorderFollowed(ordered)
+        if let ordered = FollowedOrder.moving(followedSeries, from: offsets, to: destination) { reorderFollowed(ordered) }
     }
 
     private func reorderFollowed(_ ordered: [MarketSeries]) {
-        let groups = ordered.flatMap { item in storedFollowedSeries.filter { SeriesEquivalence.matches(item, $0) }.map(\.id) }
-        let unknown = preferences.followedSeriesIDs.filter { id in !groups.contains(id) }
-        mutatePreferences { $0.followedSeriesIDs = groups + unknown }
+        let ids = FollowedOrder.ids(ordered: ordered, stored: storedFollowedSeries, followedIDs: preferences.followedSeriesIDs)
+        mutatePreferences { $0.followedSeriesIDs = ids }
     }
 
     func prepareAlert(for item: MarketSeries) {

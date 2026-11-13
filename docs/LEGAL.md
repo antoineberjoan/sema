@@ -2,7 +2,7 @@
 
 ## État
 
-Antoine a retenu une publication en son nom personnel pour ce projet secondaire. Le 17 octobre 2026, il a demandé la publication directe des deux pages et autorisé l’adresse publique `antoineberjoan@gmail.com`, sans numéro de téléphone personnel. Les pages sont dans `site/dist/mentions-legales/` et `site/dist/confidentialite/`, avec des liens dans les footers de l’accueil et du téléchargement. Elles n’ajoutent ni compte, ni cookies de mesure d’audience, ni outil de paiement.
+Ce projet secondaire est publié au nom personnel de son éditeur. Les deux pages sont publiées directement, avec l’adresse publique `antoineberjoan@gmail.com` et sans numéro de téléphone personnel. Les pages sont dans `site/dist/mentions-legales/` et `site/dist/confidentialite/`, avec des liens dans les footers de l’accueil et du téléchargement. Elles n’ajoutent ni compte, ni cookies de mesure d’audience, ni outil de paiement.
 
 Les mentions identifient Antoine Berjoan comme éditeur et directeur de la publication. Aucune adresse postale personnelle n’a été fournie et il n’a pas confirmé les coordonnées d’identification détenues par Vercel. La publication demandée ne vaut donc pas validation de la complétude des mentions au regard de la LCEN ; ce point reste à régulariser. Aucun domicile ni téléphone privé n’est déduit des comptes connectés. Le téléphone affiché est explicitement celui de l’hébergeur.
 
@@ -10,7 +10,7 @@ L’article 1-1 de la LCEN décrit les informations d’identification de l’é
 
 ## Contact et traitements
 
-- Contact public de l’éditeur et demandes relatives aux données personnelles : `antoineberjoan@gmail.com`, explicitement autorisée par Antoine. Le formulaire Notion reste le canal des idées et bugs.
+- Contact public de l’éditeur et demandes relatives aux données personnelles : `antoineberjoan@gmail.com`. Le formulaire Notion reste le canal des idées et bugs.
 - Retours : sujet, type, description ; e-mail facultatif. Réponses privées dans l’espace sema d’Antoine. Finalités : répondre et améliorer le produit ; base : intérêt légitime.
 - Conservation proposée dans la notice : traitement de la demande, au maximum douze mois après le dernier échange. Supprimer ou anonymiser ensuite le retour ou la demande reçue par e-mail et ses pièces jointes, y compris les coordonnées des interlocuteurs. Il s’agit d’une règle d’exploitation à appliquer manuellement dans Notion, pas d’une suppression automatique déjà implémentée. Ne pas conserver une clé API ou une pièce sensible reçue par erreur.
 - Journaux d’hébergement : ne pas inventer de durée ou de localisation contractuelle ; renvoi vers les informations de Vercel. Aucune affirmation « zéro collecte ».

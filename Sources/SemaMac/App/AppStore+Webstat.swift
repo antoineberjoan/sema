@@ -78,25 +78,20 @@ extension AppStore {
                     failures[id] = "L’unité, l’échelle ou la base a changé. Les périodes récentes remplacent l’ancienne courbe ; rechargez l’historique et vérifiez les seuils."
                     updated.append(value)
                 } else {
-                    updated.append(value.replacing(observations: (held?.observations ?? []) + value.observations,
-                        completeHistory: held?.hasCompleteHistory))
+                    updated.append(value.continuing(held))
                 }
             } catch is CancellationError { break }
             catch {
                 if isSourceEnabled(source), generations[source] == sourceGenerations[source] {
                     failures[id] = error.localizedDescription
                     if MarketProvider(rawValue: source) != nil, let issue = error as? MarketDataError,
-                       issue == .quota || issue == .invalidKey { blockedMarkets[source] = issue.localizedDescription }
+                       issue.stopsProvider { blockedMarkets[source] = issue.localizedDescription }
                 }
             }
         }
         updated.removeAll { !isSourceEnabled(for: $0.id) || generations[sourceID(for: $0.id)] != sourceGenerations[sourceID(for: $0.id)] }
         if !changedMeasurements.isEmpty {
-            let paused = mutatePreferences { value in
-                for index in value.alerts.indices where changedMeasurements.contains(value.alerts[index].seriesID) {
-                    value.alerts[index].isEnabled = false
-                }
-            }
+            let paused = mutatePreferences { $0.alerts = AlertEvaluator.pausing($0.alerts, seriesIDs: changedMeasurements) }
             // Garde aussi le descripteur détenu quand la pause ne peut pas être enregistrée. Une actualisation ultérieure
             // doit détecter à nouveau le changement d’échelle au lieu de reprendre un seuil périmé.
             if !paused {
@@ -128,10 +123,9 @@ extension AppStore {
     func fetchRecent(descriptor: WebstatSeriesDescriptor, apiKey: String) async throws -> MarketSeries {
         let anchor = min(descriptor.lastPeriod ?? .now, .now)
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-        let start = calendar.date(byAdding: .year, value: -HistoryPeriod.recentYears, to: anchor)!
-        let points = try await WebstatClient().observations(apiKey: apiKey, descriptor: descriptor, start: start)
-        return descriptor.series(observations: points, syncedAt: .now,
-            completeHistory: descriptor.firstPeriod.map { $0 >= start } ?? false)
+        let window = HistoryPeriod.recent(endingAt: anchor, firstPublished: descriptor.firstPeriod, calendar: calendar)
+        let points = try await WebstatClient().observations(apiKey: apiKey, descriptor: descriptor, start: window.start)
+        return descriptor.series(observations: points, syncedAt: .now, completeHistory: window.isComplete)
     }
 
     func removeWebstatKey() async {
