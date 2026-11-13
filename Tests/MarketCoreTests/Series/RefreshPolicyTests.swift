@@ -42,4 +42,11 @@ struct RefreshPolicyTests {
         #expect(RefreshPolicy.nextClose(after: saturday) == utc("2026-11-09T16:50:00Z"))
         #expect(RefreshPolicy.nextDelay(syncedDates: [saturday], now: saturday, followsCloses: true) == RefreshPolicy.interval)
     }
+
+    @Test func automaticRefreshNeedsAnActiveAndConnectedSource() {
+        let rate = MarketSeries(id: "rate", name: "Taux", subtitle: "", category: .savings, unit: .percent, source: "Test", observations: [])
+        #expect(RefreshPolicy.isAutomaticallyRefreshable(rate, isSourceEnabled: true, connectedProviders: [], hasWebstatKey: true))
+        #expect(!RefreshPolicy.isAutomaticallyRefreshable(rate, isSourceEnabled: true, connectedProviders: [], hasWebstatKey: false))
+        #expect(!RefreshPolicy.isAutomaticallyRefreshable(rate, isSourceEnabled: false, connectedProviders: [], hasWebstatKey: true))
+    }
 }

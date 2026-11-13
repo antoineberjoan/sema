@@ -12,6 +12,14 @@ public enum RefreshPolicy {
     /// Jours cherchés autour d’une date pour trouver la clôture ouvrée la plus proche.
     private static let searchDays = 7
 
+    /// Une série suivie entre dans l'actualisation automatique si sa source est active et connectée.
+    public static func isAutomaticallyRefreshable(_ series: MarketSeries, isSourceEnabled: Bool,
+                                                  connectedProviders: Set<MarketProvider>, hasWebstatKey: Bool) -> Bool {
+        guard isSourceEnabled else { return false }
+        if let instrument = series.marketInstrument { return connectedProviders.contains(instrument.provider) }
+        return series.statisticalDescriptor != nil || hasWebstatKey
+    }
+
     /// Une série est due après 24 h, ou, quand elle est surveillée pour les mouvements inhabituels, dès qu’une clôture est passée depuis sa synchronisation.
     public static func isDue(syncedAt: Date?, now: Date, followsCloses: Bool = false) -> Bool {
         guard let syncedAt else { return true }

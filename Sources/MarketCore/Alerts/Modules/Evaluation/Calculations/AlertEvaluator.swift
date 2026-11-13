@@ -66,6 +66,20 @@ public enum AlertEvaluator {
         return result
     }
 
+    /// Règles actives d'une source qu'on suspend : elles reprendront à la dernière observation quand la source revient, sans événement sur ce qui a eu lieu entre-temps.
+    public static func ruleIDsToReset(_ rules: [AlertRule], isFromSuspendedSource: (String) -> Bool) -> Set<UUID> {
+        Set(rules.filter { $0.isEnabled && isFromSuspendedSource($0.seriesID) }.map(\.id))
+    }
+
+    /// Met en pause les règles des séries dont l'unité, l'échelle ou la base a changé : un seuil périmé ne doit pas se déclencher.
+    public static func pausing(_ rules: [AlertRule], seriesIDs: Set<String>) -> [AlertRule] {
+        rules.map { rule in
+            var rule = rule
+            if seriesIDs.contains(rule.seriesID) { rule.isEnabled = false }
+            return rule
+        }
+    }
+
     /// Deux observations de part et d'autre du seuil, pour tester la notification d'une règle sans toucher aux données réelles.
     public static func testSample(for rule: AlertRule, series item: MarketSeries, now: Date) -> MarketSeries {
         let step: Decimal = 0.1

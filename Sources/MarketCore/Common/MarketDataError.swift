@@ -3,6 +3,9 @@ import Foundation
 
 public enum MarketDataError: Error, LocalizedError, Equatable {
     case missingKey, invalidKey, quota, entitlement, unavailable, invalidData, network, unknownPlan
+    /// Une erreur qui vaut pour tout le fournisseur : inutile d'interroger ses autres instruments pendant cette actualisation.
+    public var stopsProvider: Bool { self == .quota || self == .invalidKey }
+
     public var errorDescription: String? {
         switch self {
         case .unknownPlan: "Le fournisseur ne précise pas votre forfait. Le catalogue accessible ne peut pas être déterminé. Consultez votre compte fournisseur."

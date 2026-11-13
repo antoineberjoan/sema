@@ -128,5 +128,13 @@ struct MarketCoreTests {
         #expect(throws: (any Error).self) { _ = try store.load() }
     }
 
-
+    @Test
+    func testContinuingAddsToHeldObservationsAndKeepsTheirCompleteness() {
+        let held = series([1, 2]).replacing(observations: series([1, 2]).observations, completeHistory: true)
+        let received = series([3])
+        let result = received.continuing(held)
+        #expect(result.observations.map(\.value) == [1, 2, 3])
+        #expect(result.hasCompleteHistory)
+        #expect(received.continuing(nil).observations.map(\.value) == [3])
+    }
 }

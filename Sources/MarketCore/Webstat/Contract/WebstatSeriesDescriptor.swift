@@ -49,6 +49,24 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
         (try? WebstatSeriesDescriptor(raw: raw, labels: self.labels.merging(labels, uniquingKeysWith: { _, replacement in replacement }))) ?? self
     }
 
+    /// Ajoute les libellés lisibles du jeu : un libellé par champ de dimension ou d'attribut, puis un repli sur les listes usuelles (unité, fréquence, agence, zone).
+    public func resolving(codeLabels: [String: [String: String]], dataset: WebstatDataset?) -> WebstatSeriesDescriptor {
+        var labels: [String: String] = [:]
+        let mapping = (dataset?.dimensionCodelists ?? [:]).merging(dataset?.attributeCodelists ?? [:], uniquingKeysWith: { _, attribute in attribute })
+        let attributes = self.attributes; let dimensions = self.dimensions
+        for (field, list) in mapping {
+            let code = raw[field.lowercased()]?.text ?? dimensions[field] ?? attributes[field]
+            if let code, let label = codeLabels[list]?[code] { labels[field.lowercased()] = label }
+        }
+        let fallback = ["unit": "CL_UNIT", "unit_mult": "CL_UNIT_MULT", "freq": "CL_FREQ", "source_agency": "CL_ORGANISATION", "ref_area": "CL_AREA"]
+        for (field, list) in fallback where labels[field] == nil {
+            let code = raw[field]?.text ?? dimensions[field.uppercased()] ?? attributes[field.uppercased()]
+            if let code, let label = codeLabels[list]?[code] { labels[field] = label }
+        }
+        if labels["ref_area"] == nil { labels["ref_area"] = labels["ame_ref_area"] ?? labels["zone_geo"] }
+        return resolving(labels: labels)
+    }
+
     public var frequency: ObservationFrequency {
         switch frequencyCode {
         case "D": .daily

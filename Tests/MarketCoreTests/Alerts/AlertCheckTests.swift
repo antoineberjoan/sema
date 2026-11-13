@@ -61,4 +61,20 @@ struct AlertCheckTests {
         let down = AlertEvaluator.testSample(for: fall, series: rate([4, 4]), now: start)
         #expect(AlertEvaluator.evaluate(fall, series: down) != nil)
     }
+
+    @Test func pausingTouchesOnlyTheNamedSeries() {
+        let kept = AlertRule(seriesID: "a", direction: .rise, threshold: 1, condition: .level)
+        let paused = AlertRule(seriesID: "b", direction: .rise, threshold: 1, condition: .level)
+        let result = AlertEvaluator.pausing([kept, paused], seriesIDs: ["b"])
+        #expect(result[0].isEnabled)
+        #expect(!result[1].isEnabled)
+    }
+
+    @Test func onlyEnabledRulesOfTheSuspendedSourceAreReset() {
+        let active = AlertRule(seriesID: "a", direction: .rise, threshold: 1, condition: .level)
+        let other = AlertRule(seriesID: "b", direction: .rise, threshold: 1, condition: .level)
+        let off = AlertRule(seriesID: "a", direction: .rise, threshold: 1, isEnabled: false, condition: .level)
+        let ids = AlertEvaluator.ruleIDsToReset([active, other, off]) { $0 == "a" }
+        #expect(ids == [active.id])
+    }
 }

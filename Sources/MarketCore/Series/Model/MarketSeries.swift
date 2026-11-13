@@ -56,6 +56,16 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     public var displayUnit: String { marketInstrument?.displayUnit ?? descriptor?.displayUnit ?? statisticalDescriptor?.displayUnit ?? unit.symbol }
     public var canAlert: Bool { descriptor?.canAlert ?? statisticalDescriptor?.canAlert ?? (unit != .unknown) }
 
+    /// Cette série reçue prolonge l'historique déjà détenu : ses observations s'ajoutent, la complétude détenue est gardée.
+    public func continuing(_ held: MarketSeries?) -> MarketSeries {
+        replacing(observations: (held?.observations ?? []) + observations, completeHistory: held?.hasCompleteHistory)
+    }
+
+    /// Comme `continuing(_:)`, mais une mesure qui a changé d'unité, d'échelle ou de base ne reprend rien de l'ancien historique.
+    public func continuing(_ held: MarketSeries?, sameMeasurement: Bool) -> MarketSeries {
+        sameMeasurement ? continuing(held) : replacing(observations: observations, completeHistory: false)
+    }
+
     public func replacing(observations: [MarketObservation], syncedAt: Date? = nil,
                           completeHistory: Bool? = nil, descriptor: WebstatSeriesDescriptor? = nil) -> MarketSeries {
         MarketSeries(id: id, name: name, subtitle: subtitle, category: category, unit: unit,

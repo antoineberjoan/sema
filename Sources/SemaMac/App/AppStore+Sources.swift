@@ -36,7 +36,7 @@ extension AppStore {
             if enabled { disabled.remove(id) } else { disabled.insert(id) }
             value.disabledSourceIDs = disabled
             if !enabled {
-                let rules = value.alerts.filter { $0.isEnabled && sourceID(for: $0.seriesID) == id }.map(\.id)
+                let rules = AlertEvaluator.ruleIDsToReset(value.alerts) { sourceID(for: $0) == id }
                 value.alertBaselineIDs = (value.alertBaselineIDs ?? []).union(rules)
             }
         }) else { return }
