@@ -137,16 +137,7 @@ final class AppStore {
     @discardableResult func setProfile(_ profile: LocalProfile) -> Bool { mutatePreferences { $0.profile = profile } }
 
     @discardableResult func followStarterSeries(ids: [String]) -> Bool {
-        let allowed = Set(WebstatStarter.ids)
-        var seen: Set<String> = []
-        let chosen = ids.filter { allowed.contains($0) && seen.insert($0).inserted }
-        let result = mutatePreferences { value in
-            value.followedSeriesIDs = chosen + value.followedSeriesIDs.filter { !allowed.contains($0) }
-            for index in value.alerts.indices where allowed.contains(value.alerts[index].seriesID) && !chosen.contains(value.alerts[index].seriesID) {
-                value.alerts[index].isEnabled = false
-            }
-            value.favoriteIDs = value.favoriteIDs.filter { chosen.contains($0) || !allowed.contains($0) }
-        }
+        let result = mutatePreferences { $0.followStarters(ids, allowed: Set(WebstatStarter.ids)) }
         if result { reconcileSelection() }
         return result
     }
@@ -174,23 +165,10 @@ final class AppStore {
         guard let value = previewSeries, !value.observations.isEmpty, !isLoadingPreview, previewError == nil,
               let previous = followedMatch(for: value), previous.id != value.id,
               isSourceEnabled(value.statisticalDescriptor?.dataset.source.rawValue ?? "webstat") else { return false }
-        let ids = Set(storedFollowedSeries.filter { SeriesEquivalence.matches($0, value) }.map(\.id))
+        let ids = FollowedOrder.equivalentIDs(of: value, among: storedFollowedSeries)
         do {
             try storage.cacheWebstat(series.filter { $0.id != value.id } + [value])
-            guard mutatePreferences({ next in
-                var hasInserted = false
-                next.followedSeriesIDs = next.followedSeriesIDs.compactMap { id in
-                    guard ids.contains(id) else { return id }
-                    if hasInserted { return nil }; hasInserted = true; return value.id
-                }
-                if !next.favoriteIDs.isDisjoint(with: ids) { next.favoriteIDs.subtract(ids); next.favoriteIDs.insert(value.id) }
-                next.alerts = next.alerts.map { rule in
-                    guard ids.contains(rule.seriesID) else { return rule }
-                    return AlertRule(id: rule.id, seriesID: value.id, direction: rule.direction, threshold: rule.threshold,
-                        isEnabled: rule.isEnabled, condition: rule.effectiveCondition,
-                        lastEvaluatedAt: max(rule.lastEvaluatedAt ?? .distantPast, value.latest?.date ?? .distantPast))
-                }
-            }) else { return false }
+            guard mutatePreferences({ $0.replacing(ids, with: value.id, latest: value.latest?.date) }) else { return false }
             merge([value]); if ids.contains(selectedSeriesID) { selectedSeriesID = value.id }
             status = "Source du repère : \(value.originBadge). Favori et règles conservés."
             return true
@@ -198,14 +176,8 @@ final class AppStore {
     }
 
     @discardableResult func unfollow(_ id: String) -> Bool {
-        let ids = Set(storedFollowedSeries.filter { candidate in
-            series.first(where: { $0.id == id }).map { SeriesEquivalence.matches($0, candidate) } ?? false
-        }.map(\.id)).union([id])
-        let result = mutatePreferences { value in
-            value.followedSeriesIDs.removeAll { ids.contains($0) }
-            value.favoriteIDs.subtract(ids)
-            for index in value.alerts.indices where ids.contains(value.alerts[index].seriesID) { value.alerts[index].isEnabled = false }
-        }
+        let ids = FollowedOrder.equivalentIDs(of: series.first { $0.id == id }, among: storedFollowedSeries).union([id])
+        let result = mutatePreferences { $0.unfollow(ids) }
         if result { reconcileSelection() }
         return result
     }

@@ -1,14 +1,13 @@
 # Sources, profil local et soutien
 
-Demandé et validé par Antoine le 16 octobre 2026.
 
 ## Réglages natifs
 
-Cinq rubriques : Général, Sources, Profil, Apparence, À propos. « Mon espace » ouvre directement Profil ; les actions « Connecter Webstat » ouvrent Sources. Les vues réutilisent les formulaires groupés, les interrupteurs, le sélecteur de fichiers et la typographie système de macOS. Aucune dépendance de production ni nouveau mouvement n’est ajouté.
+Six rubriques : Général, Sources, Profil, Apparence, Raccourcis, À propos. « Mon espace » ouvre directement Profil ; les actions « Connecter Webstat » ouvrent Sources. Les vues réutilisent les formulaires groupés, les interrupteurs, le sélecteur de fichiers et la typographie système de macOS. Aucune dépendance de production ni nouveau mouvement n’est ajouté.
 
 ### Sources
 
-Un interrupteur par source : Webstat, Insee, BCE, Eurostat, BRI, OCDE, Fed de New York et Banque mondiale. À la première ouverture, Webstat, Insee, BCE et Eurostat sont actives ; les quatre autres, plus spécialisées, s’activent dans les réglages (décision d’Antoine, 18 octobre 2026). Les préférences existantes ne changent pas. Les réglages n’exposent pas une liste éditoriale de séries : Explorer garde les catalogues complets des sources activées et le choix des jeux et dimensions. Aucun catalogue complet d’observations n’est importé automatiquement.
+Un interrupteur par source : Webstat, Insee, BCE, Eurostat, BRI, OCDE, Fed de New York et Banque mondiale. À la première ouverture, Webstat, Insee, BCE et Eurostat sont actives ; les quatre autres, plus spécialisées, s’activent dans les réglages. Les préférences existantes ne changent pas. Les réglages n’exposent pas une liste éditoriale de séries : Explorer garde les catalogues complets des sources activées et le choix des jeux et dimensions. Aucun catalogue complet d’observations n’est importé automatiquement.
 
 - Les préférences existantes continuent à rendre toutes les sources accessibles. Aucune hiérarchie ou sélection de fournisseurs n’est imposée.
 - Désactiver une source la retire d’Explorer et suspend son actualisation, le chargement d’historique et les alertes correspondantes. Les repères, favoris, règles et observations restent conservés. La connexion Webstat est distincte : désactiver Webstat ne supprime pas sa clé.

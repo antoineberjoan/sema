@@ -13,6 +13,7 @@ Référence : dépôt `antoineberjoan/sophos`. Lire le `SKILL.md` d'un skill à 
 | [construire](https://antoineberjoan.github.io/sophos/skills/construire/SKILL.html) | 0.9.0 |
 | [expliquer](https://antoineberjoan.github.io/sophos/skills/expliquer/SKILL.html) | 0.3.0 |
 | [concevoir](https://antoineberjoan.github.io/sophos/skills/concevoir/SKILL.html) | 0.5.0 |
+| [cristalliser](https://antoineberjoan.github.io/sophos/skills/cristalliser/SKILL.html) | 2.1.0 |
 <!-- carte:skills:fin -->
 
 - `penser` : la façon de travailler avec Antoine. Une direction qu'il tranche est une décision de ce dépôt, dans `docs/decisions/`.
@@ -49,7 +50,7 @@ Référence : `patron/structure.md` de Sophos. Chaque sorte de code a une forme 
 | Connecteur | `Sources/MarketCore/Webstat`, `Sdmx`, `NewYorkFed`, `WorldBank`, `Fred`, `TwelveData`, `AlphaVantage`, `Claude`, `Gdelt`, `CentralBankFeeds` ; `Sources/SemaMac/Infrastructure/Keychain`, `Notifications`, `LoginItem`, `GlobalShortcuts`, `AppleIntelligence`, `Feedback` |
 | Module d'écran | `Sources/SemaMac/Features/*` |
 
-En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Cette forme est celle de `patron/structure.md` de Sophos. La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés. Les dossiers `Common/` de `MarketCore` et de `SemaMac` sont au niveau du domaine, hors unité : ils portent ce que plusieurs unités partagent.
+En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Cette forme est celle de `patron/structure.md` de Sophos. Une étape d'une bibliothèque de règles est un dossier `Modules/<Étape>/` (`Alerts/Modules/Evaluation/`), qui porte ses propres rôles (`Calculations/`, `Model/`). La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés : `AppStore` assemble (il lit, appelle, stocke) et ne porte aucune règle. Tout calcul, toute décision, tout filtre et toute validation vit dans une étape de `MarketCore`, avec son test ; le texte des notifications vit dans `Sources/SemaMac/Common/NotificationText.swift`. Les dossiers `Common/` de `MarketCore` et de `SemaMac` sont au niveau du domaine, hors unité : ils portent ce que plusieurs unités partagent.
 
 ## Bibliothèque de composants
 

@@ -2,7 +2,7 @@
 
 ## Contrat produit
 
-Le catalogue appartient au fournisseur. Sema ne maintient pas une liste autorisée d’indices : l’utilisateur choisit une source, recherche un jeu publié puis une série existante par son libellé, et prévisualise la série avant de la suivre. Les dimensions et la clé exacte restent facultatives dans Recherche avancée, sans formulaire obligatoire. La liste initiale Webstat et les exemples de ce document ne limitent pas les possibilités.
+Le catalogue appartient au fournisseur. sema ne maintient pas une liste autorisée d’indices : l’utilisateur choisit une source, recherche un jeu publié puis une série existante par son libellé, et prévisualise la série avant de la suivre. Les dimensions et la clé exacte restent facultatives dans Recherche avancée, sans formulaire obligatoire. La liste initiale Webstat et les exemples de ce document ne limitent pas les possibilités.
 
 Explorer place aussi vingt références de départ reconnaissables en tête de chaque source statistique publique. Elles ne sont montrées que si leur jeu figure dans le catalogue courant ; leur clic retrouve la clé complète dans le catalogue officiel avant d’ouvrir l’aperçu. Les libellés de départ sont des aides à la navigation, pas des métadonnées officielles. Les changements de version ou de catalogue ne fabriquent pas de série : une référence absente est signalée, et la recherche complète demeure disponible. Les suggestions ne suivent aucune série automatiquement.
 
@@ -43,7 +43,7 @@ Un aperçu charge les six dernières années lorsque la source le permet. « Tou
 
 Les valeurs restent des `Decimal`, dans l’unité et l’échelle de publication. Un volume de 100 milliards de dollars reste 100, avec l’échelle affichée ; il n’est pas multiplié une seconde fois. Les valeurs manquantes ne deviennent pas zéro. Les dates trimestrielles et annuelles conservent leur intervalle civil.
 
-Favoris, ordre, alertes et cache sont partagés avec Webstat. L’actualisation peut fonctionner sans clé Webstat pour les repères publics. Un changement d’unité, d’échelle ou de base ne fusionne pas les valeurs de l’ancienne et de la nouvelle mesure : les règles sont mises en pause avant toute évaluation. Le chargement de périodes plus anciennes ne déclenche pas rétroactivement des alertes. Le fonctionnement reste manuel, sans surveillance quand Sema est quittée ou le Mac en veille.
+Favoris, ordre, alertes et cache sont partagés avec Webstat. L’actualisation peut fonctionner sans clé Webstat pour les repères publics. Un changement d’unité, d’échelle ou de base ne fusionne pas les valeurs de l’ancienne et de la nouvelle mesure : les règles sont mises en pause avant toute évaluation. Le chargement de périodes plus anciennes ne déclenche pas rétroactivement des alertes. Le fonctionnement reste manuel, sans surveillance quand sema est quittée ou le Mac en veille.
 
 ## Apport réel par rapport à Webstat
 

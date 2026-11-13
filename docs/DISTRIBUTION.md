@@ -57,9 +57,9 @@ brew trust --cask antoineberjoan/sema/sema-app
 brew install --cask sema-app
 ```
 
-L’approbation porte uniquement sur ce cask tiers. Antoine demande de garder uniquement la commande courte sur la landing ; la préparation reste dans cette documentation technique.
+L’approbation porte uniquement sur ce cask tiers. La landing garde seulement la commande courte ; la préparation reste dans cette documentation technique.
 
-Antoine a choisi de ne pas prendre d’adhésion Apple Developer. La distribution reste signée ad hoc ; aucune intégration au catalogue officiel Homebrew ni notarisation n’est déclarée.
+Sans adhésion Apple Developer, la distribution reste signée ad hoc ; aucune intégration au catalogue officiel Homebrew ni notarisation n’est déclarée.
 
 Le manifeste distingue `validation.homebrewInstall`, `validation.homebrewUpgrade` et `validation.internetDownload`. Le générateur de page refuse d’exposer une commande Homebrew active si ces trois valeurs ne sont pas vraies. La désinstallation ne supprime pas les préférences de l’utilisateur ; aucun `zap` automatique n’est défini.
 

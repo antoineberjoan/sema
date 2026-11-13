@@ -1,4 +1,4 @@
-// Rubrique Panorama : le repère sélectionné en mode Focus et le passage rapide aux autres.
+// Rubrique Mes repères : le repère sélectionné en mode Focus et le passage rapide aux autres.
 import SemaDesign
 import SwiftUI
 

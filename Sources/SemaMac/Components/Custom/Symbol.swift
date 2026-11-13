@@ -4,7 +4,7 @@
 import SemaDesign
 import SwiftUI
 
-/// Le signe d’Antoine (8 novembre 2026). Dans la barre des menus, le point suit la couleur de l’image modèle.
+/// Le signe de sema. Dans la barre des menus, le point suit la couleur de l’image modèle.
 struct Symbol: View {
     var isMenuBarIcon = false
 
