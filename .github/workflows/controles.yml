@@ -7,7 +7,7 @@
 # - Pas après la fusion : la PR vient d'être prouvée.
 # - Le lundi : la suite complète, pour ce qui ne dépend pas d'un changement.
 # - Le runner se choisit sans toucher ce fichier : la variable RUNNER du dépôt, en JSON. Sans elle,
-#   le runner hébergé de GitHub. Avec un forfait épuisé : ["self-hosted", "macOS"] (outils/runner.sh).
+#   le runner hébergé de GitHub. Avec un forfait épuisé : ["self-hosted", "macOS"] (`outils/runner.sh` de Sophos).
 
 name: Contrôles
 
