@@ -53,7 +53,7 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 
 ## Origine des valeurs
 
-Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil ([décision](decisions/2026-10-18-profil-neuf-sans-valeur-fictive.md)). Aucune valeur fictive n’apparaît dans l’app : avant connexion, un repère choisi n’a pas d’observation et son détail indique « Pas encore de données » avec l’accès à la connexion Webstat. Après connexion, les séries choisies reçoivent les observations de Webstat. Aucun fonds n’est exposé ; une règle ou un favori de fonds déjà écrit reste lu sans être actif. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
+Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil ([décision](decisions/2026-10-18-profil-neuf-sans-valeur-fictive.md)). Aucune valeur fictive n’apparaît dans l’app. Sans connexion Webstat, un repère choisi n’a pas d’observation : son détail indique « Pas encore de données » et donne accès à la connexion Webstat. Une fois connecté, il reçoit les observations de Webstat. Aucun fonds n’est exposé ; le fichier de préférences peut garder une règle ou un favori de fonds sans l’activer. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles, à chaque actualisation.
 
 ## Dates et calculs
 
@@ -74,7 +74,7 @@ Les séries agrégées des OPC et les autres jeux accessibles peuvent être ajou
 
 ## Exemples à retrouver dans le catalogue
 
-Repérage du 16 octobre 2026 à partir du catalogue officiel et de ses fiches. Les séries ci-dessous peuvent être recherchées dans Explorer, sans ajout de code dédié. Une fiche disponible ne remplace pas le contrôle des observations, conventions et droits du producteur.
+Sélection issue du catalogue officiel et de ses fiches. Les séries ci-dessous peuvent être recherchées dans Explorer, sans ajout de code dédié. Une fiche disponible ne remplace pas le contrôle des observations, conventions et droits du producteur.
 
 | Priorité | Repère candidat | Série / fréquence | Intérêt pour un CGP |
 | --- | --- | --- | --- |
@@ -87,7 +87,14 @@ Repérage du 16 octobre 2026 à partir du catalogue officiel et de ses fiches. L
 | Ensuite | Dépôts à terme des ménages et entreprises | [Publication officielle](https://www.banque-france.fr/fr/statistiques/epargne/taux-de-remuneration-des-depots-bancaires-2026-06), mensuelle ; codes à sélectionner | Contexte sur l’épargne bancaire et la trésorerie. |
 | Ensuite | Collecte agrégée des OPC par catégorie | [Panorama officiel](https://www.banque-france.fr/fr/statistiques/epargne/panorama-financier-des-opc-france-2024-q4), codes et périodicités à sélectionner | Flux agrégés ; aucun suivi d’un fonds individuel n’est réintroduit. |
 
-Les séries de taux souverains candidates sont à jour dans le catalogue au repérage, depuis janvier 1980 jusqu’à septembre 2026. Les séries de crédit par durée repérées couvrent mars 2004 à juin 2026. Ces profondeurs proviennent du catalogue. Les observations du Bund, de l’indice IPCH France, de l’encours OPC actions et du crédit immobilier trimestriel ont été vérifiées par appels réels le 16 octobre 2026 ; le reste du catalogue ne reçoit pas de badge de validation exhaustive.
+Les profondeurs viennent du catalogue. Le reste du catalogue ne reçoit pas de badge de validation exhaustive.
+
+| Série | Couverture dans le catalogue | Couverture mesurée le | Observations vérifiées par appel réel le |
+| --- | --- | --- | --- |
+| Taux souverains candidats | janvier 1980 à septembre 2026 | 2026-10-16 | Bund : 2026-10-16 |
+| Crédit par durée | mars 2004 à juin 2026 | 2026-10-16 | crédit immobilier trimestriel : 2026-10-16 |
+| IPCH France | | | 2026-10-16 |
+| Encours OPC actions | | | 2026-10-16 |
 
 ### États-Unis et autres compléments
 

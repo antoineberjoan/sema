@@ -5,13 +5,13 @@ import SwiftUI
 
 // SIGNATURE — une lecture, sans boucle. Le texte reste disponible à VoiceOver.
 //    0 ms  Le cartouche est posé, le signe attend la fin de l’entrée du panneau.
-//  300 ms  Le signe se trace pendant 1 800 ms, de la boucle vers le palier.
-// 1250 ms  « L’économie bouge. » apparaît en fondu, sur 800 ms.
-// 1850 ms  « Gardez vos repères. » se pose avec un ressort amorti, sur 800 ms.
+//  100 ms  Le signe se trace pendant 550 ms, de la boucle vers le palier.
+//  650 ms  Le point sarcelle et « L’économie bouge. » apparaissent en fondu, sur 200 ms.
+//  700 ms  « Gardez vos repères. » se pose en fondu avec un léger décalage, sur 200 ms. La séquence finit à 900 ms.
 // Réduire les animations : le cartouche est immédiatement dans son état final.
 private enum SignatureMotion {
-    // Mouvement 1.1 : la ligne se dessine en 550 ms (vue à chaque ouverture, donc courte), puis le point et le
-    // contexte apparaissent ensemble, la mission suit après un décalage de 50 ms. Toute la séquence finit sous 900 ms.
+    // La ligne se dessine pendant `DesignDuration.explain` (vue à chaque ouverture, donc courte), puis le point et le
+    // contexte apparaissent ensemble, la mission suit après `DesignMotion.stagger`.
     static let drawDuration = DesignDuration.explain
     static let contextDelay = Int(DesignDuration.signatureMotionDrawDelay * 1_000) + Int(drawDuration * 1_000)
     static let missionDelay = contextDelay + Int(DesignMotion.stagger * 1_000)

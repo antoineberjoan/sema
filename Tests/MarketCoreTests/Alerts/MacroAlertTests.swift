@@ -68,15 +68,15 @@ struct MacroAlertTests {
 
     @Test func schemaOnePreferencesAndFundRulesStayReadableWithoutReinterpretation() throws {
         let storedV1 = Data("""
-        {"schemaVersion":1,"favoriteIDs":["atlas-i-eur","fr10"],"notificationsEnabled":false,
-         "alerts":[{"id":"0F1396B5-51D9-42B3-A6DC-75E16B00D144","seriesID":"atlas-i-eur",
+        {"schemaVersion":1,"favoriteIDs":["fund-a","fr10"],"notificationsEnabled":false,
+         "alerts":[{"id":"0F1396B5-51D9-42B3-A6DC-75E16B00D144","seriesID":"fund-a",
                     "direction":"fall","threshold":3,"isEnabled":true}]}
         """.utf8)
         var preferences = try JSONDecoder().decode(AppPreferences.self, from: storedV1)
         #expect(preferences.themeID == nil)
         #expect(preferences.ribbonPositionID == nil)
         #expect(preferences.alerts.first?.effectiveCondition == .relativeChange)
-        #expect(preferences.favoriteIDs.contains("atlas-i-eur"))
+        #expect(preferences.favoriteIDs.contains("fund-a"))
         preferences.themeID = "lavender"
         preferences.ribbonPositionID = "right"
         preferences.alerts.append(AlertRule(seriesID: "inflation", direction: .fall, threshold: 0,

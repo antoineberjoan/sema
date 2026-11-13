@@ -1,6 +1,6 @@
 # La marge d'un bouton posé au coin d'une carte lit un rôle de ligne de liste
 
-Date : 2026-11-12 · Statut : proposée
+Date : 2026-11-12 · Statut : remplacée par [Un point d’étape et un bouton de coin ont chacun leur rôle de jeton](2026-11-13-roles-exacts-point-d-etape-et-bouton-de-coin.md)
 Décidé par : à confirmer par Antoine
 
 ## Contexte

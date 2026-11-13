@@ -149,12 +149,12 @@ struct WebstatCatalogTests {
 
     @Test func versionOneUpgradePreservesAlertIdentityCheckpointAndFundFavorites() throws {
         let rule = AlertRule(seriesID: "fr10", direction: .rise, threshold: 3, condition: .level, lastEvaluatedAt: Date(timeIntervalSince1970: 42))
-        var storedV1 = AppPreferences(favoriteIDs: ["fr10", "fund-i-eur"], alerts: [rule])
+        var storedV1 = AppPreferences(favoriteIDs: ["fr10", "fund-a"], alerts: [rule])
         storedV1.schemaVersion = 1
         let upgraded = try PreferencesMigration.upgrade(storedV1)
         #expect(upgraded.schemaVersion == 2)
         #expect(upgraded.favoriteIDs.contains(IdentifierMigration.upgrade("fr10")))
-        #expect(upgraded.favoriteIDs.contains("fund-i-eur"))
+        #expect(upgraded.favoriteIDs.contains("fund-a"))
         #expect(upgraded.alerts[0].id == rule.id)
         #expect(upgraded.alerts[0].lastEvaluatedAt == rule.lastEvaluatedAt)
         #expect(upgraded.alerts[0].seriesID == IdentifierMigration.upgrade("fr10"))
