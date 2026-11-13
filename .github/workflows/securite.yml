@@ -1,0 +1,71 @@
+# Sécurité — trois scanners gratuits lancés à chaque PR, à chaque push sur main
+# et chaque lundi. Source : sophos (fonder). Ne pas modifier projet par projet.
+#
+# - gitleaks    : cherche une clé, un token ou un mot de passe dans le code et
+#                 dans tout l'historique Git. Une clé commitée reste lisible même
+#                 supprimée ensuite.
+# - osv-scanner : compare les dépendances (lockfiles) à la base publique des
+#                 failles connues OSV.dev. La plupart du code d'un projet vient
+#                 d'autres que nous.
+# - semgrep     : relit notre propre code à la recherche de motifs dangereux
+#                 (injection, secret en dur, route sans contrôle). Remplace
+#                 CodeQL, payant sur dépôt privé.
+
+name: Sécurité
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: securite-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  secrets:
+    name: Secrets (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0
+      - name: Installer gitleaks 8.30.1
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz | tar -xz gitleaks
+      - name: Analyser le code et tout l'historique
+        run: ./gitleaks git --redact --verbose --exit-code 1 .
+
+  dependances:
+    name: Dépendances (osv-scanner)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Installer osv-scanner 2.7.0
+        run: |
+          curl -sSfL -o osv-scanner https://github.com/google/osv-scanner/releases/download/v2.7.0/osv-scanner_linux_amd64
+          chmod +x osv-scanner
+      - name: Comparer les dépendances aux failles connues
+        run: |
+          set +e
+          ./osv-scanner scan source --recursive .
+          code=$?
+          # 128 = aucun fichier de dépendances trouvé : rien à vérifier.
+          if [ "$code" -eq 128 ]; then echo "Aucune dépendance déclarée."; exit 0; fi
+          exit $code
+
+  code:
+    name: Code (semgrep)
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - name: Relire le code
+        run: semgrep scan --config p/default --error --metrics off
