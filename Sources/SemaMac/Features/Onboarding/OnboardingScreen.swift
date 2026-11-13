@@ -61,17 +61,17 @@ private struct WelcomeCollection: Identifiable {
     let subtitle: String
     let symbol: String
     let items: [(id: String, title: String)]
-    var seriesIDs: [String] { items.map { WebstatStarter.starterKey($0.id) } }
+    var seriesIDs: [String] { items.map { $0.id } }
 
     static let all: [Self] = [
         .init(id: "rates", title: "Taux & marchés", subtitle: "Le coût de l’argent", symbol: "chart.xyaxis.line",
-              items: [("fr10", "France · 10 ans"), ("ecb", "Dépôt BCE"), ("estr", "€STR")]),
+              items: [("FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", "France · 10 ans"), ("FM.D.U2.EUR.4F.KR.DFR.LEV", "Dépôt BCE"), ("ESTR.B.EU000A2X2A25.WT", "€STR")]),
         .init(id: "economy", title: "Économie réelle", subtitle: "Prix et financement", symbol: "building.2",
-              items: [("inflation", "Inflation France"), ("inflation-euro", "Inflation euro"), ("mortgage-fr", "Crédit immobilier")]),
+              items: [("HICP.M.FR.N.000000.4D0.ANR", "Inflation France"), ("HICP.M.U2.N.000000.4D0.ANR", "Inflation euro"), ("MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N", "Crédit immobilier")]),
         .init(id: "savings", title: "Épargne", subtitle: "Les repères du quotidien", symbol: "leaf",
-              items: [("livreta", "Livret A"), ("ldds", "LDDS"), ("lep", "LEP")]),
+              items: [("MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O", "Livret A"), ("MIR1.M.FR.B.L23FRLD.D.R.A.2254U6.EUR.O", "LDDS"), ("MIR1.M.FR.B.L23FRLP.H.R.A.2250U6.EUR.O", "LEP")]),
         .init(id: "currencies", title: "Devises", subtitle: "L’euro dans le monde", symbol: "globe.europe.africa",
-              items: [("eurusd", "EUR / USD"), ("eurjpy", "EUR / JPY"), ("eurchf", "EUR / CHF"), ("eurgbp", "EUR / GBP")])
+              items: [("EXR.D.USD.EUR.SP00.A", "EUR / USD"), ("EXR.D.JPY.EUR.SP00.A", "EUR / JPY"), ("EXR.D.CHF.EUR.SP00.A", "EUR / CHF"), ("EXR.D.GBP.EUR.SP00.A", "EUR / GBP")])
     ]
 }
 
@@ -107,7 +107,7 @@ struct OnboardingScreen: View {
     private var previewSeries: [MarketSeries] {
         WelcomeCollection.all.compactMap { collection in
             collection.items.lazy
-                .filter { selection.contains(WebstatStarter.starterKey($0.id)) }
+                .filter { selection.contains($0.id) }
                 .compactMap { item in Self.previewExamples.first { $0.id == item.id } }
                 .first { $0.observations.count > Self.minimumPreviewObservations }
         }

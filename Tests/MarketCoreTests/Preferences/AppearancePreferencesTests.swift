@@ -16,8 +16,8 @@ struct AppearancePreferencesTests {
         let value = try PreferencesRepository(fileURL: file).load()
         #expect(value.appearanceID == nil)
         #expect(value.themeID == "polar")
-        #expect(value.followedSeriesIDs == [WebstatStarter.starterKey("eurusd")])
-        #expect(value.favoriteIDs == [WebstatStarter.starterKey("eurusd")])
+        #expect(value.followedSeriesIDs == [IdentifierMigration.upgrade("eurusd")])
+        #expect(value.favoriteIDs == [IdentifierMigration.upgrade("eurusd")])
         #expect(try Data(contentsOf: file) == previous)
     }
 

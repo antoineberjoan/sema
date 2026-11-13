@@ -93,7 +93,7 @@ struct ExchangeRatePairTests {
         #expect(preferences.invertedCurrencyPairs == nil)
         let originalFile = try Data(contentsOf: file)
         #expect(originalFile == previous)
-        preferences.alerts = [AlertRule(seriesID: WebstatStarter.starterKey("eurusd"), direction: .rise,
+        preferences.alerts = [AlertRule(seriesID: IdentifierMigration.upgrade("eurusd"), direction: .rise,
             threshold: Decimal(string: "1.2")!, condition: .level)]
         let favorites = preferences.favoriteIDs
         let selection = preferences.followedSeriesIDs

@@ -153,19 +153,19 @@ struct WebstatCatalogTests {
         storedV1.schemaVersion = 1
         let upgraded = try PreferencesMigration.upgrade(storedV1)
         #expect(upgraded.schemaVersion == 2)
-        #expect(upgraded.favoriteIDs.contains(WebstatStarter.starterKey("fr10")))
+        #expect(upgraded.favoriteIDs.contains(IdentifierMigration.upgrade("fr10")))
         #expect(upgraded.favoriteIDs.contains("fund-i-eur"))
         #expect(upgraded.alerts[0].id == rule.id)
         #expect(upgraded.alerts[0].lastEvaluatedAt == rule.lastEvaluatedAt)
-        #expect(upgraded.alerts[0].seriesID == WebstatStarter.starterKey("fr10"))
+        #expect(upgraded.alerts[0].seriesID == IdentifierMigration.upgrade("fr10"))
         #expect(upgraded.isOnboardingCompleted == true)
     }
 
     @Test func versionTwoKeepsEmptyAndDeduplicatesCanonicalSelection() throws {
         let empty = AppPreferences(followedSeriesIDs: [])
         #expect(try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(empty)).followedSeriesIDs.isEmpty)
-        let duplicate = AppPreferences(followedSeriesIDs: ["fr10", WebstatStarter.starterKey("fr10"), "eurusd"])
-        #expect(try PreferencesMigration.upgrade(duplicate).followedSeriesIDs == [WebstatStarter.starterKey("fr10"), WebstatStarter.starterKey("eurusd")])
+        let duplicate = AppPreferences(followedSeriesIDs: ["fr10", IdentifierMigration.upgrade("fr10"), "eurusd"])
+        #expect(try PreferencesMigration.upgrade(duplicate).followedSeriesIDs == [IdentifierMigration.upgrade("fr10"), IdentifierMigration.upgrade("eurusd")])
     }
 
     @Test func migrationIsAtomicAndKeepsOriginalFile() throws {

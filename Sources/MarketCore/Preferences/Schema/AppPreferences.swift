@@ -29,14 +29,14 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     /// Morning brief settings; absent means off at 8:00 on weekdays.
     public var brief: BriefPreferences?
 
-    public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
+    public init(favoriteIDs: Set<String> = ["FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", "FM.D.U2.EUR.4F.KR.DFR.LEV", "EXR.D.USD.EUR.SP00.A", "MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O"],
                 alerts: [AlertRule] = [], canNotify: Bool = false, themeID: String? = "brand", appearanceID: String? = nil,
                 followedSeriesIDs: [String] = [], isOnboardingCompleted: Bool? = nil,
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = StatisticalSource.inactiveByDefault,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
                 ribbonGlass: RibbonGlassPreferences? = nil, shortcuts: ShortcutPreferences? = nil) {
-        self.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.starterKey))
-        self.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.starterKey)
+        self.favoriteIDs = favoriteIDs
+        self.followedSeriesIDs = followedSeriesIDs
         self.alerts = alerts
         self.canNotify = canNotify
         self.themeID = themeID

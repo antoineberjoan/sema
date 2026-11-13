@@ -17,7 +17,7 @@ struct SeriesExplanationTests {
 
     private func rate(_ id: String, values: [Decimal], unit: String = "PC", multiplier: String = "0",
                       frequency: String? = nil, definition: String = "Définition du fournisseur") throws -> MarketSeries {
-        let key = WebstatStarter.starterKey(id)
+        let key = IdentifierMigration.upgrade(id)
         return try WebstatSeriesDescriptor(raw: [
             "series_key": .string(key), "dataset_id": .string(String(key.split(separator: ".")[0])),
             "freq": .string(frequency ?? String(key.split(separator: ".")[1])),
@@ -140,6 +140,14 @@ struct SeriesExplanationTests {
             let reading = try #require(explain(rate(id, values: [2])))
             #expect(reading.definition != "Définition du fournisseur")
             #expect(reading.reading != nil)
+        }
+    }
+
+    @Test func readingRulesAreKeyedBySeriesCode() throws {
+        let rules = ["FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", "FM.D.U2.EUR.4F.KR.DFR.LEV", "MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N"]
+        for code in rules {
+            let reading = try #require(explain(rate(code, values: [3, 4])))
+            #expect(reading.definition != "Définition du fournisseur")
         }
     }
 

@@ -26,9 +26,8 @@ public struct ExchangeRatePair: Equatable, Sendable {
     public init?(_ series: MarketSeries) {
         let key: String
         if series.descriptor == nil, series.statisticalDescriptor == nil {
-            let canonical = WebstatStarter.starterKey(series.id)
-            guard canonical.hasPrefix(SeriesEquivalence.webstatPrefix) else { return nil }
-            key = String(canonical.dropFirst(SeriesEquivalence.webstatPrefix.count))
+            guard series.id.hasPrefix(SeriesEquivalence.webstatPrefix) else { return nil }
+            key = String(series.id.dropFirst(SeriesEquivalence.webstatPrefix.count))
         } else {
             guard let verified = SeriesEquivalence.referenceExchangeRateKey(series) else { return nil }
             key = String(verified.dropFirst(SeriesEquivalence.referencePrefix.count))

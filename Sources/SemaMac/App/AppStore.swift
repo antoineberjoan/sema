@@ -11,7 +11,7 @@ final class AppStore {
     var section: WorkspaceSection = .overview
     var settingsTab: SettingsTab = .general
     var category: SeriesCategory = .markets
-    var selectedSeriesID = WebstatStarter.starterKey("eurusd")
+    var selectedSeriesID = "EXR.D.USD.EUR.SP00.A"
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -140,7 +140,7 @@ final class AppStore {
     @discardableResult func followStarterSeries(ids: [String]) -> Bool {
         let allowed = Set(WebstatStarter.ids)
         var seen: Set<String> = []
-        let chosen = ids.map(WebstatStarter.starterKey).filter { allowed.contains($0) && seen.insert($0).inserted }
+        let chosen = ids.filter { allowed.contains($0) && seen.insert($0).inserted }
         let result = mutatePreferences { value in
             value.followedSeriesIDs = chosen + value.followedSeriesIDs.filter { !allowed.contains($0) }
             for index in value.alerts.indices where allowed.contains(value.alerts[index].seriesID) && !chosen.contains(value.alerts[index].seriesID) {
