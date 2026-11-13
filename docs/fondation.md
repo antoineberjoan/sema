@@ -48,6 +48,7 @@ La marque tient en cinq couleurs : Encre, Graphite, Papier, Brume et Sarcelle Pr
 - **Montré** : oui
 - **Signature** : sema
 - **Publics** : les personnes qui suivent des repères économiques, les contributeurs du dépôt
-- **Ton** : calme, précis, sans phrase de remplissage. Chaque chiffre porte sa source et sa date.
+- **Ton** : calme, précis, sans phrase de remplissage ; direct, posé et concret. Vouvoiement, phrases courtes, vocabulaire financier expliqué. Chaque chiffre porte sa source, sa période et son unité. Une hausse de taux n'est pas toujours une bonne nouvelle : couleur neutre et variation signée.
+- **Qualités** : calme, précision, attention aux détails.
 - **Mots** : repère, série, source, seuil, séance. On évite « temps réel », que les données ne garantissent pas.
 - **Jamais** : une cause économique inventée, un suivi quand l'app est quittée, une valeur que la source n'a pas publiée.
