@@ -1,10 +1,11 @@
-// Fige la liste des types publics du cœur : un déplacement de fichier ne doit pas changer ce que l'app peut lire.
+// Fige la liste des types publics du cœur : l'app ne lit que ces types.
 import Foundation
 import Testing
 
 struct PublicSurfaceTests {
     private static let expected: [String] = [
         "AgendaItem",
+        "AlertCheck",
         "AlertCondition",
         "AlertDirection",
         "AlertEvaluator",
@@ -22,6 +23,7 @@ struct PublicSurfaceTests {
         "DayContext",
         "EconomicRelease",
         "ExchangeRatePair",
+        "FollowedOrder",
         "FredClient",
         "GdeltClient",
         "Headline",
