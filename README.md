@@ -17,7 +17,7 @@ sema est une application macOS native pour consulter des séries économiques pu
 
 ## Démarrer
 
-Pour installer l'app : télécharger le DMG sur [getsema.app](https://getsema.app/download/), ou lancer `brew install --cask antoineberjoan/sema/sema-app`. La version alpha porte une signature ad hoc et n'est pas notarisée par Apple : macOS peut bloquer la première ouverture (voir [la distribution](docs/DISTRIBUTION.md)).
+Pour installer l'app : télécharger le DMG sur [getsema.app](https://getsema.app/), ou lancer `brew install --cask antoineberjoan/sema/sema-app`. La version alpha porte une signature ad hoc et n'est pas notarisée par Apple : macOS peut bloquer la première ouverture (voir [la distribution](docs/DISTRIBUTION.md)).
 
 Pour développer (macOS 14 ou plus, Swift 6, Xcode complet) :
 

@@ -14,7 +14,7 @@ La direction **Focus** est retenue.
 - Le détail repose sur le fond de la fenêtre, sans carte en plus et sans ombre intérieure.
 - La variation et son horizon sont dans un petit badge à côté de la valeur. Il prend la couleur du thème, sans code vert ou rouge : une hausse de taux n'est pas toujours une bonne nouvelle.
 - Le bouton d'alerte est juste sous le badge, sur le même alignement. Ce bloc se replie sous la valeur si la largeur manque.
-- Sous le graphique, la date de la valeur publiée est un texte sans interaction. Antoine a demandé de retirer le grand panneau de source : aucun popover, aucune aide au survol ne part de cette date. Définition, métadonnées et date d'actualisation restent dans les aperçus du catalogue.
+- Sous le graphique, la date de la valeur publiée est un texte sans interaction. Il n'y a pas de grand panneau de source : aucun popover, aucune aide au survol ne part de cette date. Définition, métadonnées et date d'actualisation restent dans les aperçus du catalogue.
 - Les paires de devises vérifiées ont un titre court français (« Euro / Dollar ») et leur code (« USD »). Le libellé officiel reste dans les informations de source.
 - Seule la mention « données fictives » accompagne la date des exemples. Aucun libellé de source ni accordéon technique dans la vue principale.
 - Resurf reste une référence de densité et de hiérarchie. La typographie reste celle du système et l'accent suit le thème choisi.
@@ -28,4 +28,4 @@ La direction **Focus** est retenue.
 
 ## Conséquences
 
-Les informations de source passent en second niveau. Le badge et le bouton d'alerte forment un bloc qui se replie. Le mot « Focus » désigne encore le mode de détail dans le code.
+Les informations de source passent en second niveau. Le badge et le bouton d'alerte forment un bloc qui se replie. Dans le code, le mot « Focus » nomme le mode de détail (`FocusSwitcherView`, `FocusKeyboard`).

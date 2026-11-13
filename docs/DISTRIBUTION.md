@@ -21,7 +21,7 @@ Le script produit :
 - le fond Retina et standard dans `background-preview/` ;
 - `Sema-<version>-arm64.dmg.sha256` ;
 - `release.json`, source des métadonnées du site ;
-- `sema-app.rb.template`, modèle de cask pour le futur tap.
+- `sema-app.rb.template`, modèle de cask pour le tap `antoineberjoan/homebrew-sema`.
 
 Un fichier DMG versionné existant n’est jamais écrasé. Pour un nouvel essai du même numéro, utiliser un autre dossier de sortie. Les volumes temporaires sont démontés sur succès, erreur ou interruption. Le script ne retire aucune quarantaine et ne change pas Gatekeeper.
 
@@ -38,13 +38,10 @@ Le petit outil C `finder-alias.c` utilise l’Alias Manager de macOS pour lier l
 Le site est versionné sous `site/` dans ce même dépôt ; son hébergement reste distinct. Les métadonnées sont générées à partir du manifeste du **même DMG** :
 
 ```sh
-python3 scripts/distribution/sync-download.py \
-  build/releases/<version>/release.json site/dist --local-preview
+python3 scripts/distribution/sync-download.py build/releases/<version>/release.json site/dist
 ```
 
-`--local-preview` vérifie la taille et le SHA-256, copie le fichier sous `downloads/`, écrit le manifeste de préversion et insère un vrai lien HTML. Le téléchargement fonctionne ainsi même sans JavaScript. Ce mode est prévu pour la prévisualisation ou le site privé ; il ne décide pas de son audience.
-
-Sans cette option, l’outil utilise uniquement l’URL déjà activée dans `release.json`. L’URL publique proposée et la commande Homebrew restent désactivées par défaut. Ne pas activer le site tant qu’un téléchargement Internet sans session développeur et son SHA-256 n’ont pas été vérifiés.
+L'outil utilise l'URL déjà activée dans `release.json`. L'URL publique proposée et la commande Homebrew restent désactivées par défaut. Ne pas activer le site tant qu'un téléchargement Internet sans session développeur et son SHA-256 n'ont pas été vérifiés.
 
 La landing expose le lien direct au DMG et la commande Homebrew copiable. Le générateur écrit le manifeste JSON sous `download/release.json` ; ce chemin est une métadonnée et ne sert aucune page HTML.
 

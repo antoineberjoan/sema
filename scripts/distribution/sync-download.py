@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 """Synchronise le téléchargement direct et la commande Homebrew depuis le manifeste publié."""
 import argparse
-import hashlib
 import html
 import json
 import pathlib
 import re
-import shutil
 import sys
 import urllib.parse
 
@@ -23,23 +21,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", type=pathlib.Path)
     parser.add_argument("site_dist", type=pathlib.Path)
-    parser.add_argument("--local-preview", action="store_true", help="Copier le DMG et activer un lien relatif pour la préversion privée")
     args = parser.parse_args()
     manifest = json.loads(args.manifest.read_text())
     download = manifest["download"]
-    artifact = args.manifest.parent / download["filename"]
-    if args.local_preview:
-        if not artifact.is_file() or artifact.stat().st_size != download["byteSize"]:
-            raise ValueError("Le DMG local ne correspond pas au manifeste")
-        if hashlib.sha256(artifact.read_bytes()).hexdigest() != download["sha256"]:
-            raise ValueError("Le SHA-256 du DMG local ne correspond pas au manifeste")
-        destination = args.site_dist / "downloads" / artifact.name
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(artifact, destination)
-        shutil.copyfile(artifact.with_suffix(".dmg.sha256"), destination.with_suffix(".dmg.sha256"))
-        download["enabled"] = True
-        download["url"] = "/downloads/" + urllib.parse.quote(artifact.name)
-        manifest["channel"] = "private-preview"
     if download["enabled"] and not download.get("url"):
         raise ValueError("Téléchargement actif sans URL")
     if download.get("url") and not (download["url"].startswith("/") or urllib.parse.urlparse(download["url"]).scheme == "https"):
