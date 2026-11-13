@@ -12,6 +12,8 @@ Les catalogues publics supplémentaires sont décrits dans [PUBLIC-CATALOGUES.md
 - `observations/exports/json` charge uniquement les séries consultées ou suivies avec des bornes explicites. Les six dernières années publiées sont chargées à l’ouverture ; « Tout » permet d’atteindre le début publié en tranches de six années annulables. Les fréquences mensuelles, trimestrielles, semestrielles et annuelles utilisent le début de la première période publiée, même si le catalogue renseigne sa date de fin.
 - Actualisation manuelle après connexion initiale. Le quota documenté est de 10 000 requêtes par jour et par compte. Aucun nouvel essai automatique n’est lancé après une erreur.
 - En cas d’erreur d’accès, de quota, de réseau ou d’export incomplet : les dernières données sont conservées. Le cache est séparé des préférences et ne contient jamais la clé.
+- Un échec de connexion garde le cache et les données affichées, et le contrôle automatique suivant garde l’erreur tant que la série n’est pas actualisée. Un changement d’unité, de multiplicateur ou de base d’indice interdit de fusionner l’ancien et le nouvel historique : les alertes de la série sont mises en pause avant toute évaluation, et « Tout » demande une actualisation si les métadonnées courantes diffèrent de la fiche.
+- Le catalogue SDMX est borné à 20 MiB et la pagination Webstat s’arrête à l’offset 9 950 : ces bornes sont des constantes nommées de `SdmxClient` et `WebstatClient`.
 
 ### Sélection de départ et identifiants historiques
 
