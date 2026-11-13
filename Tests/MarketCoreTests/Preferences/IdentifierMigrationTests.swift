@@ -12,4 +12,9 @@ struct IdentifierMigrationTests {
         #expect(IdentifierMigration.upgrade(code) == code)
         #expect(IdentifierMigration.upgrade("unknown-id") == "unknown-id")
     }
+
+    @Test func everyShortNameOpensAStarterSeries() {
+        let names = ["fr10", "ecb", "eurusd", "livreta", "inflation-euro"]
+        for name in names { #expect(WebstatStarter.ids.contains(IdentifierMigration.upgrade(name))) }
+    }
 }

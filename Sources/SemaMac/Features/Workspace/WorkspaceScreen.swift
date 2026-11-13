@@ -134,7 +134,7 @@ struct WorkspaceScreen: View {
 
     private var keyboardWorkspace: some View {
         workspaceLayout
-        .background { FocusKeyboard(handle: handleFocusKey).frame(width: 0, height: 0) }
+        .background { FocusKeyboard(handle: handleFocusKey).frame(width: .zero, height: .zero) }
         .overlay {
             if let selection = switcherSelection {
                 ZStack {

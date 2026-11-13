@@ -340,6 +340,15 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("`theme-color` vaut `#111111`", errors[0])
 
+    def test_media_query_limit_follows_the_breakpoint_token(self):
+        self.write("site/tokens.json", json.dumps({"breakpoint": {"narrow": {"$value": {"value": 700, "unit": "px"}}}}))
+        self.write_site("@media (max-width: 700px) { .card { margin: 0; } }\n.card { margin: 0; }")
+        self.assertEqual(self.errors(), [])
+        self.write_site("@media (max-width: 640px) { .card { margin: 0; } }\n.card { margin: 0; }")
+        errors = [error for error in self.errors() if "breakpoint.narrow" in error]
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`max-width: 640px`", errors[0])
+
     def test_site_css_reads_roles_not_scale_steps(self):
         self.write_site(".card { padding: var(--scale-space-1); }", tokens="--scale-space-1: 4px; --ink: #141414;")
         errors = self.errors()

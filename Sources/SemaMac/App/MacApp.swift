@@ -15,7 +15,7 @@ struct MacApp: App {
                 .environment(\.locale, .french)
                 .preferredColorScheme(store.appearance.colorScheme)
                 .background {
-                    MenuRibbonAttachment(store: store, appDelegate: appDelegate).frame(width: 0, height: 0)
+                    MenuRibbonAttachment(store: store, appDelegate: appDelegate).frame(width: .zero, height: .zero)
                 }
                 .sheet(isPresented: $store.isOnboardingPresented) {
                     OnboardingScreen(initialSelection: store.preferences.followedSeriesIDs,

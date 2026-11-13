@@ -19,7 +19,7 @@ private enum WelcomeMotion {
 private enum WelcomeLayout {
     static let windowPadding = DesignSpace.pageInsetNarrow
     static let heroSpacing = DesignSpace.sectionGap
-    static let dotSpacing = DesignIcon.gap
+    static let dotSpacing = DesignSpace.stepDotGap
     static let titleSpacing = DesignSpace.fieldGap
     static let errorSpacing = DesignSpace.fieldGap
     static let errorTopPadding = DesignSpace.menuInset
@@ -169,7 +169,7 @@ struct OnboardingScreen: View {
             Spacer()
             HStack(spacing: WelcomeLayout.dotSpacing) {
                 ForEach(0..<Self.stepCount, id: \.self) { index in
-                    Capsule().fill(index == step ? accent : DesignColor.ruleHover)
+                    Capsule().fill(index == step ? accent : DesignColor.stepDotIdle)
                         .frame(width: index == step ? DesignLayout.welcomeActiveDotWidth : DesignLayout.dotSize, height: DesignLayout.dotSize)
                 }
             }
