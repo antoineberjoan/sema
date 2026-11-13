@@ -677,8 +677,6 @@
   --layout-welcome-feature-symbol-width: 32px;
   /* Propre à sema : tile min height, Welcome (taille). */
   --layout-welcome-tile-min-height: 64px;
-  /* Propre à sema : preview card width, Welcome (taille). */
-  --layout-welcome-preview-card-width: 176px;
   /* Propre à sema : maximum width, Brief (taille). */
   --layout-brief-maximum-width: 640px;
   /* Propre à sema : sidebar width, Settings (taille). */

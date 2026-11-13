@@ -344,6 +344,16 @@ class GuardrailsTests(unittest.TestCase):
         self.assertIn("le chemin cité `Sources/Gone.swift` n’existe pas", errors[0])
         self.assertIn("le fichier cité `Dir/Gone.swift` n’existe pas", errors[1])
 
+    def test_namespace_members_used_must_be_defined(self):
+        self.write("Sources/MarketCore/Starter.swift", "// Porte les repères.\npublic enum Starter {\n    public static let ids = 1\n    static func key(_ id: String) -> String { id }\n    struct Definition {}\n}\n")
+        self.write("Sources/MarketCore/Mode.swift", "// Porte les modes.\npublic enum Mode {\n    case fast\n}\n")
+        self.write("Sources/MarketCore/Use.swift", "// Lit les repères.\nlet a = Starter.ids\nlet b = Starter.key(\"x\")\nlet c = Starter.Definition()\nlet d = Mode.fast\n")
+        self.assertEqual(self.errors(), [])
+        self.write("Tests/MarketCoreTests/UseTests.swift", "// Vérifie un membre disparu.\nlet e = Starter.canonicalID(\"x\")\n")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`Starter.canonicalID` n’est pas défini", errors[0])
+
     def test_site_variable_must_be_defined(self):
         self.write_site(".card { padding: var(--space-9); margin: var(--wrap-max, var(--space-1)); }\n.card { --wrap-max: var(--space-1); }")
         errors = self.errors()

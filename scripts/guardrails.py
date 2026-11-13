@@ -314,6 +314,44 @@ def cited_path_errors(snapshot):
     return errors
 
 
+# Un type sans cas (un espace de noms : `WebstatStarter`, `IdentifierMigration`) définit ses membres statiques ; un test ou une source qui en cite un autre ne compile pas.
+NAMESPACE_DECLARATION = re.compile(r"^[ \t]*(?:(?:public|internal|private|fileprivate|package)\s+)?(?:final\s+)?(?P<kind>enum|extension)\s+(?P<name>[A-Z]\w*)[^{\n]*\{", re.MULTILINE)
+STATIC_MEMBER = re.compile(r"\bstatic\s+(?:var|let|func)\s+(\w+)|\b(?:struct|enum|class|actor|typealias|protocol)\s+(\w+)")
+NAMESPACE_USE = re.compile(r"(?<![\w.])([A-Z]\w*)\.([A-Za-z_]\w*)")
+
+
+def matching_brace(code, start):
+    depth = 0
+    for index in range(start, len(code)):
+        if code[index] == "{":
+            depth += 1
+        elif code[index] == "}":
+            depth -= 1
+            if depth == 0:
+                return index
+    return len(code) - 1
+
+
+def undefined_static_members(sources):
+    codes = {path: swift_code(source) for path, source in sources.items()}
+    enums, extensions = {}, collections.defaultdict(set)
+    for code in codes.values():
+        for match in NAMESPACE_DECLARATION.finditer(code):
+            body = code[match.end():matching_brace(code, match.end() - 1)]
+            members = {name for found in STATIC_MEMBER.findall(body) for name in found if name}
+            if match["kind"] == "extension":
+                extensions[match["name"]] |= members
+            elif not re.search(r"^[ \t]*case\s", body, re.MULTILINE):
+                enums.setdefault(match["name"], set()).update(members)
+    errors = []
+    for path, code in sorted(codes.items()):
+        for number, line in enumerate(code.splitlines(), 1):
+            for name, member in NAMESPACE_USE.findall(line):
+                if name in enums and member not in enums[name] | extensions[name] | {"self", "init"}:
+                    errors.append(f"{path}:{number} : `{name}.{member}` n’est pas défini ; le type `{name}` définit {', '.join(sorted(enums[name])) or 'rien'}.")
+    return errors
+
+
 META_THEME_COLOR = re.compile(r'<meta\s+name="theme-color"\s+content="([^"]*)"', re.IGNORECASE)
 
 
@@ -392,6 +430,7 @@ def check(snapshot):
                     errors.append(f"{path} : lien local introuvable : {link}.")
 
     errors.extend(unused_types(swift_sources))
+    errors.extend(undefined_static_members(swift_sources))
     errors.extend(web_errors(web_sources))
     errors.extend(theme_color_errors(snapshot))
     errors.extend(cited_path_errors(snapshot))

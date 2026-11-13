@@ -1,4 +1,4 @@
-// Guide la première ouverture : bienvenue, thèmes avec aperçu du bandeau, puis connexion des données.
+// Guide la première ouverture : bienvenue, choix des thèmes, puis connexion des données.
 import SemaDesign
 import SwiftUI
 import MarketCore
@@ -7,14 +7,13 @@ import MarketCore
 //   0 ms  Les actions sont déjà disponibles.
 // 360 ms  Le signe termine son dessin ; le contenu reste stable.
 // 220 ms  Une étape remplace la précédente, sans attente imposée.
-// 180 ms  Un thème change de teinte et l’aperçu du bandeau suit, sans déplacer les tuiles.
+// 180 ms  Un thème change de teinte, sans déplacer les tuiles.
 
 private enum WelcomeMotion {
     static let drawDuration = DesignDuration.explain
     static let stepDuration = DesignDuration.standard
     static let contentOffset = DesignMotion.shift
     static let selectionDuration = DesignDuration.fast
-    static let previewScale = DesignMotion.scaleFrom
 }
 
 private enum WelcomeLayout {
@@ -33,7 +32,6 @@ private enum WelcomeLayout {
     static let tileTextSpacing = DesignSpace.titleGap
     static let tilePadding = DesignSpace.cardInset
     static let tileBorder = DesignBorder.width
-    static let previewSpacing = DesignSpace.itemGap
     static let footerSpacing = DesignSpace.fieldGap
     static let signalWidth = SignalPath.stroke * DesignLayout.welcomeSignalSize / SignalPath.viewBox
     static let heroSignalWidth = SignalPath.stroke * DesignLayout.welcomeHeroSignalSize / SignalPath.viewBox
@@ -77,8 +75,6 @@ private struct WelcomeCollection: Identifiable {
 
 struct OnboardingScreen: View {
     private static let stepCount = 3
-    private static let previewCardCount = 3
-    private static let minimumPreviewObservations = 1
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
@@ -100,19 +96,7 @@ struct OnboardingScreen: View {
         _selection = State(initialValue: Set(initialSelection))
     }
 
-    private static let previewExamples = WebstatStarter.series
     private var suggestions: [MarketSeries] { WebstatStarter.series }
-
-    /// Une carte d’exemple fictif par thème choisi : le seul endroit où sema montre des valeurs inventées.
-    private var previewSeries: [MarketSeries] {
-        WelcomeCollection.all.compactMap { collection in
-            collection.items.lazy
-                .filter { selection.contains($0.id) }
-                .compactMap { item in Self.previewExamples.first { $0.id == item.id } }
-                .first { $0.observations.count > Self.minimumPreviewObservations }
-        }
-        .prefix(Self.previewCardCount).map { $0 }
-    }
 
     private var title: String {
         switch step {
@@ -227,32 +211,7 @@ struct OnboardingScreen: View {
                       spacing: WelcomeLayout.gridSpacing) {
                 ForEach(WelcomeCollection.all) { collection in themeTile(collection) }
             }
-            VStack(alignment: .leading, spacing: WelcomeLayout.previewSpacing) {
-                Text("Aperçu du bandeau, avec des exemples fictifs.")
-                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
-                preview
-            }
         }
-    }
-
-    private var preview: some View {
-        HStack(spacing: WelcomeLayout.previewSpacing) {
-            ForEach(previewSeries) { series in
-                RibbonCard(series: store.displayedSeries(series), period: .year, action: {})
-                    .frame(width: DesignLayout.welcomePreviewCardWidth, height: DesignLayout.menuRibbonCardHeight)
-                    .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: WelcomeMotion.previewScale)))
-            }
-            if previewSeries.isEmpty {
-                Text("Choisissez un thème pour composer votre bandeau.")
-                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
-            }
-        }
-        .frame(maxWidth: .infinity, minHeight: DesignLayout.menuRibbonCardHeight, maxHeight: DesignLayout.menuRibbonCardHeight, alignment: .leading)
-        .environment(\.glassSettings, store.ribbonGlass)
-        .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
-        .allowsHitTesting(false).accessibilityHidden(true)
     }
 
     private func isSelected(_ collection: WelcomeCollection) -> Bool {

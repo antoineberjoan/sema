@@ -10,10 +10,6 @@ Un repère sans donnée réelle ne doit pas ressembler à une mesure. Une sélec
 ## Décision
 
 - Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l'accueil.
-- Aucune valeur fictive n'apparaît dans l'app. Seul l'aperçu du bandeau de l'accueil montre des exemples fictifs, annoncés comme tels.
+- Aucune valeur fictive n'apparaît dans l'app.
 - Avant connexion, un repère choisi n'a pas d'observation : son détail dit « Pas encore de données » et mène à la connexion Webstat.
 - La landing du site n'affiche aucune légende « illustration ».
-
-## Conséquences
-
-Les exemples du bandeau d'accueil sont identifiés dans le texte et dans le libellé d'accessibilité.

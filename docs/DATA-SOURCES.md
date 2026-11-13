@@ -51,7 +51,7 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 
 ## Origine des valeurs
 
-Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil ([décision](decisions/2026-10-18-profil-neuf-sans-valeur-fictive.md)). Aucune valeur fictive n’apparaît dans l’app, sauf l’aperçu du bandeau de l’accueil, annoncé comme exemples fictifs : avant connexion, un repère choisi n’a pas d’observation et son détail indique « Pas encore de données » avec l’accès à la connexion Webstat. Après connexion, les séries choisies reçoivent les observations de Webstat. Aucun fonds n’est exposé ; une règle ou un favori de fonds déjà écrit reste lu sans être actif. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
+Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil ([décision](decisions/2026-10-18-profil-neuf-sans-valeur-fictive.md)). Aucune valeur fictive n’apparaît dans l’app : avant connexion, un repère choisi n’a pas d’observation et son détail indique « Pas encore de données » avec l’accès à la connexion Webstat. Après connexion, les séries choisies reçoivent les observations de Webstat. Aucun fonds n’est exposé ; une règle ou un favori de fonds déjà écrit reste lu sans être actif. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
 
 ## Dates et calculs
 

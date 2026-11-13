@@ -47,8 +47,6 @@ public enum DesignLayout {
     public static let welcomeFeatureSymbolWidth: CGFloat = 32
     /// Propre à sema : tile min height, Welcome (taille).
     public static let welcomeTileMinHeight: CGFloat = 64
-    /// Propre à sema : preview card width, Welcome (taille).
-    public static let welcomePreviewCardWidth: CGFloat = 176
     /// Propre à sema : maximum width, Brief (taille).
     public static let briefMaximumWidth: CGFloat = 640
     /// Propre à sema : sidebar width, Settings (taille).

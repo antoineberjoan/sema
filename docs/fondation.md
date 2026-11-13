@@ -30,7 +30,7 @@ Dehors : un service serveur, la synchronisation entre appareils, une clé fourni
 
 ## Principes
 
-- Une série affiche toujours son origine, sa source, son unité et ses dates. Une valeur inventée n'existe pas, sauf un exemple annoncé comme fictif.
+- Une série affiche toujours son origine, sa source, son unité et ses dates. Une valeur inventée n'existe pas.
 - Les valeurs et variations financières se calculent en `Decimal`. Le calcul ne vit jamais dans une vue.
 - Les données de la personne restent sur son Mac. Une clé personnelle vit dans le Trousseau, jamais dans le dépôt, une URL, un cache ou un journal.
 - Un fichier que la personne a déjà sur son disque est un contrat : ses noms, ses clés et ses valeurs ne changent pas.
