@@ -98,7 +98,7 @@ struct BriefScreen: View {
     private func thresholds(_ brief: MorningBrief) -> some View {
         section("seuils proches") {
             ForEach(brief.nearThresholds) { near in
-                Text("\(MarketFormat.name(store.displayedSeries(near.series))) · \(AppStore.nearText(near))").typeRole(.body)
+                Text("\(MarketFormat.name(store.displayedSeries(near.series))) · \(NotificationText.nearText(near))").typeRole(.body)
             }
         }
     }

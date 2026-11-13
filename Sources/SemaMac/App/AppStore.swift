@@ -124,7 +124,6 @@ final class AppStore {
         return true
     }
 
-    var starterSeries: [MarketSeries] { WebstatStarter.series }
     var storedFollowedSeries: [MarketSeries] { preferences.followedSeriesIDs.compactMap { id in series.first { $0.id == id } } }
     /// Seuls les repères qui ont des valeurs sont visibles ; les autres restent suivis et reviennent avec leurs données.
     var followedSeries: [MarketSeries] { SeriesEquivalence.unique(storedFollowedSeries).filter { !$0.observations.isEmpty } }

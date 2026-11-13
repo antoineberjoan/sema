@@ -6,14 +6,17 @@ import Testing
 struct MarketCoreTests {
     private let date = Date(timeIntervalSince1970: 1_792_022_400)
 
-    private func series(_ values: [Decimal], id: String = "fund-i-eur", unit: ValueUnit = .eur,
-                        category: SeriesCategory = .funds) -> MarketSeries {
+    private func series(_ values: [Decimal], id: String = "price-eur", unit: ValueUnit = .eur,
+                        category: SeriesCategory = .markets) -> MarketSeries {
         MarketSeries(id: id, name: "Test", subtitle: "Part I · EUR", category: category,
                      unit: unit, source: "Fixture",
                      observations: values.enumerated().map {
                          MarketObservation(date: date.addingTimeInterval(Double($0.offset) * 86_400), value: $0.element)
                      })
     }
+
+    /// Les règles de variation journalière ne s'appliquent qu'aux repères de la catégorie des fonds.
+    private func fund(_ values: [Decimal]) -> MarketSeries { series(values, category: .funds) }
 
     @Test
     func testRateChangeIsInPercentagePoints() {
@@ -52,31 +55,31 @@ struct MarketCoreTests {
 
     @Test
     func testFallThresholdMustBeStrictlyExceeded() {
-        let rule = AlertRule(seriesID: "fund-i-eur", direction: .fall, threshold: 3)
-        #expect(AlertEvaluator.evaluate(rule, series: series([100, 97])) == nil)
-        let event = AlertEvaluator.evaluate(rule, series: series([100, Decimal(string: "96.99")!]))
+        let rule = AlertRule(seriesID: "price-eur", direction: .fall, threshold: 3)
+        #expect(AlertEvaluator.evaluate(rule, series: fund([100, 97])) == nil)
+        let event = AlertEvaluator.evaluate(rule, series: fund([100, Decimal(string: "96.99")!]))
         #expect(event != nil)
         #expect(event?.changePercent == Decimal(string: "-3.01")!)
     }
 
     @Test
     func testRiseRuleDoesNotTriggerOnAFall() {
-        let rule = AlertRule(seriesID: "fund-i-eur", direction: .rise, threshold: 2)
-        #expect(AlertEvaluator.evaluate(rule, series: series([100, 95])) == nil)
-        #expect(AlertEvaluator.evaluate(rule, series: series([100, 103])) != nil)
+        let rule = AlertRule(seriesID: "price-eur", direction: .rise, threshold: 2)
+        #expect(AlertEvaluator.evaluate(rule, series: fund([100, 95])) == nil)
+        #expect(AlertEvaluator.evaluate(rule, series: fund([100, 103])) != nil)
     }
 
     @Test
     func testPausedRuleAndAnotherShareClassDoNotTrigger() {
-        let paused = AlertRule(seriesID: "fund-i-eur", direction: .fall, threshold: 3, isEnabled: false)
-        let anotherPart = AlertRule(seriesID: "fund-r-eur", direction: .fall, threshold: 3)
-        #expect(AlertEvaluator.evaluate(paused, series: series([100, 90])) == nil)
-        #expect(AlertEvaluator.evaluate(anotherPart, series: series([100, 90])) == nil)
+        let paused = AlertRule(seriesID: "price-eur", direction: .fall, threshold: 3, isEnabled: false)
+        let anotherPart = AlertRule(seriesID: "other-eur", direction: .fall, threshold: 3)
+        #expect(AlertEvaluator.evaluate(paused, series: fund([100, 90])) == nil)
+        #expect(AlertEvaluator.evaluate(anotherPart, series: fund([100, 90])) == nil)
     }
 
     @Test
     func testAlreadyNotifiedPublicationDoesNotTriggerAgain() {
-        let item = series([100, 90])
+        let item = fund([100, 90])
         let rule = AlertRule(seriesID: item.id, direction: .fall, threshold: 3)
         #expect(AlertEvaluator.evaluate(rule, series: item, lastNotifiedAt: item.latest!.date) == nil)
         #expect(AlertEvaluator.evaluate(rule, series: item, lastNotifiedAt: date) != nil)

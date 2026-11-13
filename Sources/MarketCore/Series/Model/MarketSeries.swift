@@ -85,8 +85,6 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         return history(for: period).count > 1 && first.date <= cutoff(for: period, endingAt: latest.date)
     }
 
-    public var hasAnnualHistory: Bool { supports(.year) }
-
     private func cutoff(for period: HistoryPeriod, endingAt date: Date) -> Date {
         if [.monthly, .quarterly, .halfYearly, .yearly].contains(frequency) || period == .halfYear || period.days >= HistoryPeriod.year.days {
             var calendar = Calendar(identifier: .gregorian)

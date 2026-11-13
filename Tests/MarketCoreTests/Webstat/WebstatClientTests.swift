@@ -85,7 +85,7 @@ struct WebstatClientTests {
                            MarketObservation(date: dates.date(from: "2026-08-01")!, value: 1)])
         #expect(series.history(for: .month).count == 2)
         #expect(series.change(for: .month) == -1)
-        #expect(!series.hasAnnualHistory)
+        #expect(!series.supports(.year))
     }
 
     @Test
