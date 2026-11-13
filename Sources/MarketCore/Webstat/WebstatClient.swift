@@ -14,7 +14,7 @@ public struct WebstatClient: Sendable {
     public init() {}
 
     public static func request(table: String, apiKey: String, parameters: [URLQueryItem]) throws -> URLRequest {
-        guard ["series", "webstat-datasets", "codelists", "observations"].contains(table) else { throw WebstatError.invalidData }
+        guard ["series", "webstat-datasets", "codelists", "observations"].contains(table) else { throw PublicDataError.invalidData }
         let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty, key.rangeOfCharacter(from: .controlCharacters) == nil else { throw WebstatError.missingKey }
         var url = URLComponents(string: Self.apiURL + "\(table)/records")!
@@ -42,7 +42,7 @@ public struct WebstatClient: Sendable {
         }
         if !search.datasetID.isEmpty { filters.append("dataset_id = \(literal(search.datasetID))") }
         if !search.area.isEmpty {
-            guard ["ref_area", "ame_ref_area", "zone_geo"].contains(search.areaField) else { throw WebstatError.invalidData }
+            guard ["ref_area", "ame_ref_area", "zone_geo"].contains(search.areaField) else { throw PublicDataError.invalidData }
             filters.append("\(search.areaField) = \(literal(search.area))")
         }
         if !search.frequency.isEmpty { filters.append("freq = \(literal(search.frequency))") }
@@ -89,7 +89,7 @@ public struct WebstatClient: Sendable {
     }
 
     public func descriptor(apiKey: String, key: String) async throws -> WebstatSeriesDescriptor {
-        guard WebstatSeriesDescriptor.isValidKey(key) else { throw WebstatError.invalidData }
+        guard WebstatSeriesDescriptor.isValidKey(key) else { throw PublicDataError.invalidData }
         let page = try await search(apiKey: apiKey, search: WebstatSearch(query: key))
         guard let descriptor = page.items.first(where: { $0.key == key }) else { throw WebstatError.incompleteData }
         return descriptor
@@ -127,13 +127,13 @@ public struct WebstatClient: Sendable {
         let data: Data; let response: URLResponse
         do { (data, response) = try await session.data(for: request) }
         catch is CancellationError { throw CancellationError() }
-        catch { if Task.isCancelled { throw CancellationError() }; throw WebstatError.unavailable }
-        guard let http = response as? HTTPURLResponse else { throw WebstatError.unavailable }
+        catch { if Task.isCancelled { throw CancellationError() }; throw PublicDataError.unavailable }
+        guard let http = response as? HTTPURLResponse else { throw PublicDataError.unavailable }
         switch http.statusCode {
         case 200: return data
         case 401, 403, 404: throw WebstatError.accessDenied
-        case 429: throw WebstatError.quotaReached
-        default: throw WebstatError.unavailable
+        case 429: throw PublicDataError.quotaReached
+        default: throw PublicDataError.unavailable
         }
     }
 
@@ -171,8 +171,8 @@ public struct WebstatClient: Sendable {
         let response: URLResponse
         do { (data, response) = try await session.data(for: request) }
         catch is CancellationError { throw CancellationError() }
-        catch { throw WebstatError.unavailable }
-        guard let http = response as? HTTPURLResponse else { throw WebstatError.unavailable }
+        catch { throw PublicDataError.unavailable }
+        guard let http = response as? HTTPURLResponse else { throw PublicDataError.unavailable }
         return try WebstatMapping.starterHistory(data, statusCode: http.statusCode, now: now)
     }
 }
