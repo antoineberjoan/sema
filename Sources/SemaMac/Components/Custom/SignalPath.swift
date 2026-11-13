@@ -4,27 +4,27 @@
 import SwiftUI
 
 struct SignalPath: Shape {
-    /// Side of the square in which the mark is drawn, in mark units.
+    /// Côté du carré où le signe est dessiné, en unités du signe.
     static let viewBox: CGFloat = 320
-    /// Stroke of the line, in mark units.
+    /// Épaisseur du trait de la ligne, en unités du signe.
     static let stroke: CGFloat = 36
-    /// The line starts low on the left, climbs along one curve, then runs flat to the right.
+    /// La ligne part bas à gauche, monte le long d’une courbe, puis file à plat vers la droite.
     static let start = CGPoint(x: 24, y: 245)
     static let control1 = CGPoint(x: 114, y: 245)
     static let control2 = CGPoint(x: 136, y: 91)
-    /// Centre of the teal point where the line settles.
+    /// Centre du point sarcelle où la ligne se pose.
     static let dotCenter = CGPoint(x: 216, y: 91)
     static let end = CGPoint(x: 296, y: 91)
-    /// Visible radius of the point, and radius of the gap that separates it from the line.
+    /// Rayon visible du point, et rayon du vide qui le sépare de la ligne.
     static let dotRadius: CGFloat = 27
     static let gapRadius: CGFloat = 41
-    /// The app icon: a square of `appIconSize` with a rounded tile; the mark sits at `appIconOffset` inside it.
+    /// L’icône de l’app : un carré de `appIconSize` à tuile arrondie ; le signe se place à `appIconOffset` dedans.
     static let appIconSize: CGFloat = 512
     static let appIconInset: CGFloat = 3
     static let appIconCorner: CGFloat = 115
     static let appIconEdge: CGFloat = 6
     static let appIconOffset = CGPoint(x: 96, y: 123)
-    /// The frame of the mark alone, in app icon units: the mark with an equal margin around it.
+    /// Le cadre du signe seul, en unités de l’icône : le signe avec une marge égale tout autour.
     static let artboard = CGRect(x: 80, y: 170, width: 352, height: 240)
 
     func path(in rect: CGRect) -> Path {
@@ -35,7 +35,7 @@ struct SignalPath: Shape {
         return path.applying(Self.transform(in: rect))
     }
 
-    /// Scales mark units into the largest centred square of the rectangle.
+    /// Met les unités du signe à l’échelle du plus grand carré centré du rectangle.
     static func transform(in rect: CGRect) -> CGAffineTransform {
         let side = min(rect.width, rect.height)
         let scale = side / viewBox

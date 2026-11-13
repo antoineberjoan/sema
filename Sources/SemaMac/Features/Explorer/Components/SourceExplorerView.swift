@@ -3,7 +3,7 @@ import SemaDesign
 import SwiftUI
 import MarketCore
 
-/// Discovery belongs to the source. A starter selection never constrains its catalogue.
+/// La découverte appartient à la source. Une sélection de départ ne limite jamais son catalogue.
 struct SourceExplorerView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.openSettings) private var openSettings

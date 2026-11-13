@@ -3,13 +3,13 @@ import Foundation
 import MarketCore
 
 extension AppStore {
-    /// A part that cannot load is left out; the day still shows the others.
+    /// Une partie qui ne se charge pas est omise ; le jour montre quand même les autres.
     func agenda(on day: Date) async -> DayAgenda {
         if let cached = agendas[day] { return cached }
         let window = DayContext.window(for: day)
         async let releases = economicReleases(on: day)
         async let press = pressReleases(from: window.start, to: window.end)
-        // Headlines exist only for days that have started; GDELT is not asked about the future.
+        // Les titres existent seulement pour les jours déjà commencés ; GDELT n’est pas interrogé sur l’avenir.
         async let headlines = day <= .now ? headlines(from: window.start, to: window.end) : []
         let value = DayAgenda(day: day, series: followedSeries, sensitivity: moveSensitivity,
                               releases: await releases ?? [], pressReleases: await press ?? [], headlines: await headlines ?? [])
@@ -17,7 +17,7 @@ extension AppStore {
         return value
     }
 
-    /// Opens the agenda of the hub on a day chosen in the ribbon.
+    /// Ouvre l’agenda du hub sur un jour choisi dans le bandeau.
     func openAgenda(on day: Date) {
         agendaDay = day
         section = .brief

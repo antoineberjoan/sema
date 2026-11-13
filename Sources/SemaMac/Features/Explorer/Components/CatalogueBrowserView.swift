@@ -3,7 +3,7 @@ import SemaDesign
 import SwiftUI
 import MarketCore
 
-/// Shared by Explorer and ⌘K. Result rows stay in place while the detail loads.
+/// Partagé par Explorer et ⌘K. Les lignes de résultat restent en place pendant le chargement du détail.
 struct CatalogueBrowserView: View {
     private static let sectionSpacing = DesignSpace.itemGap
     private static let textInset = DesignSpace.markInset

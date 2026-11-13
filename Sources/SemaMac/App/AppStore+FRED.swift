@@ -3,7 +3,7 @@ import Foundation
 import MarketCore
 
 extension AppStore {
-    /// Statistical connectors for catalogues and refreshes; the FRED key is read from the Keychain only when it exists.
+    /// Connecteurs statistiques pour les catalogues et les actualisations ; la clé FRED est lue dans le Trousseau seulement si elle existe.
     func statisticalConnectors() async -> StatisticalConnectors {
         guard hasFREDKey, isSourceEnabled(StatisticalSource.fred.rawValue) else { return StatisticalConnectors(fredKey: nil) }
         return StatisticalConnectors(fredKey: try? await fredKeychain.read())

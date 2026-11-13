@@ -11,7 +11,7 @@ public enum SummaryPrompt {
     Si les faits ne suffisent pas, écris moins de phrases.
     """
 
-    /// Facts as numbered lines, after the date of the session.
+    /// Faits en lignes numérotées, après la date de la séance.
     public static func facts(_ facts: [ContextFact], day: Date) -> String {
         (["Séance du \(ContextFact.longDate(day)).", "Faits :"] + facts.map { "\($0.id) · \($0.text)" }).joined(separator: "\n")
     }

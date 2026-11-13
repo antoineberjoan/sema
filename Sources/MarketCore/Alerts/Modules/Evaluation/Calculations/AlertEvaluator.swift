@@ -2,8 +2,8 @@
 import Foundation
 
 public enum AlertEvaluator {
-    /// Evaluates two consecutive publications for the exact series.
-    /// A threshold is strictly exceeded, not merely reached.
+    /// Évalue deux publications consécutives pour la série exacte.
+    /// Un seuil est strictement dépassé, pas seulement atteint.
     public static func evaluate(
         _ rule: AlertRule, series: MarketSeries, lastNotifiedAt: Date? = nil
     ) -> AlertEvent? {
@@ -22,8 +22,8 @@ public enum AlertEvaluator {
                           changePercent: change)
     }
 
-    /// Checks every new pair since the persisted checkpoint, including intermediate crossings.
-    /// Revisions of an already processed date do not emit a second notification.
+    /// Vérifie chaque nouvelle paire depuis le point de contrôle enregistré, franchissements intermédiaires compris.
+    /// Les révisions d’une date déjà traitée n’émettent pas de seconde notification.
     public static func newEvents(_ rule: AlertRule, series: MarketSeries,
                                  sensitivity: MoveSensitivity = .standard) -> [AlertEvent] {
         guard rule.isEnabled, rule.isValid, rule.effectiveCondition != .relativeChange,

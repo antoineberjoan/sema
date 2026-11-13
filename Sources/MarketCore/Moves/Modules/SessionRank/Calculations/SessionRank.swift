@@ -4,15 +4,15 @@ import Foundation
 public struct SessionRank: Equatable, Sendable {
     public enum Direction: Sendable { case rise, fall }
 
-    /// Below this, the session is not worth a remark.
+    /// En dessous, la séance ne mérite pas de remarque.
     public static let minimumMonths = 3
-    /// Without an earlier equal session, the history must be at least this long to claim « de tout l’historique ».
+    /// Sans séance égale plus ancienne, l’historique doit avoir au moins cette longueur pour affirmer « de tout l’historique ».
     public static let minimumHistoryMonths = 12
     private static let monthsPerYear = 12
     private static let yearsOnlyFrom = 24
 
     public let direction: Direction
-    /// Months since an equal or larger session in the same direction; nil when the loaded history holds none.
+    /// Mois depuis une séance égale ou plus forte dans le même sens ; nil quand l’historique chargé n’en contient aucune.
     public let months: Int?
     public let historyMonths: Int
 
@@ -46,7 +46,7 @@ public struct SessionRank: Equatable, Sendable {
         }
     }
 
-    /// Reading of the rank, for example « Plus forte baisse depuis 18 mois ».
+    /// Lecture du rang, par exemple « Plus forte baisse depuis 18 mois ».
     public var text: String {
         let word = direction == .rise ? "hausse" : "baisse"
         guard let months else { return "Plus forte \(word) de tout l’historique chargé (\(Self.duration(historyMonths)))" }

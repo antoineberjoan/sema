@@ -6,7 +6,7 @@ import Testing
 struct UnusualMoveTests {
     private let start = Date(timeIntervalSince1970: 1_792_022_400)
 
-    /// Twenty-one closes alternating ±1 % around 100, then a last session with the given change in percent.
+    /// Vingt et une clôtures qui alternent ±1 % autour de 100, puis une dernière séance avec la variation donnée en pourcent.
     private func market(lastChange: Decimal, id: String = "spy") -> MarketSeries {
         var values: [Decimal] = [100]
         for index in 0..<UnusualMove.window { values.append(values[values.count - 1] * (index.isMultiple(of: 2) ? 1.01 : 0.99)) }

@@ -7,5 +7,6 @@ Applicable aussi aux tests de `MarketCore`. Le cœur reste indépendant de Swift
 - Une alerte cible une série par `seriesID`. Franchissement strict ; une même observation ne déclenche pas deux fois. Tester calculs et décodage dans `Tests/MarketCoreTests`.
 - Préférences et alertes locales, versionnées, écrites atomiquement. Un fichier illisible reste intact et l’erreur est visible. Lire `docs/decisions/2026-10-15-preferences-et-cache-separes.md` avant un changement de persistance.
 - Ne pas supprimer une migration tant que son usage et la préservation des données existantes ne sont pas établis. Ne pas développer deux comportements métier pour deux versions.
+- `Common/` garde deux piles qui ne se recouvrent pas : `MarketData*` sert les fournisseurs de cours à clé personnelle (session sans cache ni redirection, erreurs de clé, de quota et de droits, clôtures décimales), `PublicData*` sert les services statistiques publics (aucune clé, un code HTTP vaut « aucune donnée », périodes SDMX).
 - Aucune clé fournisseur partagée, aucune clé personnelle dans le dépôt, une URL, un cache ou un log.
 - Avant de changer une source, lire uniquement son contrat dans `docs/DATA-SOURCES.md`, `docs/PUBLIC-CATALOGUES.md` ou `docs/PERSONALIZATION.md`.

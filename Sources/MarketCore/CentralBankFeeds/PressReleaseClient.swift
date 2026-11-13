@@ -3,7 +3,7 @@ import Foundation
 
 public struct PressReleaseClient: Sendable {
     static let timeout: TimeInterval = 20
-    /// RSS dates, for example « Thu, 05 Nov 2026 14:00:00 -0500 » or « … GMT ».
+    /// Dates RSS, par exemple « Thu, 05 Nov 2026 14:00:00 -0500 » ou « … GMT ».
     private static let rssFormats = ["EEE, dd MMM yyyy HH:mm:ss Z", "EEE, dd MMM yyyy HH:mm:ss zzz", "EEE, d MMM yyyy HH:mm:ss Z"]
     public init() {}
 
@@ -17,7 +17,7 @@ public struct PressReleaseClient: Sendable {
         return try Self.parse(data, feed: feed)
     }
 
-    /// RSS `item` and Atom `entry` are both read; an entry without title, link or date is left out.
+    /// Les `item` RSS et les `entry` Atom sont tous deux lus ; une entrée sans titre, lien ou date est omise.
     public static func parse(_ data: Data, feed: CentralBankFeed) throws -> [PressRelease] {
         let root = try XMLTree.read(data)
         let items = root.descendants("item") + root.descendants("entry")

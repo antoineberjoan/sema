@@ -5,7 +5,7 @@ import AppKit
 import SemaDesign
 import SwiftUI
 
-/// A separate native backdrop per card leaves the space between cards transparent.
+/// Un fond natif séparé par carte laisse transparent l’espace entre les cartes.
 private struct RibbonGlassBackdrop: NSViewRepresentable {
     @Environment(\.colorScheme) private var colorScheme
     func makeNSView(context: Context) -> NSVisualEffectView {
@@ -25,7 +25,7 @@ private struct RibbonGlassBackdrop: NSViewRepresentable {
     }
 }
 
-/// A fixed tile keeps the texture still and avoids a render loop per card.
+/// Une tuile fixe garde la texture immobile et évite une boucle de rendu par carte.
 @MainActor
 private enum RibbonGrain {
     static let image: CGImage? = {
@@ -43,7 +43,7 @@ private enum RibbonGrain {
     }()
 }
 
-/// A thin highlight describes the glass edge; labels stay outside its vibrancy.
+/// Un fin reflet décrit le bord du verre ; les libellés restent hors de sa vibrance.
 struct RibbonSurface: ViewModifier {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.palette) private var palette
@@ -56,7 +56,7 @@ struct RibbonSurface: ViewModifier {
     func body(content: Content) -> some View {
         let isOpaque = reduceTransparency || contrast == .increased
         let shape = RoundedRectangle(cornerRadius: DesignRadius.card, style: .continuous)
-        // NSVisualEffectView owns the blur. Only the contrast veil changes opacity.
+        // NSVisualEffectView gère le flou. Seul le voile de contraste change d’opacité.
         let veil = (colorScheme == .dark ? DesignOpacity.glassVeilDark : DesignOpacity.glassVeilLight)
             * (1 - glass.transparency) * DesignMeasure.glassVeilRange
         let tint = (colorScheme == .dark ? DesignOpacity.glassTintDark : DesignOpacity.glassTintLight) * glass.tint * DesignMeasure.glassTintRange

@@ -136,7 +136,7 @@ private struct ShortcutRecorder: NSViewRepresentable {
             guard !isRecording else { return }
             window?.makeFirstResponder(self)
             isRecording = true; begin(); refreshTitle()
-            // Capture before menu key equivalents, only while this field records in its own window.
+            // Capture avant les équivalents clavier du menu, seulement tant que ce champ enregistre dans sa propre fenêtre.
             keyMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .leftMouseDown]) { [weak self] event in
                 let consumed = MainActor.assumeIsolated {
                     guard let self, self.isRecording, event.window === self.window,
@@ -156,7 +156,7 @@ private struct ShortcutRecorder: NSViewRepresentable {
             isRecording = false
             removeKeyMonitor()
             save(shortcut)
-            // Save restores registrations on success or failure, without clearing a conflict message.
+            // Enregistrer rétablit les enregistrements en cas de succès ou d’échec, sans effacer un message de conflit.
             refreshTitle()
         }
 

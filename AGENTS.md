@@ -28,7 +28,7 @@ sema est une app macOS native (SwiftUI, Swift 6, macOS 14 et plus) pour consulte
 
 - Dedans : le cœur (`Sources/MarketCore`), les jetons de design (`Sources/SemaDesign`), l'app (`Sources/SemaMac`), leurs tests (`Tests/MarketCoreTests`, `Tests/SemaDesignTests`, `Tests/SemaMacTests`), le site (`site/`), la distribution (`distribution/`).
 - Dehors : un serveur, un compte, une clé fournisseur partagée.
-- Nom : **sema**, en minuscules dans les textes visibles. Français pour l'interface et la documentation ; anglais pour les identifiants et les rôles. Aucun préfixe de projet dans un identifiant (les noms de cibles `SemaMac` et `SemaDesign` sont les seuls).
+- Nom : **sema**, en minuscules dans les textes visibles. Français pour l'interface, la documentation et les commentaires du code ; anglais pour les identifiants et les rôles. Le code fabriqué par un outil de Sophos (`Sources/SemaDesign/`) garde les commentaires de l'outil. Aucun préfixe de projet dans un identifiant (les noms de cibles `SemaMac` et `SemaDesign` sont les seuls).
 
 Charger au bon moment, sans tout lire au démarrage :
 
@@ -55,7 +55,7 @@ En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Mo
 
 Référence : **SwiftUI** (macOS 14). AppKit seulement pour un comportement macOS précis.
 
-On assemble ses composants avant d'écrire. Les composants propres et ceux qui reprennent la référence avec un écart sont dans `Sources/SemaMac/Components/Custom/`, avec `@documentation` et `@decision` en en-tête. Un composant qu'on ne peut pas assembler suit sa structure et déclare la page suivie : la méthode est dans `patron/composants.md` de Sophos.
+On assemble ses composants avant d'écrire. Un composant propre, ou qui reprend la référence, va dans `Sources/SemaMac/Components/Custom/`, avec `@documentation` et `@decision` en en-tête. Un composant qui assemble la référence avec un écart reste dans son module d'écran, avec les mêmes deux lignes d'en-tête (`Features/Overview/Components/HistoryChart.swift`). Un composant qu'on ne peut pas assembler suit sa structure et déclare la page suivie : la méthode est dans `patron/composants.md` de Sophos.
 
 ## Sources de vérité
 

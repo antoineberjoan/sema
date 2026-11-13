@@ -45,7 +45,7 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
     }
 
     public func resolving(labels: [String: String]) -> WebstatSeriesDescriptor {
-        // The key was validated at construction and raw values remain unchanged.
+        // La clé a été validée à la construction et les valeurs brutes restent inchangées.
         (try? WebstatSeriesDescriptor(raw: raw, labels: self.labels.merging(labels, uniquingKeysWith: { _, replacement in replacement }))) ?? self
     }
 
@@ -89,14 +89,14 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
         else { switch multiplier { case 3: scale = "milliers"; case 6: scale = "millions"; case 9: scale = "milliards"; default: scale = "× 10^\(multiplier)" } }
         return base.isEmpty ? scale : "\(scale) · \(base)"
     }
-    /// Thresholds use the source scale; obs_value is never multiplied a second time.
+    /// Les seuils utilisent l’échelle de la source ; obs_value n’est jamais multiplié une seconde fois.
     public var canAlert: Bool { multiplier != nil && unitCode != "_Z" && unitCode != "_X" && (unit != .unknown || labels["unit"] != nil) }
     public var variation: VariationConvention {
         if unit == .percent, multiplier == 0 { return .points }
         if [.usd, .jpy, .chf, .gbp].contains(unit), multiplier == 0 { return .relativePercent }
         return .unavailable
     }
-    /// Never splice values expressed in two scales or index bases into one curve.
+    /// Ne jamais raccorder en une seule courbe des valeurs exprimées dans deux échelles ou deux bases d’indice.
     public func usesSameMeasurement(as other: WebstatSeriesDescriptor) -> Bool {
         unitCode == other.unitCode && multiplier == other.multiplier &&
         attributes["UNIT_INDEX_BASE"] == other.attributes["UNIT_INDEX_BASE"]
@@ -107,7 +107,7 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
         guard let data = text?.data(using: .utf8), let values = try? JSONDecoder().decode([String: WebstatValue].self, from: data) else { return [:] }
         return values.compactMapValues(\.text)
     }
-    /// Catalogue bounds are end-of-period dates; exports filter the start of that period.
+    /// Les bornes du catalogue sont des dates de fin de période ; les exports filtrent le début de cette période.
     public var firstObservationStart: Date? {
         guard let firstPeriod else { return nil }
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!

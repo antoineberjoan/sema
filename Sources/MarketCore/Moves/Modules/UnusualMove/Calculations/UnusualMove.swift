@@ -2,17 +2,17 @@
 import Foundation
 
 public struct UnusualMove: Equatable, Sendable {
-    /// Number of previous changes that define the usual variation.
+    /// Nombre de variations précédentes qui définissent la variation habituelle.
     public static let window = 20
 
-    /// Change of the session, in points for rates and in percent otherwise.
+    /// Variation de la séance, en points pour les taux et en pourcent sinon.
     public let change: Decimal
-    /// Absolute change divided by the standard deviation of the previous changes.
+    /// Variation absolue divisée par l’écart-type des variations précédentes.
     public let ratio: Double
     public let observation: MarketObservation
 
-    /// Measures the move of the observation at `index`; nil without enough history,
-    /// with an unknown variation convention, or when the previous changes never varied.
+    /// Mesure le mouvement de l’observation à `index` ; nil sans assez d’historique,
+    /// avec une convention de variation inconnue, ou quand les variations précédentes n’ont jamais varié.
     public init?(series: MarketSeries, at index: Int) {
         let observations = series.observations
         guard observations.indices.contains(index), index > Self.window,
@@ -33,7 +33,7 @@ public struct UnusualMove: Equatable, Sendable {
         observation = observations[index]
     }
 
-    /// Move of the latest observation.
+    /// Mouvement de la dernière observation.
     public init?(series: MarketSeries) {
         self.init(series: series, at: series.observations.count - 1)
     }

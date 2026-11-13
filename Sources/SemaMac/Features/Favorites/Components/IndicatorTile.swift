@@ -10,7 +10,7 @@ struct IndicatorTile: View {
     let series: MarketSeries
     let action: () -> Void
 
-    /// The trailing buttons float over the tile: the title leaves room for each of them.
+    /// Les boutons de fin flottent sur la tuile : le titre laisse la place à chacun.
     private var actionCount: Int { series.exchangeRatePair == nil ? 1 : 2 }
 
     var body: some View {

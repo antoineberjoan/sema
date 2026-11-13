@@ -3,7 +3,7 @@ import Foundation
 
 /// Hôtes servis : `StatisticalSource.sdmxSources`. Un hôte dont les réponses demandent leur propre décodage devient son connecteur.
 public struct SdmxClient: StatisticalConnector {
-    /// Bound the XML tree and the list held in memory; never present a truncated catalogue.
+    /// Borne l’arbre XML et la liste gardée en mémoire ; ne présente jamais un catalogue tronqué.
     private static let seriesCatalogueByteLimit = 20 * 1024 * 1024
     public let source: StatisticalSource
 
@@ -47,7 +47,7 @@ public struct SdmxClient: StatisticalConnector {
             }
             catch is CancellationError { throw CancellationError() }
             catch PublicDataError.quotaReached { throw PublicDataError.quotaReached }
-            catch { } // An unavailable codelist leaves an explicit code field; observations remain accessible.
+            catch { } // Une liste de codes indisponible laisse un champ de code explicite ; les observations restent accessibles.
         }
         return additional.isEmpty ? structure : try SDMXParser.structure(data, dataset: dataset, additionalCodelists: additional)
     }

@@ -43,7 +43,7 @@ public actor AlphaVantageClient: MarketDataConnector {
         return try AlphaVantageMapping.series(data, instrument: instrument, now: .now)
     }
 
-    /// Market news of a day, with the key already kept for prices; one call of the daily quota.
+    /// Actualités de marché d’un jour, avec la clé déjà gardée pour les prix ; un appel du quota quotidien.
     public func news(from start: Date, to end: Date, key: String) async throws -> [Headline] {
         let body = try await requestBody([
             "function": "NEWS_SENTIMENT", "topics": "financial_markets", "sort": "RELEVANCE", "limit": String(Self.newsLimit),

@@ -7,7 +7,7 @@ extension AppStore {
         series.latest.map { "\(series.id)@\($0.date.timeIntervalSince1970)" }
     }
 
-    /// Loads every part independently: a missing source is named, the others still show.
+    /// Charge chaque partie indépendamment : une source absente est nommée, les autres s’affichent quand même.
     func dayContext(for series: MarketSeries) async -> DayContext? {
         guard let latest = series.latest, let key = Self.contextKey(series) else { return nil }
         if let cached = dayContexts[key] { return cached }

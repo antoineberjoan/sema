@@ -16,7 +16,7 @@ struct MenuRibbonLayoutTests {
     @Test func theMinimumCardWidthDecidesHowManyFit() {
         #expect(MenuRibbonLayout.minimumCardWidth == 208)
         #expect(MenuRibbonLayout.fixedCards == 2)
-        // 1 000 pt: floor(1 012 / 220) = 4 slots, two taken by the agenda and the signature.
+        // 1 000 pt : floor(1 012 / 220) = 4 emplacements, dont deux pris par l’agenda et la signature.
         #expect(MenuRibbonLayout.visibleCardCount(width: 1_000, favoriteCount: 6) == 2)
     }
 

@@ -18,7 +18,7 @@ struct SeriesDetailView: View {
     let series: MarketSeries
     var preview = false
     var isFocus = false
-    /// Previews outside Focus keep their own period; Focus shares the hub and ribbon choice.
+    /// Les aperçus hors Focus gardent leur période ; Focus partage le choix du hub et du bandeau.
     @State private var localPeriod: HistoryPeriod = .year
     @State private var isExplanationShown = false
 
@@ -207,7 +207,7 @@ struct SeriesDetailView: View {
         }
     }
 
-    /// Only Focus opens the inspector; previews in the catalogue stay compact.
+    /// Seul Focus ouvre l’inspecteur ; les aperçus du catalogue restent compacts.
     private var contextBinding: Binding<Bool> {
         Binding(get: { isFocus && store.isContextPresented }, set: { store.isContextPresented = $0 })
     }

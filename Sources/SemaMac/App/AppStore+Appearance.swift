@@ -20,10 +20,10 @@ extension AppStore {
     }
 
     func setRibbonPosition(_ position: MenuRibbonPosition) { mutatePreferences { $0.ribbonPositionID = position.rawValue } }
-    /// One period for the hub and the ribbon, kept across launches.
+    /// Une période pour le hub et le bandeau, gardée d’un lancement à l’autre.
     var period: HistoryPeriod { HistoryPeriod(rawValue: preferences.periodID ?? "") ?? .year }
     func setPeriod(_ period: HistoryPeriod) { mutatePreferences { $0.periodID = period.rawValue } }
-    /// A series too short for the chosen period shows all its history, without changing the shared choice.
+    /// Une série trop courte pour la période choisie montre tout son historique, sans changer le choix partagé.
     func period(for series: MarketSeries) -> HistoryPeriod { series.supports(period) ? period : .all }
 
     func setRibbonGlass(_ glass: RibbonGlassPreferences) {

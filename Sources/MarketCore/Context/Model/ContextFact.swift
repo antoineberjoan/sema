@@ -4,14 +4,14 @@ import Foundation
 public struct ContextFact: Equatable, Identifiable, Sendable {
     public enum Kind: String, Sendable { case move, peer, release, pressRelease, headline }
 
-    /// Number of facts of each part, the same as the inspector shows.
+    /// Nombre de faits de chaque partie, le même que montre l’inspecteur.
     static let peerLimit = 6, releaseLimit = 6, pressLimit = 4, headlineLimit = 5
 
     public let id: String
     public let kind: Kind
-    /// Short name of the source of the fact; its digits (« S&P 500 ») are names, never claims.
+    /// Nom court de la source du fait ; ses chiffres (« S&P 500 ») sont des noms, jamais des affirmations.
     public let label: String
-    /// Sentence given to the writer, with the figures shown in sema.
+    /// Phrase donnée au rédacteur, avec les chiffres montrés dans sema.
     public let text: String
     public let direction: AlertDirection?
     public let link: URL?
@@ -20,7 +20,7 @@ public struct ContextFact: Equatable, Identifiable, Sendable {
         self.id = id; self.kind = kind; self.label = label; self.text = text; self.direction = direction; self.link = link
     }
 
-    /// Numbered facts of the session of `series`: its own move first, then the parts of `context`.
+    /// Faits numérotés de la séance de `series` : d’abord son propre mouvement, puis les parties de `context`.
     public static func facts(for series: MarketSeries, context: DayContext, name: (MarketSeries) -> String) -> [ContextFact] {
         var drafts: [(Kind, String, String, AlertDirection?, URL?)] = []
         if let move = PeerMove.moves(on: context.day, among: [series], excluding: "").first {
@@ -44,7 +44,7 @@ public struct ContextFact: Equatable, Identifiable, Sendable {
         }
     }
 
-    /// Date of a session in French, for example « 5 novembre 2026 », on the UTC calendar used by every source.
+    /// Date d’une séance en français, par exemple « 5 novembre 2026 », sur le calendrier UTC utilisé par chaque source.
     static func longDate(_ day: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = .french

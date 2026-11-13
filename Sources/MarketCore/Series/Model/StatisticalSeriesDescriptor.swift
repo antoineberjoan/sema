@@ -14,8 +14,8 @@ public struct StatisticalSeriesDescriptor: Codable, Equatable, Sendable {
     public var unitCode: String? { fields["UNIT_MEASURE"] ?? fields["UNIT"] }
     public var multiplier: Int? {
         if let value = fields["UNIT_MULT"].flatMap(Int.init) { return value }
-        // Eurostat includes scale in its UNIT code (e.g. MIO_EUR). The values are
-        // already expressed in that labelled unit, with no separate UNIT_MULT.
+        // Eurostat inclut l’échelle dans son code UNIT (par ex. MIO_EUR). Les valeurs sont
+        // déjà exprimées dans cette unité libellée, sans UNIT_MULT séparé.
         if dataset.source == .eurostat, fields["UNIT"] != nil, labels["UNIT"] != nil { return 0 }
         return nil
     }
@@ -49,7 +49,7 @@ public struct StatisticalSeriesDescriptor: Codable, Equatable, Sendable {
     public var variation: VariationConvention {
         if unit == .percent && multiplier == 0 { return .points }
         if dataset.source == .ecb && dataset.code == "EXR" && multiplier == 0 && [.usd, .jpy, .chf, .gbp].contains(unit) { return .relativePercent }
-        // FRED market series (VIX, dollar index, prices) are compared in percent, like any quoted level.
+        // Les séries de marché FRED (VIX, indice dollar, prix) se comparent en pourcent, comme tout niveau coté.
         if dataset.source == .fred && multiplier == 0 && unit != .unknown { return .relativePercent }
         return .unavailable
     }

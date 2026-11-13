@@ -7,7 +7,7 @@ extension AppStore {
         followedSeries.first { SeriesEquivalence.matches($0, value) }
     }
 
-    func isFollowing(_ id: String) -> Bool { preferences.followedSeriesIDs.contains(WebstatStarter.starterKey(id)) }
+    func isFollowing(_ id: String) -> Bool { preferences.followedSeriesIDs.contains(id) }
 
     func isFavorite(_ id: String) -> Bool {
         guard let item = series.first(where: { $0.id == id }) else { return preferences.favoriteIDs.contains(id) }
@@ -32,7 +32,7 @@ extension AppStore {
             status = "Ce repère est déjà suivi via \(existing.originBadge)."
             return true
         }
-        // Persist the cache before preferences, for every provider.
+        // Écrit le cache avant les préférences, pour chaque fournisseur.
         let merged = series.filter { $0.id != value.id } + [value]
         try storage.cacheWebstat(merged)
         guard mutatePreferences({ $0.followedSeriesIDs.append(value.id) }) else { return false }

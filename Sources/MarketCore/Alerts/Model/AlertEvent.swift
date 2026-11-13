@@ -8,7 +8,7 @@ public struct AlertEvent: Codable, Identifiable, Equatable, Sendable {
     public let observedAt: Date
     public let changePercent: Decimal
     public let observedValue: Decimal?
-    /// Multiple of the usual variation, for an unusual move.
+    /// Multiple de la variation habituelle, pour un mouvement inhabituel.
     public let ratio: Double?
 
     public init(ruleID: UUID, seriesID: String, observedAt: Date, changePercent: Decimal,

@@ -11,7 +11,6 @@ Le bandeau des favoris et la fenêtre principale montrent les mêmes repères. U
 
 - `AppStore` est l'unique état partagé et le point de coordination. Il ne dessine pas l'interface.
 - Le bandeau et la fenêtre n'ont pas de deuxième sélection, de deuxième période ni de deuxième état métier.
-- Les mises à jour d'interface ont lieu sur le `MainActor`.
 - Le bandeau n'envoie aucune requête automatique. Le survol non plus.
 
 ## Options
@@ -23,4 +22,4 @@ Le bandeau des favoris et la fenêtre principale montrent les mêmes repères. U
 
 ## Conséquences
 
-Une règle déjà écrite dans `Sources/SemaMac/AGENTS.md`. Cette décision garde sa raison.
+La règle de fil d'exécution (`MainActor`) est dans `Sources/SemaMac/AGENTS.md`.

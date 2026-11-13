@@ -5,12 +5,12 @@ Décidé par : Antoine
 
 ## Contexte
 
-Le 8 novembre, Antoine a fourni une nouvelle identité. Elle remplace « Palier — Référence » du 16 octobre.
+sema a une identité propre : le signe « repère », une palette de marque et six autres palettes au choix de la personne.
 
 ## Décision
 
-- Le signe est une courbe qui monte puis se pose en palier, avec un point à la jonction détaché par un anneau de la couleur du fond. La géométrie est la même en SVG, en SwiftUI et en Core Graphics. Les fichiers de marque sont dans `Resources/Brand/`.
-- La palette **sema** devient le thème par défaut des nouveaux profils. Les six thèmes précédents restent disponibles dans Réglages → Apparence ; les choix enregistrés sont conservés.
+- Le signe est une courbe qui monte puis se pose en palier, avec un point à la jonction détaché par un anneau de la couleur du fond. La géométrie est écrite une fois (`SignalPath.swift`) ; les SVG de `Resources/Brand/` en sont exportés.
+- La palette **sema** est le thème par défaut des nouveaux profils. Six autres thèmes sont disponibles dans Réglages → Apparence ; un choix enregistré est conservé.
 - Le nom s'écrit « sema », toujours en minuscules, y compris en début de phrase.
 - L'icône de l'app suit les fichiers d'Antoine (`sema-app-icon.svg` et sa version sombre), sans suivre le thème personnel.
 - La palette et le mode Système / Clair / Sombre sont deux choix indépendants, locaux et persistants, partagés par la fenêtre, les réglages et le bandeau.
@@ -19,8 +19,8 @@ Le 8 novembre, Antoine a fourni une nouvelle identité. Elle remplace « Palier 
 
 | Option | Ce qu'elle donne | Ce qu'elle coûte |
 | --- | --- | --- |
-| Nouvelle identité, thèmes anciens gardés | Une marque nette ; aucun profil cassé | Sept palettes à tenir |
-| Remplacer les anciens thèmes | Moins de palettes | Casse les choix enregistrés |
+| Sept palettes, sema par défaut | Une marque nette ; aucun choix enregistré cassé | Sept palettes à tenir |
+| Une seule palette | Moins de palettes | Casse les choix enregistrés |
 
 ## Conséquences
 

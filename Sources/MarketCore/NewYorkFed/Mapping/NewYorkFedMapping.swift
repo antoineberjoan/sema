@@ -10,7 +10,7 @@ enum NewYorkFedMapping {
             for (key, value) in row {
                 if case .number = value { metadata["\(NewYorkFedClient.measurePrefix)\(key)"] = label(key) }
             }
-            // Unknown future types remain accessible through the documented all-rates endpoint.
+            // Les types futurs inconnus restent accessibles par le point d’accès documenté de tous les taux.
             metadata["ROUTE"] = ["EFFR", "OBFR"].contains(type) ? "unsecured/\(type.lowercased())" : ["SOFR", "SOFRAI", "BGCR", "TGCR"].contains(type) ? "secured/\(type.lowercased())" : "all"
             return .init(source: .newYorkFed, code: type, agency: "NYFED", version: "1", title: type,
                 detail: "Taux de référence et mesures publiées · choisir la mesure, sans confondre taux effectif et cible.", metadata: metadata)

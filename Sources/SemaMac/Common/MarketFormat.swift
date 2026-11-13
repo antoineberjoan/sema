@@ -3,7 +3,7 @@ import AppKit
 import MarketCore
 
 enum MarketFormat {
-    /// Variations are always shown with two decimals, whatever the precision of the series.
+    /// Les variations s’affichent toujours avec deux décimales, quelle que soit la précision de la série.
     static let changeDigits = 2
     static func number(_ value: Decimal, digits: Int = MarketSeries.defaultFractionDigits, signed: Bool = false) -> String {
         let formatter = NumberFormatter()
@@ -35,12 +35,12 @@ enum MarketFormat {
         return number(delta, digits: Self.changeDigits, signed: true) + (series.unit == .percent ? " pt" : " %")
     }
 
-    /// Change of one session: points for rates, percent otherwise.
+    /// Variation d’une séance : en points pour les taux, en pourcent sinon.
     static func sessionChange(_ change: Decimal, series: MarketSeries) -> String {
         number(change, digits: Self.changeDigits, signed: true) + (series.unit == .percent ? " pt" : " %")
     }
 
-    /// Multiple of the usual variation, for example « 4,0× ».
+    /// Multiple de la variation habituelle, par exemple « 4,0× ».
     static func ratio(_ ratio: Double) -> String { number(Decimal(ratio), digits: 1) + "×" }
 
     static func date(_ date: Date?) -> String {

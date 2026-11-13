@@ -1,14 +1,14 @@
 // Interroge Webstat avec une clé personnelle en en-tête et conserve la précision des observations.
 import Foundation
 
-/// Authenticated Banque de France observations. The user's key travels only in an HTTP header.
+/// Observations authentifiées de la Banque de France. La clé de la personne voyage seulement dans un en-tête HTTP.
 public struct WebstatClient: Sendable {
     static let timeout: TimeInterval = 30
     static let apiURL = "https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/"
-    /// Search results per page; the API refuses an offset beyond 10 000, so the last full page starts at 9 950.
+    /// Résultats de recherche par page ; l’API refuse un décalage au-delà de 10 000, donc la dernière page pleine commence à 9 950.
     public static let pageSize = 50
     public static let maximumSearchOffset = 9_950
-    /// From this offset on, the paged search is replaced by one lightweight export, paged locally.
+    /// À partir de ce décalage, la recherche paginée est remplacée par un seul export léger, paginé en local.
     public static func usesSummaryExport(forOffset offset: Int) -> Bool { offset >= maximumSearchOffset }
     static let datasetPageSize = 100
     public init() {}
@@ -26,7 +26,7 @@ public struct WebstatClient: Sendable {
         return request
     }
 
-    /// Quotes are escaped inside ODSQL string literals; fields and tables are never supplied by users.
+    /// Les guillemets sont échappés dans les chaînes littérales ODSQL ; les champs et les tables ne viennent jamais des utilisateurs.
     public static func literal(_ value: String) -> String {
         "'" + value.replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "'", with: "\\'") + "'"
@@ -58,8 +58,8 @@ public struct WebstatClient: Sendable {
         return try WebstatMapping.seriesPage(data, offset: offset)
     }
 
-    /// ODSQL has no ordered text comparison. Offset paging stops before its 10,000-row cap;
-    /// a user who reaches it can load this lightweight metadata index once and continue locally.
+    /// ODSQL n’a pas de comparaison de texte ordonnée. La pagination par décalage s’arrête avant son plafond de 10 000 lignes ;
+    /// une personne qui l’atteint peut charger une fois cet index léger de métadonnées et continuer en local.
     public static func summaryExportRequest(apiKey: String, search: WebstatSearch) throws -> URLRequest {
         var request = try searchRequest(apiKey: apiKey, search: search)
         var url = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
@@ -95,7 +95,7 @@ public struct WebstatClient: Sendable {
         return descriptor
     }
 
-    /// Exports are bounded by date. The caller requests older history in six-year slices.
+    /// Les exports sont bornés par date. L’appelant demande l’historique plus ancien par tranches de six ans.
     public func observations(apiKey: String, descriptor: WebstatSeriesDescriptor,
                              start: Date, end: Date = .now) async throws -> [MarketObservation] {
         let date = ISO8601DateFormatter(); date.formatOptions = [.withFullDate]
@@ -138,7 +138,7 @@ public struct WebstatClient: Sendable {
     }
 
 
-    /// Six years cover a full five-year window even when the latest monthly release lags behind today.
+    /// Six ans couvrent une fenêtre complète de cinq ans même quand la dernière publication mensuelle est en retard sur aujourd’hui.
     public static func request(apiKey: String, now: Date = .now) throws -> URLRequest {
         let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty, key.rangeOfCharacter(from: .controlCharacters) == nil else {

@@ -2,7 +2,7 @@
 import Foundation
 
 public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
-    /// Precision used when a provider does not publish one, and the widest precision accepted from a provider.
+    /// Précision utilisée quand un fournisseur n’en publie pas, et précision la plus large acceptée d’un fournisseur.
     public static let defaultFractionDigits = 2
     public static let maximumFractionDigits = 10
     public let id: String
@@ -43,7 +43,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         self.hasCompleteHistory = hasCompleteHistory
         self.statisticalDescriptor = statisticalDescriptor
         self.marketInstrument = marketInstrument
-        // One publication per date; the last input for that date wins.
+        // Une publication par date ; la dernière entrée de cette date l’emporte.
         let unique = Dictionary(observations.map { ($0.date, $0) }, uniquingKeysWith: { _, latest in latest })
         self.observations = unique.values.sorted { $0.date < $1.date }
     }
@@ -96,7 +96,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         return date.addingTimeInterval(-Double(period.days) * .day)
     }
 
-    /// Rate changes use percentage points; exchange rates and NAVs use percent.
+    /// Les variations de taux utilisent des points de pourcentage ; les taux de change et les valeurs liquidatives utilisent le pourcent.
     public func change(for period: HistoryPeriod) -> Decimal? {
         let points = history(for: period)
         guard points.count > 1, let first = points.first, let last = points.last else { return nil }

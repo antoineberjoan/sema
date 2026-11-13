@@ -8,7 +8,7 @@ struct WebstatPagingTests {
         #expect(WebstatClient.pageSize == 50)
         #expect(WebstatClient.maximumSearchOffset == 9_950)
         #expect(WebstatClient.maximumSearchOffset % WebstatClient.pageSize == 0)
-        // The API refuses an offset beyond 10 000: the last full page starts at 9 950.
+        // L’API refuse un décalage au-delà de 10 000 : la dernière page pleine commence à 9 950.
         #expect(WebstatClient.maximumSearchOffset + WebstatClient.pageSize == 10_000)
     }
 

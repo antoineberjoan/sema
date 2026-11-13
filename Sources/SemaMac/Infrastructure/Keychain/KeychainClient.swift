@@ -2,7 +2,7 @@
 import Foundation
 import Security
 
-/// A device-local credential. Never copied into preferences, caches or the distributed app.
+/// Un identifiant propre à l’appareil. Jamais copié dans les préférences, les caches ni l’app distribuée.
 actor KeychainClient {
     private let service: String
     private let title: String

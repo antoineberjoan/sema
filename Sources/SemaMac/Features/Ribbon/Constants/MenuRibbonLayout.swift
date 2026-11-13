@@ -22,13 +22,13 @@ enum MenuRibbonLayout {
     static let hoverDuration = DesignDuration.fast
     static let revealOffset = DesignMotion.shift
 
-    /// How many favorite cards are visible at this width: the two fixed cards take their share, the minimum card width decides the rest.
+    /// Combien de cartes favorites sont visibles à cette largeur : les deux cartes fixes prennent leur part, la largeur minimale d’une carte décide du reste.
     static func visibleCardCount(width: CGFloat, favoriteCount: Int) -> Int {
         let capacity = max(1, Int((width + spacing) / (DesignLayout.menuRibbonMinimumCardWidth + spacing)) - Int(DesignMeasure.menuRibbonFixedCards))
         return max(1, min(favoriteCount, capacity, Int(DesignMeasure.menuRibbonPreferredVisibleCards)))
     }
 
-    /// The width of each card (favorites and fixed cards share the whole width, with no cap).
+    /// La largeur de chaque carte (favoris et cartes fixes se partagent toute la largeur, sans plafond).
     static func cardWidth(width: CGFloat, visibleCount: Int) -> CGFloat {
         (width - CGFloat(visibleCount + Int(DesignMeasure.menuRibbonFixedCards) - 1) * spacing) / CGFloat(visibleCount + Int(DesignMeasure.menuRibbonFixedCards))
     }

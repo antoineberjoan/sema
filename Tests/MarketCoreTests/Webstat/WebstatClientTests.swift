@@ -6,7 +6,7 @@ import Testing
 struct WebstatClientTests {
     private let now = Date(timeIntervalSince1970: 1_792_022_400) // 2026-10-15 UTC
 
-    /// One independent sample for each product indicator, including a month not yet finished.
+    /// Un échantillon indépendant pour chaque indicateur du produit, dont un mois pas encore terminé.
     private func fixture(extraRows: String = "") -> Data {
         let keys = [
             "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", "FM.D.U2.EUR.4F.KR.DFR.LEV",
@@ -38,12 +38,12 @@ struct WebstatClientTests {
         #expect(series.count == 16)
         #expect(Set(series.map(\.id)).count == 16)
         #expect(series.allSatisfy { $0.sourceURL?.host == "webstat.banque-france.fr" })
-        let dollar = try #require(series.first { $0.id == "eurusd" })
+        let dollar = try #require(series.first { $0.id == IdentifierMigration.upgrade("eurusd") })
         #expect(dollar.unit == .usd)
         #expect(dollar.latest?.value == Decimal(string: "1.1195000001"))
-        #expect(series.first { $0.id == "eurgbp" }?.unit == .gbp)
-        #expect(series.first { $0.id == "inflation" }?.frequency == .monthly)
-        #expect(series.first { $0.id == "estr" }?.frequency == .daily)
+        #expect(series.first { $0.id == IdentifierMigration.upgrade("eurgbp") }?.unit == .gbp)
+        #expect(series.first { $0.id == IdentifierMigration.upgrade("inflation") }?.frequency == .monthly)
+        #expect(series.first { $0.id == IdentifierMigration.upgrade("estr") }?.frequency == .daily)
     }
 
     @Test
@@ -55,8 +55,8 @@ struct WebstatClientTests {
         {"series_key":"ESTR.B.EU000A2X2A25.WT","time_period_start":"2026-10-14","time_period_end":"2026-10-14","obs_value":-0.55,"obs_status":"A"}
         """
         let series = try WebstatMapping.starterHistory(fixture(extraRows: rows), now: now)
-        #expect(series.first { $0.id == "eurusd" }?.observations.count == 1)
-        #expect(series.first { $0.id == "estr" }?.latest?.value == Decimal(string: "-0.55"))
+        #expect(series.first { $0.id == IdentifierMigration.upgrade("eurusd") }?.observations.count == 1)
+        #expect(series.first { $0.id == IdentifierMigration.upgrade("estr") }?.latest?.value == Decimal(string: "-0.55"))
     }
 
     @Test
@@ -66,12 +66,12 @@ struct WebstatClientTests {
         {"series_key":"MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O","time_period_start":"2026-10-01","time_period_end":"2026-10-31","obs_value":1.5,"obs_status":"E","updated_at":"2026-10-01T08:00:00+00:00"}
         """
         let series = try WebstatMapping.starterHistory(fixture(extraRows: rows), now: now)
-        let livret = try #require(series.first { $0.id == "livreta" })
+        let livret = try #require(series.first { $0.id == IdentifierMigration.upgrade("livreta") })
         #expect(livret.latest?.value == Decimal(string: "1.7"))
         #expect((livret.latest?.periodEnd ?? .distantPast) > now)
         #expect(livret.latest?.updatedAt != nil)
         #expect(livret.latest?.status == "A")
-        // September has 30 days; the same calendar-month logic also handles a 31-day gap.
+        // Septembre compte 30 jours ; la même logique de mois calendaire gère aussi un écart de 31 jours.
         #expect(livret.history(for: .month).count == 2)
     }
 
