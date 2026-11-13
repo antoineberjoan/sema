@@ -1,4 +1,4 @@
-// Vérifie que les raccourcis ajoutés préservent les anciennes préférences et les choix personnels.
+// Vérifie que les raccourcis ajoutés préservent les choix personnels et les préférences déjà écrites.
 import Foundation
 import Testing
 @testable import MarketCore
@@ -40,15 +40,15 @@ struct ShortcutPreferencesTests {
         #expect(AppShortcut(keyCode: 11, modifiers: [.control, .option], key: "B").isValid)
         #expect(AppShortcut(keyCode: 11, modifiers: [.control, .option], key: "b").matches(ShortcutPreferences.standard.ribbon!))
     }
-    @Test func retiredHubDefaultChangesWithoutReplacingCustomBindings() throws {
+    @Test func originalWorkspaceShortcutChangesWithoutReplacingCustomBindings() throws {
         let ribbon = AppShortcut(keyCode: 49, modifiers: [.control, .shift], key: "espace")
-        let previous = AppShortcut(keyCode: 4, modifiers: [.control, .option], key: "H")
-        let migrated = AppPreferences(shortcuts: .init(ribbon: ribbon, workspace: previous))
-        #expect(try migrated.migrated().shortcuts?.workspace == ShortcutPreferences.standard.workspace)
-        #expect(try migrated.migrated().shortcuts?.ribbon == ribbon)
+        let original = AppShortcut(keyCode: 4, modifiers: [.control, .option], key: "H")
+        let preferences = AppPreferences(shortcuts: .init(ribbon: ribbon, workspace: original))
+        #expect(try PreferencesMigration.upgrade(preferences).shortcuts?.workspace == ShortcutPreferences.standard.workspace)
+        #expect(try PreferencesMigration.upgrade(preferences).shortcuts?.ribbon == ribbon)
         let custom = AppShortcut(keyCode: 46, modifiers: [.command, .shift], key: "M")
-        #expect(ShortcutPreferences(ribbon: ribbon, workspace: custom).migrated().workspace == custom)
-        #expect(ShortcutPreferences(ribbon: nil, workspace: nil).migrated().workspace == nil)
+        #expect(PreferencesMigration.upgrade(ShortcutPreferences(ribbon: ribbon, workspace: custom)).workspace == custom)
+        #expect(PreferencesMigration.upgrade(ShortcutPreferences(ribbon: nil, workspace: nil)).workspace == nil)
     }
 
     @Test func globalSearchIsOffByDefaultAndKeepsItsChoice() throws {
@@ -63,6 +63,6 @@ struct ShortcutPreferencesTests {
         let loaded = try store.load()
         #expect(loaded.shortcuts?[.search] == chosen)
         #expect(loaded.shortcuts?[.ribbon] == nil)
-        #expect(loaded.shortcuts?.migrated().search == chosen)
+        #expect(loaded.shortcuts.map(PreferencesMigration.upgrade)?.search == chosen)
     }
 }

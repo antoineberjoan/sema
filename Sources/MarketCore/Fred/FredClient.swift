@@ -2,10 +2,10 @@
 import Foundation
 
 public struct FredClient: StatisticalConnector {
-    /// FRED returns at most 1 000 series per page; a release is listed by popularity, most used first.
+    /// FRED renvoie au plus 1 000 séries par page ; une publication est listée par popularité, les plus utilisées d’abord.
     static let pageLimit = 1000
     private static let source = StatisticalSource.fred
-    /// Personal key, added to requests only at sending time so request builders and logs never hold it.
+    /// Clé personnelle, ajoutée aux requêtes seulement à l’envoi, pour que ni les constructeurs de requêtes ni les journaux ne la détiennent.
     private let key: String?
 
     public init(key: String? = nil) { self.key = key }
@@ -34,7 +34,7 @@ public struct FredClient: StatisticalConnector {
         return try FredMapping.series(observations: data, metadata: metadata, dataset: dataset, key: key, fullHistory: fullHistory, now: now)
     }
 
-    /// A series is named by its own identifier: its release list is not needed to refresh it.
+    /// Une série se nomme par son propre identifiant : sa liste de publications n’est pas nécessaire pour l’actualiser.
     public func observations(for descriptor: StatisticalSeriesDescriptor, fullHistory: Bool, now: Date) async throws -> MarketSeries {
         try await fetch(dataset: descriptor.dataset, structure: .init(dimensions: [], labels: [:]), key: descriptor.key, fullHistory: fullHistory, now: now)
     }
@@ -44,12 +44,12 @@ public struct FredClient: StatisticalConnector {
         return request(path: "/releases/dates?realtime_start=\(text)&realtime_end=\(text)&include_release_dates_with_no_data=true&file_type=json&limit=\(pageLimit)")
     }
 
-    /// Economic publications scheduled on a day, from the FRED calendar.
+    /// Publications économiques prévues un jour donné, d’après le calendrier FRED.
     public func releaseDates(on day: Date) async throws -> [EconomicRelease] {
         try FredMapping.releaseDates(try await download(Self.releaseDatesRequest(on: day)))
     }
 
-    /// Checks a key with one small request before it is saved.
+    /// Vérifie une clé par une petite requête avant son enregistrement.
     public func validateKey() async throws {
         _ = try await download(Self.seriesRequest(key: "DGS10"))
     }
@@ -64,7 +64,7 @@ public struct FredClient: StatisticalConnector {
 
     private func download(_ request: URLRequest) async throws -> Data {
         var request = request
-        // FRED documents only the `api_key` query parameter; the URL is never logged nor cached.
+        // FRED documente seulement le paramètre de requête `api_key` ; l’URL n’est jamais journalisée ni mise en cache.
         guard let key, !key.isEmpty, let url = request.url,
               var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { throw PublicDataError.missingAPIKey }
         components.queryItems = (components.queryItems ?? []) + [URLQueryItem(name: "api_key", value: key)]

@@ -3,6 +3,6 @@ import Foundation
 
 public enum AlertCondition: String, Codable, Sendable {
     case relativeChange, level
-    /// Session change compared with the usual variation; both directions, global sensitivity.
+    /// Variation de séance comparée à la variation habituelle ; les deux directions, sensibilité globale.
     case unusualMove
 }

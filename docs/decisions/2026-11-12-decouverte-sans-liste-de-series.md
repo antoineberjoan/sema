@@ -1,7 +1,7 @@
 # L'interface lit les catalogues publics ; elle n'a pas de liste autorisée de séries
 
 Date : 2026-11-12 · Statut : proposée
-Décidé par : à confirmer par Antoine (reprise d'un document retiré)
+Décidé par : à confirmer par Antoine
 
 ## Contexte
 
@@ -25,7 +25,3 @@ sema consulte des séries publiées par des producteurs (Insee, BCE, Eurostat, B
 ## Conséquences
 
 Les réponses de catalogue sont bornées (20 Mio en lecture progressive) et refusées si elles sont tronquées. Les détails de code restent dans les fichiers concernés.
-
-## Trace
-
-Repris de `docs/ARCHITECTURE.md` à son retrait, le 2026-11-12. La date d'origine n'est pas écrite : le texte complet reste dans l'historique Git.

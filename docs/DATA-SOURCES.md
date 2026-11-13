@@ -1,6 +1,6 @@
 # Sources et conventions
 
-Les catalogues publics supplémentaires sont désormais intégrés dans l’incrément local : voir [PUBLIC-CATALOGUES.md](PUBLIC-CATALOGUES.md) pour la couverture exacte, les contrats d’unité, la découverte des jeux et les limites vérifiées. Les exemples ci-dessous restent des suggestions, sans restreindre les catalogues.
+Les catalogues publics supplémentaires sont décrits dans [PUBLIC-CATALOGUES.md](PUBLIC-CATALOGUES.md) : couverture exacte, contrats d’unité, découverte des jeux et limites vérifiées. Les exemples ci-dessous sont des suggestions, sans restreindre les catalogues.
 
 ## Connexion active : Banque de France / Webstat
 
@@ -12,6 +12,8 @@ Les catalogues publics supplémentaires sont désormais intégrés dans l’incr
 - `observations/exports/json` charge uniquement les séries consultées ou suivies avec des bornes explicites. Les six dernières années publiées sont chargées à l’ouverture ; « Tout » permet d’atteindre le début publié en tranches de six années annulables. Les fréquences mensuelles, trimestrielles, semestrielles et annuelles utilisent le début de la première période publiée, même si le catalogue renseigne sa date de fin.
 - Actualisation manuelle après connexion initiale. Le quota documenté est de 10 000 requêtes par jour et par compte. Aucun nouvel essai automatique n’est lancé après une erreur.
 - En cas d’erreur d’accès, de quota, de réseau ou d’export incomplet : les dernières données sont conservées. Le cache est séparé des préférences et ne contient jamais la clé.
+- Un échec de connexion garde le cache et les données affichées, et le contrôle automatique suivant garde l’erreur tant que la série n’est pas actualisée. Un changement d’unité, de multiplicateur ou de base d’indice interdit de fusionner l’ancien et le nouvel historique : les alertes de la série sont mises en pause avant toute évaluation, et « Tout » demande une actualisation si les métadonnées courantes diffèrent de la fiche.
+- Le catalogue SDMX est borné à 20 MiB et la pagination Webstat s’arrête à l’offset 9 950 : ces bornes sont des constantes nommées de `SdmxClient` et `WebstatClient`.
 
 ### Sélection de départ et identifiants historiques
 
@@ -29,14 +31,14 @@ Les catalogues publics supplémentaires sont désormais intégrés dans l’incr
 | `eurchf` | `EXR.D.CHF.EUR.SP00.A` | Référence quotidienne ; CHF pour 1 EUR. |
 | `eurgbp` | `EXR.D.GBP.EUR.SP00.A` | Référence quotidienne ; GBP pour 1 EUR. |
 | `mortgage-fr` | `MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N` | Mensuelle ; nouveaux crédits à l’habitat hors renégociations, pas un TAEG ni une offre bancaire. |
-| `de10` | `FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD` | Bund à 10 ans : même définition que `fr10` pour l’Allemagne, moyenne mensuelle du rendement de l’obligation de référence. Ajouté le 18 octobre 2026 à la sélection de départ pour comparer avec la France. |
-| `us10` | `FM.M.US.USD.FR2.BB.US10YT_RR.YLD` | Treasury américain à 10 ans, même définition, rendement en % annuel. Ajouté le 18 octobre 2026 ; observations non encore vérifiées par appel réel. |
-| `mro` | `FM.D.U2.EUR.4F.KR.MRR_FR.LEV` | Quotidienne ; taux des opérations principales de refinancement de la BCE. Ajouté le 18 octobre 2026 ; observations non encore vérifiées par appel réel. |
-| `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage : « OAT France · 10 ans » (public de conseillers en gestion de patrimoine, décision d’Antoine, 18 octobre 2026). Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
+| `de10` | `FM.M.DE.EUR.FR2.BB.DE10YT_RR.YLD` | Bund à 10 ans : même définition que `fr10` pour l’Allemagne, moyenne mensuelle du rendement de l’obligation de référence. Sert à comparer avec la France. |
+| `us10` | `FM.M.US.USD.FR2.BB.US10YT_RR.YLD` | Treasury américain à 10 ans, même définition, rendement en % annuel. Observations non vérifiées par un appel réel. |
+| `mro` | `FM.D.U2.EUR.4F.KR.MRR_FR.LEV` | Quotidienne ; taux des opérations principales de refinancement de la BCE. Observations non vérifiées par un appel réel. |
+| `fr10` | `FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD` | Libellé officiel : « Taux de l’emprunt phare à 10 ans - France ». Affichage : « OAT France · 10 ans » (public de conseillers en gestion de patrimoine). Rendement publié mensuellement, pas un coupon ni le TEC 10 quotidien. Aucun cours en direct. |
 
-Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. Les anciens identifiants sema sont migrés vers la clé Webstat, qui devient l’identifiant stable des observations, favoris et alertes.
+Cette table décrit la sélection initiale ; le catalogue dynamique n’est pas limité à ces séries. La clé Webstat est l’identifiant stable des observations, favoris et alertes. Un identifiant local lu dans un fichier de version 1 y est converti ([relecture des versions de fichiers](decisions/2026-11-12-relecture-des-versions-de-fichiers.md)).
 
-Les anciennes séries `ICP…` d’inflation s’arrêtent fin 2025. Le flux actuel est `HICP…`. L’IPCH harmonisé ne doit pas être confondu avec l’IPC national de l’Insee.
+Les séries d’inflation `ICP…` s’arrêtent fin 2025. Le flux publié est `HICP…`. L’IPCH harmonisé ne doit pas être confondu avec l’IPC national de l’Insee.
 
 Le repère `fr10` n’est pas le TEC 10 quotidien : celui-ci est un indice à maturité constante interpolé. [L’AFT indique des restrictions Euronext sur sa redistribution et son usage commercial](https://www.aft.gouv.fr/fr/oat-tec-10) ; il reste hors de l’app.
 
@@ -49,11 +51,9 @@ La source est conservée par série : Banque de France, BCE via Banque de France
 - La [BCE](https://www.ecb.europa.eu/services/using-our-site/disclaimer/html/index.en.html) demande notamment l’attribution, l’identification des modifications et l’information sur la disponibilité gratuite à la source pour un contenu vendu. Les réglages sema indiquent cette disponibilité gratuite ; les variations affichées sont des calculs de sema.
 - Vérifier les conditions des producteurs pour tout ajout ou changement de source et pour la distribution commerciale finale. Aucune autorisation Morningstar, Leeway ou de place boursière n’est déduite de cet accès Webstat.
 
-## Démonstration et compatibilité
+## Origine des valeurs
 
-Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil (décision d’Antoine, 18 octobre 2026). Aucune valeur fictive n’apparaît dans l’app (décision d’Antoine, 18 octobre 2026) : avant connexion, un repère choisi n’a pas d’observation et son détail indique « Pas encore de données » avec l’accès à la connexion Webstat. Seul l’aperçu du bandeau de l’accueil montre des exemples fictifs de `DemoCatalog`, annoncés comme tels. Après connexion, les séries choisies reçoivent les observations de Webstat. Les fonds ne sont plus exposés ; leurs anciennes règles et favoris restent conservés sans être actifs. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles à l’actualisation.
-
-L’ancien client public `ECBExchangeRateClient` et son parseur restent présents pour compatibilité. Si aucun cache Webstat n’existe, les trois parités de l’ancien `ecb-cache.json` peuvent encore être consultées. L’interface actuelle n’appelle plus directement le flux BCE de 90 jours.
+Un profil neuf ne suit aucun des seize repères de départ : ils sont proposés décochés à l’accueil ([décision](decisions/2026-10-18-profil-neuf-sans-valeur-fictive.md)). Aucune valeur fictive n’apparaît dans l’app. Sans connexion Webstat, un repère choisi n’a pas d’observation : son détail indique « Pas encore de données » et donne accès à la connexion Webstat. Une fois connecté, il reçoit les observations de Webstat. Aucun fonds n’est exposé ; le fichier de préférences peut garder une règle ou un favori de fonds sans l’activer. Les alertes de seuil sont vérifiées uniquement sur les observations Webstat réelles, à chaque actualisation.
 
 ## Dates et calculs
 
@@ -70,11 +70,11 @@ L’ancien client public `ECBExchangeRateClient` et son parseur restent présent
 
 ## Suites possibles
 
-Les séries agrégées des OPC et les autres jeux accessibles peuvent désormais être ajoutés depuis Explorer ; aucun fonds individuel n’est intégré. Les données de fonds nécessitent une part précise, une devise, un calendrier et une source autorisée. Le scraping et les actions ne font pas partie de la connexion actuelle.
+Les séries agrégées des OPC et les autres jeux accessibles peuvent être ajoutés depuis Explorer ; aucun fonds individuel n’est intégré. Les données de fonds nécessitent une part précise, une devise, un calendrier et une source autorisée. Le scraping et les actions ne font pas partie de la connexion actuelle.
 
 ## Exemples à retrouver dans le catalogue
 
-Repérage du 16 octobre 2026 à partir du catalogue officiel et de ses fiches. Les séries ci-dessous peuvent être recherchées dans Explorer, sans ajout de code dédié. Une fiche disponible ne remplace pas le contrôle des observations, conventions et droits du producteur.
+Sélection issue du catalogue officiel et de ses fiches. Les séries ci-dessous peuvent être recherchées dans Explorer, sans ajout de code dédié. Une fiche disponible ne remplace pas le contrôle des observations, conventions et droits du producteur.
 
 | Priorité | Repère candidat | Série / fréquence | Intérêt pour un CGP |
 | --- | --- | --- | --- |
@@ -87,7 +87,14 @@ Repérage du 16 octobre 2026 à partir du catalogue officiel et de ses fiches. L
 | Ensuite | Dépôts à terme des ménages et entreprises | [Publication officielle](https://www.banque-france.fr/fr/statistiques/epargne/taux-de-remuneration-des-depots-bancaires-2026-06), mensuelle ; codes à sélectionner | Contexte sur l’épargne bancaire et la trésorerie. |
 | Ensuite | Collecte agrégée des OPC par catégorie | [Panorama officiel](https://www.banque-france.fr/fr/statistiques/epargne/panorama-financier-des-opc-france-2024-q4), codes et périodicités à sélectionner | Flux agrégés ; aucun suivi d’un fonds individuel n’est réintroduit. |
 
-Les séries de taux souverains candidates sont à jour dans le catalogue au repérage, depuis janvier 1980 jusqu’à septembre 2026. Les séries de crédit par durée repérées couvrent mars 2004 à juin 2026. Ces profondeurs proviennent du catalogue. Les observations du Bund, de l’indice IPCH France, de l’encours OPC actions et du crédit immobilier trimestriel ont été vérifiées par appels réels le 16 octobre 2026 ; le reste du catalogue ne reçoit pas de badge de validation exhaustive.
+Les profondeurs viennent du catalogue. Le reste du catalogue ne reçoit pas de badge de validation exhaustive.
+
+| Série | Couverture dans le catalogue | Couverture mesurée le | Observations vérifiées par appel réel le |
+| --- | --- | --- | --- |
+| Taux souverains candidats | janvier 1980 à septembre 2026 | 2026-10-16 | Bund : 2026-10-16 |
+| Crédit par durée | mars 2004 à juin 2026 | 2026-10-16 | crédit immobilier trimestriel : 2026-10-16 |
+| IPCH France | | | 2026-10-16 |
+| Encours OPC actions | | | 2026-10-16 |
 
 ### États-Unis et autres compléments
 
@@ -95,17 +102,17 @@ L’EFFR (taux effectif des fonds fédéraux) et le SOFR sont accessibles direct
 
 Le TEC 10 quotidien est distinct de l’emprunt phare mensuel actuellement intégré : [l’AFT rappelle qu’Euronext calcule et administre les indices CNO-TEC](https://www.aft.gouv.fr/fr/oat-tec-10). Aucun ajout du TEC 10 n’est décidé dans ce repérage. Le PIB, le chômage, l’inflation américaine et les prix immobiliers peuvent compléter une vue macro ensuite, avec une source officielle et des définitions vérifiées pour chaque série.
 
-## Cours Twelve Data et Alpha Vantage — 18 octobre 2026
+## Cours Twelve Data et Alpha Vantage
 
-Antoine lève le 18 octobre l’exclusion des cotations individuelles (décision du 17) pour obtenir des cours avec une clé personnelle. sema intègre les connexions personnelles Twelve Data et Alpha Vantage . Le catalogue s’affiche à l’ouverture de la source ; son filtre par nom, symbole ou place fonctionne localement. Twelve Data filtre actions, ETF et indices selon le forfait et les droits de métadonnées publiés. Alpha Vantage présente son catalogue officiel d’actions et ETF américains ; il ne fournit pas de liste de droits instrument par instrument. L’aperçu vérifie les cours avant ajout. Les séries quotidiennes et hebdomadaires ont des identifiants différents ; les valeurs restent en Decimal et portent leur devise et leur origine. Les cours sont non ajustés (Twelve Data `adjust=none`, endpoints bruts Alpha Vantage).
+sema intègre les connexions personnelles Twelve Data et Alpha Vantage pour obtenir des cours avec une clé personnelle ([décision](decisions/2026-10-18-cotations-avec-cle-personnelle.md)). Le catalogue s’affiche à l’ouverture de la source ; son filtre par nom, symbole ou place fonctionne localement. Twelve Data filtre actions, ETF et indices selon le forfait et les droits de métadonnées publiés. Alpha Vantage présente son catalogue officiel d’actions et ETF américains ; il ne fournit pas de liste de droits instrument par instrument. L’aperçu vérifie les cours avant ajout. Les séries quotidiennes et hebdomadaires ont des identifiants différents ; les valeurs restent en Decimal et portent leur devise et leur origine. Les cours sont non ajustés (Twelve Data `adjust=none`, endpoints bruts Alpha Vantage).
 
 Liens officiels : [Twelve Data](https://twelvedata.com/account/api-keys), [clé Alpha Vantage](https://www.alphavantage.co/support/#api-key), [documentation Twelve Data](https://twelvedata.com/docs), [documentation Alpha Vantage](https://www.alphavantage.co/documentation/).
 
 Une clé personnelle ne garantit ni l’accès à tous les instruments ni les droits d’affichage dans une application tierce. Les accès refusés ne sont pas contournés. Les indices premium, les fondamentaux et les autres API ne sont pas annoncés comme gratuits. Tiingo n’est pas intégré : les [conditions Starter](https://app.tiingo.com/tos/) interdisent le stockage durable de données.
 
-## Contexte d’une séance — 8 novembre 2026
+## Contexte d’une séance
 
-Sources ajoutées par le chantier « alertes de marché et refonte », décision d’Antoine du 7 novembre. Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
+Sources de contexte. Toutes servent des faits datés avec leur lien ; aucune ne sert à affirmer une cause.
 
 | Source | Usage | Accès | Limites |
 | --- | --- | --- | --- |

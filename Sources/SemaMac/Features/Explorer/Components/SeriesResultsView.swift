@@ -34,7 +34,7 @@ struct SeriesResultsView: View {
         }
     }
 
-    /// The result `offset` places away from the selected one, kept inside the list.
+    /// Le résultat à `offset` places du résultat sélectionné, gardé dans la liste.
     static func moved(_ id: String?, by offset: Int, in results: [MarketSeries]) -> String? {
         guard !results.isEmpty else { return nil }
         let current = results.firstIndex { $0.id == id } ?? 0

@@ -2,7 +2,7 @@
 import Foundation
 
 public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
-    /// Precision used when a provider does not publish one, and the widest precision accepted from a provider.
+    /// Précision utilisée quand un fournisseur n’en publie pas, et précision la plus large acceptée d’un fournisseur.
     public static let defaultFractionDigits = 2
     public static let maximumFractionDigits = 10
     public let id: String
@@ -43,7 +43,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         self.hasCompleteHistory = hasCompleteHistory
         self.statisticalDescriptor = statisticalDescriptor
         self.marketInstrument = marketInstrument
-        // One publication per date; the last input for that date wins.
+        // Une publication par date ; la dernière entrée de cette date l’emporte.
         let unique = Dictionary(observations.map { ($0.date, $0) }, uniquingKeysWith: { _, latest in latest })
         self.observations = unique.values.sorted { $0.date < $1.date }
     }
@@ -55,6 +55,16 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
     }
     public var displayUnit: String { marketInstrument?.displayUnit ?? descriptor?.displayUnit ?? statisticalDescriptor?.displayUnit ?? unit.symbol }
     public var canAlert: Bool { descriptor?.canAlert ?? statisticalDescriptor?.canAlert ?? (unit != .unknown) }
+
+    /// Cette série reçue prolonge l'historique déjà détenu : ses observations s'ajoutent, la complétude détenue est gardée.
+    public func continuing(_ held: MarketSeries?) -> MarketSeries {
+        replacing(observations: (held?.observations ?? []) + observations, completeHistory: held?.hasCompleteHistory)
+    }
+
+    /// Comme `continuing(_:)`, mais une mesure qui a changé d'unité, d'échelle ou de base ne reprend rien de l'ancien historique.
+    public func continuing(_ held: MarketSeries?, sameMeasurement: Bool) -> MarketSeries {
+        sameMeasurement ? continuing(held) : replacing(observations: observations, completeHistory: false)
+    }
 
     public func replacing(observations: [MarketObservation], syncedAt: Date? = nil,
                           completeHistory: Bool? = nil, descriptor: WebstatSeriesDescriptor? = nil) -> MarketSeries {
@@ -85,8 +95,6 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         return history(for: period).count > 1 && first.date <= cutoff(for: period, endingAt: latest.date)
     }
 
-    public var hasAnnualHistory: Bool { supports(.year) }
-
     private func cutoff(for period: HistoryPeriod, endingAt date: Date) -> Date {
         if [.monthly, .quarterly, .halfYearly, .yearly].contains(frequency) || period == .halfYear || period.days >= HistoryPeriod.year.days {
             var calendar = Calendar(identifier: .gregorian)
@@ -96,7 +104,7 @@ public struct MarketSeries: Codable, Identifiable, Equatable, Sendable {
         return date.addingTimeInterval(-Double(period.days) * .day)
     }
 
-    /// Rate changes use percentage points; exchange rates and NAVs use percent.
+    /// Les variations de taux utilisent des points de pourcentage ; les taux de change et les valeurs liquidatives utilisent le pourcent.
     public func change(for period: HistoryPeriod) -> Decimal? {
         let points = history(for: period)
         guard points.count > 1, let first = points.first, let last = points.last else { return nil }

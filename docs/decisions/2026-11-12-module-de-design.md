@@ -5,7 +5,7 @@ Décidé par : Antoine
 
 ## Contexte
 
-sema écrivait ses choix visuels à la main dans `Sources/SemaMac/DesignSystem/`. Sophos fabrique la sortie Swift des jetons, un fichier par famille de valeurs, dans un dossier propre à l'application. Les valeurs brutes y sont internes ; seuls les rôles sont publics, pour qu'une vue ne lise jamais une primitive. Cette règle n'a d'effet que si le design est un module à part. `AGENTS.md` demandait jusqu'ici un besoin explicite pour toute nouvelle cible.
+Sophos fabrique la sortie Swift des jetons, un fichier par famille de valeurs, dans un dossier propre à l'application. Les valeurs brutes y sont internes ; seuls les rôles sont publics, pour qu'une vue ne lise jamais une primitive. Cette règle n'a d'effet que si le design est un module à part : la cible `SemaDesign`.
 
 ## Décision
 
@@ -26,4 +26,4 @@ Les valeurs de couleur, d'espace, de forme, de texte et de mouvement viennent de
 
 ## Trace
 
-Lot 3 de l'alignement de sema sur Sophos. Décision d'Antoine du 2026-11-12 (« copie conforme de Sophos », cible `SemaDesign` autorisée).
+Décision d'Antoine du 2026-11-12 : la cible `SemaDesign` est autorisée.

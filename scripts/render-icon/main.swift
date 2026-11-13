@@ -14,7 +14,7 @@ func render(pixels: Int, name: String) throws {
     let context = CGContext(data: nil, width: pixels, height: pixels, bitsPerComponent: 8,
         bytesPerRow: pixels * 4, space: CGColorSpace(name: CGColorSpace.sRGB)!,
         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
-    // The icon unit square: the same geometry as the exported SVG, whose single source is SignalPath.
+    // Le carré unité de l’icône : la même géométrie que le SVG exporté, dont la source unique est SignalPath.
     context.translateBy(x: 0, y: CGFloat(pixels))
     context.scaleBy(x: CGFloat(pixels) / SignalPath.appIconSize, y: -CGFloat(pixels) / SignalPath.appIconSize)
     let ink = color(DesignPrimitive.ink800)
@@ -35,7 +35,7 @@ func render(pixels: Int, name: String) throws {
     context.setStrokeColor(color(DesignPrimitive.paper0))
     context.strokePath()
 
-    // The teal point, separated from the line by a ring of the background colour.
+    // Le point sarcelle, séparé de la ligne par un anneau de la couleur du fond.
     let radius = (SignalPath.dotRadius + SignalPath.gapRadius) / 2
     let center = moved(SignalPath.dotCenter)
     context.addEllipse(in: CGRect(x: center.x - radius, y: center.y - radius, width: 2 * radius, height: 2 * radius))

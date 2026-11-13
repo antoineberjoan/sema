@@ -4,15 +4,23 @@ import Foundation
 public enum RefreshPolicy {
     public static let interval: TimeInterval = 24 * 60 * 60
 
-    /// Weekday closes after which watched markets are checked, with a short delay for providers to publish.
+    /// Clôtures des jours ouvrés après lesquelles les marchés surveillés sont vérifiés, avec un court délai pour que les fournisseurs publient.
     private static let closes: [(timeZone: TimeZone, hour: Int, minute: Int)] = [
         (TimeZone(identifier: "Europe/Paris")!, 17, 50),
         (TimeZone(identifier: "America/New_York")!, 16, 20),
     ]
-    /// Days searched around a date to find the nearest weekday close.
+    /// Jours cherchés autour d’une date pour trouver la clôture ouvrée la plus proche.
     private static let searchDays = 7
 
-    /// A series is due after 24 h, or, when it is watched for unusual moves, once a close has passed since its sync.
+    /// Une série suivie entre dans l'actualisation automatique si sa source est active et connectée.
+    public static func isAutomaticallyRefreshable(_ series: MarketSeries, isSourceEnabled: Bool,
+                                                  connectedProviders: Set<MarketProvider>, hasWebstatKey: Bool) -> Bool {
+        guard isSourceEnabled else { return false }
+        if let instrument = series.marketInstrument { return connectedProviders.contains(instrument.provider) }
+        return series.statisticalDescriptor != nil || hasWebstatKey
+    }
+
+    /// Une série est due après 24 h, ou, quand elle est surveillée pour les mouvements inhabituels, dès qu’une clôture est passée depuis sa synchronisation.
     public static func isDue(syncedAt: Date?, now: Date, followsCloses: Bool = false) -> Bool {
         guard let syncedAt else { return true }
         let age = now.timeIntervalSince(syncedAt)

@@ -6,7 +6,7 @@ final class FloatingPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 
-    /// A transparent borderless panel above other windows; each caller draws its own surface.
+    /// Un panneau transparent sans bordure au-dessus des autres fenêtres ; chaque appelant dessine sa propre surface.
     static func make(title: String, identifier: String) -> FloatingPanel {
         let panel = FloatingPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel],
                                   backing: .buffered, defer: true)
@@ -20,7 +20,7 @@ final class FloatingPanel: NSPanel {
         return panel
     }
 
-    /// The screen where the pointer is, so a panel opens where the person is looking.
+    /// L’écran où se trouve le pointeur, pour qu’un panneau s’ouvre là où la personne regarde.
     static var screenUnderPointer: NSScreen? {
         NSScreen.screens.first { $0.frame.contains(NSEvent.mouseLocation) }
     }

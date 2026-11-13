@@ -27,7 +27,3 @@ Les captures de Monocle fournies par Antoine guident la matière du bandeau. Le 
 ## Conséquences
 
 La liste des surfaces translucides et leurs exceptions est fixée par la décision `surfaces-translucides`. Le champ `ribbonGlass` des préférences porte les trois valeurs ; son absence garde le rendu précédent.
-
-## Trace
-
-Repris de `docs/IDENTITY.md` à son retrait, le 2026-11-12. Le texte complet reste dans l'historique Git.

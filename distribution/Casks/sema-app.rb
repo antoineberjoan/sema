@@ -5,7 +5,7 @@ cask "sema-app" do
 
   url "https://github.com/antoineberjoan/homebrew-sema/releases/download/v#{version}/Sema-#{version}-arm64.dmg"
   name "sema"
-  desc "Vos repères économiques Webstat sur Mac"
+  desc "Vos repères économiques publics sur Mac"
   homepage "https://getsema.app/"
 
   depends_on arch: :arm64

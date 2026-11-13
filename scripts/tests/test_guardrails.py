@@ -290,9 +290,20 @@ class GuardrailsTests(unittest.TestCase):
         self.write("Tests/SeriesTests.swift", "// Vérifie une série.\nlet sample = Series()\n")
         self.assertEqual([error for error in self.errors() if "Tests/" not in error], [])
 
+    def test_cited_identifiers_must_exist_in_the_code(self):
+        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nstruct Series {\n    var displayedSeries: Int { 1 }\n}\n")
+        self.write("docs/lexique.md", "Voir `displayedSeries` et `publishedSeries`, mais pas `A22FRX` ni `NSStatusItem`.\n")
+        errors = [error for error in self.errors() if "identifiant cité" in error]
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`publishedSeries`", errors[0])
+
+    def test_decisions_may_cite_identifiers_that_no_longer_exist(self):
+        self.write("docs/decisions/2026-11-01-ancien-choix.md", "Le type `removedType` portait ce choix.\n")
+        self.assertEqual([error for error in self.errors() if "identifiant cité" in error], [])
+
     def test_glossary_spelling_is_enforced(self):
         self.write("docs/lexique.md", "| Concept | Nom dans le code | Sens |\n| --- | --- | --- |\n| Identifiant | `seriesID` | Série |\n")
-        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nimport Observation\nlet seriesId = 1\n")
+        self.write("Sources/MarketCore/Series.swift", "// Décrit une série.\nimport Observation\nlet seriesId = 1\nlet seriesID = 2\n")
         errors = self.errors()
         self.assertEqual(len(errors), 1)
         self.assertIn("`seriesId` s’écrit `seriesID`", errors[0])
@@ -329,11 +340,39 @@ class GuardrailsTests(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("`theme-color` vaut `#111111`", errors[0])
 
+    def test_media_query_limit_follows_the_breakpoint_token(self):
+        self.write("site/tokens.json", json.dumps({"breakpoint": {"narrow": {"$value": {"value": 700, "unit": "px"}}}}))
+        self.write_site("@media (max-width: 700px) { .card { margin: 0; } }\n.card { margin: 0; }")
+        self.assertEqual(self.errors(), [])
+        self.write_site("@media (max-width: 640px) { .card { margin: 0; } }\n.card { margin: 0; }")
+        errors = [error for error in self.errors() if "breakpoint.narrow" in error]
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`max-width: 640px`", errors[0])
+
     def test_site_css_reads_roles_not_scale_steps(self):
         self.write_site(".card { padding: var(--scale-space-1); }", tokens="--scale-space-1: 4px; --ink: #141414;")
         errors = self.errors()
         self.assertEqual(len(errors), 1)
         self.assertIn("lit la primitive `scale-space-1`", errors[0])
+
+    def test_cited_repository_paths_must_exist(self):
+        self.write("Sources/Real.swift", "// Décrit un type.\nlet value = 1\n")
+        self.write("Sources/Dir/Real.swift", "// Décrit un type.\nlet value = 2\n")
+        self.write("docs/note.md", "Voir `Sources/Real.swift`, `Sources/` et `Sources/Gone.swift`. Partiels : `Sources/Real.swift` plus court `Real.swift` est ignoré, `Dir/Real.swift` et `Dir/Gone.swift`. Ignorés : `Sources/*.swift`, `build/x.dmg`.\n")
+        errors = self.errors()
+        self.assertEqual(len(errors), 2)
+        self.assertIn("le chemin cité `Sources/Gone.swift` n’existe pas", errors[0])
+        self.assertIn("le fichier cité `Dir/Gone.swift` n’existe pas", errors[1])
+
+    def test_namespace_members_used_must_be_defined(self):
+        self.write("Sources/MarketCore/Starter.swift", "// Porte les repères.\npublic enum Starter {\n    public static let ids = 1\n    static func key(_ id: String) -> String { id }\n    struct Definition {}\n}\n")
+        self.write("Sources/MarketCore/Mode.swift", "// Porte les modes.\npublic enum Mode {\n    case fast\n}\n")
+        self.write("Sources/MarketCore/Use.swift", "// Lit les repères.\nlet a = Starter.ids\nlet b = Starter.key(\"x\")\nlet c = Starter.Definition()\nlet d = Mode.fast\n")
+        self.assertEqual(self.errors(), [])
+        self.write("Tests/MarketCoreTests/UseTests.swift", "// Vérifie un membre disparu.\nlet e = Starter.canonicalID(\"x\")\n")
+        errors = self.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("`Starter.canonicalID` n’est pas défini", errors[0])
 
     def test_site_variable_must_be_defined(self):
         self.write_site(".card { padding: var(--space-9); margin: var(--wrap-max, var(--space-1)); }\n.card { --wrap-max: var(--space-1); }")

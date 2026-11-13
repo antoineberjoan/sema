@@ -2,16 +2,16 @@
 import Foundation
 
 public struct DayAgenda: Equatable, Sendable {
-    /// Lines shown before « Tout voir ».
+    /// Lignes montrées avant « Tout voir ».
     public static let shownLimit = 3
-    /// Monday to Friday.
+    /// Du lundi au vendredi.
     static let weekLength = 5
-    /// Noon UTC keeps the calendar day stable in every time zone.
+    /// Midi UTC garde le jour calendaire stable dans tous les fuseaux horaires.
     static let noon = 12
 
     public let day: Date
-    /// Every line of the day, in this order: unusual moves (largest gap first), releases of the FRED series
-    /// the person follows, other FRED releases, central bank releases, headlines (newest first).
+    /// Chaque ligne du jour, dans cet ordre : mouvements inhabituels (plus grand écart d’abord), publications des séries FRED
+    /// que la personne suit, autres publications FRED, communiqués des banques centrales, titres (les plus récents d’abord).
     public let items: [AgendaItem]
     public var shown: [AgendaItem] { Array(items.prefix(Self.shownLimit)) }
     public var hiddenCount: Int { max(0, items.count - Self.shownLimit) }
@@ -28,7 +28,7 @@ public struct DayAgenda: Equatable, Sendable {
             + headlines.sorted { $0.publishedAt > $1.publishedAt }.map(AgendaItem.headline)
     }
 
-    /// Moves of the day that reach the chosen sensitivity, largest gap first.
+    /// Mouvements du jour qui atteignent la sensibilité choisie, plus grand écart d’abord.
     static func moves(on day: Date, series: [MarketSeries], sensitivity: MoveSensitivity) -> [PeerMove] {
         PeerMove.moves(on: day, among: series, excluding: "").filter { ($0.ratio ?? 0) >= sensitivity.multiplier }
     }
@@ -37,7 +37,7 @@ public struct DayAgenda: Equatable, Sendable {
         !moves(on: day, series: series, sensitivity: sensitivity).isEmpty
     }
 
-    /// The five working days of the week of `date`, each at noon UTC.
+    /// Les cinq jours ouvrés de la semaine de `date`, chacun à midi UTC.
     public static func week(containing date: Date, calendar: Calendar = Calendar(identifier: .iso8601)) -> [Date] {
         guard let start = calendar.dateInterval(of: .weekOfYear, for: date)?.start else { return [] }
         var utc = Calendar(identifier: .gregorian)
@@ -49,18 +49,18 @@ public struct DayAgenda: Equatable, Sendable {
         }
     }
 
-    /// The working day after `day`, at noon UTC: Friday leads to Monday.
+    /// Le jour ouvré après `day`, à midi UTC : le vendredi mène au lundi.
     public static func nextDay(after day: Date) -> Date {
         var utc = Calendar(identifier: .gregorian)
         utc.timeZone = TimeZone(secondsFromGMT: 0)!
         var next = utc.date(byAdding: .day, value: 1, to: day) ?? day
-        // Weekday 1 is Sunday and 7 is Saturday on the Gregorian calendar.
+        // Le jour 1 est dimanche et le 7 est samedi dans le calendrier grégorien.
         while [1, 7].contains(utc.component(.weekday, from: next)) { next = utc.date(byAdding: .day, value: 1, to: next) ?? next }
         let parts = utc.dateComponents([.year, .month, .day], from: next)
         return utc.date(from: DateComponents(year: parts.year, month: parts.month, day: parts.day, hour: noon)) ?? next
     }
 
-    /// The day opened first: today, or the last working day on a weekend.
+    /// Le jour ouvert en premier : aujourd’hui, ou le dernier jour ouvré un week-end.
     public static func currentDay(now: Date, calendar: Calendar = Calendar(identifier: .iso8601)) -> Date? {
         let days = week(containing: now, calendar: calendar)
         let today = calendar.dateComponents([.year, .month, .day], from: now)

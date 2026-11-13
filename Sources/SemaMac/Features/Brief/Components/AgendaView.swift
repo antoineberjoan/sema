@@ -26,7 +26,7 @@ struct AgendaView: View {
             isAllShown = false
             agenda = await store.agenda(on: day)
         }
-        // A day chosen in the ribbon opens here; the request is consumed once read.
+        // Un jour choisi dans le bandeau s’ouvre ici ; la demande est consommée une fois lue.
         .onChange(of: store.agendaDay, initial: true) { _, requested in
             guard let requested else { return }
             day = requested

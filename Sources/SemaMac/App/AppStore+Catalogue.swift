@@ -3,7 +3,7 @@ import Foundation
 import MarketCore
 
 extension AppStore {
-    /// A pause after the last keystroke avoids one request per letter.
+    /// Une pause après la dernière frappe évite une requête par lettre.
     static let searchDelay: Duration = .milliseconds(250)
     var canLoadMoreCatalogue: Bool { hasMoreCatalogue && !isSearchingCatalogue }
 
@@ -44,8 +44,7 @@ extension AppStore {
                     catalogueLabels.merge(labels, uniquingKeysWith: { _, replacement in replacement })
                     try? storage.cacheCatalogue(.init(datasets: catalogueDatasets, labels: catalogueLabels))
                 }
-                let items: [WebstatSeriesDescriptor]
-                let hasMore: Bool
+                let page: WebstatPage<WebstatSeriesDescriptor>
                 if WebstatClient.usesSummaryExport(forOffset: offset) {
                     if summaryExportSearch != search {
                         let summaries = try await WebstatClient().exportSummaries(apiKey: key, search: search)
@@ -53,33 +52,23 @@ extension AppStore {
                         guard generation == searchGeneration else { return }
                         summaryExport = summaries; summaryExportSearch = search
                     }
-                    let end = min(offset + WebstatClient.pageSize, summaryExport.count)
-                    items = offset < end ? Array(summaryExport[offset..<end]) : []
-                    catalogueTotal = summaryExport.count
-                    hasMore = end < summaryExport.count
+                    page = .slice(of: summaryExport, offset: offset, size: WebstatClient.pageSize)
+                    catalogueTotal = page.total
                 } else {
-                    let page = try await WebstatClient().search(apiKey: key, search: search, offset: offset)
+                    page = try await WebstatClient().search(apiKey: key, search: search, offset: offset)
                     try Task.checkCancellation()
                     guard generation == searchGeneration else { return }
-                    items = page.items
                     if !loadMore { catalogueTotal = page.total }
-                    hasMore = page.hasMore
                 }
                 try Task.checkCancellation()
                 guard generation == searchGeneration else { return }
-                let resolvedItems = items.map { resolvedWithCachedLabels($0) }
+                let resolvedItems = page.items.map { resolvedWithCachedLabels($0) }
                 if loadMore {
                     let known = Set(catalogueResults.map(\.key)); catalogueResults += resolvedItems.filter { !known.contains($0.key) }
                 } else {
-                    // Prépendre les séries starters (favoris) si pas de recherche texte
-                    let starters = search.query.isEmpty ? WebstatStarter.series.compactMap { series in
-                        resolvedItems.first { $0.key == series.id }
-                    } : []
-                    let starterKeys = Set(starters.map(\.key))
-                    let nonStarters = resolvedItems.filter { !starterKeys.contains($0.key) }
-                    catalogueResults = starters + nonStarters
+                    catalogueResults = search.query.isEmpty ? WebstatStarter.placingFirst(resolvedItems) : resolvedItems
                 }
-                hasMoreCatalogue = hasMore
+                hasMoreCatalogue = page.hasMore
                 isSearchingCatalogue = false
             } catch is CancellationError { }
             catch {
@@ -111,9 +100,7 @@ extension AppStore {
                 guard previewDescriptor?.key == descriptor.key else { return }
                 previewDescriptor = resolved
                 let compatible = previewSeries?.descriptor?.usesSameMeasurement(as: resolved) ?? true
-                let existing = compatible ? previewSeries?.observations ?? [] : []
-                previewSeries = value.replacing(observations: existing + value.observations,
-                    completeHistory: compatible ? previewSeries?.hasCompleteHistory : false)
+                previewSeries = value.continuing(previewSeries, sameMeasurement: compatible)
                 if isPreviewRefreshRequired {
                     previewError = "La source a changé d’unité, d’échelle ou de base. Cet aperçu utilise les nouvelles valeurs ; actualisez vos repères avant de l’ouvrir."
                 }
@@ -139,7 +126,7 @@ extension AppStore {
                 if let held = series.first(where: { $0.id == value.id }),
                    let previous = held.statisticalDescriptor, let next = value.statisticalDescriptor,
                    previous.usesSameMeasurement(as: next) {
-                    previewSeries = value.replacing(observations: held.observations + value.observations, completeHistory: held.hasCompleteHistory)
+                    previewSeries = value.continuing(held)
                 } else { previewSeries = value }
                 if isPreviewRefreshRequired { previewError = "L’unité, l’échelle ou la base a changé. Actualisez vos repères et vérifiez les seuils avant de l’ouvrir." }
                 isLoadingPreview = false
@@ -159,21 +146,7 @@ extension AppStore {
     }
 
     private func resolvedWithCachedLabels(_ descriptor: WebstatSeriesDescriptor) -> WebstatSeriesDescriptor {
-        var labels: [String: String] = [:]
-        let dataset = catalogueDatasets.first { $0.id == descriptor.datasetID }
-        let mapping = (dataset?.dimensionCodelists ?? [:]).merging(dataset?.attributeCodelists ?? [:], uniquingKeysWith: { _, attribute in attribute })
-        let attributes = descriptor.attributes; let dimensions = descriptor.dimensions
-        for (field, list) in mapping {
-            let code = descriptor.raw[field.lowercased()]?.text ?? dimensions[field] ?? attributes[field]
-            if let code, let label = catalogueLabels[list]?[code] { labels[field.lowercased()] = label }
-        }
-        let fallback = ["unit": "CL_UNIT", "unit_mult": "CL_UNIT_MULT", "freq": "CL_FREQ", "source_agency": "CL_ORGANISATION", "ref_area": "CL_AREA"]
-        for (field, list) in fallback where labels[field] == nil {
-            let code = descriptor.raw[field]?.text ?? dimensions[field.uppercased()] ?? attributes[field.uppercased()]
-            if let code, let label = catalogueLabels[list]?[code] { labels[field] = label }
-        }
-        if labels["ref_area"] == nil { labels["ref_area"] = labels["ame_ref_area"] ?? labels["zone_geo"] }
-        return descriptor.resolving(labels: labels)
+        descriptor.resolving(codeLabels: catalogueLabels, dataset: catalogueDatasets.first { $0.id == descriptor.datasetID })
     }
 
     func resolve(_ descriptor: WebstatSeriesDescriptor, apiKey: String) async -> WebstatSeriesDescriptor {

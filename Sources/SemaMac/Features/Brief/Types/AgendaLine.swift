@@ -49,7 +49,7 @@ struct AgendaLine: Identifiable {
         }
     }
 
-    /// What the line says under its title: the figure or source, else its kind.
+    /// Ce que la ligne dit sous son titre : le chiffre ou la source, sinon son genre.
     var subtitle: String { detail.isEmpty ? kind : detail }
 
     func bar(palette: DesignPalette) -> Color {
@@ -60,12 +60,12 @@ struct AgendaLine: Identifiable {
         }
     }
 
-    /// The same fill on an opaque page and on a glass card: the quiet tint is the glass-rest opacity of the text color.
+    /// Le même remplissage sur une page opaque et sur une carte de verre : la teinte discrète est l’opacité « verre au repos » de la couleur du texte.
     func tint(palette: DesignPalette) -> Color {
         tone == .move ? DesignColor.selection(palette) : DesignColor.text.opacity(DesignOpacity.glassRest)
     }
 
-    /// Said when a day has no line; the FRED key is the only way to get releases.
+    /// Dit quand un jour n’a aucune ligne ; la clé FRED est le seul moyen d’obtenir des publications.
     static func emptyText(hasFREDKey: Bool) -> String {
         hasFREDKey ? "Aucun mouvement inhabituel, publication ni communiqué ce jour."
             : "Aucun mouvement inhabituel ni communiqué ce jour. Connectez FRED dans Réglages, Sources, pour voir les publications."

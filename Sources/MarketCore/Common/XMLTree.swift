@@ -1,8 +1,8 @@
 // Arbre XML minimal et sûr, partagé par les messages SDMX et les flux de communiqués : entités refusées, annotations ignorées.
 import Foundation
 
-/// The same reader handles SDMX 2.1 messages and RSS or Atom feeds.
-/// Annotations are not needed for navigation; entity declarations are rejected.
+/// Le même lecteur gère les messages SDMX 2.1 et les flux RSS ou Atom.
+/// Les annotations ne servent pas à la navigation ; les déclarations d’entité sont rejetées.
 final class XMLTree {
     let name: String
     let attributes: [String: String]
@@ -18,7 +18,7 @@ final class XMLTree {
         return (names.first { $0.attributes["xml:lang"] == "fr" } ?? names.first { $0.attributes["xml:lang"] == "en" } ?? names.first)?.text.trimmingCharacters(in: .whitespacesAndNewlines) ?? attributes["id"] ?? ""
     }
 
-    /// Reads a whole message; an entity declaration, an `Error` or a `Fault` element makes it invalid.
+    /// Lit un message entier ; une déclaration d’entité, un élément `Error` ou `Fault` le rend invalide.
     static func read(_ data: Data) throws -> XMLTree {
         let reader = XMLTreeReader(); let parser = XMLParser(data: data)
         parser.shouldResolveExternalEntities = false; parser.delegate = reader

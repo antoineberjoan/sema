@@ -1,10 +1,10 @@
-# Catalogues publics — incrément local du 16 octobre 2026
+# Catalogues publics
 
 ## Contrat produit
 
-Le catalogue appartient au fournisseur. Sema ne maintient pas une liste autorisée d’indices : l’utilisateur choisit une source, recherche un jeu publié puis une série existante par son libellé, et prévisualise la série avant de la suivre. Antoine précise le 17 octobre que les dimensions et la clé exacte doivent rester facultatives dans Recherche avancée, sans formulaire obligatoire. La liste initiale Webstat et les exemples de ce document ne limitent pas les possibilités.
+Le catalogue appartient au fournisseur. sema ne maintient pas une liste autorisée d’indices : l’utilisateur choisit une source, recherche un jeu publié puis une série existante par son libellé, et prévisualise la série avant de la suivre. Les dimensions et la clé exacte restent facultatives dans Recherche avancée, sans formulaire obligatoire. La liste initiale Webstat et les exemples de ce document ne limitent pas les possibilités.
 
-À la demande d’Antoine, Explorer place aussi vingt références de départ reconnaissables en tête de chaque source statistique publique. Elles ne sont montrées que si leur jeu figure dans le catalogue courant ; leur clic retrouve la clé complète dans le catalogue officiel avant d’ouvrir l’aperçu. Les libellés de départ sont des aides à la navigation, pas des métadonnées officielles. Les changements de version ou de catalogue ne fabriquent pas de série : une référence absente est signalée, et la recherche complète demeure disponible. Les suggestions ne suivent aucune série automatiquement.
+Explorer place aussi vingt références de départ reconnaissables en tête de chaque source statistique publique. Elles ne sont montrées que si leur jeu figure dans le catalogue courant ; leur clic retrouve la clé complète dans le catalogue officiel avant d’ouvrir l’aperçu. Les libellés de départ sont des aides à la navigation, pas des métadonnées officielles. Les changements de version ou de catalogue ne fabriquent pas de série : une référence absente est signalée, et la recherche complète demeure disponible. Les suggestions ne suivent aucune série automatiquement.
 
 Découvrir un catalogue ne télécharge pas toutes ses observations. Chaque combinaison désigne un repère ; une réponse contenant plusieurs séries doit être précisée, sans sélection silencieuse de la première. Une combinaison inexistante ou un format non interprété reste une erreur explicite, sans valeurs de remplacement.
 
@@ -23,7 +23,7 @@ La liste des séries SDMX utilise `detail=nodata` : clés complètes et attribut
 | Fed de New York | Familles et mesures numériques découvertes par l’API des taux de référence | Taux effectifs, cibles lorsqu’elles sont publiées, percentiles, volumes, moyennes composées et indice SOFR. Les opérations repo, SOMA et autres tables d’opérations ne sont pas intégrées à ce lecteur de séries. |
 | Banque mondiale | Catalogue complet des indicateurs de l’API Indicators v2, toutes les pages et bases annoncées ; pays et agrégats | La base productrice est conservée dans l’identifiant. Une unité absente n’est pas déduite du nom : le graphique reste lisible, les alertes sont suspendues. |
 
-Les sept nouveaux accès sont publics et n’utilisent pas de clé Webstat. Les catalogues sont mis en cache dans `statistical-catalogues.json`, avec un bouton d’actualisation explicite. Le cache des observations conserve son nom historique `webstat-cache.json` et sa version 2. `MarketSeries.statisticalDescriptor` est optionnel : les caches précédents restent lisibles.
+Les sept nouveaux accès sont publics et n’utilisent pas de clé Webstat. Les catalogues sont mis en cache dans `statistical-catalogues.json`, avec un bouton d’actualisation explicite. Le cache des observations est `webstat-cache.json`, en version 2. `MarketSeries.statisticalDescriptor` est optionnel : un cache sans descripteur reste lisible.
 
 ### Limites explicites
 
@@ -31,8 +31,8 @@ Les sept nouveaux accès sont publics et n’utilisent pas de clé Webstat. Les 
 - Une période non interprétée, une réponse tronquée ou plusieurs séries dans une réponse ne deviennent pas une courbe présentée comme complète.
 - L’exploration révèle les listes de codes de la source. Lorsque celle-ci ne publie pas toutes les contraintes entre dimensions, une combinaison proposée peut ne pas exister ; l’utilisateur peut aussi saisir une clé exacte.
 - Les séries numériques à unité non interprétée restent consultables. Une alerte exige une unité et une échelle explicites. Les indices et montants ne reçoivent pas de variation relative inventée.
-- Les sources à inscription ou à contrat supplémentaire (BEA, EIA, FMI, etc.) ne sont pas présentées comme connectées. Aucune clé, aucun compte et aucun accord supplémentaire ne sont créés par cet incrément.
-- Mise à jour du 8 novembre : FRED est connecté avec une clé personnelle gratuite, inactif tant qu’elle manque. Catalogue = publications FRED, structure = séries de la publication par popularité ; unités converties (Percent en points, Index en %), valeurs « . » ignorées. La clé passe dans l’URL `api_key`, seule méthode offerte, uniquement à l’envoi. Suggestions : VIXCLS (© Cboe, citation obligatoire), DGS10, DGS2, DTWEXBGS, DEXUSEU ; identifiants de publication à vérifier avec une vraie clé.
+- Les sources à inscription ou à contrat supplémentaire (BEA, EIA, FMI, etc.) ne sont pas présentées comme connectées. Aucune clé, aucun compte et aucun accord supplémentaire ne sont créés.
+- FRED est connecté avec une clé personnelle gratuite, inactif tant qu’elle manque. Catalogue = publications FRED, structure = séries de la publication par popularité ; unités converties (Percent en points, Index en %), valeurs « . » ignorées. La clé passe dans l’URL `api_key`, seule méthode offerte, uniquement à l’envoi. Suggestions : VIXCLS (© Cboe, citation obligatoire), DGS10, DGS2, DTWEXBGS, DEXUSEU ; identifiants de publication à vérifier avec une vraie clé.
 - Pas de cotations d’actions ni de VL ou de collecte d’un fonds individuel. Les flux agrégés d’OPC sont déjà une famille de données Webstat ; une variation d’encours n’est pas une collecte.
 
 ## Persistance, historique et alertes
@@ -43,7 +43,7 @@ Un aperçu charge les six dernières années lorsque la source le permet. « Tou
 
 Les valeurs restent des `Decimal`, dans l’unité et l’échelle de publication. Un volume de 100 milliards de dollars reste 100, avec l’échelle affichée ; il n’est pas multiplié une seconde fois. Les valeurs manquantes ne deviennent pas zéro. Les dates trimestrielles et annuelles conservent leur intervalle civil.
 
-Favoris, ordre, alertes et cache sont partagés avec Webstat. L’actualisation peut fonctionner sans clé Webstat pour les repères publics. Un changement d’unité, d’échelle ou de base ne fusionne pas les anciennes valeurs : les règles sont mises en pause avant toute évaluation. Le chargement d’un historique ancien ne déclenche pas rétroactivement des alertes. Le fonctionnement reste manuel, sans surveillance quand Sema est quittée ou le Mac en veille.
+Favoris, ordre, alertes et cache sont partagés avec Webstat. L’actualisation peut fonctionner sans clé Webstat pour les repères publics. Un changement d’unité, d’échelle ou de base ne fusionne pas les valeurs de l’ancienne et de la nouvelle mesure : les règles sont mises en pause avant toute évaluation. Le chargement de périodes plus anciennes ne déclenche pas rétroactivement des alertes. Le fonctionnement reste manuel, sans surveillance quand sema est quittée ou le Mac en veille.
 
 ## Apport réel par rapport à Webstat
 

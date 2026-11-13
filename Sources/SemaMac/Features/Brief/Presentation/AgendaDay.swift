@@ -8,7 +8,7 @@ enum AgendaDay {
         return calendar
     }()
 
-    /// French text of a day, for example « EEE » gives « jeu. ».
+    /// Texte français d’un jour, par exemple « EEE » donne « jeu. ».
     static func text(_ date: Date, _ format: String) -> String {
         let formatter = DateFormatter()
         formatter.locale = .french

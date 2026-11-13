@@ -286,6 +286,98 @@ def markdown_prose(source):
     return re.sub(r"(?<!`)(`+)(?!`)(.*?)\1(?!`)", "", "".join(lines), flags=re.DOTALL)
 
 
+# Un chemin du dépôt cité entre apostrophes inverses dans un texte existe : un document ne renvoie pas à un fichier disparu.
+CITED_ROOTS = {"Sources", "Tests", "docs", "scripts", "site", "distribution", "Resources", ".github", ".claude", ".githooks"}
+PARTIAL_FILE = re.compile(r"^[A-Z][\w.-]*(?:/[\w.-]+)+\.(?:swift|md|json|py|sh|css|js|html)$")
+BACKTICK_SPAN = re.compile(r"`([^`\n]+)`")
+UNCHECKED_PATH = re.compile(r"[\s*<>{}()$~@|]|://|^-")
+
+
+def cited_path_errors(snapshot):
+    errors = []
+    for path in sorted(snapshot.paths):
+        name = pathlib.PurePosixPath(path).name
+        if not (path.endswith(".md") and (path.startswith("docs/") or name in {"AGENTS.md", "README.md", "CONTRIBUTING.md", "SECURITY.md"})):
+            continue
+        for number, line in enumerate(snapshot.read(path).splitlines(), 1):
+            for span in BACKTICK_SPAN.findall(line):
+                cited = span.rstrip("/") if span.endswith("/") else span
+                if "/" not in span or UNCHECKED_PATH.search(span):
+                    continue
+                if cited.split("/")[0] not in CITED_ROOTS:
+                    # Un chemin partiel (`App/Store.swift`) se termine un chemin du dépôt.
+                    if PARTIAL_FILE.match(span) and not any(other == span or other.endswith("/" + span) for other in snapshot.paths):
+                        errors.append(f"{path}:{number} : le fichier cité `{span}` n’existe pas.")
+                    continue
+                if cited not in snapshot.paths and not any(other.startswith(cited + "/") for other in snapshot.paths):
+                    errors.append(f"{path}:{number} : le chemin cité `{span}` n’existe pas.")
+    return errors
+
+
+# Un identifiant de code cité entre accents graves dans une doc (`displayedSeries`, `AlertEvaluator`) existe dans le code, les tests ou les scripts.
+IDENTIFIER_SPAN = re.compile(r"^(?=.*[a-z])(?:[a-z][a-z0-9]*(?:[A-Z][A-Za-z0-9]*)+|[A-Z][a-z0-9]+(?:[A-Z][A-Za-z0-9]*)+)$")
+IDENTIFIER_SOURCES = (".swift", ".py", ".js", ".mjs", ".css", ".html", ".json", ".yml", ".sh")
+# Noms d'API de la plateforme : ils vivent dans le SDK, pas dans le dépôt.
+PLATFORM_IDENTIFIER = re.compile(r"^(?:NS|SM|UN|CG|AX|CA|SF|UT|AV|WK)[A-Z]|^(?:SwiftUI|SwiftData|CoreGraphics|HomebrewCask|GitHub|MacOS|WebKit|JavaScript)$|^(?:decodeIfPresent|keyboardShortcut|onMove|isEnabled|hdiutil)$|^kVK_")
+
+
+def cited_identifier_errors(snapshot):
+    corpus = "\n".join(snapshot.read(path) for path in sorted(snapshot.paths)
+                       if path.endswith(IDENTIFIER_SOURCES) and not path.startswith(("docs/", "site/dist/brand/")))
+    words = set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*", corpus))
+    errors = []
+    for path in sorted(snapshot.paths):
+        name = pathlib.PurePosixPath(path).name
+        if not (path.endswith(".md") and not path.startswith("docs/decisions/")
+                and (path.startswith("docs/") or name in {"AGENTS.md", "README.md", "CONTRIBUTING.md", "SECURITY.md"})):
+            continue
+        for number, line in enumerate(snapshot.read(path).splitlines(), 1):
+            for span in BACKTICK_SPAN.findall(line):
+                head = span.split(".")[0].split("(")[0]
+                for part in {head, *span.replace("(", ".").replace(")", "").split(".")}:
+                    if IDENTIFIER_SPAN.match(part) and part not in words and not PLATFORM_IDENTIFIER.search(part):
+                        errors.append(f"{path}:{number} : l’identifiant cité `{part}` n’existe pas dans le code.")
+    return errors
+
+
+# Un type sans cas (un espace de noms : `WebstatStarter`, `IdentifierMigration`) définit ses membres statiques ; un test ou une source qui en cite un autre ne compile pas.
+NAMESPACE_DECLARATION = re.compile(r"^[ \t]*(?:(?:public|internal|private|fileprivate|package)\s+)?(?:final\s+)?(?P<kind>enum|extension)\s+(?P<name>[A-Z]\w*)[^{\n]*\{", re.MULTILINE)
+STATIC_MEMBER = re.compile(r"\bstatic\s+(?:var|let|func)\s+(\w+)|\b(?:struct|enum|class|actor|typealias|protocol)\s+(\w+)")
+NAMESPACE_USE = re.compile(r"(?<![\w.])([A-Z]\w*)\.([A-Za-z_]\w*)")
+
+
+def matching_brace(code, start):
+    depth = 0
+    for index in range(start, len(code)):
+        if code[index] == "{":
+            depth += 1
+        elif code[index] == "}":
+            depth -= 1
+            if depth == 0:
+                return index
+    return len(code) - 1
+
+
+def undefined_static_members(sources):
+    codes = {path: swift_code(source) for path, source in sources.items()}
+    enums, extensions = {}, collections.defaultdict(set)
+    for code in codes.values():
+        for match in NAMESPACE_DECLARATION.finditer(code):
+            body = code[match.end():matching_brace(code, match.end() - 1)]
+            members = {name for found in STATIC_MEMBER.findall(body) for name in found if name}
+            if match["kind"] == "extension":
+                extensions[match["name"]] |= members
+            elif not re.search(r"^[ \t]*case\s", body, re.MULTILINE):
+                enums.setdefault(match["name"], set()).update(members)
+    errors = []
+    for path, code in sorted(codes.items()):
+        for number, line in enumerate(code.splitlines(), 1):
+            for name, member in NAMESPACE_USE.findall(line):
+                if name in enums and member not in enums[name] | extensions[name] | {"self", "init"}:
+                    errors.append(f"{path}:{number} : `{name}.{member}` n’est pas défini ; le type `{name}` définit {', '.join(sorted(enums[name])) or 'rien'}.")
+    return errors
+
+
 META_THEME_COLOR = re.compile(r'<meta\s+name="theme-color"\s+content="([^"]*)"', re.IGNORECASE)
 
 
@@ -302,6 +394,26 @@ def theme_color_errors(snapshot):
         if path.startswith("site/dist/") and path.endswith(".html"):
             errors.extend(f"{path} : `theme-color` vaut `{value}` ; le rôle `page` de {TOKEN_SOURCE} vaut `{page}`."
                           for value in META_THEME_COLOR.findall(snapshot.read(path)) if value.lower() != page)
+    return errors
+
+
+MEDIA_MAX_WIDTH = re.compile(r"@media\s*\(\s*max-width\s*:\s*(\d+(?:\.\d+)?)px\s*\)")
+
+
+def breakpoint_errors(snapshot):
+    """Une media query ne lit pas `var()` : la limite écrite dans une feuille du site est celle du jeton `breakpoint.narrow` de `site/tokens.json`."""
+    if TOKEN_SOURCE not in snapshot.paths:
+        return []
+    try:
+        limit = float(json.loads(snapshot.read(TOKEN_SOURCE))["breakpoint"]["narrow"]["$value"]["value"])
+    except (ValueError, KeyError, TypeError):
+        return []
+    errors = []
+    for path in sorted(snapshot.paths):
+        if not (path.startswith("site/dist/") and path.endswith(".css")) or path.startswith("site/dist/brand/"):
+            continue
+        errors.extend(f"{path} : `max-width: {value}px` ; le jeton `breakpoint.narrow` de {TOKEN_SOURCE} vaut {limit:g}px."
+                      for value in MEDIA_MAX_WIDTH.findall(snapshot.read(path)) if float(value) != limit)
     return errors
 
 
@@ -364,8 +476,12 @@ def check(snapshot):
                     errors.append(f"{path} : lien local introuvable : {link}.")
 
     errors.extend(unused_types(swift_sources))
+    errors.extend(undefined_static_members(swift_sources))
     errors.extend(web_errors(web_sources))
     errors.extend(theme_color_errors(snapshot))
+    errors.extend(cited_path_errors(snapshot))
+    errors.extend(cited_identifier_errors(snapshot))
+    errors.extend(breakpoint_errors(snapshot))
     canonical = "distribution/release.json"
     mirror = "site/dist/download/release.json"
     missing = {canonical, mirror} - snapshot.paths

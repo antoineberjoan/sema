@@ -4,10 +4,10 @@ import SwiftUI
 import QuartzCore
 import SemaDesign
 
-/// A native status item owns the panel independently of the hub's window lifetime.
+/// Un élément d’état natif possède le panneau indépendamment de la vie de la fenêtre du hub.
 @MainActor
 final class MenuRibbonController: NSObject {
-    /// The menu bar image: the brand symbol, drawn once as a template image.
+    /// L’image de la barre des menus : le symbole de la marque, dessiné une fois comme image modèle.
     private static let menuBarIcon: NSImage = {
         let renderer = ImageRenderer(content: Symbol(isMenuBarIcon: true).foregroundStyle(DesignColor.text).frame(width: DesignIcon.menuBarSize, height: DesignIcon.menuBarSize))
         renderer.scale = CGFloat(DesignMeasure.menuBarIconRenderScale)
@@ -23,7 +23,7 @@ final class MenuRibbonController: NSObject {
     private var screenObserver: NSObjectProtocol?
     private var isPresented = false
     private var transition = UUID()
-    /// A click elsewhere, Escape or another app closes the ribbon; ⌘K opens the search from it.
+    /// Un clic ailleurs, Échap ou une autre app ferme le bandeau ; ⌘K en ouvre la recherche.
     private lazy var dismissal = PanelDismissal(panel: panel, ignoring: { [weak self] in [self?.statusItem.button?.window] },
         dismiss: { [weak self] in self?.dismiss() }, handleKey: { [weak self] event in
             guard let self, event.modifierFlags.contains(.command), event.charactersIgnoringModifiers == "k" else { return false }
@@ -40,7 +40,7 @@ final class MenuRibbonController: NSObject {
 
     private lazy var panel: FloatingPanel = {
         let panel = FloatingPanel.make(title: "Vos favoris · sema", identifier: "sema-favorites-ribbon")
-        // Each card owns its glass. The panel and the gaps remain transparent.
+        // Chaque carte possède son verre. Le panneau et les espaces restent transparents.
         let container = NSView()
         hostedContent.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(hostedContent)

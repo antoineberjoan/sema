@@ -4,7 +4,7 @@ Ce document dit ce qu'est sema, pour une personne qui ne l'a jamais vu.
 
 ## Nom
 
-**sema**, toujours en minuscules dans les textes visibles. Le dépôt n'écrit pas l'origine du nom : à compléter par Antoine.
+**sema**, toujours en minuscules dans les textes visibles.
 
 ## Raison d'être
 
@@ -30,7 +30,7 @@ Dehors : un service serveur, la synchronisation entre appareils, une clé fourni
 
 ## Principes
 
-- Une série affiche toujours son origine, sa source, son unité et ses dates. Une valeur inventée n'existe pas, sauf un exemple annoncé comme fictif.
+- Une série affiche toujours son origine, sa source, son unité et ses dates. Une valeur inventée n'existe pas.
 - Les valeurs et variations financières se calculent en `Decimal`. Le calcul ne vit jamais dans une vue.
 - Les données de la personne restent sur son Mac. Une clé personnelle vit dans le Trousseau, jamais dans le dépôt, une URL, un cache ou un journal.
 - Un fichier que la personne a déjà sur son disque est un contrat : ses noms, ses clés et ses valeurs ne changent pas.
@@ -48,6 +48,6 @@ La marque tient en cinq couleurs : Encre, Graphite, Papier, Brume et Sarcelle Pr
 - **Montré** : oui
 - **Signature** : sema
 - **Publics** : les personnes qui suivent des repères économiques, les contributeurs du dépôt
-- **Ton** : calme, précis, sans phrase de remplissage. Chaque chiffre porte sa source et sa date.
+- **Ton** : calme, précis, attentif aux détails, sans phrase de remplissage ; direct, posé et concret. Vouvoiement, phrases courtes, vocabulaire financier expliqué. Chaque chiffre porte sa source, sa période et son unité. Une hausse de taux n'est pas toujours une bonne nouvelle : couleur neutre et variation signée.
 - **Mots** : repère, série, source, seuil, séance. On évite « temps réel », que les données ne garantissent pas.
 - **Jamais** : une cause économique inventée, un suivi quand l'app est quittée, une valeur que la source n'a pas publiée.

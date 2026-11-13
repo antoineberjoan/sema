@@ -4,14 +4,14 @@ import UserNotifications
 
 @MainActor
 final class NotificationClient {
-    /// All alerts of sema share one thread, so macOS stacks them instead of filling the screen.
+    /// Toutes les alertes de sema partagent un fil, pour que macOS les empile au lieu de remplir l’écran.
     private static let thread = "sema.alerts"
 
     func requestPermission() async throws -> Bool {
         try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
     }
 
-    /// `target` is read back when the person clicks the notification.
+    /// `target` est relu quand la personne clique sur la notification.
     func send(title: String, subtitle: String, body: String, target: NotificationTarget? = nil) async throws {
         let content = UNMutableNotificationContent()
         content.title = title

@@ -17,7 +17,7 @@ sema est une application macOS native pour consulter des séries économiques pu
 
 ## Démarrer
 
-Pour installer l'app : télécharger le DMG sur [getsema.app](https://getsema.app/download/), ou lancer `brew install --cask antoineberjoan/sema/sema-app`. La version alpha porte une signature ad hoc et n'est pas notarisée par Apple : macOS peut bloquer la première ouverture (voir [la distribution](docs/DISTRIBUTION.md)).
+Pour installer l'app : télécharger le DMG sur [getsema.app](https://getsema.app/), ou lancer `brew install --cask antoineberjoan/sema/sema-app`. La version alpha porte une signature ad hoc et n'est pas notarisée par Apple : macOS peut bloquer la première ouverture (voir [la distribution](docs/DISTRIBUTION.md)).
 
 Pour développer (macOS 14 ou plus, Swift 6, Xcode complet) :
 
@@ -34,13 +34,14 @@ Quand l'app s'ouvre, une icône apparaît dans la barre de menus. Les préféren
 ## Organisation du dépôt
 
 - `Sources/MarketCore/` : le cœur. Séries, alertes, préférences, connecteurs aux sources de données.
-- `Sources/SemaMac/` : l'app macOS. Écrans, état, design, adaptation au système.
-- `Tests/MarketCoreTests/` : les preuves du cœur.
+- `Sources/SemaDesign/` : les jetons de design, fabriqués depuis `Resources/Brand/tokens.json`.
+- `Sources/SemaMac/` : l'app macOS. Écrans, état, adaptation au système.
+- `Tests/MarketCoreTests/`, `Tests/SemaDesignTests/`, `Tests/SemaMacTests/` : les preuves du cœur, des jetons et de l'app.
 - `Resources/` : métadonnées du bundle et marque.
 - `scripts/` : construction, contrôles, distribution.
 - `site/` : le site statique.
 - `distribution/` : le manifeste de release et le cask public.
-- `docs/` : fondation, décisions, lexique, contrats de données, plans.
+- `docs/` : fondation, produit, décisions, lexique, sources de données, catalogues publics, personnalisation, distribution, mentions légales ([LEGAL.md](docs/LEGAL.md)), retours ([FEEDBACK.md](docs/FEEDBACK.md)).
 
 ## Liens avec les autres projets
 
@@ -53,6 +54,7 @@ Aucun lien avec un autre dépôt.
 - Ce qu'est le projet : [docs/fondation.md](docs/fondation.md).
 - Les règles pour les agents de code : [AGENTS.md](AGENTS.md).
 - Les décisions, une par fichier daté : `docs/decisions/`.
+- Le produit et ses données : [docs/PRODUCT.md](docs/PRODUCT.md), [sources de données](docs/DATA-SOURCES.md), [catalogues publics](docs/PUBLIC-CATALOGUES.md), [personnalisation](docs/PERSONALIZATION.md).
 - Pour contribuer : [CONTRIBUTING.md](CONTRIBUTING.md). Pour signaler une faille : [SECURITY.md](SECURITY.md).
 
 ## Licence

@@ -29,7 +29,3 @@ La direction **Focus** est retenue.
 ## Conséquences
 
 Les informations de source passent en second niveau. Le badge et le bouton d'alerte forment un bloc qui se replie. Le mot « Focus » désigne encore le mode de détail dans le code.
-
-## Trace
-
-Repris de `docs/IDENTITY.md` à son retrait, le 2026-11-12. Le texte complet reste dans l'historique Git.

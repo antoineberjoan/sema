@@ -1,20 +1,20 @@
 // Interroge Webstat avec une clé personnelle en en-tête et conserve la précision des observations.
 import Foundation
 
-/// Authenticated Banque de France observations. The user's key travels only in an HTTP header.
+/// Observations authentifiées de la Banque de France. La clé de la personne voyage seulement dans un en-tête HTTP.
 public struct WebstatClient: Sendable {
     static let timeout: TimeInterval = 30
     static let apiURL = "https://webstat.banque-france.fr/api/explore/v2.1/catalog/datasets/"
-    /// Search results per page; the API refuses an offset beyond 10 000, so the last full page starts at 9 950.
+    /// Résultats de recherche par page ; l’API refuse un décalage au-delà de 10 000, donc la dernière page pleine commence à 9 950.
     public static let pageSize = 50
     public static let maximumSearchOffset = 9_950
-    /// From this offset on, the paged search is replaced by one lightweight export, paged locally.
+    /// À partir de ce décalage, la recherche paginée est remplacée par un seul export léger, paginé en local.
     public static func usesSummaryExport(forOffset offset: Int) -> Bool { offset >= maximumSearchOffset }
     static let datasetPageSize = 100
     public init() {}
 
     public static func request(table: String, apiKey: String, parameters: [URLQueryItem]) throws -> URLRequest {
-        guard ["series", "webstat-datasets", "codelists", "observations"].contains(table) else { throw WebstatError.invalidData }
+        guard ["series", "webstat-datasets", "codelists", "observations"].contains(table) else { throw PublicDataError.invalidData }
         let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty, key.rangeOfCharacter(from: .controlCharacters) == nil else { throw WebstatError.missingKey }
         var url = URLComponents(string: Self.apiURL + "\(table)/records")!
@@ -26,7 +26,7 @@ public struct WebstatClient: Sendable {
         return request
     }
 
-    /// Quotes are escaped inside ODSQL string literals; fields and tables are never supplied by users.
+    /// Les guillemets sont échappés dans les chaînes littérales ODSQL ; les champs et les tables ne viennent jamais des utilisateurs.
     public static func literal(_ value: String) -> String {
         "'" + value.replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "'", with: "\\'") + "'"
@@ -42,7 +42,7 @@ public struct WebstatClient: Sendable {
         }
         if !search.datasetID.isEmpty { filters.append("dataset_id = \(literal(search.datasetID))") }
         if !search.area.isEmpty {
-            guard ["ref_area", "ame_ref_area", "zone_geo"].contains(search.areaField) else { throw WebstatError.invalidData }
+            guard ["ref_area", "ame_ref_area", "zone_geo"].contains(search.areaField) else { throw PublicDataError.invalidData }
             filters.append("\(search.areaField) = \(literal(search.area))")
         }
         if !search.frequency.isEmpty { filters.append("freq = \(literal(search.frequency))") }
@@ -58,8 +58,8 @@ public struct WebstatClient: Sendable {
         return try WebstatMapping.seriesPage(data, offset: offset)
     }
 
-    /// ODSQL has no ordered text comparison. Offset paging stops before its 10,000-row cap;
-    /// a user who reaches it can load this lightweight metadata index once and continue locally.
+    /// ODSQL n’a pas de comparaison de texte ordonnée. La pagination par décalage s’arrête avant son plafond de 10 000 lignes ;
+    /// une personne qui l’atteint peut charger une fois cet index léger de métadonnées et continuer en local.
     public static func summaryExportRequest(apiKey: String, search: WebstatSearch) throws -> URLRequest {
         var request = try searchRequest(apiKey: apiKey, search: search)
         var url = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
@@ -89,13 +89,13 @@ public struct WebstatClient: Sendable {
     }
 
     public func descriptor(apiKey: String, key: String) async throws -> WebstatSeriesDescriptor {
-        guard WebstatSeriesDescriptor.isValidKey(key) else { throw WebstatError.invalidData }
+        guard WebstatSeriesDescriptor.isValidKey(key) else { throw PublicDataError.invalidData }
         let page = try await search(apiKey: apiKey, search: WebstatSearch(query: key))
         guard let descriptor = page.items.first(where: { $0.key == key }) else { throw WebstatError.incompleteData }
         return descriptor
     }
 
-    /// Exports are bounded by date. The caller requests older history in six-year slices.
+    /// Les exports sont bornés par date. L’appelant demande l’historique plus ancien par tranches de six ans.
     public func observations(apiKey: String, descriptor: WebstatSeriesDescriptor,
                              start: Date, end: Date = .now) async throws -> [MarketObservation] {
         let date = ISO8601DateFormatter(); date.formatOptions = [.withFullDate]
@@ -127,18 +127,18 @@ public struct WebstatClient: Sendable {
         let data: Data; let response: URLResponse
         do { (data, response) = try await session.data(for: request) }
         catch is CancellationError { throw CancellationError() }
-        catch { if Task.isCancelled { throw CancellationError() }; throw WebstatError.unavailable }
-        guard let http = response as? HTTPURLResponse else { throw WebstatError.unavailable }
+        catch { if Task.isCancelled { throw CancellationError() }; throw PublicDataError.unavailable }
+        guard let http = response as? HTTPURLResponse else { throw PublicDataError.unavailable }
         switch http.statusCode {
         case 200: return data
         case 401, 403, 404: throw WebstatError.accessDenied
-        case 429: throw WebstatError.quotaReached
-        default: throw WebstatError.unavailable
+        case 429: throw PublicDataError.quotaReached
+        default: throw PublicDataError.unavailable
         }
     }
 
 
-    /// Six years cover a full five-year window even when the latest monthly release lags behind today.
+    /// Six ans couvrent une fenêtre complète de cinq ans même quand la dernière publication mensuelle est en retard sur aujourd’hui.
     public static func request(apiKey: String, now: Date = .now) throws -> URLRequest {
         let key = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty, key.rangeOfCharacter(from: .controlCharacters) == nil else {
@@ -171,8 +171,8 @@ public struct WebstatClient: Sendable {
         let response: URLResponse
         do { (data, response) = try await session.data(for: request) }
         catch is CancellationError { throw CancellationError() }
-        catch { throw WebstatError.unavailable }
-        guard let http = response as? HTTPURLResponse else { throw WebstatError.unavailable }
+        catch { throw PublicDataError.unavailable }
+        guard let http = response as? HTTPURLResponse else { throw PublicDataError.unavailable }
         return try WebstatMapping.starterHistory(data, statusCode: http.statusCode, now: now)
     }
 }

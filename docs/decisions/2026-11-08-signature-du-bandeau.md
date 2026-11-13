@@ -26,7 +26,3 @@ Le cartouche signature du bandeau doit dire la promesse de sema sans gêner l'ac
 ## Conséquences
 
 Une seule tâche annulable pilote les trois étapes. La fermeture du bandeau termine la présentation. Les durées lisent les rôles de mouvement du patron.
-
-## Trace
-
-Repris de `docs/IDENTITY.md` à son retrait, le 2026-11-12. Le texte complet reste dans l'historique Git.

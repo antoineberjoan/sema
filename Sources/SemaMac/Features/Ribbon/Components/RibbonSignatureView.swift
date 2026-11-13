@@ -5,13 +5,13 @@ import SwiftUI
 
 // SIGNATURE — une lecture, sans boucle. Le texte reste disponible à VoiceOver.
 //    0 ms  Le cartouche est posé, le signe attend la fin de l’entrée du panneau.
-//  300 ms  Le signe se trace pendant 1 800 ms, de la boucle vers le palier.
-// 1250 ms  « L’économie bouge. » apparaît en fondu, sur 800 ms.
-// 1850 ms  « Gardez vos repères. » se pose avec un ressort amorti, sur 800 ms.
+//  100 ms  Le signe se trace pendant 550 ms, de la boucle vers le palier.
+//  650 ms  Le point sarcelle et « L’économie bouge. » apparaissent en fondu, sur 200 ms.
+//  700 ms  « Gardez vos repères. » se pose en fondu avec un léger décalage, sur 200 ms. La séquence finit à 900 ms.
 // Réduire les animations : le cartouche est immédiatement dans son état final.
 private enum SignatureMotion {
-    // Mouvement 1.1: the line draws in 550 ms (seen at each opening, so kept short), then the point and the
-    // context fade in together, the mission follows after a 50 ms stagger. The whole sequence ends under 900 ms.
+    // La ligne se dessine pendant `DesignDuration.explain` (vue à chaque ouverture, donc courte), puis le point et le
+    // contexte apparaissent ensemble, la mission suit après `DesignMotion.stagger`.
     static let drawDuration = DesignDuration.explain
     static let contextDelay = Int(DesignDuration.signatureMotionDrawDelay * 1_000) + Int(drawDuration * 1_000)
     static let missionDelay = contextDelay + Int(DesignMotion.stagger * 1_000)
@@ -38,7 +38,7 @@ struct RibbonSignatureView: View {
             ZStack {
                 SignalPath().trim(from: 0, to: stage >= SignatureMotion.drawStage ? 1 : 0)
                     .stroke(DesignColor.onAccent, style: StrokeStyle(lineWidth: SignatureMotion.lineWidth, lineCap: .round, lineJoin: .round))
-                // The teal point settles once the line has arrived.
+                // Le point sarcelle se pose quand la ligne est arrivée.
                 SignalDot().fill(DesignColor.accentControl(.brand))
                     .opacity(stage >= SignatureMotion.contextStage ? 1 : 0)
                     .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: SignatureMotion.textDuration), value: stage >= SignatureMotion.contextStage)
@@ -101,7 +101,7 @@ struct RibbonSignatureView: View {
     }
 
     private func play() async {
-        // A new presentation cancels the previous task before resetting its stage.
+        // Une nouvelle présentation annule la tâche précédente avant de remettre sa scène à zéro.
         var transaction = Transaction(); transaction.disablesAnimations = true
         withTransaction(transaction) { stage = reduceMotion || presentationID == nil ? SignatureMotion.missionStage : 0 }
         guard !reduceMotion, presentationID != nil else { return }
@@ -112,6 +112,6 @@ struct RibbonSignatureView: View {
             if !reduceMotion { stage = SignatureMotion.contextStage }
             try await Task.sleep(for: .milliseconds(SignatureMotion.missionDelay - SignatureMotion.contextDelay))
             if !reduceMotion { stage = SignatureMotion.missionStage }
-        } catch { /* Presentation interrupted. */ }
+        } catch { /* Présentation interrompue. */ }
     }
 }

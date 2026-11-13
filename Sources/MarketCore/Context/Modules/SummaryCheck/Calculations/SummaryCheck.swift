@@ -5,7 +5,7 @@ public struct SummaryCheck: Equatable, Sendable {
     public static let maximumSentences = 3
 
     public let kept: [SummarySentence]
-    /// Sentences written but not shown, so the reader knows the summary is partial.
+    /// Phrases écrites mais pas montrées, pour que le lecteur sache que la synthèse est partielle.
     public let hiddenCount: Int
 
     private static let riseWords: Set<String> = [
@@ -18,14 +18,14 @@ public struct SummaryCheck: Equatable, Sendable {
         "repli", "replie", "replient", "decroche", "decrochent", "glisse", "glissent", "diminue", "diminuent",
         "cede", "cedent", "flechit", "flechissent", "degringole", "degringolent",
     ]
-    /// Causal phrasing, folded: sema shows facts of the same day, never why.
+    /// Formulations causales, aplaties : sema montre des faits du même jour, jamais le pourquoi.
     private static let causalMarkers = [
         "a cause d", "en raison d", "parce qu", "provoqu", "declench", "du fait d", "suite a", "a la suite d",
         "entrain", "s'expliqu", "grace a",
     ]
 
-    /// Verifies each sentence against the facts it cites. Numbers may be rounded, never changed.
-    /// The session date is not a figure; digits of fact labels (« S&P 500 ») are always allowed.
+    /// Vérifie chaque phrase d’après les faits qu’elle cite. Les nombres peuvent être arrondis, jamais changés.
+    /// La date de la séance n’est pas un chiffre ; les chiffres des libellés de faits (« S&P 500 ») sont toujours permis.
     public init(_ draft: [SummarySentence], facts: [ContextFact], day: Date) {
         let byID = Dictionary(facts.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         let common = facts.flatMap { Self.numbers(in: $0.label) }
@@ -63,7 +63,7 @@ public struct SummaryCheck: Equatable, Sendable {
         return causalMarkers.contains { folded.contains($0) }
     }
 
-    /// Removes « 5 novembre 2026 », « 5 novembre » and « 1er novembre »: any other date keeps its digits and must match a fact.
+    /// Retire « 5 novembre 2026 », « 5 novembre » et « 1er novembre » : toute autre date garde ses chiffres et doit correspondre à un fait.
     private static func withoutSessionDate(_ text: String, day: Date) -> String {
         let parts = ContextFact.longDate(day).split(separator: " ").map(String.init)
         guard parts.count == 3 else { return text }
@@ -82,7 +82,7 @@ public struct SummaryCheck: Equatable, Sendable {
         return result
     }
 
-    /// Unsigned numbers of a text, with « , » or « . » as decimal mark and narrow spaces between thousands.
+    /// Nombres non signés d’un texte, avec « , » ou « . » comme marque décimale et espaces fines entre les milliers.
     static func numbers(in text: String) -> [(value: Decimal, digits: Int)] {
         let characters = Array(text)
         var result: [(value: Decimal, digits: Int)] = []
@@ -102,7 +102,7 @@ public struct SummaryCheck: Equatable, Sendable {
                 current.append("."); isDecimal = true
             } else if !current.isEmpty, !isDecimal, character == "\u{202F}" || character == "\u{00A0}",
                       isDigit(index + 1), isDigit(index + 2), isDigit(index + 3), !isDigit(index + 4) {
-                // Thousands separator: the next three digits belong to the same number.
+                // Séparateur de milliers : les trois chiffres suivants font partie du même nombre.
             } else if !current.isEmpty {
                 flush()
             }

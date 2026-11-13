@@ -1,4 +1,4 @@
-// Indique la provenance d’une série ou son caractère de démonstration.
+// Indique la provenance d’une série.
 import SemaDesign
 import SwiftUI
 import MarketCore

@@ -2,7 +2,7 @@
 import MarketCore
 
 extension AppStore {
-    /// A series watched for unusual moves is also checked after each market close.
+    /// Une série surveillée pour les mouvements inhabituels est aussi vérifiée après chaque clôture du marché.
     func followsCloses(_ series: MarketSeries) -> Bool {
         preferences.alerts.contains { $0.seriesID == series.id && $0.isEnabled && $0.effectiveCondition == .unusualMove }
     }
@@ -10,8 +10,8 @@ extension AppStore {
     var automaticRefreshSeries: [MarketSeries] {
         guard !isOnboardingPresented else { return [] }
         return followedSeries.filter {
-            isSourceEnabled(for: $0.id) && ($0.marketInstrument.map { connectedMarkets.contains($0.provider) }
-                ?? ($0.statisticalDescriptor != nil || hasWebstatKey))
+            RefreshPolicy.isAutomaticallyRefreshable($0, isSourceEnabled: isSourceEnabled(for: $0.id),
+                connectedProviders: connectedMarkets, hasWebstatKey: hasWebstatKey)
         }
     }
 }

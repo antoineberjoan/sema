@@ -259,6 +259,8 @@
   --color-palette-preview-4: var(--primitive-color-palette-preview-100);
   /* Propre à sema : le fond sur lequel une photo de profil à fond transparent est aplatie avant l'enregistrement en JPEG ; papier dans les deux modes, car l'image enregistrée ne suit pas l'apparence. */
   --color-photo-matte: var(--primitive-color-paper-0);
+  /* Point d'étape pas encore atteint dans un indicateur de progression ; pas pour un filet ni un survol. */
+  --color-step-dot-idle: var(--primitive-color-paper-200);
   /* Entre deux lignes d'une liste serrée ; pas entre deux groupes. */
   --space-list-gap-dense: var(--primitive-space-2);
   /* Marge intérieure d'une pastille ou d'un tag. */
@@ -291,6 +293,10 @@
   --space-section-gap: var(--primitive-space-48);
   /* Marge d'une page large. */
   --space-page-inset-wide: var(--primitive-space-64);
+  /* Marge d'un bouton d'icône posé au coin d'une carte ou d'une surface ; pas pour la marge intérieure d'une ligne de liste (row-inset). */
+  --space-corner-button-inset: var(--primitive-space-8);
+  /* Écart entre deux points d'un indicateur de progression par étapes ; pas pour l'écart entre une icône et son libellé (icon.gap). */
+  --space-step-dot-gap: var(--primitive-space-8);
   /* Entre deux paragraphes. */
   --rhythm-paragraph: 0.9rem;
   /* Au-dessus d'un titre. */
@@ -677,8 +683,6 @@
   --layout-welcome-feature-symbol-width: 32px;
   /* Propre à sema : tile min height, Welcome (taille). */
   --layout-welcome-tile-min-height: 64px;
-  /* Propre à sema : preview card width, Welcome (taille). */
-  --layout-welcome-preview-card-width: 176px;
   /* Propre à sema : maximum width, Brief (taille). */
   --layout-brief-maximum-width: 640px;
   /* Propre à sema : sidebar width, Settings (taille). */
@@ -1116,6 +1120,7 @@
     --color-shadow-far: color-mix(in srgb, var(--primitive-color-ink-900) 40%, transparent);
     --color-scrim: color-mix(in srgb, var(--primitive-color-ink-900) 56%, transparent);
     --color-glass-veil: var(--primitive-color-ink-900);
+    --color-step-dot-idle: var(--primitive-color-ink-600);
     color-scheme: dark;
   }
 }
@@ -1144,6 +1149,7 @@
   --color-shadow-far: color-mix(in srgb, var(--primitive-color-ink-900) 40%, transparent);
   --color-scrim: color-mix(in srgb, var(--primitive-color-ink-900) 56%, transparent);
   --color-glass-veil: var(--primitive-color-ink-900);
+  --color-step-dot-idle: var(--primitive-color-ink-600);
   color-scheme: dark;
 }
 :root[data-theme="light"] {
@@ -1159,6 +1165,7 @@
     --color-success: var(--primitive-color-green-650);
     --color-warning: var(--primitive-color-amber-600);
     --color-info: var(--primitive-color-blue-600);
+    --color-step-dot-idle: var(--primitive-color-ink-500);
   }
 }
 @media (prefers-contrast: more) and (prefers-color-scheme: dark) {
@@ -1170,6 +1177,7 @@
     --color-success: var(--primitive-color-green-200);
     --color-warning: var(--primitive-color-amber-200);
     --color-info: var(--primitive-color-blue-200);
+    --color-step-dot-idle: var(--primitive-color-ink-300);
   }
 }
 @media (prefers-contrast: more) {
@@ -1181,6 +1189,7 @@
     --color-success: var(--primitive-color-green-200);
     --color-warning: var(--primitive-color-amber-200);
     --color-info: var(--primitive-color-blue-200);
+    --color-step-dot-idle: var(--primitive-color-ink-300);
   }
 }
 

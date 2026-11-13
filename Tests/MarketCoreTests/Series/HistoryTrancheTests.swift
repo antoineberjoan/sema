@@ -48,4 +48,13 @@ struct HistoryTrancheTests {
         #expect(tranche.start == date("2020-11-12"))
         #expect(tranche.isComplete)
     }
+
+    @Test func recentWindowIsCompleteOnlyWhenThePublishedStartFitsInside() {
+        let end = date("2026-11-12")
+        let inside = HistoryPeriod.recent(endingAt: end, firstPublished: date("2022-01-01"), calendar: calendar)
+        #expect(inside.start == date("2020-11-12"))
+        #expect(inside.isComplete)
+        #expect(!HistoryPeriod.recent(endingAt: end, firstPublished: date("2000-01-01"), calendar: calendar).isComplete)
+        #expect(!HistoryPeriod.recent(endingAt: end, firstPublished: nil, calendar: calendar).isComplete)
+    }
 }

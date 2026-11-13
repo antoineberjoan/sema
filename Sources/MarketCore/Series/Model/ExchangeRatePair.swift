@@ -1,9 +1,9 @@
 // Reconnaît les paires vérifiées et projette leur cotation inverse uniquement pour l’affichage.
 import Foundation
 
-/// A verified ECB spot quotation, published as units of currency for one euro.
+/// Une cotation au comptant BCE vérifiée, publiée en unités de devise pour un euro.
 public struct ExchangeRatePair: Equatable, Sendable {
-    /// An inverted rate below this value needs more decimals to stay readable.
+    /// Un taux inversé sous cette valeur demande plus de décimales pour rester lisible.
     static let smallRate = Decimal(string: "0.1")!
     static let smallRateDigits = 6
     static let rateDigits = 4
@@ -26,9 +26,8 @@ public struct ExchangeRatePair: Equatable, Sendable {
     public init?(_ series: MarketSeries) {
         let key: String
         if series.descriptor == nil, series.statisticalDescriptor == nil {
-            let canonical = WebstatStarter.canonicalID(series.id)
-            guard canonical.hasPrefix(SeriesEquivalence.webstatPrefix) else { return nil }
-            key = String(canonical.dropFirst(SeriesEquivalence.webstatPrefix.count))
+            guard series.id.hasPrefix(SeriesEquivalence.webstatPrefix) else { return nil }
+            key = String(series.id.dropFirst(SeriesEquivalence.webstatPrefix.count))
         } else {
             guard let verified = SeriesEquivalence.referenceExchangeRateKey(series) else { return nil }
             key = String(verified.dropFirst(SeriesEquivalence.referencePrefix.count))
@@ -44,8 +43,8 @@ extension MarketSeries {
         exchangeRatePair != nil && observations.allSatisfy { $0.value > 0 }
     }
 
-    /// Display only: source metadata, cache, selection and alerts keep the published series.
-    /// Every point is inverted before variations and chart bounds are calculated.
+    /// Affichage seulement : les métadonnées de source, le cache, la sélection et les alertes gardent la série publiée.
+    /// Chaque point est inversé avant le calcul des variations et des bornes du graphique.
     public func invertedExchangeRateForDisplay() -> MarketSeries? {
         guard let pair = exchangeRatePair, canInvertExchangeRate else { return nil }
         var inverted: [MarketObservation] = []

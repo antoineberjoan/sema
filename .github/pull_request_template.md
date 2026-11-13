@@ -1,17 +1,11 @@
-## Problème et comportement obtenu
+## Ce qui change
 
-Besoin concret, décision Notion source et résultat observable. Une issue liée renvoie aussi à cette décision ; elle ne la remplace pas. Si deux versions divergeaient, préciser l’arbitrage d’Antoine.
+Le besoin, le résultat observable et le lien vers la décision de `docs/decisions/` quand il y en a une.
 
-## Périmètre
+## Pas vérifié
 
-Responsabilités modifiées et ancien chemin supprimé, si remplacement. Lien vers le plan ou la décision uniquement s’ils sont nécessaires.
+Ce qu'aucun test ni aucune lecture n'a contrôlé. « Rien. » est une réponse.
 
-## Validation
+## Pour une PR rouge
 
-- Commandes exécutées et résultat.
-- Parcours natif vérifié si l’interface change.
-- Origine et date des données si une source change.
-
-## Suite
-
-Limites, prochaine action ou aucune. Distinguer ce qui est vérifié, proposé et publié. Une fusion sur main déclenche le déploiement du site.
+`Closes #N` et `## Relecture croisée`. Le niveau se calcule avec `node ../sophos/outils/politique.mjs --classer`.

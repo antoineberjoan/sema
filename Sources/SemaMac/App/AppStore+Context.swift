@@ -7,7 +7,7 @@ extension AppStore {
         series.latest.map { "\(series.id)@\($0.date.timeIntervalSince1970)" }
     }
 
-    /// Loads every part independently: a missing source is named, the others still show.
+    /// Charge chaque partie indépendamment : une source absente est nommée, les autres s’affichent quand même.
     func dayContext(for series: MarketSeries) async -> DayContext? {
         guard let latest = series.latest, let key = Self.contextKey(series) else { return nil }
         if let cached = dayContexts[key] { return cached }
@@ -34,10 +34,10 @@ extension AppStore {
         var result: [PressRelease] = []
         var hasFailed = false
         for feed in feeds {
-            do { result += try await PressReleaseClient().releases(feed).filter { (start...end).contains($0.publishedAt) } }
+            do { result += try await PressReleaseClient().releases(feed) }
             catch { hasFailed = true }
         }
-        return hasFailed && result.isEmpty ? nil : result.sorted { $0.publishedAt > $1.publishedAt }
+        return hasFailed && result.isEmpty ? nil : PressRelease.recent(result, from: start, to: end)
     }
 
     func headlines(from start: Date, to end: Date) async -> [Headline]? {

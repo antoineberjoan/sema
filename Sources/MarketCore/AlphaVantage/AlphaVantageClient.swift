@@ -43,7 +43,7 @@ public actor AlphaVantageClient: MarketDataConnector {
         return try AlphaVantageMapping.series(data, instrument: instrument, now: .now)
     }
 
-    /// Market news of a day, with the key already kept for prices; one call of the daily quota.
+    /// Actualités de marché d’un jour, avec la clé déjà gardée pour les prix ; un appel du quota quotidien.
     public func news(from start: Date, to end: Date, key: String) async throws -> [Headline] {
         let body = try await requestBody([
             "function": "NEWS_SENTIMENT", "topics": "financial_markets", "sort": "RELEVANCE", "limit": String(Self.newsLimit),
@@ -73,7 +73,7 @@ public actor AlphaVantageClient: MarketDataConnector {
         if delay > 0 { try await Task.sleep(for: .seconds(delay)) }
         try Task.checkCancellation()
         var query = parameters
-        // Exception demandée par Antoine le 17 octobre : Alpha Vantage ne documente que ce mode.
+        // Exception : Alpha Vantage ne documente que ce mode.
         query["apikey"] = key
         return try await MarketDataTransport.send(MarketDataTransport.request(host: Self.host, endpoint: "query", query: query), on: session)
     }

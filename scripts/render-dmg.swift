@@ -2,8 +2,8 @@
 import AppKit
 import Foundation
 
-// Build tool only. No Finder automation and no executable code inside the DMG.
-// PNG representations share a 640 × 400 pt canvas; tiffutil combines their scales.
+// Outil de construction seulement. Pas d’automatisation du Finder ni de code exécutable dans le DMG.
+// Les représentations PNG partagent un canevas de 640 × 400 pt ; tiffutil combine leurs échelles.
 let arguments = CommandLine.arguments
 func fail(_ message: String) -> Never {
     fputs("\(message)\n", stderr)

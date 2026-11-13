@@ -17,7 +17,7 @@ struct MoveContextView: View {
     @State private var tab = Tab.facts
     @State private var isWriting = false
     @State private var summaryError: String?
-    /// Read from the store, so a change of writer in Réglages shows the matching summary or none.
+    /// Lu dans le store, pour qu’un changement de rédacteur dans Réglages montre la synthèse correspondante ou aucune.
     private var summary: SummaryCheck? { store.cachedSummary(for: series) }
 
     var body: some View {

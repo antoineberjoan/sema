@@ -19,7 +19,7 @@ export const GARDES = ["controles", "niveau"];
 
 export class ErreurFiche extends Error {}
 
-/** La version de Sophos qu'un projet suit (`sophos:` dans sa fiche). Sans ce champ : 1, la forme d'avant la refonte. */
+/** La version de Sophos qu'un projet suit (`sophos:` dans sa fiche). Sans ce champ : 1. */
 export const versionSuivie = (fiche) => Number(fiche.sophos ?? 1);
 
 function echouer(message) {

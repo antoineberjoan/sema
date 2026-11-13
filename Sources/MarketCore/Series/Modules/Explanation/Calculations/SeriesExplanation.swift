@@ -23,7 +23,7 @@ public struct SeriesExplanation: Equatable, Sendable {
             return
         }
         if let id = Self.knownRateID(series) {
-            if id == "inflation" || id == "inflation-euro" {
+            if id == "HICP.M.FR.N.000000.4D0.ANR" || id == "HICP.M.U2.N.000000.4D0.ANR" {
                 self = Self.inflation(series, period: period, format: formatNumber)
                 return
             }
@@ -34,12 +34,12 @@ public struct SeriesExplanation: Equatable, Sendable {
                 if let delta = Self.comparisonChange(series, period: period) {
                     reading = (reading ?? "") + " " + Self.rateMovement(delta)
                 }
-                self.init(definition: rule.definition, reading: Self.identifyingDemo(reading, series: series),
+                self.init(definition: rule.definition, reading: reading,
                     implication: rule.implication, referenceURL: rule.referenceURL ?? series.sourceURL)
                 return
             }
         }
-        // A title or a percent unit alone never establishes the economic meaning of a series.
+        // Un titre ou une unité en pourcent seul n’établit jamais le sens économique d’une série.
         let official = (series.descriptor?.definition ?? series.statisticalDescriptor?.definition ?? "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard !official.isEmpty, official.localizedCaseInsensitiveCompare(series.name) != .orderedSame else { return nil }
@@ -55,14 +55,14 @@ public struct SeriesExplanation: Equatable, Sendable {
         guard series.unit == .percent else { return nil }
         let key: String
         if series.descriptor == nil, series.statisticalDescriptor == nil {
-            key = WebstatStarter.canonicalID(series.id)
+            key = series.id
         } else if let descriptor = series.descriptor,
                   descriptor.unit == .percent, descriptor.multiplier == 0,
                   descriptor.datasetID == descriptor.key.split(separator: ".").first.map(String.init),
                   descriptor.frequencyCode == descriptor.key.split(separator: ".").dropFirst().first.map(String.init) {
             key = descriptor.key
         } else { return nil }
-        return WebstatStarter.shortIDs.first { $0.value == key }?.key
+        return WebstatStarter.ids.contains(key) ? key : nil
     }
 
     private static func comparisonChange(_ series: MarketSeries, period: HistoryPeriod) -> Decimal? {
@@ -70,10 +70,6 @@ public struct SeriesExplanation: Equatable, Sendable {
               !first.value.isNaN, let latest = series.latest, !latest.value.isNaN,
               let change = series.change(for: period), !change.isNaN else { return nil }
         return change
-    }
-
-    private static func identifyingDemo(_ reading: String?, series: MarketSeries) -> String? {
-        reading
     }
 
     private static func exchangeRate(_ series: MarketSeries, pair: ExchangeRatePair, period: HistoryPeriod,
@@ -102,7 +98,7 @@ public struct SeriesExplanation: Equatable, Sendable {
             reading = text
         }
         return Self(definition: "Ce taux de référence indique combien de \(quote) correspondent à 1 \(base).",
-            reading: identifyingDemo(reading, series: series), implication: implication,
+            reading: reading, implication: implication,
             referenceURL: Reference.ecbExchangeRates)
     }
 
@@ -140,7 +136,7 @@ public struct SeriesExplanation: Equatable, Sendable {
             reading = text
         }
         return Self(definition: "Ce taux d’inflation mesure la variation sur douze mois de l’indice des prix à la consommation harmonisé (IPCH).",
-            reading: identifyingDemo(reading, series: series), implication: implication,
+            reading: reading, implication: implication,
             referenceURL: Reference.ecbInflation)
     }
 
@@ -152,22 +148,22 @@ public struct SeriesExplanation: Equatable, Sendable {
 
     private static func rateRule(_ id: String) -> (definition: String, implication: String, referenceURL: URL?)? {
         switch id {
-        case "fr10":
+        case "FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD":
             return ("Ce taux est le rendement publié de l’OAT française à dix ans (l’emprunt phare), pas son coupon ni son prix.",
                 "À caractéristiques comparables, une hausse des rendements tend à faire baisser le prix des obligations à taux fixe existantes, et inversement.",
                 Reference.amfBondPrices)
-        case "ecb":
+        case "FM.D.U2.EUR.4F.KR.DFR.LEV":
             return ("Ce taux s’applique aux dépôts des banques au jour le jour auprès de l’Eurosystème.",
                 "Il influence les conditions de financement et d’épargne, sans fixer à lui seul le taux de chaque crédit ou livret.",
                 Reference.ecbInterestRates)
-        case "estr":
+        case "ESTR.B.EU000A2X2A25.WT":
             return ("L’€STR reflète le coût des emprunts en euros au jour le jour, non garantis, des banques de la zone euro.",
                 "Il sert de référence à des contrats financiers. Ce taux n’est pas le rendement net d’un fonds monétaire.",
                 Reference.ecbShortTermRate)
-        case "livreta", "ldds", "lep":
+        case "MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O", "MIR1.M.FR.B.L23FRLD.D.R.A.2254U6.EUR.O", "MIR1.M.FR.B.L23FRLP.H.R.A.2250U6.EUR.O":
             return ("Cette série indique le taux annuel publié du livret réglementé.",
                 "À solde et durée identiques, un taux plus élevé augmente la rémunération, selon les règles du livret.", nil)
-        case "mortgage-fr":
+        case "MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N":
             return ("Ce taux porte sur les nouveaux crédits à l’habitat en France, hors renégociations. Ce n’est ni un TAEG ni une offre bancaire.",
                 "À montant et durée identiques, un taux plus élevé renchérit un nouveau crédit. Il ne modifie pas automatiquement un prêt existant à taux fixe.", nil)
         default: return nil

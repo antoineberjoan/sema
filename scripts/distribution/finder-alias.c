@@ -1,5 +1,5 @@
-// Build tool: Finder's backgroundImageAlias still uses an Alias Manager record.
-// This helper is not bundled with Sema and never operates the Finder UI.
+// Outil de construction : le backgroundImageAlias du Finder utilise encore un enregistrement Alias Manager.
+// Cet assistant n’est pas inclus dans sema et ne pilote jamais l’interface du Finder.
 #include <CoreServices/CoreServices.h>
 #include <stdio.h>
 

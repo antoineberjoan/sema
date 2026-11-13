@@ -2,16 +2,16 @@
 import Foundation
 
 public struct MorningBrief: Equatable, Sendable {
-    /// A threshold is close within 2 % of its value, or 0,10 point for rates.
+    /// Un seuil est proche à 2 % de sa valeur, ou 0,10 point pour les taux.
     public static let nearPercent: Decimal = 2
     public static let nearPoints: Decimal = 0.1
-    /// Sessions older than this are not « the last session » any more (a long weekend fits).
+    /// Les séances plus anciennes ne sont plus « la dernière séance » (un long week-end passe).
     public static let recentDays = 4
 
     public struct NearThreshold: Equatable, Identifiable, Sendable {
         public let rule: AlertRule
         public let series: MarketSeries
-        /// Remaining gap, in points for rates and in percent of the threshold otherwise.
+        /// Écart restant, en points pour les taux et en pourcent du seuil sinon.
         public let gap: Decimal
         public var id: UUID { rule.id }
     }
@@ -23,7 +23,7 @@ public struct MorningBrief: Equatable, Sendable {
 
     public var isQuiet: Bool { moves.isEmpty && nearThresholds.isEmpty }
 
-    /// Unusual moves at the chosen sensitivity and level thresholds not yet crossed but close.
+    /// Mouvements inhabituels à la sensibilité choisie et seuils de niveau pas encore franchis mais proches.
     public init(series: [MarketSeries], alerts: [AlertRule], sensitivity: MoveSensitivity, now: Date) {
         let oldest = now.addingTimeInterval(-Double(Self.recentDays) * .day)
         let recent = series.filter { ($0.latest?.date ?? .distantPast) >= oldest }

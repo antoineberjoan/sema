@@ -1,7 +1,7 @@
 # Le bandeau et la fenêtre partagent un seul état
 
 Date : 2026-11-12 · Statut : proposée
-Décidé par : à confirmer par Antoine (reprise d'un document retiré)
+Décidé par : à confirmer par Antoine
 
 ## Contexte
 
@@ -11,7 +11,6 @@ Le bandeau des favoris et la fenêtre principale montrent les mêmes repères. U
 
 - `AppStore` est l'unique état partagé et le point de coordination. Il ne dessine pas l'interface.
 - Le bandeau et la fenêtre n'ont pas de deuxième sélection, de deuxième période ni de deuxième état métier.
-- Les mises à jour d'interface ont lieu sur le `MainActor`.
 - Le bandeau n'envoie aucune requête automatique. Le survol non plus.
 
 ## Options
@@ -23,8 +22,4 @@ Le bandeau des favoris et la fenêtre principale montrent les mêmes repères. U
 
 ## Conséquences
 
-Une règle déjà écrite dans `Sources/SemaMac/AGENTS.md`. Cette décision garde sa raison.
-
-## Trace
-
-Repris de `docs/ARCHITECTURE.md` à son retrait, le 2026-11-12. La date d'origine n'est pas écrite : le texte complet reste dans l'historique Git.
+La règle de fil d'exécution (`MainActor`) est dans `Sources/SemaMac/AGENTS.md`.

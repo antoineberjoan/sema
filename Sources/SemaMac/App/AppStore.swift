@@ -11,7 +11,7 @@ final class AppStore {
     var section: WorkspaceSection = .overview
     var settingsTab: SettingsTab = .general
     var category: SeriesCategory = .markets
-    var selectedSeriesID = WebstatStarter.canonicalID("eurusd")
+    var selectedSeriesID = "EXR.D.USD.EUR.SP00.A"
     var isLoading = false
     var hasLoadedWebstat = false
     var hasWebstatKey = false
@@ -22,7 +22,7 @@ final class AppStore {
     var recentAlertEvents: [AlertEvent] = []
     var isAlertSheetPresented = false
     var isSearchPresented = false
-    /// Text carried from the search panel to the catalogues tab of the search sheet; read once.
+    /// Texte transmis du panneau de recherche à l’onglet catalogues de la feuille de recherche ; lu une seule fois.
     var catalogueSeed: String?
     var isOnboardingPresented = false
     var shortcutError: String?
@@ -64,14 +64,14 @@ final class AppStore {
     var hasClaudeKey = false
     var isConnectingClaude = false
     var claudeError: String?
-    /// Verified summaries of a session, kept in memory only, keyed by session and writer.
+    /// Synthèses vérifiées d’une séance, gardées en mémoire seulement, par séance et par rédacteur.
     var summaries: [String: SummaryCheck] = [:]
-    /// Facts of a session, kept in memory for the session only; never written to disk.
+    /// Faits d’une séance, gardés en mémoire pour la session seulement ; jamais écrits sur le disque.
     var dayContexts: [String: DayContext] = [:]
     var isContextPresented = false
-    /// Agendas already loaded, by day (noon UTC); kept in memory only.
+    /// Agendas déjà chargés, par jour (midi UTC) ; gardés en mémoire seulement.
     var agendas: [Date: DayAgenda] = [:]
-    /// Day chosen in the ribbon, waiting for the agenda of the hub to open on it.
+    /// Jour choisi dans le bandeau, en attente que l’agenda du hub s’ouvre dessus.
     var agendaDay: Date?
     var connectingMarkets: Set<MarketProvider> = []
     var marketErrors: [MarketProvider: String] = [:]
@@ -86,7 +86,7 @@ final class AppStore {
     var historyTask: Task<Void, Never>?
     var historyGeneration = UUID()
     var sourceGenerations: [String: UUID] = [:]
-    /// Set by the app delegate: asks the refresh timer to plan again after a schedule setting changes.
+    /// Posé par le délégué de l’app : demande au minuteur d’actualisation de replanifier après un changement de réglage d’horaire.
     @ObservationIgnored var rescheduleRefresh: () -> Void = {}
     @ObservationIgnored var invertedExchangeRates: [String: (source: MarketSeries, display: MarketSeries)] = [:]
 
@@ -101,15 +101,9 @@ final class AppStore {
         do {
             let cached = try storage.cachedWebstat()
             if !cached.isEmpty {
-                merge(cached.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
+                merge(cached)
                 hasLoadedWebstat = cached.contains { $0.sourceURL?.host == "webstat.banque-france.fr" }
                 status = "Repères conservés localement · consultez la période et la date de publication."
-            } else {
-                let previousRates = try storage.cachedRates()
-                if !previousRates.isEmpty {
-                    merge(previousRates.map { $0.withID(WebstatStarter.canonicalID($0.id)) })
-                    status = "Ancien cache BCE · connectez Webstat dans les réglages pour actualiser."
-                }
             }
             if let catalog = try storage.cachedCatalogue() {
                 catalogueDatasets = catalog.datasets
@@ -130,7 +124,6 @@ final class AppStore {
         return true
     }
 
-    var starterSeries: [MarketSeries] { WebstatStarter.series }
     var storedFollowedSeries: [MarketSeries] { preferences.followedSeriesIDs.compactMap { id in series.first { $0.id == id } } }
     /// Seuls les repères qui ont des valeurs sont visibles ; les autres restent suivis et reviennent avec leurs données.
     var followedSeries: [MarketSeries] { SeriesEquivalence.unique(storedFollowedSeries).filter { !$0.observations.isEmpty } }
@@ -144,16 +137,7 @@ final class AppStore {
     @discardableResult func setProfile(_ profile: LocalProfile) -> Bool { mutatePreferences { $0.profile = profile } }
 
     @discardableResult func followStarterSeries(ids: [String]) -> Bool {
-        let allowed = Set(WebstatStarter.ids)
-        var seen: Set<String> = []
-        let chosen = ids.map(WebstatStarter.canonicalID).filter { allowed.contains($0) && seen.insert($0).inserted }
-        let result = mutatePreferences { value in
-            value.followedSeriesIDs = chosen + value.followedSeriesIDs.filter { !allowed.contains($0) }
-            for index in value.alerts.indices where allowed.contains(value.alerts[index].seriesID) && !chosen.contains(value.alerts[index].seriesID) {
-                value.alerts[index].isEnabled = false
-            }
-            value.favoriteIDs = value.favoriteIDs.filter { chosen.contains($0) || !allowed.contains($0) }
-        }
+        let result = mutatePreferences { $0.followStarters(ids, allowed: Set(WebstatStarter.ids)) }
         if result { reconcileSelection() }
         return result
     }
@@ -181,23 +165,10 @@ final class AppStore {
         guard let value = previewSeries, !value.observations.isEmpty, !isLoadingPreview, previewError == nil,
               let previous = followedMatch(for: value), previous.id != value.id,
               isSourceEnabled(value.statisticalDescriptor?.dataset.source.rawValue ?? "webstat") else { return false }
-        let ids = Set(storedFollowedSeries.filter { SeriesEquivalence.matches($0, value) }.map(\.id))
+        let ids = FollowedOrder.equivalentIDs(of: value, among: storedFollowedSeries)
         do {
             try storage.cacheWebstat(series.filter { $0.id != value.id } + [value])
-            guard mutatePreferences({ next in
-                var hasInserted = false
-                next.followedSeriesIDs = next.followedSeriesIDs.compactMap { id in
-                    guard ids.contains(id) else { return id }
-                    if hasInserted { return nil }; hasInserted = true; return value.id
-                }
-                if !next.favoriteIDs.isDisjoint(with: ids) { next.favoriteIDs.subtract(ids); next.favoriteIDs.insert(value.id) }
-                next.alerts = next.alerts.map { rule in
-                    guard ids.contains(rule.seriesID) else { return rule }
-                    return AlertRule(id: rule.id, seriesID: value.id, direction: rule.direction, threshold: rule.threshold,
-                        isEnabled: rule.isEnabled, condition: rule.effectiveCondition,
-                        lastEvaluatedAt: max(rule.lastEvaluatedAt ?? .distantPast, value.latest?.date ?? .distantPast))
-                }
-            }) else { return false }
+            guard mutatePreferences({ $0.replacing(ids, with: value.id, latest: value.latest?.date) }) else { return false }
             merge([value]); if ids.contains(selectedSeriesID) { selectedSeriesID = value.id }
             status = "Source du repère : \(value.originBadge). Favori et règles conservés."
             return true
@@ -205,14 +176,8 @@ final class AppStore {
     }
 
     @discardableResult func unfollow(_ id: String) -> Bool {
-        let ids = Set(storedFollowedSeries.filter { candidate in
-            series.first(where: { $0.id == id }).map { SeriesEquivalence.matches($0, candidate) } ?? false
-        }.map(\.id)).union([id])
-        let result = mutatePreferences { value in
-            value.followedSeriesIDs.removeAll { ids.contains($0) }
-            value.favoriteIDs.subtract(ids)
-            for index in value.alerts.indices where ids.contains(value.alerts[index].seriesID) { value.alerts[index].isEnabled = false }
-        }
+        let ids = FollowedOrder.equivalentIDs(of: series.first { $0.id == id }, among: storedFollowedSeries).union([id])
+        let result = mutatePreferences { $0.unfollow(ids) }
         if result { reconcileSelection() }
         return result
     }

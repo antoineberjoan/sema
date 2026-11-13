@@ -1,7 +1,7 @@
 // Valeur brute Webstat conservée telle quelle, même lorsqu’elle n’est pas interprétée.
 import Foundation
 
-/// Source values are kept verbatim, including fields that Sema does not interpret yet.
+/// Les valeurs de la source sont gardées telles quelles, y compris les champs que sema n’interprète pas encore.
 public enum WebstatValue: Codable, Equatable, Sendable {
     case string(String), number(Decimal), bool(Bool), array([WebstatValue]), object([String: WebstatValue]), null
 

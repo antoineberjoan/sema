@@ -1,4 +1,4 @@
-// Vérifie la conservation du mode d’apparence et le repli des préférences anciennes.
+// Vérifie la conservation du mode d’apparence et le repli d’un fichier de préférences sans mode d’apparence.
 import Foundation
 import Testing
 @testable import MarketCore
@@ -16,8 +16,8 @@ struct AppearancePreferencesTests {
         let value = try PreferencesRepository(fileURL: file).load()
         #expect(value.appearanceID == nil)
         #expect(value.themeID == "polar")
-        #expect(value.followedSeriesIDs == [WebstatStarter.canonicalID("eurusd")])
-        #expect(value.favoriteIDs == [WebstatStarter.canonicalID("eurusd")])
+        #expect(value.followedSeriesIDs == [IdentifierMigration.upgrade("eurusd")])
+        #expect(value.favoriteIDs == [IdentifierMigration.upgrade("eurusd")])
         #expect(try Data(contentsOf: file) == previous)
     }
 

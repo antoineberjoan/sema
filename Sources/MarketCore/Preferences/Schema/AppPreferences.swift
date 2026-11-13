@@ -1,4 +1,4 @@
-// Préférences persistées de l’app et migration des versions de schéma distribuées.
+// Préférences persistées de l’app, au format de schéma 2.
 import Foundation
 
 public struct AppPreferences: Codable, Equatable, Sendable {
@@ -18,25 +18,25 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var invertedCurrencyPairs: Set<String>?
     public var ribbonGlass: RibbonGlassPreferences?
     public var shortcuts: ShortcutPreferences?
-    /// History period shared by the hub and the ribbon; absent means one year.
+    /// Période d’historique partagée par le hub et le bandeau ; absente signifie un an.
     public var periodID: String?
-    /// Global sensitivity of unusual-move alerts; absent means normal (2×).
+    /// Sensibilité globale des alertes de mouvement inhabituel ; absente signifie normale (2×).
     public var moveSensitivityID: String?
-    /// Source of the headlines of the day; absent means GDELT.
+    /// Source des titres du jour ; absente signifie GDELT.
     public var headlineSourceID: String?
-    /// Writer of the summary of a session; absent means off.
+    /// Rédacteur de la synthèse d’une séance ; absent signifie désactivé.
     public var summaryWriterID: String?
-    /// Morning brief settings; absent means off at 8:00 on weekdays.
+    /// Réglages du brief du matin ; absents signifie désactivé à 8:00 les jours ouvrés.
     public var brief: BriefPreferences?
 
-    public init(favoriteIDs: Set<String> = ["fr10", "ecb", "eurusd", "livreta"],
+    public init(favoriteIDs: Set<String> = ["FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", "FM.D.U2.EUR.4F.KR.DFR.LEV", "EXR.D.USD.EUR.SP00.A", "MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O"],
                 alerts: [AlertRule] = [], canNotify: Bool = false, themeID: String? = "brand", appearanceID: String? = nil,
                 followedSeriesIDs: [String] = [], isOnboardingCompleted: Bool? = nil,
                 ribbonPositionID: String? = "top", disabledSourceIDs: Set<String>? = StatisticalSource.inactiveByDefault,
                 profile: LocalProfile? = nil, invertedCurrencyPairs: Set<String>? = nil,
                 ribbonGlass: RibbonGlassPreferences? = nil, shortcuts: ShortcutPreferences? = nil) {
-        self.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.canonicalID))
-        self.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.canonicalID)
+        self.favoriteIDs = favoriteIDs
+        self.followedSeriesIDs = followedSeriesIDs
         self.alerts = alerts
         self.canNotify = canNotify
         self.themeID = themeID
@@ -77,27 +77,10 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         headlineSourceID = try values.decodeIfPresent(String.self, forKey: .headlineSourceID)
         summaryWriterID = try values.decodeIfPresent(String.self, forKey: .summaryWriterID)
         brief = try values.decodeIfPresent(BriefPreferences.self, forKey: .brief)
-        // Empty is a valid v2 selection; absence only means legacy v1.
+        // Schéma 2 : la liste peut être vide. Schéma 1 : elle est absente et la sélection de départ s’applique (`PreferencesMigration`).
         if schemaVersion > 1 { followedSeriesIDs = try values.decode([String].self, forKey: .followedSeriesIDs) }
         else { followedSeriesIDs = WebstatStarter.ids }
     }
 
     public func isSourceEnabled(_ id: String) -> Bool { !(disabledSourceIDs ?? []).contains(id) }
-
-    public func migrated() throws -> AppPreferences {
-        guard (1...Self.currentSchemaVersion).contains(schemaVersion) else { throw PreferencesError.unsupportedVersion(schemaVersion) }
-        var value = self
-        value.schemaVersion = Self.currentSchemaVersion
-        value.favoriteIDs = Set(favoriteIDs.map(WebstatStarter.canonicalID))
-        var seen: Set<String> = []
-        value.followedSeriesIDs = followedSeriesIDs.map(WebstatStarter.canonicalID).filter { seen.insert($0).inserted }
-        value.alerts = alerts.map { rule in
-            AlertRule(id: rule.id, seriesID: WebstatStarter.canonicalID(rule.seriesID), direction: rule.direction,
-                threshold: rule.threshold, isEnabled: rule.isEnabled, condition: rule.effectiveCondition,
-                lastEvaluatedAt: rule.lastEvaluatedAt)
-        }
-        value.shortcuts = shortcuts?.migrated()
-        if schemaVersion == 1 { value.isOnboardingCompleted = true }
-        return value
-    }
 }

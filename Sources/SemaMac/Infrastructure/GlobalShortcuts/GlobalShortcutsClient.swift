@@ -33,7 +33,7 @@ final class GlobalShortcutsClient {
         for shortcut in shortcuts where isReserved(shortcut) { throw RegistrationError.reserved }
         try installHandler()
 
-        // Acquire replacements before removing previous keys. A failed registration leaves them intact.
+        // Obtient les remplaçants avant de retirer les anciennes touches. Un enregistrement raté les laisse intactes.
         var acquired: [ShortcutAction: (shortcut: AppShortcut, reference: EventHotKeyRef)] = [:]
         do {
             for (index, action) in actions.enumerated() {
@@ -78,7 +78,7 @@ final class GlobalShortcutsClient {
                 key.signature == GlobalShortcutsClient.signature else { return OSStatus(eventNotHandledErr) }
             let controller = Unmanaged<GlobalShortcutsClient>.fromOpaque(context).takeUnretainedValue()
             let id = key.id
-            // End the Carbon callback before opening a SwiftUI window or changing the key panel.
+            // Termine le rappel Carbon avant d’ouvrir une fenêtre SwiftUI ou de changer le panneau clavier.
             Task { @MainActor in
                 let actions = ShortcutAction.allCases
                 if id > 0, id <= actions.count { controller.perform(actions[Int(id) - 1]) }

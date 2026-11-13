@@ -12,4 +12,4 @@ brew trust --cask antoineberjoan/sema/sema-app
 brew install --cask sema-app
 ```
 
-`cask_renames.json` associe l’ancien nom `sema` au nouveau. Il ne s’agit pas d’une inclusion au catalogue officiel Homebrew. La signature ad hoc et les contrôles de macOS restent inchangés.
+`cask_renames.json` associe le nom `sema` au cask `sema-app`. Il ne s’agit pas d’une inclusion au catalogue officiel Homebrew. La signature ad hoc et les contrôles de macOS restent inchangés.

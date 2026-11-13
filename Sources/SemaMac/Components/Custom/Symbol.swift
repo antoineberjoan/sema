@@ -4,7 +4,7 @@
 import SemaDesign
 import SwiftUI
 
-/// Antoine’s mark (8 November 2026). In the menu bar the point follows the template colour.
+/// Le signe de sema. Dans la barre des menus, le point suit la couleur de l’image modèle.
 struct Symbol: View {
     var isMenuBarIcon = false
 

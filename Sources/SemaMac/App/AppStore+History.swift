@@ -20,7 +20,7 @@ extension AppStore {
             do {
                 let key = try await requiredKey()
                 let current = try await WebstatClient().descriptor(apiKey: key, key: descriptor.key)
-                guard descriptor.usesSameMeasurement(as: current) else { throw WebstatError.metadataChanged }
+                guard descriptor.usesSameMeasurement(as: current) else { throw PublicDataError.metadataChanged }
                 let descriptor = current.resolving(labels: descriptor.labels)
                 guard let first = descriptor.firstObservationStart else { throw WebstatError.incompleteData }
                 var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!

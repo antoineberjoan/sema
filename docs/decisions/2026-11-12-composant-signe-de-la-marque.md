@@ -27,7 +27,3 @@ Le composant est gardé avec cet écart à la référence (SwiftUI).
 ## Conséquences
 
 **Une seule source.** La géométrie du signe est écrite une fois, dans `SignalPath.swift` (points, trait, rayons, géométrie de l'icône d'app). Les fichiers SVG de la marque sont exportés par `scripts/export_signe.py`, et `controler.sh` échoue si l'un d'eux diffère de l'export. Les tailles d'icône du bundle sont dessinées par `scripts/render-icon/main.swift`, compilé avec `SignalPath.swift` et les couleurs générées. Le mot « sema » du lockup est un dessin (`Resources/Brand/sema-wordmark.svg`), repris tel quel.
-
-## Trace
-
-Lot des composants de l'alignement de sema sur Sophos : inventaire de `DesignSystem` avant sa suppression.

@@ -13,6 +13,7 @@ Référence : dépôt `antoineberjoan/sophos`. Lire le `SKILL.md` d'un skill à 
 | [construire](https://antoineberjoan.github.io/sophos/skills/construire/SKILL.html) | 0.9.0 |
 | [expliquer](https://antoineberjoan.github.io/sophos/skills/expliquer/SKILL.html) | 0.3.0 |
 | [concevoir](https://antoineberjoan.github.io/sophos/skills/concevoir/SKILL.html) | 0.5.0 |
+| [cristalliser](https://antoineberjoan.github.io/sophos/skills/cristalliser/SKILL.html) | 2.1.0 |
 <!-- carte:skills:fin -->
 
 - `penser` : la façon de travailler avec Antoine. Une direction qu'il tranche est une décision de ce dépôt, dans `docs/decisions/`.
@@ -26,9 +27,9 @@ Une recherche de fond avec des sources ne reste pas dans une conversation. Avant
 
 sema est une app macOS native (SwiftUI, Swift 6, macOS 14 et plus) pour consulter des séries économiques publiques, suivre ses favoris et définir des seuils. Le détail est dans `docs/fondation.md` et `docs/PRODUCT.md`.
 
-- Dedans : le cœur (`Sources/MarketCore`), l'app (`Sources/SemaMac`), ses tests (`Tests/`), le site (`site/`), la distribution (`distribution/`).
+- Dedans : le cœur (`Sources/MarketCore`), les jetons de design (`Sources/SemaDesign`), l'app (`Sources/SemaMac`), leurs tests (`Tests/MarketCoreTests`, `Tests/SemaDesignTests`, `Tests/SemaMacTests`), le site (`site/`), la distribution (`distribution/`).
 - Dehors : un serveur, un compte, une clé fournisseur partagée.
-- Nom : **sema**, en minuscules dans les textes visibles. Français pour l'interface et la documentation ; anglais pour les identifiants et les rôles. Pas de préfixe `Sema` dans un nouvel identifiant.
+- Nom : **sema**, en minuscules dans les textes visibles. Français pour l'interface, la documentation et les commentaires du code ; anglais pour les identifiants et les rôles. Le code fabriqué par un outil de Sophos (`Sources/SemaDesign/`) garde les commentaires de l'outil. Aucun préfixe de projet dans un identifiant (les noms de cibles `SemaMac` et `SemaDesign` sont les seuls).
 
 Charger au bon moment, sans tout lire au démarrage :
 
@@ -46,16 +47,16 @@ Référence : `patron/structure.md` de Sophos. Chaque sorte de code a une forme 
 | --- | --- |
 | Bibliothèque de règles | `Sources/MarketCore/Series`, `Moves`, `Alerts`, `Context` |
 | Dépôt de données | `Sources/MarketCore/Preferences`, `Sources/SemaMac/Infrastructure/Storage` |
-| Connecteur | `Sources/MarketCore/Webstat`, `Sdmx`, `NewYorkFed`, `WorldBank`, `Fred`, `TwelveData`, `AlphaVantage`, `ECB`, `Claude`, `Gdelt`, `CentralBankFeeds` ; `Sources/SemaMac/Infrastructure/Keychain`, `Notifications`, `LoginItem`, `GlobalShortcuts`, `AppleIntelligence`, `Feedback` |
+| Connecteur | `Sources/MarketCore/Webstat`, `Sdmx`, `NewYorkFed`, `WorldBank`, `Fred`, `TwelveData`, `AlphaVantage`, `Claude`, `Gdelt`, `CentralBankFeeds` ; `Sources/SemaMac/Infrastructure/Keychain`, `Notifications`, `LoginItem`, `GlobalShortcuts`, `AppleIntelligence`, `Feedback` |
 | Module d'écran | `Sources/SemaMac/Features/*` |
 
-En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Le détail est dans `docs/decisions/2026-11-12-forme-swift-des-unites.md`. La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés.
+En Swift, un rôle qui porte plusieurs types est un dossier du nom du rôle (`Model/`, `Contract/`), un fichier par type. Un rôle qui porte un seul type est un fichier dont le nom finit par le rôle (`WebstatClient.swift`, `AlertsScreen.swift`). Cette forme est celle de `patron/structure.md` de Sophos. Une étape d'une bibliothèque de règles est un dossier `Modules/<Étape>/` (`Alerts/Modules/Evaluation/`), qui porte ses propres rôles (`Calculations/`, `Model/`). La racine de l'app (`Sources/SemaMac/App`) et ses composants ne sont pas déclarés : `AppStore` assemble (il lit, appelle, stocke) et ne porte aucune règle. Tout calcul, toute décision, tout filtre et toute validation vit dans une étape de `MarketCore`, avec son test ; le texte des notifications vit dans `Sources/SemaMac/Common/NotificationText.swift`. Les dossiers `Common/` de `MarketCore` et de `SemaMac` sont au niveau du domaine, hors unité : ils portent ce que plusieurs unités partagent.
 
 ## Bibliothèque de composants
 
 Référence : **SwiftUI** (macOS 14). AppKit seulement pour un comportement macOS précis.
 
-On assemble ses composants avant d'écrire. Les composants propres et ceux qui reprennent la référence avec un écart sont dans `Sources/SemaMac/Components/Custom/`, avec `@documentation` et `@decision` en en-tête. Un composant qu'on ne peut pas assembler suit sa structure et déclare la page suivie : la méthode est dans `patron/composants.md` de Sophos.
+On assemble ses composants avant d'écrire. Un composant propre, ou qui reprend la référence, va dans `Sources/SemaMac/Components/Custom/`, avec `@documentation` et `@decision` en en-tête. Un composant qui assemble la référence avec un écart reste dans son module d'écran, avec les mêmes deux lignes d'en-tête (`Features/Overview/Components/HistoryChart.swift`). Un composant qu'on ne peut pas assembler suit sa structure et déclare la page suivie : la méthode est dans `patron/composants.md` de Sophos.
 
 ## Sources de vérité
 
@@ -67,11 +68,13 @@ Une information vit à un seul endroit. Si deux sources se contredisent, arrête
 | Ce qu'est le projet | `docs/fondation.md` |
 | Périmètre du produit | `docs/PRODUCT.md` |
 | Décisions | `docs/decisions/` |
+| Sources de données, catalogues publics, personnalisation | `docs/DATA-SOURCES.md`, `docs/PUBLIC-CATALOGUES.md`, `docs/PERSONALIZATION.md` |
+| Mentions légales, retours, distribution | `docs/LEGAL.md`, `docs/FEEDBACK.md`, `docs/DISTRIBUTION.md` |
 | Mots du métier | `docs/lexique.md` |
 | Marque | `Resources/Brand/` |
 | Carte du dépôt | `projet.yml` |
 
-Notion ne pilote plus sema (`docs/decisions/2026-11-12-alignement-sur-sophos.md`). Une intention formulée dans le chat vaut instruction pour la tâche ; sa décision durable s'écrit dans `docs/decisions/`, avec sa date.
+Une intention formulée dans le chat vaut instruction pour la tâche ; sa décision durable s'écrit dans `docs/decisions/`, avec sa date. Le dépôt suit Sophos.
 
 ## Validation et autonomie
 

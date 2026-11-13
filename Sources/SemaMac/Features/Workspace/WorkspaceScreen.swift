@@ -13,7 +13,7 @@ struct WorkspaceScreen: View {
     private static let previewInset = DesignSpace.frameInset
     private static let previewVerticalInset = DesignSpace.controlInsetDense
     private static let switcherScrim = DesignColor.scrim
-    // Every sidebar text starts on one edge: an 8 pt block inset plus an 8 pt inner padding equals the 16 pt margin.
+    // Chaque texte de la barre latérale commence sur un même bord : 8 pt de retrait du bloc plus 8 pt de marge interne font la marge de 16 pt.
     private static let sidebarSpacing = DesignSpace.itemGap
     private static let sidebarMargin = DesignSpace.cardInset
     private static let searchSpacing = DesignIcon.gap
@@ -134,7 +134,7 @@ struct WorkspaceScreen: View {
 
     private var keyboardWorkspace: some View {
         workspaceLayout
-        .background { FocusKeyboard(handle: handleFocusKey).frame(width: 0, height: 0) }
+        .background { FocusKeyboard(handle: handleFocusKey).frame(width: .zero, height: .zero) }
         .overlay {
             if let selection = switcherSelection {
                 ZStack {

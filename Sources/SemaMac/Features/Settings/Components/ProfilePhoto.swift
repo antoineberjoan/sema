@@ -43,7 +43,7 @@ enum ProfilePhoto {
         guard let image = context.makeImage(),
               let destination = CGImageDestinationCreateWithData(result, UTType.jpeg.identifier as CFString, 1, nil)
         else { throw ImportError.unsupported }
-        // A new image carries no EXIF/location metadata from the selected file.
+        // Une nouvelle image ne porte aucune métadonnée EXIF ou de position du fichier choisi.
         CGImageDestinationAddImage(destination, image, [kCGImageDestinationLossyCompressionQuality: DesignMeasure.profilePhotoJpegQuality] as CFDictionary)
         guard CGImageDestinationFinalize(destination) else { throw ImportError.unsupported }
         return result as Data

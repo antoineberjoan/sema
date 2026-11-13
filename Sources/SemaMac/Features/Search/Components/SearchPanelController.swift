@@ -17,7 +17,7 @@ final class SearchPanelController {
         panel.contentView = hostedContent
         return panel
     }()
-    /// Escape first leaves the detail of a series, then closes the panel.
+    /// Échap quitte d’abord le détail d’une série, puis ferme le panneau.
     private lazy var dismissal = PanelDismissal(panel: panel, dismiss: { [weak self] in self?.dismiss() },
         handleKey: { [weak self] event in
             guard let self, Int(event.keyCode) == kVK_Escape, self.model.detail != nil else { return false }

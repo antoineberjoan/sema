@@ -27,7 +27,7 @@ struct BriefScreen: View {
                 .typeRole(.small).foregroundStyle(DesignColor.textMuted)
         }
         .frame(maxWidth: DesignLayout.briefMaximumWidth, alignment: .leading)
-        // A day chosen in the ribbon unfolds the agenda; it reads and clears the request.
+        // Un jour choisi dans le bandeau déplie l’agenda ; il lit et efface la demande.
         .onChange(of: store.agendaDay, initial: true) { _, requested in
             if requested != nil { isAgendaOpen = true }
         }
@@ -98,7 +98,7 @@ struct BriefScreen: View {
     private func thresholds(_ brief: MorningBrief) -> some View {
         section("seuils proches") {
             ForEach(brief.nearThresholds) { near in
-                Text("\(MarketFormat.name(store.displayedSeries(near.series))) · \(AppStore.nearText(near))").typeRole(.body)
+                Text("\(MarketFormat.name(store.displayedSeries(near.series))) · \(NotificationText.nearText(near))").typeRole(.body)
             }
         }
     }
@@ -137,7 +137,7 @@ struct BriefScreen: View {
         }
     }
 
-    /// Press releases and headlines of the session day; moves and releases are shown elsewhere on the page.
+    /// Communiqués et titres du jour de la séance ; les mouvements et les publications sont montrés ailleurs sur la page.
     private static func isSameDayFact(_ item: AgendaItem) -> Bool {
         switch item {
         case .pressRelease, .headline: true
@@ -171,7 +171,7 @@ struct BriefScreen: View {
 
     static func time(_ brief: BriefPreferences) -> String { "\(brief.hour) h " + String(format: "%02d", brief.minute) }
 
-    /// French text of a day, read on the UTC calendar the sessions are dated on.
+    /// Texte français d’un jour, lu sur le calendrier UTC où les séances sont datées.
     private static func text(_ date: Date, _ format: String) -> String {
         let formatter = DateFormatter()
         formatter.locale = .french

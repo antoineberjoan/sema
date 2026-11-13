@@ -1,7 +1,7 @@
 // Erreurs que les connecteurs de données publiques, de presse et de contexte rendent à l'app.
 import Foundation
 
-public enum PublicDataError: Error, LocalizedError {
+public enum PublicDataError: Error, LocalizedError, Equatable {
     case unavailable, quotaReached, invalidData, noData, metadataChanged, chooseOneSeries, invalidKey, unsupportedPeriod, catalogueTooLarge, missingAPIKey, rejectedAPIKey
     public var errorDescription: String? {
         switch self {

@@ -27,7 +27,3 @@ Le composant est gardé avec cet écart à la référence (SwiftUI).
 ## Conséquences
 
 Lu par le seul détail d'une série : le composant est dans les composants de l'écran Aperçu.
-
-## Trace
-
-Lot des composants de l'alignement de sema sur Sophos : inventaire de `DesignSystem` avant sa suppression.

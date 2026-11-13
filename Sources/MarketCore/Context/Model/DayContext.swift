@@ -7,12 +7,12 @@ public struct DayContext: Equatable, Sendable {
     public var releases: [EconomicRelease] = []
     public var pressReleases: [PressRelease] = []
     public var headlines: [Headline] = []
-    /// Parts that could not be loaded, named for the reader (for example « Titres »), so an empty list is never mistaken for « rien ».
+    /// Parties qui n’ont pas pu se charger, nommées pour le lecteur (par exemple « Titres »), pour qu’une liste vide ne passe jamais pour « rien ».
     public var unavailable: [String] = []
 
     public init(day: Date) { self.day = day }
 
-    /// Start and end of the UTC calendar day of a session, used to query every source on the same window.
+    /// Début et fin du jour calendaire UTC d’une séance, utilisés pour interroger chaque source sur la même fenêtre.
     public static func window(for day: Date) -> (start: Date, end: Date) {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!

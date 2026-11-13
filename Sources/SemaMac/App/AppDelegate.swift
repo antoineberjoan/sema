@@ -58,7 +58,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         shortcuts?.tearDown(); menuRibbon?.tearDown(); searchPanel?.tearDown()
     }
 
-    /// A click opens sema on what the notification is about: the series and its context, or a section.
+    /// Un clic ouvre sema sur ce dont parle la notification : la série et son contexte, ou une section.
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse) async {
         guard let target = NotificationTarget(userInfo: response.notification.request.content.userInfo) else { return }

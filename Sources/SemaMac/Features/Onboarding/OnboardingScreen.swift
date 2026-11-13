@@ -1,4 +1,4 @@
-// Guide la première ouverture : bienvenue, thèmes avec aperçu du bandeau, puis connexion des données.
+// Guide la première ouverture : bienvenue, choix des thèmes, puis connexion des données.
 import SemaDesign
 import SwiftUI
 import MarketCore
@@ -7,20 +7,19 @@ import MarketCore
 //   0 ms  Les actions sont déjà disponibles.
 // 360 ms  Le signe termine son dessin ; le contenu reste stable.
 // 220 ms  Une étape remplace la précédente, sans attente imposée.
-// 180 ms  Un thème change de teinte et l’aperçu du bandeau suit, sans déplacer les tuiles.
+// 180 ms  Un thème change de teinte, sans déplacer les tuiles.
 
 private enum WelcomeMotion {
     static let drawDuration = DesignDuration.explain
     static let stepDuration = DesignDuration.standard
     static let contentOffset = DesignMotion.shift
     static let selectionDuration = DesignDuration.fast
-    static let previewScale = DesignMotion.scaleFrom
 }
 
 private enum WelcomeLayout {
     static let windowPadding = DesignSpace.pageInsetNarrow
     static let heroSpacing = DesignSpace.sectionGap
-    static let dotSpacing = DesignIcon.gap
+    static let dotSpacing = DesignSpace.stepDotGap
     static let titleSpacing = DesignSpace.fieldGap
     static let errorSpacing = DesignSpace.fieldGap
     static let errorTopPadding = DesignSpace.menuInset
@@ -33,7 +32,6 @@ private enum WelcomeLayout {
     static let tileTextSpacing = DesignSpace.titleGap
     static let tilePadding = DesignSpace.cardInset
     static let tileBorder = DesignBorder.width
-    static let previewSpacing = DesignSpace.itemGap
     static let footerSpacing = DesignSpace.fieldGap
     static let signalWidth = SignalPath.stroke * DesignLayout.welcomeSignalSize / SignalPath.viewBox
     static let heroSignalWidth = SignalPath.stroke * DesignLayout.welcomeHeroSignalSize / SignalPath.viewBox
@@ -61,24 +59,22 @@ private struct WelcomeCollection: Identifiable {
     let subtitle: String
     let symbol: String
     let items: [(id: String, title: String)]
-    var seriesIDs: [String] { items.map { WebstatStarter.canonicalID($0.id) } }
+    var seriesIDs: [String] { items.map { $0.id } }
 
     static let all: [Self] = [
         .init(id: "rates", title: "Taux & marchés", subtitle: "Le coût de l’argent", symbol: "chart.xyaxis.line",
-              items: [("fr10", "France · 10 ans"), ("ecb", "Dépôt BCE"), ("estr", "€STR")]),
+              items: [("FM.M.FR.EUR.FR2.BB.FR10YT_RR.YLD", "France · 10 ans"), ("FM.D.U2.EUR.4F.KR.DFR.LEV", "Dépôt BCE"), ("ESTR.B.EU000A2X2A25.WT", "€STR")]),
         .init(id: "economy", title: "Économie réelle", subtitle: "Prix et financement", symbol: "building.2",
-              items: [("inflation", "Inflation France"), ("inflation-euro", "Inflation euro"), ("mortgage-fr", "Crédit immobilier")]),
+              items: [("HICP.M.FR.N.000000.4D0.ANR", "Inflation France"), ("HICP.M.U2.N.000000.4D0.ANR", "Inflation euro"), ("MIR1.M.FR.B.A22HR.A.R.A.2254U6.EUR.N", "Crédit immobilier")]),
         .init(id: "savings", title: "Épargne", subtitle: "Les repères du quotidien", symbol: "leaf",
-              items: [("livreta", "Livret A"), ("ldds", "LDDS"), ("lep", "LEP")]),
+              items: [("MIR1.M.FR.B.L23FRLA.D.R.A.2230U6.EUR.O", "Livret A"), ("MIR1.M.FR.B.L23FRLD.D.R.A.2254U6.EUR.O", "LDDS"), ("MIR1.M.FR.B.L23FRLP.H.R.A.2250U6.EUR.O", "LEP")]),
         .init(id: "currencies", title: "Devises", subtitle: "L’euro dans le monde", symbol: "globe.europe.africa",
-              items: [("eurusd", "EUR / USD"), ("eurjpy", "EUR / JPY"), ("eurchf", "EUR / CHF"), ("eurgbp", "EUR / GBP")])
+              items: [("EXR.D.USD.EUR.SP00.A", "EUR / USD"), ("EXR.D.JPY.EUR.SP00.A", "EUR / JPY"), ("EXR.D.CHF.EUR.SP00.A", "EUR / CHF"), ("EXR.D.GBP.EUR.SP00.A", "EUR / GBP")])
     ]
 }
 
 struct OnboardingScreen: View {
     private static let stepCount = 3
-    private static let previewCardCount = 3
-    private static let minimumPreviewObservations = 1
     @Environment(AppStore.self) private var store
     @Environment(\.palette) private var palette
     private var accent: Color { DesignColor.accent(palette) }
@@ -100,19 +96,7 @@ struct OnboardingScreen: View {
         _selection = State(initialValue: Set(initialSelection))
     }
 
-    private static let previewExamples = WebstatStarter.series
     private var suggestions: [MarketSeries] { WebstatStarter.series }
-
-    /// Une carte d’exemple fictif par thème choisi : le seul endroit où sema montre des valeurs inventées.
-    private var previewSeries: [MarketSeries] {
-        WelcomeCollection.all.compactMap { collection in
-            collection.items.lazy
-                .filter { selection.contains(WebstatStarter.canonicalID($0.id)) }
-                .compactMap { item in Self.previewExamples.first { $0.id == item.id } }
-                .first { $0.observations.count > Self.minimumPreviewObservations }
-        }
-        .prefix(Self.previewCardCount).map { $0 }
-    }
 
     private var title: String {
         switch step {
@@ -185,7 +169,7 @@ struct OnboardingScreen: View {
             Spacer()
             HStack(spacing: WelcomeLayout.dotSpacing) {
                 ForEach(0..<Self.stepCount, id: \.self) { index in
-                    Capsule().fill(index == step ? accent : DesignColor.ruleHover)
+                    Capsule().fill(index == step ? accent : DesignColor.stepDotIdle)
                         .frame(width: index == step ? DesignLayout.welcomeActiveDotWidth : DesignLayout.dotSize, height: DesignLayout.dotSize)
                 }
             }
@@ -227,32 +211,7 @@ struct OnboardingScreen: View {
                       spacing: WelcomeLayout.gridSpacing) {
                 ForEach(WelcomeCollection.all) { collection in themeTile(collection) }
             }
-            VStack(alignment: .leading, spacing: WelcomeLayout.previewSpacing) {
-                Text("Aperçu du bandeau, avec des exemples fictifs.")
-                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
-                preview
-            }
         }
-    }
-
-    private var preview: some View {
-        HStack(spacing: WelcomeLayout.previewSpacing) {
-            ForEach(previewSeries) { series in
-                RibbonCard(series: store.displayedSeries(series), period: .year, action: {})
-                    .frame(width: DesignLayout.welcomePreviewCardWidth, height: DesignLayout.menuRibbonCardHeight)
-                    .transition(reduceMotion ? .identity : .opacity.combined(with: .scale(scale: WelcomeMotion.previewScale)))
-            }
-            if previewSeries.isEmpty {
-                Text("Choisissez un thème pour composer votre bandeau.")
-                    .typeRole(.caption).foregroundStyle(DesignColor.textMuted)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(DesignColor.surface, in: RoundedRectangle(cornerRadius: DesignRadius.block))
-            }
-        }
-        .frame(maxWidth: .infinity, minHeight: DesignLayout.menuRibbonCardHeight, maxHeight: DesignLayout.menuRibbonCardHeight, alignment: .leading)
-        .environment(\.glassSettings, store.ribbonGlass)
-        .animation(reduceMotion ? nil : Animation.timingCurve(DesignEase.out, duration: WelcomeMotion.selectionDuration), value: previewSeries.map(\.id))
-        .allowsHitTesting(false).accessibilityHidden(true)
     }
 
     private func isSelected(_ collection: WelcomeCollection) -> Bool {

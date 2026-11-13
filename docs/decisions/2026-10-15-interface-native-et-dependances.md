@@ -25,7 +25,3 @@ Toute nouvelle dépendance répond à un besoin observé et reçoit l'accord d'A
 ## Conséquences
 
 Aucune bibliothèque examinée n'est ajoutée : la scène native `Settings` suffit. Si un besoin réel apparaît, Antoine décide, et cette décision est remplacée par une nouvelle.
-
-## Trace
-
-Reprise d'ADR 001 (statut « retenu pour la version 0.1 »). Date : celle du premier commit qui la porte. Renommée au format de Sophos lors de l'alignement.

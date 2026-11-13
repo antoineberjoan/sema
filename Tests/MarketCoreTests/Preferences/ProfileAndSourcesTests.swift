@@ -10,7 +10,7 @@ struct ProfileAndSourcesTests {
         let raw = try JSONSerialization.jsonObject(with: data)
         var document = try #require(raw as? [String: Any])
         for key in ["profile", "disabledSourceIDs", "alertBaselineIDs"] { document.removeValue(forKey: key) }
-        let restored = try JSONDecoder().decode(AppPreferences.self, from: JSONSerialization.data(withJSONObject: document)).migrated()
+        let restored = try PreferencesMigration.upgrade(JSONDecoder().decode(AppPreferences.self, from: JSONSerialization.data(withJSONObject: document)))
         #expect(restored.followedSeriesIDs.isEmpty)
         #expect(restored.profile == nil)
         for id in ["webstat"] + StatisticalSource.allCases.map(\.rawValue) { #expect(restored.isSourceEnabled(id)) }

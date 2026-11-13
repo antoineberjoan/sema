@@ -26,7 +26,7 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
         func text(_ field: String) -> String? {
             (raw[field]?.text ?? attributes[field.uppercased()] ?? dimensions[field.uppercased()]).flatMap { $0.isEmpty ? nil : $0 }
         }
-        guard let key = text("series_key"), Self.isValidKey(key) else { throw WebstatError.invalidData }
+        guard let key = text("series_key"), Self.isValidKey(key) else { throw PublicDataError.invalidData }
         self.key = key
         datasetID = text("dataset_id") ?? String(key.split(separator: ".").first ?? "")
         title = text("title_fr") ?? text("title_en") ?? key
@@ -45,8 +45,26 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
     }
 
     public func resolving(labels: [String: String]) -> WebstatSeriesDescriptor {
-        // The key was validated at construction and raw values remain unchanged.
+        // La clé a été validée à la construction et les valeurs brutes restent inchangées.
         (try? WebstatSeriesDescriptor(raw: raw, labels: self.labels.merging(labels, uniquingKeysWith: { _, replacement in replacement }))) ?? self
+    }
+
+    /// Ajoute les libellés lisibles du jeu : un libellé par champ de dimension ou d'attribut, puis un repli sur les listes usuelles (unité, fréquence, agence, zone).
+    public func resolving(codeLabels: [String: [String: String]], dataset: WebstatDataset?) -> WebstatSeriesDescriptor {
+        var labels: [String: String] = [:]
+        let mapping = (dataset?.dimensionCodelists ?? [:]).merging(dataset?.attributeCodelists ?? [:], uniquingKeysWith: { _, attribute in attribute })
+        let attributes = self.attributes; let dimensions = self.dimensions
+        for (field, list) in mapping {
+            let code = raw[field.lowercased()]?.text ?? dimensions[field] ?? attributes[field]
+            if let code, let label = codeLabels[list]?[code] { labels[field.lowercased()] = label }
+        }
+        let fallback = ["unit": "CL_UNIT", "unit_mult": "CL_UNIT_MULT", "freq": "CL_FREQ", "source_agency": "CL_ORGANISATION", "ref_area": "CL_AREA"]
+        for (field, list) in fallback where labels[field] == nil {
+            let code = raw[field]?.text ?? dimensions[field.uppercased()] ?? attributes[field.uppercased()]
+            if let code, let label = codeLabels[list]?[code] { labels[field] = label }
+        }
+        if labels["ref_area"] == nil { labels["ref_area"] = labels["ame_ref_area"] ?? labels["zone_geo"] }
+        return resolving(labels: labels)
     }
 
     public var frequency: ObservationFrequency {
@@ -89,14 +107,14 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
         else { switch multiplier { case 3: scale = "milliers"; case 6: scale = "millions"; case 9: scale = "milliards"; default: scale = "× 10^\(multiplier)" } }
         return base.isEmpty ? scale : "\(scale) · \(base)"
     }
-    /// Thresholds use the source scale; obs_value is never multiplied a second time.
+    /// Les seuils utilisent l’échelle de la source ; obs_value n’est jamais multiplié une seconde fois.
     public var canAlert: Bool { multiplier != nil && unitCode != "_Z" && unitCode != "_X" && (unit != .unknown || labels["unit"] != nil) }
     public var variation: VariationConvention {
         if unit == .percent, multiplier == 0 { return .points }
         if [.usd, .jpy, .chf, .gbp].contains(unit), multiplier == 0 { return .relativePercent }
         return .unavailable
     }
-    /// Never splice values expressed in two scales or index bases into one curve.
+    /// Ne jamais raccorder en une seule courbe des valeurs exprimées dans deux échelles ou deux bases d’indice.
     public func usesSameMeasurement(as other: WebstatSeriesDescriptor) -> Bool {
         unitCode == other.unitCode && multiplier == other.multiplier &&
         attributes["UNIT_INDEX_BASE"] == other.attributes["UNIT_INDEX_BASE"]
@@ -107,7 +125,7 @@ public struct WebstatSeriesDescriptor: Codable, Equatable, Sendable, Identifiabl
         guard let data = text?.data(using: .utf8), let values = try? JSONDecoder().decode([String: WebstatValue].self, from: data) else { return [:] }
         return values.compactMapValues(\.text)
     }
-    /// Catalogue bounds are end-of-period dates; exports filter the start of that period.
+    /// Les bornes du catalogue sont des dates de fin de période ; les exports filtrent le début de cette période.
     public var firstObservationStart: Date? {
         guard let firstPeriod else { return nil }
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!

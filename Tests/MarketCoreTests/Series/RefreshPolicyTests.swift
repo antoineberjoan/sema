@@ -27,7 +27,7 @@ struct RefreshPolicyTests {
     private func utc(_ text: String) -> Date { ISO8601DateFormatter().date(from: text)! }
 
     @Test func watchedMarketsAreDueOnceACloseHasPassed() {
-        // Thursday 5 November 2026: New York closes at 16:20 EST, 21:20 UTC.
+        // Jeudi 5 novembre 2026 : New York ferme à 16:20 EST, soit 21:20 UTC.
         let beforeClose = utc("2026-11-05T20:00:00Z")
         let afterClose = utc("2026-11-05T22:00:00Z")
         #expect(RefreshPolicy.isDue(syncedAt: beforeClose, now: afterClose, followsCloses: true))
@@ -41,5 +41,12 @@ struct RefreshPolicyTests {
         #expect(RefreshPolicy.lastClose(before: saturday) == utc("2026-11-06T21:20:00Z"))
         #expect(RefreshPolicy.nextClose(after: saturday) == utc("2026-11-09T16:50:00Z"))
         #expect(RefreshPolicy.nextDelay(syncedDates: [saturday], now: saturday, followsCloses: true) == RefreshPolicy.interval)
+    }
+
+    @Test func automaticRefreshNeedsAnActiveAndConnectedSource() {
+        let rate = MarketSeries(id: "rate", name: "Taux", subtitle: "", category: .savings, unit: .percent, source: "Test", observations: [])
+        #expect(RefreshPolicy.isAutomaticallyRefreshable(rate, isSourceEnabled: true, connectedProviders: [], hasWebstatKey: true))
+        #expect(!RefreshPolicy.isAutomaticallyRefreshable(rate, isSourceEnabled: true, connectedProviders: [], hasWebstatKey: false))
+        #expect(!RefreshPolicy.isAutomaticallyRefreshable(rate, isSourceEnabled: false, connectedProviders: [], hasWebstatKey: true))
     }
 }

@@ -147,25 +147,25 @@ struct WebstatCatalogTests {
         #expect(value.latest?.periodEnd == WebstatSeriesDescriptor.date("2026-03-31"))
     }
 
-    @Test func versionOneMigrationPreservesAlertIdentityCheckpointAndLegacyFunds() throws {
+    @Test func versionOneUpgradePreservesAlertIdentityCheckpointAndFundFavorites() throws {
         let rule = AlertRule(seriesID: "fr10", direction: .rise, threshold: 3, condition: .level, lastEvaluatedAt: Date(timeIntervalSince1970: 42))
-        var storedV1 = AppPreferences(favoriteIDs: ["fr10", "fund-i-eur"], alerts: [rule])
+        var storedV1 = AppPreferences(favoriteIDs: ["fr10", "fund-a"], alerts: [rule])
         storedV1.schemaVersion = 1
-        let migrated = try storedV1.migrated()
-        #expect(migrated.schemaVersion == 2)
-        #expect(migrated.favoriteIDs.contains(WebstatStarter.canonicalID("fr10")))
-        #expect(migrated.favoriteIDs.contains("fund-i-eur"))
-        #expect(migrated.alerts[0].id == rule.id)
-        #expect(migrated.alerts[0].lastEvaluatedAt == rule.lastEvaluatedAt)
-        #expect(migrated.alerts[0].seriesID == WebstatStarter.canonicalID("fr10"))
-        #expect(migrated.isOnboardingCompleted == true)
+        let upgraded = try PreferencesMigration.upgrade(storedV1)
+        #expect(upgraded.schemaVersion == 2)
+        #expect(upgraded.favoriteIDs.contains(IdentifierMigration.upgrade("fr10")))
+        #expect(upgraded.favoriteIDs.contains("fund-a"))
+        #expect(upgraded.alerts[0].id == rule.id)
+        #expect(upgraded.alerts[0].lastEvaluatedAt == rule.lastEvaluatedAt)
+        #expect(upgraded.alerts[0].seriesID == IdentifierMigration.upgrade("fr10"))
+        #expect(upgraded.isOnboardingCompleted == true)
     }
 
     @Test func versionTwoKeepsEmptyAndDeduplicatesCanonicalSelection() throws {
         let empty = AppPreferences(followedSeriesIDs: [])
         #expect(try JSONDecoder().decode(AppPreferences.self, from: JSONEncoder().encode(empty)).followedSeriesIDs.isEmpty)
-        let duplicate = AppPreferences(followedSeriesIDs: ["fr10", WebstatStarter.canonicalID("fr10"), "eurusd"])
-        #expect(try duplicate.migrated().followedSeriesIDs == [WebstatStarter.canonicalID("fr10"), WebstatStarter.canonicalID("eurusd")])
+        let duplicate = AppPreferences(followedSeriesIDs: ["fr10", IdentifierMigration.upgrade("fr10"), "eurusd"])
+        #expect(try PreferencesMigration.upgrade(duplicate).followedSeriesIDs == [IdentifierMigration.upgrade("fr10"), IdentifierMigration.upgrade("eurusd")])
     }
 
     @Test func migrationIsAtomicAndKeepsOriginalFile() throws {
@@ -180,5 +180,14 @@ struct WebstatCatalogTests {
         #expect(migrated.followedSeriesIDs.count == WebstatStarter.ids.count)
         #expect(try Data(contentsOf: file.appendingPathExtension("v1-backup")) == storedV1File)
         #expect(try store.load() == migrated)
+    }
+
+    @Test func labelsComeFromTheCachedCodelistsWithAFallbackOnTheUsualLists() throws {
+        let value = try descriptor()
+        let labels = ["CL_UNIT": ["EUR": "Euro"], "CL_FREQ": ["Q": "Trimestrielle"]]
+        let resolved = value.resolving(codeLabels: labels, dataset: nil)
+        #expect(resolved.labels["unit"] == "Euro")
+        #expect(resolved.labels["freq"] == "Trimestrielle")
+        #expect(value.resolving(codeLabels: [:], dataset: nil).labels.isEmpty)
     }
 }

@@ -6,7 +6,7 @@ struct LocalRepository {
     let directory: URL
 
     static func applicationDefault() -> LocalRepository {
-        if let path = Bundle.main.object(forInfoDictionaryKey: "SemaDevelopmentDataDirectory") as? String {
+        if let path = Bundle.main.object(forInfoDictionaryKey: "DevelopmentDataDirectory") as? String {
             return LocalRepository(directory: URL(fileURLWithPath: path, isDirectory: true))
         }
         let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -15,27 +15,17 @@ struct LocalRepository {
 
     var preferences: PreferencesRepository { PreferencesRepository(fileURL: directory.appendingPathComponent("preferences.json")) }
 
-    func cachedRates() throws -> [MarketSeries] {
-        let url = directory.appendingPathComponent("ecb-cache.json")
-        guard FileManager.default.fileExists(atPath: url.path) else { return [] }
-        return try JSONDecoder().decode([MarketSeries].self, from: Data(contentsOf: url))
-    }
-
-    func cacheRates(_ rates: [MarketSeries]) throws {
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        try JSONEncoder().encode(rates).write(to: directory.appendingPathComponent("ecb-cache.json"), options: .atomic)
-    }
-
     func cachedWebstat() throws -> [MarketSeries] {
         let url = directory.appendingPathComponent("webstat-cache.json")
         guard FileManager.default.fileExists(atPath: url.path) else { return [] }
         let data = try Data(contentsOf: url)
         if let cache = try? JSONDecoder().decode(WebstatCache.self, from: data) {
             guard cache.schemaVersion == WebstatCache.currentSchemaVersion else { throw PreferencesError.unsupportedVersion(cache.schemaVersion) }
-            return cache.series
+            return WebstatCacheMigration.upgrade(cache.series)
         }
+        // Cache de schéma 1 : une liste de séries sans version (`WebstatCacheMigration`).
         let stored = try JSONDecoder().decode([MarketSeries].self, from: data)
-        let migrated = stored.map { $0.withID(WebstatStarter.canonicalID($0.id)) }
+        let migrated = WebstatCacheMigration.upgrade(stored)
         let backup = url.appendingPathExtension("v1-backup")
         if !FileManager.default.fileExists(atPath: backup.path) { try data.write(to: backup, options: .atomic) }
         try cacheWebstat(migrated)
